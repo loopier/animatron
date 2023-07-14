@@ -9,7 +9,7 @@ extends Node
 
 ## Store variables in memory for later use. Use 'getVar' and 'setVar' to
 ## manage them.
-var memory: Dictionary = {
+static var variables: Dictionary = {
 	"/var1": 0,
 	"/zero": 0,
 	"/one": 1,
@@ -21,6 +21,9 @@ var memory: Dictionary = {
 
 var funcs: Dictionary
 
+func _init():
+	Log.debug("init mapper")
+
 # Called when the node enters the scene tree for the first time.
 func _ready():
 	pass # Replace with function body.
@@ -30,13 +33,20 @@ func _ready():
 func _process(delta):
 	pass
 
-## get a variable value by name
-func getVar( name ) -> Variant:
-	var value = memory[name] if memory.has(name) else null
-	Log.debug("Looking for var '%s': %s" % [name, value])
-	return memory[name] if memory.has(name) else null
+## Read a file with a FILENAME and put its OSC constent in a TARGET dictionary
+static func loadFile( filename, target ):
+	Log.debug("Reading '%s': %s" % [filename, target])
 
-## set and store new value
-func setVar( name, value ):
-	memory[name] = value
+## Get a variable value by NAME
+static func getVar( name ) -> Variant:
+	var value = variables[name] if variables.has(name) else null
+	Log.verbose("Looking for var '%s': %s" % [name, value])
+	return variables[name] if variables.has(name) else null
 
+## Set and store new VALUE in a variable with a NAME
+static func setVar( name, value ):
+	variables[name] = value
+
+## Remove a variable with a NAME
+static func remove( name ):
+	if variables.has(name): variables.erase(name)

@@ -39,5 +39,5 @@
  "show_help": false,
  "suffix": ".gd",
  "tests": [],
- "unit_test_name": "test_assert_eq_setVar"
+ "unit_test_name": null
 }
