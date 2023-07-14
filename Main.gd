@@ -29,4 +29,5 @@ func _on_osc_msg_received(addr, args, sender):
 func initVariables():
 	var variablesStr = OscMapper.loadFile(variablesPath)
 	OscMapper.variables = OscMapper.oscStrToDict(variablesStr)
-	Log.verbose("OSC Variables: %s" % [OscMapper.variables])
+#	Log.verbose("OSC Variables:")
+#	OscMapper.list(OscMapper.variables)

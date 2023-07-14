@@ -48,6 +48,7 @@ static func oscStrToDict( oscStr: String ) -> Dictionary:
 static func getVar( name ) -> Variant:
 	var value = variables[name][0] if variables.has(name) else null
 	Log.verbose("Looking for var '%s': %s" % [name, value])
+	if value == null: Log.warn("Variable '%s' not found" % [name])
 	return value
 
 ## Set and store new [param value] in a variable with a [param name]
@@ -57,3 +58,8 @@ static func setVar( name, value ):
 ## Remove the [param key] and its value from [param dict]
 static func remove( key, dict ):
 	if variables.has(key): variables.erase(key)
+
+## List contents of [param dict]
+static func list( dict ):
+	for key in dict:
+		print("%s: %s" % [key, dict[key]])
