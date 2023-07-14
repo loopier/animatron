@@ -5,21 +5,10 @@ extends Node
 ## Using dictionaries to store variable values and function pointers.
 ##
 ## @tutorial:	TODO
-## @tutorial(2): TODO
+## @tutorial(2):	TODO
 
-## Store variables in memory for later use. Use 'getVar' and 'setVar' to
-## manage them.
-static var variables: Dictionary = {
-	"/var1": 0,
-	"/zero": 0,
-	"/one": 1,
-	"/pointone": 0.1,
-	"/bla": "bla",
-	"/true": true,
-	"/false": false,
-}
-
-var funcs: Dictionary
+## A dictionary used to store variables accessible from OSC messages.
+static var variables: Dictionary
 
 func _init():
 	Log.debug("init mapper")
@@ -33,20 +22,38 @@ func _ready():
 func _process(delta):
 	pass
 
-## Read a file with a FILENAME and put its OSC constent in a TARGET dictionary
-static func loadFile( filename, target ):
-	Log.debug("Reading '%s': %s" % [filename, target])
+## Read a file with a [param filename] and return its OSC constent in a string
+static func loadFile( filename ) -> String:
+	Log.verbose("Reading: %s" % [filename])
+	var file = FileAccess.open(filename, FileAccess.READ)
+	var content = file.get_as_text()
+	return content
 
-## Get a variable value by NAME
+## Return a dictionary based on the string [param oscStr] of OSC messages.[br]
+## The address is the key of the dictionary (or the first element), and the 
+## array of arguments the value.
+static func oscStrToDict( oscStr: String ) -> Dictionary:
+	var dict: Dictionary
+	var lines = oscStr.split("\n")
+	for line in lines:
+		var items: Array = line.split(" ")
+		if items[0] == "": continue
+		dict[items[0]] = items.slice(1)
+	return dict
+
+## Get a variable value by [param name].
+##
+## This method returns a single value. If by any reason the value holds
+## more than one, it will return only the first one.
 static func getVar( name ) -> Variant:
-	var value = variables[name] if variables.has(name) else null
+	var value = variables[name][0] if variables.has(name) else null
 	Log.verbose("Looking for var '%s': %s" % [name, value])
-	return variables[name] if variables.has(name) else null
+	return value
 
-## Set and store new VALUE in a variable with a NAME
+## Set and store new [param value] in a variable with a [param name]
 static func setVar( name, value ):
-	variables[name] = value
+	variables[name] = [value]
 
-## Remove a variable with a NAME
-static func remove( name ):
-	if variables.has(name): variables.erase(name)
+## Remove the [param key] and its value from [param dict]
+static func remove( key, dict ):
+	if variables.has(key): variables.erase(key)

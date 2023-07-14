@@ -1,7 +1,7 @@
 extends Node2D
 
 var osc: OscReceiver
-static var configPath = "res://variables.osc"
+static var variablesPath = "res://lib/core.ocl"
 
 func _ready():
 	Log.setLevel(Log.LOG_LEVEL_VERBOSE)
@@ -13,7 +13,7 @@ func _ready():
 	
 	# saving osc maps for variables to .osc files can be used as config files
 	# load osc variable maps to a dictionary
-	OscMapper.loadFile(configPath, OscMapper.variables)
+	initVariables()
 	# is it possible to save function maps to .osc files?
 	# if it is:  bdload osc function maps to a dictionary
 
@@ -25,3 +25,8 @@ func _on_osc_msg_received(addr, args, sender):
 	# map incoming OSC message to a function
 	Log.warn("TODO: Map incoming messages to functions: Main._on_osc_msg_received")
 	return [addr, args, sender]
+
+func initVariables():
+	var variablesStr = OscMapper.loadFile(variablesPath)
+	OscMapper.variables = OscMapper.oscStrToDict(variablesStr)
+	Log.verbose("OSC Variables: %s" % [OscMapper.variables])
