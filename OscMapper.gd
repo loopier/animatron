@@ -9,6 +9,11 @@ extends Node
 
 ## A dictionary used to store variables accessible from OSC messages.
 static var variables: Dictionary
+## A dictionary to store function calls.
+static var cmds: Dictionary = {
+	"/set": OscMapper.setVar,
+	"/get": OscMapper.getVar,
+}
 
 func _init():
 	Log.debug("init mapper")
@@ -52,8 +57,16 @@ static func getVar( name ) -> Variant:
 	return value
 
 ## Set and store new [param value] in a variable with a [param name]
-static func setVar( name, value ):
+static func setVar( name, value ) -> bool:
 	variables[name] = [value]
+	if Log.getLevel() == Log.LOG_LEVEL_VERBOSE:
+		OscMapper.list(OscMapper.variables)
+	return true
+
+static func getCmd( cmd ) -> Variant:
+	var value = cmds[cmd] if cmds.has(cmd) else null
+	if value == null: Log.warn("Command '%s' not found" % [cmd])
+	return value
 
 ## Remove the [param key] and its value from [param dict]
 static func remove( key, dict ):
@@ -63,3 +76,6 @@ static func remove( key, dict ):
 static func list( dict ):
 	for key in dict:
 		print("%s: %s" % [key, dict[key]])
+
+func alo( args ):
+	Log.debug("alo in mapper: %s" % [args])
