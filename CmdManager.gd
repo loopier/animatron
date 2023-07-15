@@ -1,6 +1,6 @@
-class_name OscMapper
+class_name CmdManager
 extends Node
-## Map OSC messages to Godot functionality
+## Map OSC commands to Godot functionality
 ##
 ## Using dictionaries to store variable values and function pointers.
 ##
@@ -11,8 +11,8 @@ extends Node
 static var variables: Dictionary
 ## A dictionary to store function calls.
 static var cmds: Dictionary = {
-	"/set": OscMapper.setVar,
-	"/get": OscMapper.getVar,
+	"/set": CmdManager.setVar,
+	"/get": CmdManager.getVar,
 }
 
 func _init():
@@ -60,7 +60,7 @@ static func getVar( name ) -> Variant:
 static func setVar( name, value ) -> bool:
 	variables[name] = [value]
 	if Log.getLevel() == Log.LOG_LEVEL_VERBOSE:
-		OscMapper.list(OscMapper.variables)
+		CmdManager.list(CmdManager.variables)
 	return true
 
 static func getCmd( cmd ) -> Variant:
