@@ -1,4 +1,4 @@
-class_name CmdManager
+class_name OscInterface
 extends Node
 ## Map OSC commands to Godot functionality
 ##
@@ -11,8 +11,8 @@ extends Node
 static var variables: Dictionary
 ## A dictionary to store function calls.
 static var cmds: Dictionary = {
-	"/set": CmdManager.setVar,
-	"/get": CmdManager.getVar,
+	"/set": OscInterface.setVar,
+	"/get": OscInterface.getVar,
 }
 
 func _init():
@@ -26,6 +26,36 @@ func _ready():
 # Called every frame. 'delta' is the elapsed time since the previous frame.
 func _process(delta):
 	pass
+
+static func parseCmd(key, args, sender) -> Variant:
+	Log.warn("TODO: filter messages by type (function, variable or OSC)")
+	# all custom cmd methods must return anything other than 'null'
+	var result: Variant
+	# get OSC key from cmds dict
+	var cmd = OscInterface.getCmd(key)
+	Log.verbose("parsing '%s': %s %s" % [key, cmd, args])
+	match typeof(cmd):
+		TYPE_CALLABLE: result = cmd.callv(args)
+		TYPE_STRING:
+			# if it's a variable: get the value and return it to the parent command
+			Log.warn("TODO: try calling '%s' as a GDScript function" % [key])
+			result = OscInterface.getVar(cmd)
+			# if it's a cmd: parse arguments
+			if result == null:
+				result = OscInterface.getCmd(cmd)
+		_: result = null
+		
+	# if none of the above worked: try calling it as if it was a GDScript function
+	if result == null:
+		if key.begins_with("/"): cmd = key.substr(1)
+#		result = callv(cmd, args)
+		Log.warn("TODO: should be calling a GDScript with '%s'" % [cmd])
+	
+	# else: it doesn't, report error back to sender
+	if result == null:
+		Log.warn("TODO: send '%s' error back to the sender" % [key])
+	Log.debug("Parsed '%s': %s %s => %s" % [key, cmd, args, result])
+	return result
 
 ## Read a file with a [param filename] and return its OSC constent in a string
 static func loadFile( filename ) -> String:
@@ -60,7 +90,7 @@ static func getVar( name ) -> Variant:
 static func setVar( name, value ) -> bool:
 	variables[name] = [value]
 	if Log.getLevel() == Log.LOG_LEVEL_VERBOSE:
-		CmdManager.list(CmdManager.variables)
+		OscInterface.list(OscInterface.variables)
 	return true
 
 static func getCmd( cmd ) -> Variant:
@@ -77,5 +107,5 @@ static func list( dict ):
 	for key in dict:
 		print("%s: %s" % [key, dict[key]])
 
-func alo( args ):
-	Log.debug("alo in mapper: %s" % [args])
+static func listCmds():
+	OscInterface.list(OscInterface.cmds)
