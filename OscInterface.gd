@@ -189,21 +189,29 @@ func loadAsset(name: String) -> Status:
 	return Status.ok(true)
 
 func loadImageSequence(path: String) -> Status:
-	var dir = DirAccess.open(path)
+	var filenames = DirAccess.get_files_at(path)
 	var name = path.get_basename().split("/")[-1]
-	if dir:
-		dir.list_dir_begin()
-		animationsLibrary.add_animation(name)
-		var asset = dir.get_next()
-		while asset != "":
-			if dir.current_is_dir():
-				Log.verbose("Found directory: " + asset)
-			else:
-				if asset.ends_with(".png"):
-					animationsLibrary.add_frame(name, loadImage(path.path_join(asset)))
-			asset = dir.get_next()
-	else:
-		reportError("An error occurred when trying to access the path.")
+	animationsLibrary.add_animation(name)
+	for file in filenames:
+		if file.ends_with(".png"):
+#			Log.debug("Loading img to '%s': %s" % [name, path.path_join(file)])
+			var texture = loadImage(path.path_join(file))
+			animationsLibrary.add_frame(name, texture)
+#
+#	var dir = DirAccess.open(path)
+#	if dir:
+#		dir.list_dir_begin()
+#		animationsLibrary.add_animation(name)
+#		var asset = dir.get_next()
+#		while asset != "":
+#			if dir.current_is_dir():
+#				Log.verbose("Found directory: " + asset)
+#			else:
+#				if asset.ends_with(".png"):
+#					animationsLibrary.add_frame(name, loadImage(path.path_join(asset)))
+#			asset = dir.get_next()
+#	else:
+#		reportError("An error occurred when trying to access the path.")
 	
 	Log.verbose("Loaded %s frames: %s" % [animationsLibrary.get_frame_count(name), name])
 	return Status.ok(true)
@@ -212,8 +220,6 @@ func loadImage(path: String) -> ImageTexture:
 	Log.verbose("Loading image: %s" % [path])
 	var img = Image.load_from_file(path)
 	var texture = ImageTexture.create_from_image(img)
-	Log.debug("Image image: %s" % [typeof(img)])
-	Log.debug("Image texture: %s" % [texture])
 	return texture
 
 func getAllActors() -> Status:
@@ -251,18 +257,16 @@ func createActor(name: String, anim: String) -> Status:
 	actor.set_position(Vector2(0.5,0.5) * get_parent().get_viewport_rect().size)
 	actor.get_node(animationNodePath).set_sprite_frames(animationsLibrary)
 	actor.get_node(animationNodePath).play(anim)
-	Log.debug("Anim node playing: %s" % [actor.get_node(animationNodePath).is_playing()])
-	Log.debug("Anim node has %s(%s), %s" % [anim, actor.get_node(animationNodePath).get_sprite_frames().get_frame_count(anim), actor.get_node(animationNodePath).get_sprite_frames().has_animation(anim)])
-#	Log.debug("Anim node has %s(%s), %s" % [anim, animationsLibrary.get_frame_count(anim), animationsLibrary.has_animation(anim)])
+	actor.get_node(animationNodePath).get_sprite_frames().set_animation_speed(anim, 12)
 	actorsNode.add_child(actor)
 	return Status.ok(actor, msg)
 
 func setActorAnimation(actorName, animation) -> Status:
-#	var actor: CharacterBody2D = getActor(actorName).value
-#	var frames: SpriteFrames = 
-#	actor.get_node(animationNodePath).set_sprite_frames(frames)
-#	return Status.ok(frames)
-	return Status.error("TODO setActorAnimation")
+	var result = getActor(actorName)
+	if result.isError():
+		return result
+	result.value.get_node(animationNodePath).play(animation)
+	return Status.ok()
 
 func removeActor(name: String) -> Status:
 	var actor = getActor(name)
