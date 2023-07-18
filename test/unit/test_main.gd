@@ -18,5 +18,8 @@ func after_all():
 #	var action = main._on_osc_msg_received("/alo", [0,1], "127.0.0.1")
 #	assert_eq(action, "nothing", "Should fail")
 
-func test_assert_eq_alo():
-	assert_eq(main.alo(), 0, "nose")
+func test_creatActor():
+	var main = preload("res://main.tscn").instantiate()
+	
+	assert_eq(main.createActor("actor1", "bla"), null)
+	assert_eq(main.createActor("actor1", "bla"), null)
