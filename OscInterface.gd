@@ -72,13 +72,15 @@ func parseCommand(key: String, args: Array, sender: String) -> Variant:
 			# if it's a command: parse arguments
 			if result == null:
 				result = getCommand(value)
-				Log.debug("Checking for command '%s':'%s' => %s" % [key, value, result])
+				Log.debug("Checking for subcommand '%s':'%s' => %s" % [key, value, result])
 				result = parseCommand(value, args, sender)
-		_: result = null
+		_: 
+			executeCommandAsGdScript(key, args)
+			result = null
 		
 	# if none of the above worked: try calling it as if it was a GDScript function
-	if result == null:
-		executeCommandAsGdScript(key, args)
+#	if result == null:
+#		executeCommandAsGdScript(key, args)
 #		var function
 #		if key.begins_with("/"): function = key.substr(1)
 #		result = callv(function, args)
@@ -110,8 +112,15 @@ func oscStrToDict( oscStr: String ) -> Dictionary:
 		dict[items[0]] = items.slice(1)
 	return dict
 
+func isActor( name ) -> bool:
+	return false if main.get_node("Actors").find_child(name) == null else true
+
 ## Try to execute a command as a GDScript function
 func executeCommandAsGdScript(command, args) -> Status:
+	# if args first element is an actor, call it's Node2D method equivalent to 'command'
+	TODO
+	Log.debug("--------- actor: %s" % [main.get_node("Actors").get_children()])
+	Log.debug("Execute Actor command '%s'(%s): %s" % [args[0], isActor(args[0]), command])
 	Log.debug("TODO: Execute  '%s' as GDScript command: %s" % [command, args])
 	return Status.error("TODO executeCommandAsGdScript")
 
@@ -197,21 +206,6 @@ func loadImageSequence(path: String) -> Status:
 #			Log.debug("Loading img to '%s': %s" % [name, path.path_join(file)])
 			var texture = loadImage(path.path_join(file))
 			animationsLibrary.add_frame(name, texture)
-#
-#	var dir = DirAccess.open(path)
-#	if dir:
-#		dir.list_dir_begin()
-#		animationsLibrary.add_animation(name)
-#		var asset = dir.get_next()
-#		while asset != "":
-#			if dir.current_is_dir():
-#				Log.verbose("Found directory: " + asset)
-#			else:
-#				if asset.ends_with(".png"):
-#					animationsLibrary.add_frame(name, loadImage(path.path_join(asset)))
-#			asset = dir.get_next()
-#	else:
-#		reportError("An error occurred when trying to access the path.")
 	
 	Log.verbose("Loaded %s frames: %s" % [animationsLibrary.get_frame_count(name), name])
 	return Status.ok(true)
@@ -259,6 +253,9 @@ func createActor(name: String, anim: String) -> Status:
 	actor.get_node(animationNodePath).play(anim)
 	actor.get_node(animationNodePath).get_sprite_frames().set_animation_speed(anim, 12)
 	actorsNode.add_child(actor)
+	# Need to set an owner so it appears in the SceneTree and can be found using
+	# Node.finde_child(pattern) -- see Node docs
+	actor.set_owner(actorsNode)
 	return Status.ok(actor, msg)
 
 func setActorAnimation(actorName, animation) -> Status:
