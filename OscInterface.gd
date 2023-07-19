@@ -33,7 +33,8 @@ var commands: Dictionary = {
 	"/set": setVar,
 	"/get": getVar,
 	"/load": loadAsset,
-	"/assets/list": listAssets,
+	"/assets/list": listAssets, # available in disk
+	"/animations/list": listAnimations, # loaded
 	"/actors/list": listActors,
 	"/create": createActor,
 	"/new": "/create",
@@ -118,7 +119,6 @@ func isActor( name ) -> bool:
 ## Try to execute a command as a GDScript function
 func executeCommandAsGdScript(command, args) -> Status:
 	# if args first element is an actor, call it's Node2D method equivalent to 'command'
-	TODO
 	Log.debug("--------- actor: %s" % [main.get_node("Actors").get_children()])
 	Log.debug("Execute Actor command '%s'(%s): %s" % [args[0], isActor(args[0]), command])
 	Log.debug("TODO: Execute  '%s' as GDScript command: %s" % [command, args])
@@ -174,21 +174,37 @@ func listCommands() -> Status:
 func listActors() -> Status:
 	var actorsList := []
 	var actors: Array = getAllActors().value
-	print("List of actors (%s)" % [len(actors)])
+	Log.info("List of actors (%s)" % [len(actors)])
 	for actor in actors:
 		var name: String = actor.get_name()
 		var anim: String = actor.get_node(animationNodePath).get_animation()
 		actorsList.append("%s (%s)" % [name, anim])
-		print(actorsList.back())
+		Log.info(actorsList.back())
 	actorsList.sort()
 	return Status.ok(actorsList)
 
-func listAssets() -> Status:
+func listAnimations() -> Status:
 	var animationNames = animationsLibrary.get_animation_names()
-	print("List of animations (%s)" % [len(animationNames)])
+	Log.info("List of animations (%s)" % [len(animationNames)])
 	for name in animationNames:
-		print(name)
+		var frameCount = animationsLibrary.get_frame_count(name)
+		Log.info("%s (%s)" % [name, frameCount])
 	return Status.ok(animationNames)
+
+func listAssets() -> Status:
+	var dir := DirAccess.open(assetsPath)
+	var assetNames := []
+	Log.info("List of available assets in '%s'" % [assetsPath])
+	if dir:
+		dir.list_dir_begin()
+		var filename = dir.get_next()
+		while filename != "":
+			assetNames.append(filename)
+			filename = dir.get_next()
+	assetNames.sort()
+	for name in assetNames:
+		Log.info(name)
+	return Status.ok(assetNames)
 
 func loadAsset(name: String) -> Status:
 	var path = assetsPath.path_join(name)
