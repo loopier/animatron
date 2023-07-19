@@ -37,6 +37,9 @@ var commands: Dictionary = {
 	"/animations/list": listAnimations, # loaded
 	"/actors/list": listActors,
 	"/create": createActor,
+	"/remove": removeActor,
+	"/free": "/remove",
+	"/scale": scaleActor,
 	"/new": "/create",
 }
 
@@ -76,9 +79,9 @@ func parseCommand(key: String, args: Array, sender: String) -> Variant:
 				Log.debug("Checking for subcommand '%s':'%s' => %s" % [key, value, result])
 				result = parseCommand(value, args, sender)
 		_: 
-			executeCommandAsGdScript(key, args)
-			result = null
-		
+			result = executeCommandAsGdScript(key, args)
+#			result = null
+	
 	# if none of the above worked: try calling it as if it was a GDScript function
 #	if result == null:
 #		executeCommandAsGdScript(key, args)
@@ -90,7 +93,7 @@ func parseCommand(key: String, args: Array, sender: String) -> Variant:
 	# else: it doesn't, report error back to sender
 	if result == null:
 		Log.warn("TODO: send '%s' error back to the sender" % [key])
-	reportStatus("Parsed command '%s': %s %s => %s" % [key, value, args, result], sender)
+	reportStatus("Parsed command '%s': %s %s => %s" % [key, value, args, result.msg], sender)
 	return result
 
 ## Read a file with a [param filename] and return its OSC constent in a string
@@ -119,10 +122,16 @@ func isActor( name ) -> bool:
 ## Try to execute a command as a GDScript function
 func executeCommandAsGdScript(command, args) -> Status:
 	# if args first element is an actor, call it's Node2D method equivalent to 'command'
-	Log.debug("--------- actor: %s" % [main.get_node("Actors").get_children()])
-	Log.debug("Execute Actor command '%s'(%s): %s" % [args[0], isActor(args[0]), command])
-	Log.debug("TODO: Execute  '%s' as GDScript command: %s" % [command, args])
-	return Status.error("TODO executeCommandAsGdScript")
+	var actorName = args[0]
+	args = args.slice(1)
+	var actor = getActor(actorName).value
+	if actor == null:
+		return Status.error("Actor not found: %s" % [actorName])
+	command = command.get_slice("/", 1)
+	var msg = "Execute GDScript command: %s.%s(%s)" % [actor, command, args]
+	var result = actor.callv(command, args)
+	Log.debug("exec result: %s" % [result])
+	return Status.ok(result, msg)
 
 ## Get a variable value by [param name].
 ##
@@ -276,12 +285,21 @@ func createActor(name: String, anim: String) -> Status:
 
 func setActorAnimation(actorName, animation) -> Status:
 	var result = getActor(actorName)
-	if result.isError():
-		return result
+	if result.isError(): return result
 	result.value.get_node(animationNodePath).play(animation)
 	return Status.ok()
 
 func removeActor(name: String) -> Status:
-	var actor = getActor(name)
+	var result = getActor(name)
+	if result.isError(): return result
+	var actor = result.value
 	actorsNode.remove_child(actor)
 	return Status.ok(actor)
+
+func scaleActor(name: String, x: float, y: float) -> Status:
+	var result = getActor(name)
+	if result.isError(): return result
+	var actor = result.value
+	var scale = Vector2(x,y)
+	actor.set_scale(Vector2(x,y))
+	return Status.ok(result, "%s" % [actor.get_scale()])
