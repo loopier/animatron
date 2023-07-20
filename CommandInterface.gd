@@ -37,6 +37,7 @@ var commands: Dictionary = {
 	"/assets/list": listAssets, # available in disk
 	"/animations/list": listAnimations, # loaded
 	"/actors/list": listActors,
+	"/commands/list": listCommands,
 	"/create": createActor,
 	"/new": "/create",
 	"/remove": removeActor,
@@ -60,6 +61,7 @@ func reportError(msg, sender = null):
 	Log.error(msg)
 
 func reportStatus(msg, sender = null):
+	Log.verbose("TODO: report message back to '%s'" % [sender])
 	Log.info(msg)
 
 ## Different behaviours depend on the [param command] contents in the [member commands] Dictionary.
@@ -81,21 +83,14 @@ func parseCommand(key: String, args: Array, sender: String) -> Variant:
 				Log.debug("Checking for subcommand '%s':'%s' => %s" % [key, value, result])
 				result = parseCommand(value, args, sender)
 		_: 
-			result = executeCommandAsGdScript(key, args)
-#			result = null
-	
-	# if none of the above worked: try calling it as if it was a GDScript function
-#	if result == null:
-#		executeCommandAsGdScript(key, args)
-#		var function
-#		if key.begins_with("/"): function = key.substr(1)
-#		result = callv(function, args)
-#		Log.warn("TODO: should be calling '%s' as a GDScript function with args: %s" % [function, args])
+#			result = executeCommandAsGdScript(key, args)
+			pass
 	
 	# else: it doesn't, report error back to sender
 	if result == null:
 		Log.warn("TODO: send '%s' error back to the sender" % [key])
-	reportStatus("Parsed command '%s': %s %s => %s" % [key, value, args, result.msg], sender)
+	Log.verbose("Parsed command '%s': %s %s" % [key, value, args])
+	reportStatus(result.msg, sender)
 	return result
 
 ## Read a file with a [param filename] and return its OSC constent in a string
@@ -143,7 +138,7 @@ func getVar( name: String ) -> Status:
 	var value = variables[name][0] if variables.has(name) else null
 #	Log.debug("Looking for var '%s': %s" % [name, value])
 	if value == null: return Status.error("Variable '%s' not found return: %s" % [name, value])
-	return Status.ok(value, "Variabl '%s': %s" % [name, value])
+	return Status.ok(value, "Variable '%s': %s" % [name, value])
 
 ## Set and store new [param value] in a variable with a [param name]
 ## Returns the value stored in the variable
@@ -180,7 +175,10 @@ func list( dict: Dictionary ) -> Status:
 	
 
 func listCommands() -> Status:
-	return list(commands)
+	var list := "\nCommands:\n"
+	for command in commands.keys():
+		list += "%s\n" % [command]
+	return Status.ok(commands.keys(), list)
 
 func listActors() -> Status:
 	var actorsList := []

@@ -23,7 +23,7 @@ func _process(delta):
 	pass
 
 func _on_osc_msg_received(addr, args, sender):
-	get_node("OscInterface").parseCommand(addr, args, sender)
+	get_node("CommandInterface").parseCommand(addr, args, sender)
 #	OscInterface.listCmds()
 	pass
 
