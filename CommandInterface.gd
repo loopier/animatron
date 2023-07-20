@@ -202,7 +202,6 @@ func listAnimations() -> Status:
 func listAssets() -> Status:
 	var dir := DirAccess.open(assetsPath)
 	var assetNames := []
-	Log.info("List of available assets in '%s'" % [ProjectSettings.globalize_path(assetsPath)])
 	if dir:
 		dir.list_dir_begin()
 		var filename = dir.get_next()
@@ -210,9 +209,10 @@ func listAssets() -> Status:
 			assetNames.append(filename)
 			filename = dir.get_next()
 	assetNames.sort()
+	var msg := "Assets at '%s':\n" % [ProjectSettings.globalize_path(assetsPath)]
 	for name in assetNames:
-		Log.info(name)
-	return Status.ok(assetNames)
+		msg += "%s\n" % [name]
+	return Status.ok(assetNames, msg)
 
 func loadAsset(name: String) -> Status:
 	var path = assetsPath.path_join(name)
