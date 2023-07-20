@@ -33,16 +33,17 @@ var commands: Dictionary = {
 	"/set": setVar,
 	"/get": getVar,
 	# general commands
+	"/commands/list": listCommands,
+	# assets
 	"/load": loadAsset,
 	"/assets/list": listAssets, # available in disk
 	"/animations/list": listAnimations, # loaded
+	# actor commands
 	"/actors/list": listActors,
-	"/commands/list": listCommands,
 	"/create": createActor,
 	"/new": "/create",
 	"/remove": removeActor,
 	"/free": "/remove",
-	# actor commands
 	"/scale": scaleActor,
 }
 
@@ -193,11 +194,11 @@ func listActors() -> Status:
 
 func listAnimations() -> Status:
 	var animationNames = animationsLibrary.get_animation_names()
-	Log.info("List of animations (%s)" % [len(animationNames)])
+	var msg := "List of animations (%s):\n" % [len(animationNames)]
 	for name in animationNames:
 		var frameCount = animationsLibrary.get_frame_count(name)
-		Log.info("%s (%s)" % [name, frameCount])
-	return Status.ok(animationNames)
+		msg += "%s (%s)\n" % [name, frameCount]
+	return Status.ok(animationNames, msg)
 
 func listAssets() -> Status:
 	var dir := DirAccess.open(assetsPath)
