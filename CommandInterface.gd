@@ -44,6 +44,7 @@ var commands: Dictionary = {
 	"/new": "/create",
 	"/remove": removeActor,
 	"/free": "/remove",
+	"/animation": setActorAnimation,
 	"/scale": scaleActor,
 }
 
@@ -225,6 +226,8 @@ func loadAsset(name: String) -> Status:
 func loadImageSequence(path: String) -> Status:
 	var filenames = DirAccess.get_files_at(path)
 	var name = path.get_basename().split("/")[-1]
+	if animationsLibrary.has_animation(name):
+		return Status.error("Animation already loaded: '%s'" % [name])
 	animationsLibrary.add_animation(name)
 	for file in filenames:
 		if file.ends_with(".png"):
@@ -232,8 +235,7 @@ func loadImageSequence(path: String) -> Status:
 			var texture = loadImage(path.path_join(file))
 			animationsLibrary.add_frame(name, texture)
 	
-	Log.verbose("Loaded %s frames: %s" % [animationsLibrary.get_frame_count(name), name])
-	return Status.ok(true)
+	return Status.ok(true, "Loaded %s frames: %s" % [animationsLibrary.get_frame_count(name), name])
 
 func loadImage(path: String) -> ImageTexture:
 	Log.verbose("Loading image: %s" % [path])
@@ -274,20 +276,15 @@ func createActor(name: String, anim: String) -> Status:
 	Log.debug(msg)
 	actor.set_name(name)
 	actor.set_position(Vector2(0.5,0.5) * get_parent().get_viewport_rect().size)
-	actor.get_node(animationNodePath).set_sprite_frames(animationsLibrary)
-	actor.get_node(animationNodePath).play(anim)
-	actor.get_node(animationNodePath).get_sprite_frames().set_animation_speed(anim, 12)
+	var animationNode = actor.get_node(animationNodePath)
+	animationNode.set_sprite_frames(animationsLibrary)
+	animationNode.play(anim)
+	animationNode.get_sprite_frames().set_animation_speed(anim, 12)
 	actorsNode.add_child(actor)
 	# Need to set an owner so it appears in the SceneTree and can be found using
 	# Node.finde_child(pattern) -- see Node docs
 	actor.set_owner(actorsNode)
 	return Status.ok(actor, msg)
-
-func setActorAnimation(actorName, animation) -> Status:
-	var result = getActor(actorName)
-	if result.isError(): return result
-	result.value.get_node(animationNodePath).play(animation)
-	return Status.ok()
 
 func removeActor(name: String) -> Status:
 	var result = getActor(name)
@@ -295,6 +292,13 @@ func removeActor(name: String) -> Status:
 	var actor = result.value
 	actorsNode.remove_child(actor)
 	return Status.ok(actor)
+
+func setActorAnimation(actorName, animation) -> Status:
+	var result = getActor(actorName)
+	if result.isError(): return result
+	if not animationsLibrary.has_animation(animation): return Status.error("Animation not found: %s" % [animation])
+	result.value.get_node(animationNodePath).play(animation)
+	return Status.ok(true, "Set animation for '%s': %s" % [actorName, animation])
 
 func scaleActor(name: String, x: float, y: float) -> Status:
 	var result = getActor(name)

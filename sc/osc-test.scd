@@ -7,3 +7,9 @@ n.sendMsg("/assets/list");
 
 n.sendMsg("/load", "numbers");
 n.sendMsg("/animations/list");
+
+n.sendMsg("/load", "mama");
+n.sendMsg("/load", "numbers");
+n.sendMsg("/create", "x", "mama");
+n.sendMsg("/animation", "x", "numbers");
+n.sendMsg("/animation", "x", "bla");
