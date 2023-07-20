@@ -71,7 +71,6 @@ func parseCommand(key: String, args: Array, sender: String) -> Variant:
 	# get OSC key from commands dict
 	var value = result.value
 	var msg = result.msg
-	Log.verbose(msg)
 	match typeof(value):
 		TYPE_CALLABLE: result = value.callv(args)
 		TYPE_STRING:
@@ -203,7 +202,7 @@ func listAnimations() -> Status:
 func listAssets() -> Status:
 	var dir := DirAccess.open(assetsPath)
 	var assetNames := []
-	Log.info("List of available assets in '%s'" % [assetsPath])
+	Log.info("List of available assets in '%s'" % [ProjectSettings.globalize_path(assetsPath)])
 	if dir:
 		dir.list_dir_begin()
 		var filename = dir.get_next()
