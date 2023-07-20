@@ -37,10 +37,10 @@ var commands: Dictionary = {
 	"/animations/list": listAnimations, # loaded
 	"/actors/list": listActors,
 	"/create": createActor,
+	"/new": "/create",
 	"/remove": removeActor,
 	"/free": "/remove",
 	"/scale": scaleActor,
-	"/new": "/create",
 }
 
 # Called when the node enters the scene tree for the first time.
