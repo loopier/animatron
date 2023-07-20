@@ -32,6 +32,7 @@ var commands: Dictionary = {
 	"/test": getActor, ## used to test random stuff
 	"/set": setVar,
 	"/get": getVar,
+	# general commands
 	"/load": loadAsset,
 	"/assets/list": listAssets, # available in disk
 	"/animations/list": listAnimations, # loaded
@@ -40,6 +41,7 @@ var commands: Dictionary = {
 	"/new": "/create",
 	"/remove": removeActor,
 	"/free": "/remove",
+	# actor commands
 	"/scale": scaleActor,
 }
 
