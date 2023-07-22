@@ -300,6 +300,22 @@ func setActorAnimation(actorName, animation) -> Status:
 	result.value.get_node(animationNodePath).play(animation)
 	return Status.ok(true, "Set animation for '%s': %s" % [actorName, animation])
 
+func callActorMethodWithVector(method, args):
+	var result = getActor(args[0])
+	return Status.error("Calling '%s': %s" % [method, args])
+	if result.isError(): return result
+	var actor = result.value
+	match len(args):
+		2:
+			actor.call(method, Vector2(args[1], args[2]))
+		3:
+			actor.call(method, Vector3(args[1], args[2], args[3]))
+		4:
+			actor.call(method, Vector4(args[1], args[2], args[3], args[4]))
+		_:
+			return Status.error("callActorMethodWithVector xpected between 2 and 4 arguments, received: %s" % [len(args.slice(1))])
+	return Status.ok(true, "Called %s.%s(Vector%d(%s))" % [actor.get_name(), method, args.slice(1)])
+
 func scaleActor(name: String, x: float, y: float) -> Status:
 	var result = getActor(name)
 	if result.isError(): return result

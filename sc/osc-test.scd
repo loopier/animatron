@@ -13,3 +13,10 @@ n.sendMsg("/load", "numbers");
 n.sendMsg("/create", "x", "mama");
 n.sendMsg("/animation", "x", "numbers");
 n.sendMsg("/animation", "x", "bla");
+
+(
+n.sendMsg("/load", "mama");
+n.sendMsg("/create", "x", "mama");
+n.sendMsg("/scale", "x", 0.5, 0.5);
+)
+n.sendMsg("/bla", "x", 0.5, 0.5);
