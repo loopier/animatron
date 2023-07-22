@@ -7,6 +7,10 @@ extends Node
 ## @tutorial:	TODO
 ## @tutorial(2):	TODO
 
+signal command_finished(msg, sender)
+signal command_not_found(command, sender)
+signal command_error(msg, sender)
+
 enum {
 	COMMAND_CALLABLE,
 	COMMAND_VARIABLE,
@@ -28,7 +32,7 @@ var variables: Dictionary:
 	set(value): variables = value
 	get: return variables
 ## Commands map.
-var commands: Dictionary = {
+var coreCommands: Dictionary = {
 	"/test": getActor, ## used to test random stuff
 	"/set": setVar,
 	"/get": getVar,
@@ -38,14 +42,15 @@ var commands: Dictionary = {
 	"/load": loadAsset,
 	"/assets/list": listAssets, # available in disk
 	"/animations/list": listAnimations, # loaded
-	# actor commands
 	"/actors/list": listActors,
 	"/create": createActor,
-	"/new": "/create",
+}
+var actorCommands: Dictionary = {
 	"/remove": removeActor,
 	"/free": "/remove",
 	"/animation": setActorAnimation,
-	"/scale": scaleActor,
+#	"/scale": scaleActor,
+	"/scale": callActorMethodWithVector,
 }
 
 # Called when the node enters the scene tree for the first time.
@@ -53,7 +58,6 @@ func _ready():
 	var animationsLibraryNode = metanode.instantiate().get_node(animationNodePath)
 	animationsLibraryNode.set_sprite_frames(SpriteFrames.new())
 	animationsLibrary = animationsLibraryNode.get_sprite_frames()
-	pass # Replace with function body.
 
 # Called every frame. 'delta' is the elapsed time since the previous frame.
 func _process(delta):
@@ -68,31 +72,57 @@ func reportStatus(msg, sender = null):
 
 ## Different behaviours depend on the [param command] contents in the [member commands] Dictionary.
 func parseCommand(key: String, args: Array, sender: String) -> Variant:
-	# all custom command methods must return anything other than 'null'
-	var result: Status = getCommand(key)
-	# get OSC key from commands dict
-	var value = result.value
-	var msg = result.msg
-	match typeof(value):
-		TYPE_CALLABLE: result = value.callv(args)
-		TYPE_STRING:
-			# if it's a variable: get the value and return it to the parent command
-			result = getVar(value)
-			# if it's a command: parse arguments
-			if result == null:
-				result = getCommand(value)
-				Log.debug("Checking for subcommand '%s':'%s' => %s" % [key, value, result])
-				result = parseCommand(value, args, sender)
-		_: 
-#			result = executeCommandAsGdScript(key, args)
-			pass
+	var commandDicts := [coreCommands, actorCommands]
+	var commandValue: Variant
+	var commandDict: Dictionary
+	var result: Status
+	for dict in commandDicts:
+		commandValue = dict.get(key)
+		if commandValue != null: 
+			commandDict = dict
+			break
 	
-	# else: it doesn't, report error back to sender
-	if result == null:
-		Log.warn("TODO: send '%s' error back to the sender" % [key])
-	Log.verbose("Parsed command '%s': %s %s" % [key, value, args])
-	reportStatus(result.msg, sender)
-	return result
+	match commandDict:
+		coreCommands:
+			result = commandValue.callv(args)
+		actorCommands:
+			result = commandValue.call(key, args)
+		_:
+			command_not_found.emit(key, sender)
+			return null
+	
+	match result.type:
+		Status.OK: command_finished.emit(result.msg, sender)
+		Status.ERROR: command_error.emit(result.msg, sender)
+		_: command_not_found.emit(key, sender)
+
+	return null
+#	# all custom command methods must return anything other than 'null'
+#	var result: Status = getCommand(key)
+#	# get OSC key from commands dict
+#	var value = result.value
+#	var msg = result.msg
+#	match typeof(value):
+#		TYPE_CALLABLE: result = value.callv(args)
+#		TYPE_STRING:
+#			# if it's a variable: get the value and return it to the parent command
+#			result = getVar(value)
+#			# if it's a command: parse arguments
+#			if result.value == null:
+#				result = getCommand(value)
+#				Log.debug("Checking for subcommand '%s':'%s' => %s" % [key, value, result])
+#				result = parseCommand(value, args, sender)
+#		_: 
+##			result = executeCommandAsGdScript(key, args)
+#			pass
+#
+#	# else: it doesn't, report error back to sender
+##	if result.value == null:
+##		reportError("TODO: send '%s' error back to the sender" % [key])
+##		return
+#	Log.verbose("Parsed command '%s': %s %s" % [key, value, args])
+#	reportStatus(result.msg, sender)
+#	return result
 
 ## Read a file with a [param filename] and return its OSC constent in a string
 func loadFile( filename: String ) -> Status:
@@ -151,7 +181,7 @@ func setVar( name: String, value: Variant ) -> Status:
 	return Status.ok(variables[name][0])
 
 func getCommand( command: String ) -> Status:
-	var value = commands[command] if commands.has(command) else null
+	var value = coreCommands[command] if coreCommands.has(command) else null
 	if value == null: Status.error("Command '%s' not found" % [command])
 	return Status.ok(value, "Command found '%s': %s" % [command, value])
 
@@ -177,9 +207,9 @@ func list( dict: Dictionary ) -> Status:
 
 func listCommands() -> Status:
 	var list := "\nCommands:\n"
-	for command in commands.keys():
+	for command in coreCommands.keys():
 		list += "%s\n" % [command]
-	return Status.ok(commands.keys(), list)
+	return Status.ok(coreCommands.keys(), list)
 
 func listActors() -> Status:
 	var actorsList := []
@@ -300,18 +330,22 @@ func setActorAnimation(actorName, animation) -> Status:
 	result.value.get_node(animationNodePath).play(animation)
 	return Status.ok(true, "Set animation for '%s': %s" % [actorName, animation])
 
-func callActorMethodWithVector(method, args):
+func callActorMethodWithVector(method, args) -> Status:
 	var result = getActor(args[0])
-	return Status.error("Calling '%s': %s" % [method, args])
+#	return Status.error("Calling '%s': %s" % [method, args])
 	if result.isError(): return result
 	var actor = result.value
+	# we need to remove the actor name from the arguments
+	args = args.slice(1)
+	method = "set_%s" % [method.get_slice("/",1)]
+	Log.debug("actor: %s - method: %s - args (%s): %s" % [actor.name, method, len(args), args])
 	match len(args):
 		2:
-			actor.call(method, Vector2(args[1], args[2]))
+			actor.call(method, Vector2(args[0], args[1]))
 		3:
-			actor.call(method, Vector3(args[1], args[2], args[3]))
+			actor.call(method, Vector3(args[0], args[1], args[2]))
 		4:
-			actor.call(method, Vector4(args[1], args[2], args[3], args[4]))
+			actor.call(method, Vector4(args[0], args[1], args[2], args[3]))
 		_:
 			return Status.error("callActorMethodWithVector xpected between 2 and 4 arguments, received: %s" % [len(args.slice(1))])
 	return Status.ok(true, "Called %s.%s(Vector%d(%s))" % [actor.get_name(), method, args.slice(1)])
