@@ -8,15 +8,7 @@ extends Node
 ## @tutorial(2):	TODO
 
 signal command_finished(msg, sender)
-signal command_not_found(command, sender)
 signal command_error(msg, sender)
-
-enum {
-	COMMAND_CALLABLE,
-	COMMAND_VARIABLE,
-	COMMAND_DEF,
-	COMMAND_SUBCOMMAND,
-}
 
 var status := preload("res://Status.gd")
 @onready var metanode := preload("res://meta_node.tscn")
@@ -31,7 +23,7 @@ var assetsPath = "user://assets"
 var variables: Dictionary:
 	set(value): variables = value
 	get: return variables
-## Commands map.
+## Core ommands map.
 var coreCommands: Dictionary = {
 	"/test": getActor, ## used to test random stuff
 	"/set": setVar,
@@ -45,12 +37,19 @@ var coreCommands: Dictionary = {
 	"/actors/list": listActors,
 	"/create": createActor,
 }
+## Actor commands map.
+## Actor commands are parsed differently than [param coreCommands]. They use 
+## OSC address as method name (by removing the forward slash), and first argument is
+## always the actor's name.
+## Using meta methods filtered by parameter types allows to automatically map a lot
+## of OSC messages to a few actual GDScript functions and methods.
+## Keep in mind, though, that the command (OSC address) has to have the same signature as
+## the expected GDScript method. If a different command name is needed, use a [method def].
 var actorCommands: Dictionary = {
 	"/remove": removeActor,
-	"/free": "/remove",
 	"/animation": setActorAnimation,
-#	"/scale": scaleActor,
 	"/scale": callActorMethodWithVector,
+	"/position": callActorMethodWithVector,
 }
 
 # Called when the node enters the scene tree for the first time.
@@ -70,33 +69,33 @@ func reportStatus(msg, sender = null):
 	Log.verbose("TODO: report message back to '%s'" % [sender])
 	Log.info(msg)
 
-## Different behaviours depend on the [param command] contents in the [member commands] Dictionary.
-func parseCommand(key: String, args: Array, sender: String) -> Variant:
+## Different behaviours depend on the [param command] contents in the different [member xxxCommands] dictionaries.
+func parseCommand(key: String, args: Array, sender: String) -> Status:
 	var commandDicts := [coreCommands, actorCommands]
 	var commandValue: Variant
 	var commandDict: Dictionary
-	var result: Status
+	var result := Status.new()
 	for dict in commandDicts:
 		commandValue = dict.get(key)
 		if commandValue != null: 
 			commandDict = dict
 			break
 	
+	# aliases
+	if typeof(commandValue) == TYPE_STRING: 
+		return parseCommand(commandValue, args, sender) 
+	
 	match commandDict:
-		coreCommands:
-			result = commandValue.callv(args)
-		actorCommands:
-			result = commandValue.call(key, args)
-		_:
-			command_not_found.emit(key, sender)
-			return null
+		coreCommands: result = commandValue.callv(args)
+		actorCommands: result = commandValue.call(key, args)
+		_: command_error.emit("Command not found: %s" % [key], sender)
 	
 	match result.type:
 		Status.OK: command_finished.emit(result.msg, sender)
 		Status.ERROR: command_error.emit(result.msg, sender)
-		_: command_not_found.emit(key, sender)
+		_: pass
 
-	return null
+	return result
 #	# all custom command methods must return anything other than 'null'
 #	var result: Status = getCommand(key)
 #	# get OSC key from commands dict
@@ -176,7 +175,7 @@ func getVar( name: String ) -> Status:
 func setVar( name: String, value: Variant ) -> Status:
 	variables[name] = [value]
 	if Log.getLevel() == Log.LOG_LEVEL_VERBOSE:
-		list(variables)
+		_list(variables)
 	reportStatus(variables[name][0], null)
 	return Status.ok(variables[name][0])
 
@@ -195,7 +194,7 @@ func remove( key, dict ) -> Status:
 		return Status.error("Key not found in %s: '%s'" % [dict, key])
 
 ## List contents of [param dict]
-func list( dict: Dictionary ) -> Status:
+func _list( dict: Dictionary ) -> Status:
 	var list := []
 	var msg: String
 	for key in dict:

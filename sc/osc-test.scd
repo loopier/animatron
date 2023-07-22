@@ -16,6 +16,7 @@ n.sendMsg("/animation", "x", "bla");
 (
 n.sendMsg("/load", "mama");
 n.sendMsg("/create", "x", "mama");
-n.sendMsg("/scale", "x", 0.5, 0.5);
 )
-n.sendMsg("/bla", "x", 0.5, 0.5);
+n.sendMsg("/scale", "x", 0.5, 0.5);
+n.sendMsg("/position", "x", 150, 50);
+n.sendMsg("/bla", "x", 300, 200);

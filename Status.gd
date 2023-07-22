@@ -2,7 +2,7 @@
 ## in order to determine wether it has succeeded of failed.
 class_name Status
 
-
+const NULL := -1
 const ERROR := 0
 const OK := 1
 
@@ -23,7 +23,7 @@ var msg: String:
 	set(inMsg): 
 		msg = inMsg
 
-func _init(inType: int, inValue: Variant, inMsg: String = ""):
+func _init(inType: int = Status.NULL, inValue: Variant = null, inMsg: String = ""):
 	type = inType
 	value = inValue
 	msg = inMsg

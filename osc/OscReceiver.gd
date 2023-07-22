@@ -37,8 +37,8 @@ func _process(delta):
 	if socketUdp.get_available_packet_count() > 0:
 		var msg = parseOsc(socketUdp.get_packet())
 		var sender = socketUdp.get_packet_ip()
-		osc_msg_received.emit(msg.addr, msg.args, sender)
 		Log.verbose("OSC message received from '%s': %s %s" % [socketUdp.get_packet_ip(), msg.addr, msg.args])
+		osc_msg_received.emit(msg.addr, msg.args, sender)
 #	print(sockestUdp.get_available_packet_count())
 #	print(socketUdp.get_local_port())
 	pass
