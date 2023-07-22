@@ -96,32 +96,6 @@ func parseCommand(key: String, args: Array, sender: String) -> Status:
 		_: pass
 
 	return result
-#	# all custom command methods must return anything other than 'null'
-#	var result: Status = getCommand(key)
-#	# get OSC key from commands dict
-#	var value = result.value
-#	var msg = result.msg
-#	match typeof(value):
-#		TYPE_CALLABLE: result = value.callv(args)
-#		TYPE_STRING:
-#			# if it's a variable: get the value and return it to the parent command
-#			result = getVar(value)
-#			# if it's a command: parse arguments
-#			if result.value == null:
-#				result = getCommand(value)
-#				Log.debug("Checking for subcommand '%s':'%s' => %s" % [key, value, result])
-#				result = parseCommand(value, args, sender)
-#		_: 
-##			result = executeCommandAsGdScript(key, args)
-#			pass
-#
-#	# else: it doesn't, report error back to sender
-##	if result.value == null:
-##		reportError("TODO: send '%s' error back to the sender" % [key])
-##		return
-#	Log.verbose("Parsed command '%s': %s %s" % [key, value, args])
-#	reportStatus(result.msg, sender)
-#	return result
 
 ## Read a file with a [param filename] and return its OSC constent in a string
 func loadFile( filename: String ) -> Status:
