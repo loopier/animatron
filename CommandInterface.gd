@@ -48,8 +48,12 @@ var coreCommands: Dictionary = {
 ## the expected GDScript method. If a different command name is needed, use a [method def].
 var nodeCommands: Dictionary = {
 	"/remove": removeActor,
-	"/scale": callActorMethodWithVector,
-	"/position": callActorMethodWithVector,
+	"/scale": setActorVector,
+	"/scale/x": setActorVectorN,
+	"/scale/y": setActorVectorN,
+	"/position": setActorVector,
+	"/position/x": setActorVectorN,
+	"/position/y": setActorVectorN,
 }
 
 # Called when the node enters the scene tree for the first time.
@@ -304,25 +308,51 @@ func setActorAnimation(actorName, animation) -> Status:
 	result.value.get_node(animationNodePath).play(animation)
 	return Status.ok(true, "Set animation for '%s': %s" % [actorName, animation])
 
-func callActorMethodWithVector(method, args) -> Status:
+## Sets any Vector [param property] of any actor. 
+## [param args\[0\]] is the actor name.
+## [param args[1..]] are the vector values (between 2 and 4).
+func setActorVector(property, args) -> Status:
 	var result = getActor(args[0])
-#	return Status.error("Calling '%s': %s" % [method, args])
+#	return Status.error("Calling '%s': %s" % [property, args])
 	if result.isError(): return result
 	var actor = result.value
 	# we need to remove the actor name from the arguments
 	args = args.slice(1)
-	method = "set_%s" % [method.get_slice("/",1)]
-	Log.debug("actor: %s - method: %s - args (%s): %s" % [actor.name, method, len(args), args])
+	property = "set_%s" % [property.get_slice("/",1)]
+	Log.debug("actor: %s - property: %s - args (%s): %s" % [actor.name, property, len(args), args])
 	match len(args):
 		2:
-			actor.call(method, Vector2(args[0], args[1]))
+			actor.call(property, Vector2(args[0], args[1]))
 		3:
-			actor.call(method, Vector3(args[0], args[1], args[2]))
+			actor.call(property, Vector3(args[0], args[1], args[2]))
 		4:
-			actor.call(method, Vector4(args[0], args[1], args[2], args[3]))
+			actor.call(property, Vector4(args[0], args[1], args[2], args[3]))
 		_:
 			return Status.error("callActorMethodWithVector xpected between 2 and 4 arguments, received: %s" % [len(args.slice(1))])
-	return Status.ok(true, "Called %s.%s(Vector%d(%s))" % [actor.get_name(), method, args.slice(1)])
+	return Status.ok(true, "Called %s.%s(Vector%d(%s))" % [actor.get_name(), property, args.slice(1)])
+
+## Sets the value for the N axis of any Vector [param property] (position, scale, ...) of any actor.
+## For example: /position/x would set the [method actor.get_position().x] value.
+## [param args\[0\]] is the actor name.
+## [param args[1]] is the value.
+func setActorVectorN(property, args) -> Status:
+	var result = getActor(args[0])
+	if result.isError(): return result
+	var actor = result.value
+	var vec = actor.call("get_" + property.get_slice("/", 1).to_snake_case())
+	var axis = property.get_slice("/", 2).to_snake_case()
+	var value = float(args[1])
+	match axis:
+		"x": vec.x = value
+		"y": vec.y = value
+		"z": vec.z = value
+		"r": vec.r = value
+		"g": vec.g = value
+		"b": vec.b = value
+		"a": vec.a = value
+	actor.call("set_" + property.get_slice("/", 1).to_snake_case(), vec)
+#	Log.debug("Set %s %s -- %s: %s" % [property, actor.get_position(), vec, value])
+	return Status.ok("Set %s.%s: %s" % [vec, axis, value])
 
 func scaleActor(name: String, x: float, y: float) -> Status:
 	var result = getActor(name)

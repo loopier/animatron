@@ -22,3 +22,8 @@ n.sendMsg("/scale", "x", 0.5, 0.5);
 n.sendMsg("/position", "x", 150, 50);
 n.sendMsg("/bla", "x", 300, 200);
 n.sendMsg("/animation", "x", "numbers");
+n.sendMsg("/animation", "x", "numbers");
+n.sendMsg("/position/x", "x", 300);
+n.sendMsg("/position/y", "x", 200);
+n.sendMsg("/scale/x", "x", 1);
+n.sendMsg("/scale/y", "x", 1);
