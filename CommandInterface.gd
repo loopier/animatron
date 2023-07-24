@@ -359,10 +359,3 @@ func setActorVectorN(property, args) -> Status:
 #	Log.debug("Set %s %s -- %s: %s" % [property, actor.get_position(), vec, value])
 	return Status.ok("Set %s.%s: %s" % [vec, axis, value])
 
-func scaleActor(name: String, x: float, y: float) -> Status:
-	var result = getActor(name)
-	if result.isError(): return result
-	var actor = result.value
-	var scale = Vector2(x,y)
-	actor.set_scale(Vector2(x,y))
-	return Status.ok(result, "%s" % [actor.get_scale()])

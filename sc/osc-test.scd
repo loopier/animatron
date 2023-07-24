@@ -23,7 +23,7 @@ n.sendMsg("/scale", "x", 1);
 n.sendMsg("/position", "x", 150, 50);
 n.sendMsg("/bla", "x", 300, 200);
 n.sendMsg("/animation", "x", "numbers");
-n.sendMsg("/animation", "x", "numbers");
+n.sendMsg("/animation", "x", "mama");
 n.sendMsg("/position/x", "x", 300);
 n.sendMsg("/position/y", "x", 200);
 n.sendMsg("/position", "x", 500);
