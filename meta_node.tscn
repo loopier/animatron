@@ -1,9 +1,12 @@
-[gd_scene format=3 uid="uid://bv4h4a2us0yne"]
+[gd_scene load_steps=2 format=3 uid="uid://bv4h4a2us0yne"]
+
+[sub_resource type="SpriteFrames" id="SpriteFrames_g6lqa"]
 
 [node name="MetaNode" type="CharacterBody2D"]
 
 [node name="Offset" type="Node2D" parent="."]
 
 [node name="Animation" type="AnimatedSprite2D" parent="Offset"]
+sprite_frames = SubResource("SpriteFrames_g6lqa")
 
 [node name="CollisionShape2D" type="CollisionShape2D" parent="."]

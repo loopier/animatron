@@ -11,11 +11,11 @@ signal command_finished(msg, sender)
 signal command_error(msg, sender)
 
 var status := preload("res://Status.gd")
-@onready var metanode := preload("res://meta_node.tscn")
+var metanode := preload("res://meta_node.tscn")
 @onready var animationNodePath := "Offset/Animation"
-var animationsLibrary: SpriteFrames ## The meta node containing these frames needs to be initialized in _ready
 @onready var main := get_parent()
 @onready var actorsNode := main.get_node("Actors")
+var animationsLibrary: SpriteFrames ## The meta node containing these frames needs to be initialized in _ready
 var assetsPath = "user://assets"
 
 ## A dictionary used to store variables accessible from OSC messages.
@@ -36,27 +36,28 @@ var coreCommands: Dictionary = {
 	"/animations/list": listAnimations, # loaded
 	"/actors/list": listActors,
 	"/create": createActor,
+	"/animation": setActorAnimation,
 }
-## Actor commands map.
-## Actor commands are parsed differently than [param coreCommands]. They use 
+## Node commands map.
+## Node commands are parsed differently than [param coreCommands]. They use 
 ## OSC address as method name (by removing the forward slash), and first argument is
-## always the actor's name.
+## usually the actor's name (the node's name).
 ## Using meta methods filtered by parameter types allows to automatically map a lot
 ## of OSC messages to a few actual GDScript functions and methods.
 ## Keep in mind, though, that the command (OSC address) has to have the same signature as
 ## the expected GDScript method. If a different command name is needed, use a [method def].
-var actorCommands: Dictionary = {
+var nodeCommands: Dictionary = {
 	"/remove": removeActor,
-	"/animation": setActorAnimation,
 	"/scale": callActorMethodWithVector,
 	"/position": callActorMethodWithVector,
 }
 
 # Called when the node enters the scene tree for the first time.
 func _ready():
-	var animationsLibraryNode = metanode.instantiate().get_node(animationNodePath)
+	var animationsLibraryNode = AnimatedSprite2D.new()
 	animationsLibraryNode.set_sprite_frames(SpriteFrames.new())
 	animationsLibrary = animationsLibraryNode.get_sprite_frames()
+	main.add_child(animationsLibraryNode)
 
 # Called every frame. 'delta' is the elapsed time since the previous frame.
 func _process(delta):
@@ -71,7 +72,7 @@ func reportStatus(msg, sender = null):
 
 ## Different behaviours depend on the [param command] contents in the different [member xxxCommands] dictionaries.
 func parseCommand(key: String, args: Array, sender: String) -> Status:
-	var commandDicts := [coreCommands, actorCommands]
+	var commandDicts := [coreCommands, nodeCommands]
 	var commandValue: Variant
 	var commandDict: Dictionary
 	var result := Status.new()
@@ -87,7 +88,7 @@ func parseCommand(key: String, args: Array, sender: String) -> Status:
 	
 	match commandDict:
 		coreCommands: result = commandValue.callv(args)
-		actorCommands: result = commandValue.call(key, args)
+		nodeCommands: result = commandValue.call(key, args)
 		_: command_error.emit("Command not found: %s" % [key], sender)
 	
 	match result.type:
@@ -251,9 +252,9 @@ func getAllActors() -> Status:
 
 ## Returns an actor by exact name match (see [method getActors])
 func getActor(name: String) -> Status:
-	var actor = actorsNode.get_node(name)
+	var actor = actorsNode.find_child(name)
 	if actor == null: return Status.error("Actor not found: %s" % [name])
-	return Status.ok(actorsNode.get_node(name))
+	return Status.ok(actor)
 
 ## Returns an array of children matching the name pattern
 func getActors(namePattern: String) -> Status:
@@ -265,7 +266,7 @@ func createActor(name: String, anim: String) -> Status:
 	Log.debug("TODO Add anim to actor on creation '%s': %s" % [name, anim])
 	if not animationsLibrary.has_animation(anim):
 		return Status.error("Animation not found: %s" % [anim])
-	var actor: CharacterBody2D
+	var actor: Variant
 	var msg: String
 	var result = getActor(name)
 	Log.debug(result.msg)

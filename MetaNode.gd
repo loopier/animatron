@@ -10,8 +10,8 @@ var isVisibleEnd: bool = true:
 var frameCmdsIndex = 0
 # frame that triggers the next command in the frameCmds
 var trigFrame = 0
-var main
-
+@onready var main := get_parent().get_parent()
+@onready var animationsLibrary: SpriteFrames = main.find_child("animationsLibraryNode").get_sprite_frames()
 
 func _ready():
 	var animNode = get_node("Offset/Animation")
