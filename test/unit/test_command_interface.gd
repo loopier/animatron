@@ -18,5 +18,7 @@ func after_all():
 	gut.p("ran run teardown logger", 2)
 
 func test_listCommands():
-	var status = cmd.listAssets()
-	assert_eq(status.value, ["mamma", "numbers"])
+	assert_eq(cmd.listCommands().value, cmd.commands.keys())
+
+func test_listAssets():
+	assert_eq(cmd.listAssets().value, [])
