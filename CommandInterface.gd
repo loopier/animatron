@@ -310,7 +310,7 @@ func setActorAnimation(actorName, animation) -> Status:
 
 ## Sets any Vector [param property] of any actor. 
 ## [param args\[0\]] is the actor name.
-## [param args[1..]] are the vector values (between 2 and 4).
+## [param args[1..]] are the vector values (between 2 and 4). If only 1 value is passed, it will set the same value on all axes.
 func setActorVector(property, args) -> Status:
 	var result = getActor(args[0])
 #	return Status.error("Calling '%s': %s" % [property, args])
@@ -318,17 +318,22 @@ func setActorVector(property, args) -> Status:
 	var actor = result.value
 	# we need to remove the actor name from the arguments
 	args = args.slice(1)
-	property = "set_%s" % [property.get_slice("/",1)]
-	Log.debug("actor: %s - property: %s - args (%s): %s" % [actor.name, property, len(args), args])
+	var setProperty = "set_%s" % [property.get_slice("/",1)]
+	var vec = actor.call("get_%s" % [property.get_slice("/",1)])
 	match len(args):
+		1: 
+			match typeof(vec):
+				TYPE_VECTOR2: actor.call(setProperty, Vector2(args[0], args[0]))
+				TYPE_VECTOR3: actor.call(setProperty, Vector3(args[0], args[0], args[0]))
+				TYPE_VECTOR4: actor.call(setProperty, Vector4(args[0], args[0], args[0], args[0]))
 		2:
-			actor.call(property, Vector2(args[0], args[1]))
+			actor.call(setProperty, Vector2(args[0], args[1]))
 		3:
-			actor.call(property, Vector3(args[0], args[1], args[2]))
+			actor.call(setProperty, Vector3(args[0], args[1], args[2]))
 		4:
-			actor.call(property, Vector4(args[0], args[1], args[2], args[3]))
+			actor.call(setProperty, Vector4(args[0], args[1], args[2], args[3]))
 		_:
-			return Status.error("callActorMethodWithVector xpected between 2 and 4 arguments, received: %s" % [len(args.slice(1))])
+			return Status.error("callActorMethodWithVector xpected between 1 and 4 arguments, received: %s" % [len(args.slice(1))])
 	return Status.ok(true, "Called %s.%s(Vector%d(%s))" % [actor.get_name(), property, args.slice(1)])
 
 ## Sets the value for the N axis of any Vector [param property] (position, scale, ...) of any actor.
