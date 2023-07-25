@@ -54,6 +54,8 @@ var nodeCommands: Dictionary = {
 	"/play": callAnimationMethod,
 	"/play/backwards": callAnimationMethod,
 	"/reverse": "/play/backwards",
+	"/set/animation/loop": callAnimationFramesMethod,
+	"/loop": "/set/animation/loop",
 	"/stop": callAnimationMethod,
 	"/frame": setAnimationProperty,
 	"/frame/progress": setAnimationProperty,
@@ -68,7 +70,7 @@ var nodeCommands: Dictionary = {
 	"/scale/x": setActorPropertyWithVectorN,
 	"/scale/y": setActorPropertyWithVectorN,
 	"/apply/scale": callActorMethodWithVector,
-	"/position": setActorPropertyWithVector,
+	"/set/position": callActorMethodWithVector,
 	"/position/x": setActorPropertyWithVectorN,
 	"/position/y": setActorPropertyWithVectorN,
 	"/rotation": "/rotation/degrees",
@@ -415,6 +417,20 @@ func callAnimationMethod(method, args) -> Status:
 	else:
 		result = animation.callv(method, args)
 	return Status.ok(result, "Called %s.%s.%s(%s): %s" % [actor.get_name(), animation.get_animation(), method, args, result])
+
+func callAnimationFramesMethod(method, args) -> Status:
+	var result = getActor(args[0])
+	if result.isError(): return result
+	var actor = result.value
+	var animation = actor.get_node("Animation")
+	var frames = animation.get_sprite_frames()
+	method = method.substr(1) if method.begins_with("/") else method
+	method = method.replace("/", "_").to_lower()
+	# replace first argument with animation name
+	# most of the SpriteFrames methods need the animation name as first argument
+	args[0] = animation.get_animation()
+	result = frames.callv(method, args)
+	return Status.ok(result, "Called %s.%s.frames.%s(%s): %s" % [actor.get_name(), animation.get_animation(), method, args, result])
 
 func callActorMethodWithVector(method, args) -> Status:
 	var result = getActor(args[0])
