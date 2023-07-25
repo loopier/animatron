@@ -61,16 +61,16 @@ var nodeCommands: Dictionary = {
 	"/speed": "/speed/scale",
 	"/flip/v": setAnimationProperty,
 	"/flip/h": setAnimationProperty,
-	"/offset": setAnimationVector,
-	"/offset/x": setAnimationVectorN,
-	"/offset/y": setAnimationVectorN,
-	"/scale": setActorVector,
-	"/scale/x": setActorVectorN,
-	"/scale/y": setActorVectorN,
+	"/offset": setAnimationPropertyWithVector,
+	"/offset/x": setAnimationPropertyWithVectorN,
+	"/offset/y": setAnimationPropertyWithVectorN,
+	"/scale": setActorPropertyWithVector,
+	"/scale/x": setActorPropertyWithVectorN,
+	"/scale/y": setActorPropertyWithVectorN,
 	"/apply/scale": callActorMethodWithVector,
-	"/position": setActorVector,
-	"/position/x": setActorVectorN,
-	"/position/y": setActorVectorN,
+	"/position": setActorPropertyWithVector,
+	"/position/x": setActorPropertyWithVectorN,
+	"/position/y": setActorPropertyWithVectorN,
 	"/rotation": "/rotation/degrees",
 	"/rotation/degrees": setActorProperty,
 }
@@ -317,7 +317,7 @@ func setActorAnimation(actorName, animation) -> Status:
 
 ## Sets any Vector [param property] of any node. 
 ## [param args[1..]] are the vector values (between 2 and 4). If only 1 value is passed, it will set the same value on all axes.
-func setNodeVector(node, property, args) -> Status:
+func setNodePropertyWithVector(node, property, args) -> Status:
 	var setProperty = "set_%s" % [property.get_slice("/",1)]
 	var vec = node.call("get_%s" % [property.get_slice("/",1)])
 	if len(args) < 2:
@@ -327,23 +327,23 @@ func setNodeVector(node, property, args) -> Status:
 			TYPE_VECTOR4: args = [args[0], args[0], args[0], args[0]]
 	return callMethodWithVector(node, setProperty, args)
 
-func setActorVector(property, args) -> Status:
+func setActorPropertyWithVector(property, args) -> Status:
 	var result = getActor(args[0])
 	if result.isError(): return result
-	return setNodeVector(result.value, property, args.slice(1))
+	return setNodePropertyWithVector(result.value, property, args.slice(1))
 
-func setAnimationVector(property, args) -> Status:
+func setAnimationPropertyWithVector(property, args) -> Status:
 	var result = getActor(args[0])
 	if result.isError(): return result
 	var actor = result.value
 	var animation = actor.get_node("Animation")
-	return setNodeVector(animation, property, args.slice(1))
+	return setNodePropertyWithVector(animation, property, args.slice(1))
 
 ## Sets the value for the N axis of any Vector [param property] (position, scale, ...) of any actor.
 ## For example: /position/x would set the [method actor.get_position().x] value.
 ## [param args\[0\]] is the actor name.
 ## [param args[1]] is the value.
-func setNodeVectorN(node, property, value) -> Status:
+func setNodePropertyWithVectorN(node, property, value) -> Status:
 	var vec = node.call("get_" + property.get_slice("/", 1).to_snake_case())
 	var axis = property.get_slice("/", 2).to_snake_case()
 	value = float(value)
@@ -359,18 +359,18 @@ func setNodeVectorN(node, property, value) -> Status:
 #	Log.debug("Set %s %s -- %s: %s" % [property, actor.get_position(), vec, value])
 	return Status.ok("Set %s.%s: %s" % [vec, axis, value])
 
-func setActorVectorN(property, args) -> Status:
+func setActorPropertyWithVectorN(property, args) -> Status:
 	var result = getActor(args[0])
 	if result.isError(): return result
 	var actor = result.value
-	return setNodeVectorN(actor, property, args[1])
+	return setNodePropertyWithVectorN(actor, property, args[1])
 
-func setAnimationVectorN(property, args) -> Status:
+func setAnimationPropertyWithVectorN(property, args) -> Status:
 	var result = getActor(args[0])
 	if result.isError(): return result
 	var actor = result.value
 	var animation = actor.get_node("Animation")
-	return setNodeVectorN(animation, property, args[1])
+	return setNodePropertyWithVectorN(animation, property, args[1])
 
 func setActorProperty(property, args) -> Status:
 	var result = getActor(args[0])
@@ -407,7 +407,7 @@ func callAnimationMethod(method, args) -> Status:
 	var result = getActor(args[0])
 	if result.isError(): return result
 	var actor = result.value
-	var animation = actor.get_node("Offset/Animation")
+	var animation = actor.get_node("Animation")
 	method = method.substr(1).replace("/", "_").to_lower()
 	args = args.slice(1)
 	if len(args) == 0:
