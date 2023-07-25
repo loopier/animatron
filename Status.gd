@@ -2,37 +2,22 @@
 ## in order to determine wether it has succeeded of failed.
 class_name Status
 
-const NULL := -1
-const ERROR := 0
-const OK := 1
+enum { NULL = -1, ERROR = 0, OK = 1 }
 
-var type:
-	get: 
-		return type
-	set(inType): 
-		type = inType
-var value:
-	get: 
-		return value
-	set(inValue): 
-		value = inValue
-
-var msg: String:
-	get: 
-		return msg
-	set(inMsg): 
-		msg = inMsg
+var type: int
+var value: Variant
+var msg: String
 
 func _init(inType: int = Status.NULL, inValue: Variant = null, inMsg: String = ""):
 	type = inType
 	value = inValue
 	msg = inMsg
 
-static func ok( value: Variant = true, msg: String = "" ) -> Status:
-	return Status.new(Status.OK, value, msg)
+static func ok( inValue: Variant = true, inMsg: String = "" ) -> Status:
+	return Status.new(Status.OK, inValue, inMsg)
 
-static func error(msg: String = "") -> Status:
-	return Status.new(Status.ERROR, null, msg)
+static func error(inMsg: String = "") -> Status:
+	return Status.new(Status.ERROR, null, inMsg)
 
 func isOk() -> bool:
 	return type == Status.OK

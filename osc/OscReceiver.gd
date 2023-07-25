@@ -8,15 +8,15 @@ class OscMessage:
 
 signal osc_msg_received(addr, args, sender)
 
-var socketUdp: PacketPeerUDP = PacketPeerUDP.new()
+var socketUdp := PacketPeerUDP.new()
 var senderIP: String
 enum {OSC_ARG_TYPE_NULL, OSC_ARG_TYPE_FLOAT=102, OSC_ARG_TYPE_INT=105, OSC_ARG_TYPE_STRING=115}
 var observers: Dictionary = Dictionary()
 
 # osc server
 var serverPort: int = 56101 :
-	get: return serverPort
-	set(port): serverPort = port
+	get = getServerPort,
+	set = setServerPort
 
 func _ready():
 	pass
@@ -28,15 +28,15 @@ func startServer():
 	else:
 		Log.info("OSC server listening on port: %s" % [socketUdp.get_local_port()])
 
-func startServerOn(listenPort):
+func startServerOn(listenPort: int):
 	serverPort = listenPort
 	startServer()	
 
 # Called every frame. 'delta' is the elapsed time since the previous frame.
-func _process(delta):
+func _process(_delta):
 	if socketUdp.get_available_packet_count() > 0:
-		var msg = parseOsc(socketUdp.get_packet())
-		var sender = socketUdp.get_packet_ip()
+		var msg := parseOsc(socketUdp.get_packet())
+		var sender := socketUdp.get_packet_ip()
 		Log.verbose("OSC message received from '%s': %s %s" % [socketUdp.get_packet_ip(), msg.addr, msg.args])
 		osc_msg_received.emit(msg.addr, msg.args, sender)
 #	print(sockestUdp.get_available_packet_count())
@@ -47,19 +47,18 @@ func _exit_tree():
 	socketUdp.close()
 #	thread.wait_to_finish()
 
-func setServerPort(port):
+func setServerPort(port: int):
 	serverPort = port
 func getServerPort() -> int:
 	return serverPort
 
-func parseOsc(packet):
-	var buf = StreamPeerBuffer.new()
+func parseOsc(packet: PackedByteArray) -> OscMessage:
+	var buf := StreamPeerBuffer.new()
 	buf.set_data_array(packet)
 	buf.set_big_endian(true)
 	var addr := getString(buf)
 	# move the cursor to the beginning of the argument types string fs
 	buf.seek(getArgTypesIndex(buf))
-	var start := buf.get_position()
 	# get the types
 	var types := getString(buf)
 	# skip the leading ','
@@ -83,20 +82,20 @@ func parseOsc(packet):
 		typeIndex += 1
 #		print("OSC arg %s: %s(%s)" % [i, args.back(), type])
 	
-	var msg = OscMessage.new()
+	var msg := OscMessage.new()
 	msg.addr = addr
 	msg.args = args
 	
 	return msg
 
 func getString(buf) -> String:
-	var str := ""
+	var result := ""
 	for i in buf.get_size():
 		var c = buf.get_u8()
 		# keep moving the cursor until the next multiple of 4
 		if c == 0 and buf.get_position() % 4 == 0: break
-		str += char(c)
-	return str
+		result += char(c)
+	return result
 
 func getFloat(buf) -> float:
 	return buf.get_float()
@@ -108,7 +107,7 @@ func getInt(buf) -> int:
 func getArgTypesIndex(buf) -> int:
 	return buf.get_data_array().find(",".to_ascii_buffer()[0])
 
-func getArgs(buf: StreamPeerBuffer) -> Array:
+func getArgs(_buf: StreamPeerBuffer) -> Array:
 	return []
 
 #func _thread_function(userdata):

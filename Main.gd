@@ -21,7 +21,7 @@ func _ready():
 	# load osc variable maps to a dictionary
 
 # Called every frame. 'delta' is the elapsed time since the previous frame./
-func _process(delta):
+func _process(_delta):
 	pass
 
 func _on_osc_msg_received(addr, args, sender):
