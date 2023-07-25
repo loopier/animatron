@@ -54,6 +54,8 @@ var nodeCommands: Dictionary = {
 	"/position": setActorVector,
 	"/position/x": setActorVectorN,
 	"/position/y": setActorVectorN,
+	"/rotation": "/rotation/degrees",
+	"/rotation/degrees": setActorProperty,
 }
 
 # Called when the node enters the scene tree for the first time.
@@ -359,3 +361,11 @@ func setActorVectorN(property, args) -> Status:
 #	Log.debug("Set %s %s -- %s: %s" % [property, actor.get_position(), vec, value])
 	return Status.ok("Set %s.%s: %s" % [vec, axis, value])
 
+func setActorProperty(property, args) -> Status:
+	var result = getActor(args[0])
+	if result.isError(): return result
+	var actor = result.value
+	property = "set_" + property.substr(1).replace("/", "_").to_lower()
+	var value = args[1]
+	actor.call(property, value)
+	return Status.ok(true, "Set %s.%s: %s" % [actor.get_name(), property, value])

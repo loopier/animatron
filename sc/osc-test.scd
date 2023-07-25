@@ -29,3 +29,6 @@ n.sendMsg("/position/y", "x", 200);
 n.sendMsg("/position", "x", 500);
 n.sendMsg("/scale/x", "x", 1);
 n.sendMsg("/scale/y", "x", 1);
+n.sendMsg("/angle", "x", 0.1);
+n.sendMsg("/rotation", "x", 180);
+n.sendMsg("/rotation/degrees", "x", 90);
