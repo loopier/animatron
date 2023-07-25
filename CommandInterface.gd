@@ -51,6 +51,10 @@ var coreCommands: Dictionary = {
 var nodeCommands: Dictionary = {
 	"/play": callAnimationMethod,
 	"/stop": callAnimationMethod,
+	"/frame": setAnimationProperty,
+	"/frame/progress": setAnimationProperty,
+	"/speed/scale": setAnimationProperty,
+	"/speed": "/speed/scale",
 	"/flip/v": setAnimationProperty,
 	"/flip/h": setAnimationProperty,
 	"/scale": setActorVector,
