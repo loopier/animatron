@@ -54,6 +54,7 @@ var nodeCommands: Dictionary = {
 	"/play": callAnimationMethod,
 	"/play/backwards": callAnimationMethod,
 	"/reverse": "/play/backwards",
+	"/animation/loop": setAnimationFramesProperty,
 	"/stop": callAnimationMethod,
 	"/frame": setAnimationProperty,
 	"/frame/progress": setAnimationProperty,
@@ -68,7 +69,7 @@ var nodeCommands: Dictionary = {
 	"/scale/x": setActorPropertyWithVectorN,
 	"/scale/y": setActorPropertyWithVectorN,
 	"/apply/scale": callActorMethodWithVector,
-	"/position": setActorPropertyWithVector,
+	"/set/position": callActorMethodWithVector,
 	"/position/x": setActorPropertyWithVectorN,
 	"/position/y": setActorPropertyWithVectorN,
 	"/rotation": "/rotation/degrees",
@@ -373,29 +374,20 @@ func setAnimationPropertyWithVectorN(property, args) -> Status:
 	return setNodePropertyWithVectorN(animation, property, args[1])
 
 func setActorProperty(property, args) -> Status:
-	var result = getActor(args[0])
-	if result.isError(): return result
-	var actor = result.value
-	property = "set_" + property.substr(1).replace("/", "_").to_lower()
-	var value = args[1]
-	actor.call(property, value)
-	return Status.ok(true, "Set %s.%s: %s" % [actor.get_name(), property, value])
-	
+	return callActorMethod("/set" + property, args)
+
 func setAnimationProperty(property, args) -> Status:
-	var result = getActor(args[0])
-	if result.isError(): return result
-	var actor = result.value
-	var animation = actor.get_node("Animation")
-	property = "set_" + property.substr(1).replace("/", "_").to_lower()
-	var value: Variant = args.slice(1)
-	animation.callv(property, value)
-	return Status.ok(true, "Set %s.%s.%s: %s" % [actor.get_name(), animation.get_animation(), property, value])
+	return callAnimationMethod("/set" + property, args)
+
+func setAnimationFramesProperty(property, args) -> Status:
+	return callAnimationFramesMethod("/set" + property, args)
 
 func callActorMethod(method, args) -> Status:
 	var result = getActor(args[0])
 	if result.isError(): return result
 	var actor = result.value
-	method = method.substr(1)
+	if method.begins_with("/"): method = method.substr(1)
+	method = method.replace("/", "_")
 	args = args.slice(1)
 	if len(args) == 0:
 		result = actor.call(method)
@@ -415,6 +407,20 @@ func callAnimationMethod(method, args) -> Status:
 	else:
 		result = animation.callv(method, args)
 	return Status.ok(result, "Called %s.%s.%s(%s): %s" % [actor.get_name(), animation.get_animation(), method, args, result])
+
+func callAnimationFramesMethod(method, args) -> Status:
+	var result = getActor(args[0])
+	if result.isError(): return result
+	var actor = result.value
+	var animation = actor.get_node("Animation")
+	var frames = animation.get_sprite_frames()
+	method = method.substr(1) if method.begins_with("/") else method
+	method = method.replace("/", "_").to_lower()
+	# replace first argument with animation name
+	# most of the SpriteFrames methods need the animation name as first argument
+	args[0] = animation.get_animation()
+	result = frames.callv(method, args)
+	return Status.ok(result, "Called %s.%s.frames.%s(%s): %s" % [actor.get_name(), animation.get_animation(), method, args, result])
 
 func callActorMethodWithVector(method, args) -> Status:
 	var result = getActor(args[0])

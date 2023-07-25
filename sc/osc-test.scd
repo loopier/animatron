@@ -53,5 +53,6 @@ n.sendMsg("/speed", "x", 1);
 n.sendMsg("/offset", "x", 0, 200);
 n.sendMsg("/offset/y", "x", -200);
 n.sendMsg("/offset/x", "x", -200);
-
-n.sendMsg("/create", "x", "balloon-01");
+n.sendMsg("/animation/loop", "x", 0);
+n.sendMsg("/loop", "x", 1);
+n.sendMsg("/play", "x");
