@@ -18,7 +18,7 @@ n.sendMsg("/animation", "x", "bla");
 n.sendMsg("/load", "mama");
 n.sendMsg("/load", "numbers");
 n.sendMsg("/create", "x", "mama");
-n.sendMsg("/create", "n", "numbers");
+// n.sendMsg("/create", "n", "numbers");
 )
 n.sendMsg("/remove", "n");
 n.sendMsg("/free", "x");
@@ -38,3 +38,5 @@ n.sendMsg("/rotation", "x", 180);
 n.sendMsg("/rotation/degrees", "x", 90);
 n.sendMsg("/stop", "x");
 n.sendMsg("/play", "x");
+n.sendMsg("/flip/v", "x", 1);
+n.sendMsg("/flip/h", "x", 1);

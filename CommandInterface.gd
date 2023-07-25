@@ -51,6 +51,8 @@ var coreCommands: Dictionary = {
 var nodeCommands: Dictionary = {
 	"/play": callAnimationMethod,
 	"/stop": callAnimationMethod,
+	"/flip/v": setAnimationProperty,
+	"/flip/h": setAnimationProperty,
 	"/scale": setActorVector,
 	"/scale/x": setActorVectorN,
 	"/scale/y": setActorVectorN,
@@ -176,9 +178,11 @@ func _list( dict: Dictionary ) -> Status:
 
 func listCommands() -> Status:
 	var list := "\nCommands:\n"
-	for command in coreCommands.keys():
+	var commands = coreCommands.keys()
+	commands.append_array(nodeCommands.keys())
+	for command in commands:
 		list += "%s\n" % [command]
-	return Status.ok(coreCommands.keys(), list)
+	return Status.ok(commands, list)
 
 func listActors() -> Status:
 	var actorsList := []
@@ -358,6 +362,16 @@ func setActorProperty(property, args) -> Status:
 	var value = args[1]
 	actor.call(property, value)
 	return Status.ok(true, "Set %s.%s: %s" % [actor.get_name(), property, value])
+	
+func setAnimationProperty(property, args) -> Status:
+	var result = getActor(args[0])
+	if result.isError(): return result
+	var actor = result.value
+	var animation = actor.get_node("Offset/Animation")
+	property = "set_" + property.substr(1).replace("/", "_").to_lower()
+	var value: Variant = args.slice(1)
+	animation.callv(property, value)
+	return Status.ok(true, "Set %s.%s.%s: %s" % [actor.get_name(), animation.get_animation(), property, value])
 
 func callActorMethod(method, args) -> Status:
 	var result = getActor(args[0])
@@ -376,7 +390,7 @@ func callAnimationMethod(method, args) -> Status:
 	if result.isError(): return result
 	var actor = result.value
 	var animation = actor.get_node("Offset/Animation")
-	method = method.substr(1)
+	method = method.substr(1).replace("/", "_").to_lower()
 	args = args.slice(1)
 	if len(args) == 0:
 		result = animation.call(method)
