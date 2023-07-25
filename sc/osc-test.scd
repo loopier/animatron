@@ -49,3 +49,4 @@ n.sendMsg("/flip/h", "x", 1);
 n.sendMsg("/speed/scale", "x", 2);
 n.sendMsg("/speed", "x", 1);
 n.sendMsg("/offset", "x", 0, 200);
+n.sendMsg("/offset/y", "x", -200);

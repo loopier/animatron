@@ -62,6 +62,8 @@ var nodeCommands: Dictionary = {
 	"/flip/v": setAnimationProperty,
 	"/flip/h": setAnimationProperty,
 	"/offset": setAnimationVector,
+	"/offset/x": setAnimationVectorN,
+	"/offset/y": setAnimationVectorN,
 	"/scale": setActorVector,
 	"/scale/x": setActorVectorN,
 	"/scale/y": setActorVectorN,
@@ -350,13 +352,10 @@ func setAnimationVector(property, args) -> Status:
 ## For example: /position/x would set the [method actor.get_position().x] value.
 ## [param args\[0\]] is the actor name.
 ## [param args[1]] is the value.
-func setActorVectorN(property, args) -> Status:
-	var result = getActor(args[0])
-	if result.isError(): return result
-	var actor = result.value
-	var vec = actor.call("get_" + property.get_slice("/", 1).to_snake_case())
+func setNodeVectorN(node, property, value) -> Status:
+	var vec = node.call("get_" + property.get_slice("/", 1).to_snake_case())
 	var axis = property.get_slice("/", 2).to_snake_case()
-	var value = float(args[1])
+	value = float(value)
 	match axis:
 		"x": vec.x = value
 		"y": vec.y = value
@@ -365,9 +364,22 @@ func setActorVectorN(property, args) -> Status:
 		"g": vec.g = value
 		"b": vec.b = value
 		"a": vec.a = value
-	actor.call("set_" + property.get_slice("/", 1).to_snake_case(), vec)
+	node.call("set_" + property.get_slice("/", 1).to_snake_case(), vec)
 #	Log.debug("Set %s %s -- %s: %s" % [property, actor.get_position(), vec, value])
 	return Status.ok("Set %s.%s: %s" % [vec, axis, value])
+
+func setActorVectorN(property, args) -> Status:
+	var result = getActor(args[0])
+	if result.isError(): return result
+	var actor = result.value
+	return setNodeVectorN(actor, property, args[1])
+
+func setAnimationVectorN(property, args) -> Status:
+	var result = getActor(args[0])
+	if result.isError(): return result
+	var actor = result.value
+	var animation = actor.get_node("Offset/Animation")
+	return setNodeVectorN(animation, property, args[1])
 
 func setActorProperty(property, args) -> Status:
 	var result = getActor(args[0])
