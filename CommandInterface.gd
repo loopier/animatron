@@ -38,7 +38,7 @@ var coreCommands: Dictionary = {
 	"/create": createActor,
 	"/remove": removeActor,
 	"/free": "/remove",
-	"/animation": setActorAnimation,
+#	"/animation": setActorAnimation,
 }
 ## Node commands map.
 ## Node commands are parsed differently than [param coreCommands]. They use 
@@ -49,6 +49,7 @@ var coreCommands: Dictionary = {
 ## Keep in mind, though, that the command (OSC address) has to have the same signature as
 ## the expected GDScript method. If a different command name is needed, use a [method def].
 var nodeCommands: Dictionary = {
+	"/animation": setAnimationProperty,
 	"/play": callAnimationMethod,
 	"/play/backwards": callAnimationMethod,
 	"/reverse": "/play/backwards",
