@@ -49,7 +49,8 @@ var coreCommands: Dictionary = {
 ## Keep in mind, though, that the command (OSC address) has to have the same signature as
 ## the expected GDScript method. If a different command name is needed, use a [method def].
 var nodeCommands: Dictionary = {
-	"/remove": removeActor,
+	"/play": callAnimationMethod,
+	"/stop": callAnimationMethod,
 	"/scale": setActorVector,
 	"/scale/x": setActorVectorN,
 	"/scale/y": setActorVectorN,
@@ -128,20 +129,6 @@ func oscStrToDict( oscStr: String ) -> Dictionary:
 
 func isActor( name ) -> bool:
 	return false if main.get_node("Actors").find_child(name) == null else true
-
-## Try to execute a command as a GDScript function
-func executeCommandAsGdScript(command, args) -> Status:
-	# if args first element is an actor, call it's Node2D method equivalent to 'command'
-	var actorName = args[0]
-	args = args.slice(1)
-	var actor = getActor(actorName).value
-	if actor == null:
-		return Status.error("Actor not found: %s" % [actorName])
-	command = command.get_slice("/", 1)
-	var msg = "Execute GDScript command: %s.%s(%s)" % [actor, command, args]
-	var result = actor.callv(command, args)
-	Log.debug("exec result: %s" % [result])
-	return Status.ok(result, msg)
 
 ## Get a variable value by [param name].
 ##
@@ -371,3 +358,28 @@ func setActorProperty(property, args) -> Status:
 	var value = args[1]
 	actor.call(property, value)
 	return Status.ok(true, "Set %s.%s: %s" % [actor.get_name(), property, value])
+
+func callActorMethod(method, args) -> Status:
+	var result = getActor(args[0])
+	if result.isError(): return result
+	var actor = result.value
+	method = method.substr(1)
+	args = args.slice(1)
+	if len(args) == 0:
+		result = actor.call(method)
+	else:
+		result = actor.callv(method, args)
+	return Status.ok(result, "Called %s.%s(%s): %s" % [actor.get_name(), method, args, result])
+
+func callAnimationMethod(method, args) -> Status:
+	var result = getActor(args[0])
+	if result.isError(): return result
+	var actor = result.value
+	var animation = actor.get_node("Offset/Animation")
+	method = method.substr(1)
+	args = args.slice(1)
+	if len(args) == 0:
+		result = animation.call(method)
+	else:
+		result = animation.callv(method, args)
+	return Status.ok(result, "Called %s.%s.%s(%s): %s" % [actor.get_name(), animation.get_animation(), method, args, result])

@@ -36,3 +36,5 @@ n.sendMsg("/scale/y", "x", 1);
 n.sendMsg("/angle", "x", 0.1);
 n.sendMsg("/rotation", "x", 180);
 n.sendMsg("/rotation/degrees", "x", 90);
+n.sendMsg("/stop", "x");
+n.sendMsg("/play", "x");
