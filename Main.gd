@@ -11,7 +11,7 @@ func _ready():
 	Log.setLevel(Log.LOG_LEVEL_VERBOSE)
 	
 	osc = OscReceiver.new()
-	self.add_child(osc)
+	self.add_child.call_deferred(osc)
 	osc.startServer()
 	osc.osc_msg_received.connect(_on_osc_msg_received)
 	cmdInterface.command_finished.connect(_on_command_finished)
@@ -24,8 +24,9 @@ func _ready():
 func _process(_delta):
 	pass
 
-func _on_osc_msg_received(addr, args, sender):
+func _on_osc_msg_received(addr: String, args: Array, sender: String):
 	cmdInterface.parseCommand(addr, args, sender)
+#	osc.sendTo(sender, "/testing", [16])
 
 func _on_command_finished(msg: String, sender: String):
 	Log.info("Command finished:\n%s" % [msg])
