@@ -36,6 +36,8 @@ var coreCommands: Dictionary = {
 	"/animations/list": listAnimations, # loaded
 	"/actors/list": listActors,
 	"/create": createActor,
+	"/remove": removeActor,
+	"/free": "/remove",
 	"/animation": setActorAnimation,
 }
 ## Node commands map.

@@ -6,6 +6,7 @@ n.sendMsg("/assets/list");
 
 n.sendMsg("/load", "numbers");
 n.sendMsg("/animations/list");
+n.sendMsg("/actors/list");
 
 n.sendMsg("/load", "mama");
 n.sendMsg("/load", "numbers");
@@ -17,7 +18,10 @@ n.sendMsg("/animation", "x", "bla");
 n.sendMsg("/load", "mama");
 n.sendMsg("/load", "numbers");
 n.sendMsg("/create", "x", "mama");
+n.sendMsg("/create", "n", "numbers");
 )
+n.sendMsg("/remove", "n");
+n.sendMsg("/free", "x");
 n.sendMsg("/scale", "x", 0.1, 0.5);
 n.sendMsg("/scale", "x", 1);
 n.sendMsg("/position", "x", 150, 50);
