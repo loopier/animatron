@@ -36,7 +36,8 @@ var coreCommands: Dictionary = {
 	"/animations/list": listAnimations, # loaded
 	"/actors/list": listActors,
 	"/create": createActor,
-	"/animation": setActorAnimation,
+	"/remove": removeActor,
+	"/free": "/remove",
 }
 ## Node commands map.
 ## Node commands are parsed differently than [param coreCommands]. They use 
@@ -46,14 +47,32 @@ var coreCommands: Dictionary = {
 ## of OSC messages to a few actual GDScript functions and methods.
 ## Keep in mind, though, that the command (OSC address) has to have the same signature as
 ## the expected GDScript method. If a different command name is needed, use a [method def].
+## To expose new methods or properties, just replace the snake_case underscore in the method for
+## a slash '/' in the osc command.
 var nodeCommands: Dictionary = {
-	"/remove": removeActor,
+	"/animation": setAnimationProperty,
+	"/play": callAnimationMethod,
+	"/play/backwards": callAnimationMethod,
+	"/reverse": "/play/backwards",
+	"/stop": callAnimationMethod,
+	"/frame": setAnimationProperty,
+	"/frame/progress": setAnimationProperty,
+	"/speed/scale": setAnimationProperty,
+	"/speed": "/speed/scale",
+	"/flip/v": setAnimationProperty,
+	"/flip/h": setAnimationProperty,
+	"/offset": setAnimationVector,
+	"/offset/x": setAnimationVectorN,
+	"/offset/y": setAnimationVectorN,
 	"/scale": setActorVector,
 	"/scale/x": setActorVectorN,
 	"/scale/y": setActorVectorN,
+	"/apply/scale": callActorMethodWithVector,
 	"/position": setActorVector,
 	"/position/x": setActorVectorN,
 	"/position/y": setActorVectorN,
+	"/rotation": "/rotation/degrees",
+	"/rotation/degrees": setActorProperty,
 }
 
 # Called when the node enters the scene tree for the first time.
@@ -125,20 +144,6 @@ func oscStrToDict( oscStr: String ) -> Dictionary:
 func isActor( name ) -> bool:
 	return false if main.get_node("Actors").find_child(name) == null else true
 
-## Try to execute a command as a GDScript function
-func executeCommandAsGdScript(command, args) -> Status:
-	# if args first element is an actor, call it's Node2D method equivalent to 'command'
-	var actorName = args[0]
-	args = args.slice(1)
-	var actor = getActor(actorName).value
-	if actor == null:
-		return Status.error("Actor not found: %s" % [actorName])
-	command = command.get_slice("/", 1)
-	var msg = "Execute GDScript command: %s.%s(%s)" % [actor, command, args]
-	var result = actor.callv(command, args)
-	Log.debug("exec result: %s" % [result])
-	return Status.ok(result, msg)
-
 ## Get a variable value by [param name].
 ##
 ## This method returns a single value. If by any reason the value holds
@@ -185,9 +190,11 @@ func _list( dict: Dictionary ) -> Status:
 
 func listCommands() -> Status:
 	var list := "\nCommands:\n"
-	for command in coreCommands.keys():
+	var commands = coreCommands.keys()
+	commands.append_array(nodeCommands.keys())
+	for command in commands:
 		list += "%s\n" % [command]
-	return Status.ok(coreCommands.keys(), list)
+	return Status.ok(commands, list)
 
 func listActors() -> Status:
 	var actorsList := []
@@ -308,45 +315,38 @@ func setActorAnimation(actorName, animation) -> Status:
 	result.value.get_node(animationNodePath).play(animation)
 	return Status.ok(true, "Set animation for '%s': %s" % [actorName, animation])
 
-## Sets any Vector [param property] of any actor. 
-## [param args\[0\]] is the actor name.
+## Sets any Vector [param property] of any node. 
 ## [param args[1..]] are the vector values (between 2 and 4). If only 1 value is passed, it will set the same value on all axes.
+func setNodeVector(node, property, args) -> Status:
+	var setProperty = "set_%s" % [property.get_slice("/",1)]
+	var vec = node.call("get_%s" % [property.get_slice("/",1)])
+	if len(args) < 2:
+		match typeof(vec):
+			TYPE_VECTOR2: args = [args[0], args[0]]
+			TYPE_VECTOR3: args = [args[0], args[0], args[0]]
+			TYPE_VECTOR4: args = [args[0], args[0], args[0], args[0]]
+	return callMethodWithVector(node, setProperty, args)
+
 func setActorVector(property, args) -> Status:
 	var result = getActor(args[0])
-#	return Status.error("Calling '%s': %s" % [property, args])
+	if result.isError(): return result
+	return setNodeVector(result.value, property, args.slice(1))
+
+func setAnimationVector(property, args) -> Status:
+	var result = getActor(args[0])
 	if result.isError(): return result
 	var actor = result.value
-	# we need to remove the actor name from the arguments
-	args = args.slice(1)
-	var setProperty = "set_%s" % [property.get_slice("/",1)]
-	var vec = actor.call("get_%s" % [property.get_slice("/",1)])
-	match len(args):
-		1: 
-			match typeof(vec):
-				TYPE_VECTOR2: actor.call(setProperty, Vector2(args[0], args[0]))
-				TYPE_VECTOR3: actor.call(setProperty, Vector3(args[0], args[0], args[0]))
-				TYPE_VECTOR4: actor.call(setProperty, Vector4(args[0], args[0], args[0], args[0]))
-		2:
-			actor.call(setProperty, Vector2(args[0], args[1]))
-		3:
-			actor.call(setProperty, Vector3(args[0], args[1], args[2]))
-		4:
-			actor.call(setProperty, Vector4(args[0], args[1], args[2], args[3]))
-		_:
-			return Status.error("callActorMethodWithVector xpected between 1 and 4 arguments, received: %s" % [len(args.slice(1))])
-	return Status.ok(true, "Called %s.%s(Vector%d(%s))" % [actor.get_name(), property, args.slice(1)])
+	var animation = actor.get_node("Offset/Animation")
+	return setNodeVector(animation, property, args.slice(1))
 
 ## Sets the value for the N axis of any Vector [param property] (position, scale, ...) of any actor.
 ## For example: /position/x would set the [method actor.get_position().x] value.
 ## [param args\[0\]] is the actor name.
 ## [param args[1]] is the value.
-func setActorVectorN(property, args) -> Status:
-	var result = getActor(args[0])
-	if result.isError(): return result
-	var actor = result.value
-	var vec = actor.call("get_" + property.get_slice("/", 1).to_snake_case())
+func setNodeVectorN(node, property, value) -> Status:
+	var vec = node.call("get_" + property.get_slice("/", 1).to_snake_case())
 	var axis = property.get_slice("/", 2).to_snake_case()
-	var value = float(args[1])
+	value = float(value)
 	match axis:
 		"x": vec.x = value
 		"y": vec.y = value
@@ -355,7 +355,83 @@ func setActorVectorN(property, args) -> Status:
 		"g": vec.g = value
 		"b": vec.b = value
 		"a": vec.a = value
-	actor.call("set_" + property.get_slice("/", 1).to_snake_case(), vec)
+	node.call("set_" + property.get_slice("/", 1).to_snake_case(), vec)
 #	Log.debug("Set %s %s -- %s: %s" % [property, actor.get_position(), vec, value])
 	return Status.ok("Set %s.%s: %s" % [vec, axis, value])
 
+func setActorVectorN(property, args) -> Status:
+	var result = getActor(args[0])
+	if result.isError(): return result
+	var actor = result.value
+	return setNodeVectorN(actor, property, args[1])
+
+func setAnimationVectorN(property, args) -> Status:
+	var result = getActor(args[0])
+	if result.isError(): return result
+	var actor = result.value
+	var animation = actor.get_node("Offset/Animation")
+	return setNodeVectorN(animation, property, args[1])
+
+func setActorProperty(property, args) -> Status:
+	var result = getActor(args[0])
+	if result.isError(): return result
+	var actor = result.value
+	property = "set_" + property.substr(1).replace("/", "_").to_lower()
+	var value = args[1]
+	actor.call(property, value)
+	return Status.ok(true, "Set %s.%s: %s" % [actor.get_name(), property, value])
+	
+func setAnimationProperty(property, args) -> Status:
+	var result = getActor(args[0])
+	if result.isError(): return result
+	var actor = result.value
+	var animation = actor.get_node("Offset/Animation")
+	property = "set_" + property.substr(1).replace("/", "_").to_lower()
+	var value: Variant = args.slice(1)
+	animation.callv(property, value)
+	return Status.ok(true, "Set %s.%s.%s: %s" % [actor.get_name(), animation.get_animation(), property, value])
+
+func callActorMethod(method, args) -> Status:
+	var result = getActor(args[0])
+	if result.isError(): return result
+	var actor = result.value
+	method = method.substr(1)
+	args = args.slice(1)
+	if len(args) == 0:
+		result = actor.call(method)
+	else:
+		result = actor.callv(method, args)
+	return Status.ok(result, "Called %s.%s(%s): %s" % [actor.get_name(), method, args, result])
+	
+func callAnimationMethod(method, args) -> Status:
+	var result = getActor(args[0])
+	if result.isError(): return result
+	var actor = result.value
+	var animation = actor.get_node("Offset/Animation")
+	method = method.substr(1).replace("/", "_").to_lower()
+	args = args.slice(1)
+	if len(args) == 0:
+		result = animation.call(method)
+	else:
+		result = animation.callv(method, args)
+	return Status.ok(result, "Called %s.%s.%s(%s): %s" % [actor.get_name(), animation.get_animation(), method, args, result])
+
+func callActorMethodWithVector(method, args) -> Status:
+	var result = getActor(args[0])
+	if result.isError(): return result
+	var actor = result.value
+	return callMethodWithVector(actor, method, args.slice(1))
+
+func callMethodWithVector(object: Variant, method: String, args: Array) -> Status:
+	method = method.substr(1) if method.begins_with("/") else method
+	method = method.replace("/", "_").to_lower()
+	match len(args):
+		2:
+			object.call(method, Vector2(args[0], args[1]))
+		3:
+			object.call(method, Vector3(args[0], args[1], args[2]))
+		4:
+			object.call(method, Vector4(args[0], args[1], args[2], args[3]))
+		_:
+			return Status.error("callActorMethodWithVector xpected between 1 and 4 arguments, received: %s" % [len(args.slice(1))])
+	return Status.ok(true, "Called %s.%s(Vector%d(%s))" % [object.get_name(), method, args.slice(1)])
