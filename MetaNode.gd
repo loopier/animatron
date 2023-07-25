@@ -14,7 +14,7 @@ var trigFrame = 0
 @onready var animationsLibrary: SpriteFrames = main.find_child("animationsLibraryNode").get_sprite_frames()
 
 func _ready():
-	var animNode = get_node("Offset/Animation")
+	var animNode := get_node("Offset/Animation") as AnimatedSprite2D
 	animNode.frame_changed.connect(_on_Animation_frame_changed)
 	animNode.animation_finished.connect(_on_Animation_animation_finished)
 
@@ -23,8 +23,9 @@ func _on_Animation_frame_changed():
 	if main == null:
 		return
 	main = main.get_parent()
-	var anim = get_node("Offset/Animation").get_animation()
-	var frame = get_node("Offset/Animation").get_frame()
+	var animNode := get_node("Offset/Animation") as AnimatedSprite2D
+	var anim := animNode.animation
+	var frame := animNode.frame
 	if frameCmds.has(frame):
 		sendCmds(frame)
 

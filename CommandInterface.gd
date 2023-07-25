@@ -1,4 +1,4 @@
-class_name OscInterface
+class_name CommandInterface
 extends Node
 ## Map OSC commands to Godot functionality
 ##
