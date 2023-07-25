@@ -16,6 +16,7 @@ var metanode := preload("res://meta_node.tscn")
 @onready var actorsNode := main.get_node("Actors")
 var animationsLibrary: SpriteFrames ## The meta node containing these frames needs to be initialized in _ready
 var assetsPath = "user://assets"
+var animationAssetsPath = assetsPath + "/animations"
 
 ## A dictionary used to store variables accessible from OSC messages.
 ## They are stored in a file, and loaded into this dictionary.
@@ -30,8 +31,8 @@ var coreCommands: Dictionary = {
 	# general commands
 	"/commands/list": listCommands,
 	# assets
-	"/load": loadAsset,
-	"/assets/list": listAssets, # available in disk
+	"/load": loadAnimationAsset,
+	"/assets/list": listAnimationAssets, # available in disk
 	"/animations/list": listAnimations, # loaded
 	"/actors/list": listActors,
 	"/create": createActor,
@@ -215,8 +216,8 @@ func listAnimations() -> Status:
 		msg += "%s (%s)\n" % [name, frameCount]
 	return Status.ok(animationNames, msg)
 
-func listAssets() -> Status:
-	var dir := DirAccess.open(assetsPath)
+func listAnimationAssets() -> Status:
+	var dir := DirAccess.open(animationAssetsPath)
 	var assetNames := []
 	if dir:
 		dir.list_dir_begin()
@@ -225,13 +226,13 @@ func listAssets() -> Status:
 			assetNames.append(filename)
 			filename = dir.get_next()
 	assetNames.sort()
-	var msg := "Assets at '%s':\n" % [ProjectSettings.globalize_path(assetsPath)]
+	var msg := "Assets at '%s':\n" % [ProjectSettings.globalize_path(animationAssetsPath)]
 	for name in assetNames:
 		msg += "%s\n" % [name]
 	return Status.ok(assetNames, msg)
 
-func loadAsset(name: String) -> Status:
-	var path = assetsPath.path_join(name)
+func loadAnimationAsset(name: String) -> Status:
+	var path = animationAssetsPath.path_join(name)
 	Log.debug("TODO: load sprites and image sequences from disk: %s" % [path])
 	var result = loadImageSequence(path)
 	if result.isError(): return Status.error("Assets not found: %s" % [path])
