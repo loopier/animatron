@@ -12,11 +12,11 @@ signal command_error(msg, sender)
 
 var status := preload("res://Status.gd")
 var metanode := preload("res://meta_node.tscn")
-@onready var animationNodePath := "Offset/Animation"
 @onready var main := get_parent()
 @onready var actorsNode := main.get_node("Actors")
 var animationsLibrary: SpriteFrames ## The meta node containing these frames needs to be initialized in _ready
 var assetsPath = "user://assets"
+var animationAssetsPath = assetsPath + "/animations"
 
 ## A dictionary used to store variables accessible from OSC messages.
 ## They are stored in a file, and loaded into this dictionary.
@@ -31,8 +31,8 @@ var coreCommands: Dictionary = {
 	# general commands
 	"/commands/list": listCommands,
 	# assets
-	"/load": loadAsset,
-	"/assets/list": listAssets, # available in disk
+	"/load": loadAnimationAsset,
+	"/assets/list": listAnimationAssets, # available in disk
 	"/animations/list": listAnimations, # loaded
 	"/actors/list": listActors,
 	"/create": createActor,
@@ -61,16 +61,16 @@ var nodeCommands: Dictionary = {
 	"/speed": "/speed/scale",
 	"/flip/v": setAnimationProperty,
 	"/flip/h": setAnimationProperty,
-	"/offset": setAnimationVector,
-	"/offset/x": setAnimationVectorN,
-	"/offset/y": setAnimationVectorN,
-	"/scale": setActorVector,
-	"/scale/x": setActorVectorN,
-	"/scale/y": setActorVectorN,
+	"/offset": setAnimationPropertyWithVector,
+	"/offset/x": setAnimationPropertyWithVectorN,
+	"/offset/y": setAnimationPropertyWithVectorN,
+	"/scale": setActorPropertyWithVector,
+	"/scale/x": setActorPropertyWithVectorN,
+	"/scale/y": setActorPropertyWithVectorN,
 	"/apply/scale": callActorMethodWithVector,
-	"/position": setActorVector,
-	"/position/x": setActorVectorN,
-	"/position/y": setActorVectorN,
+	"/position": setActorPropertyWithVector,
+	"/position/x": setActorPropertyWithVectorN,
+	"/position/y": setActorPropertyWithVectorN,
 	"/rotation": "/rotation/degrees",
 	"/rotation/degrees": setActorProperty,
 }
@@ -202,7 +202,7 @@ func listActors() -> Status:
 	Log.info("List of actors (%s)" % [len(actors)])
 	for actor in actors:
 		var actorName := actor.get_name()
-		var anim: String = actor.get_node(animationNodePath).get_animation()
+		var anim: String = actor.get_node("Animation").get_animation()
 		actorsList.append("%s (%s)" % [actorName, anim])
 		Log.info(actorsList.back())
 	actorsList.sort()
@@ -216,8 +216,8 @@ func listAnimations() -> Status:
 		msg += "%s (%s)\n" % [animName, frameCount]
 	return Status.ok(animationNames, msg)
 
-func listAssets() -> Status:
-	var dir := DirAccess.open(assetsPath)
+func listAnimationAssets() -> Status:
+	var dir := DirAccess.open(animationAssetsPath)
 	var assetNames := []
 	if dir:
 		dir.list_dir_begin()
@@ -226,13 +226,13 @@ func listAssets() -> Status:
 			assetNames.append(filename)
 			filename = dir.get_next()
 	assetNames.sort()
-	var msg := "Assets at '%s':\n" % [ProjectSettings.globalize_path(assetsPath)]
+	var msg := "Assets at '%s':\n" % [ProjectSettings.globalize_path(animationAssetsPath)]
 	for assetName in assetNames:
 		msg += "%s\n" % [assetName]
 	return Status.ok(assetNames, msg)
 
-func loadAsset(assetName: String) -> Status:
-	var path = assetsPath.path_join(assetName)
+func loadAnimationAsset(assetName: String) -> Status:
+	var path = animationAssetsPath.path_join(assetName)
 	Log.debug("TODO: load sprites and image sequences from disk: %s" % [path])
 	var result = loadImageSequence(path)
 	if result.isError(): return Status.error("Assets not found: %s" % [path])
@@ -291,7 +291,7 @@ func createActor(actorName: String, anim: String) -> Status:
 	Log.debug(msg)
 	actor.set_name(actorName)
 	actor.set_position(Vector2(0.5,0.5) * get_parent().get_viewport_rect().size)
-	var animationNode = actor.get_node(animationNodePath)
+	var animationNode = actor.get_node("Animation")
 	animationNode.set_sprite_frames(animationsLibrary)
 	animationNode.play(anim)
 	animationNode.get_sprite_frames().set_animation_speed(anim, 12)
@@ -312,12 +312,12 @@ func setActorAnimation(actorName, animation) -> Status:
 	var result = getActor(actorName)
 	if result.isError(): return result
 	if not animationsLibrary.has_animation(animation): return Status.error("Animation not found: %s" % [animation])
-	result.value.get_node(animationNodePath).play(animation)
+	result.value.get_node("Animation").play(animation)
 	return Status.ok(true, "Set animation for '%s': %s" % [actorName, animation])
 
 ## Sets any Vector [param property] of any node. 
 ## [param args[1..]] are the vector values (between 2 and 4). If only 1 value is passed, it will set the same value on all axes.
-func setNodeVector(node, property, args) -> Status:
+func setNodePropertyWithVector(node, property, args) -> Status:
 	var setProperty = "set_%s" % [property.get_slice("/",1)]
 	var vec = node.call("get_%s" % [property.get_slice("/",1)])
 	if len(args) < 2:
@@ -327,23 +327,23 @@ func setNodeVector(node, property, args) -> Status:
 			TYPE_VECTOR4: args = [args[0], args[0], args[0], args[0]]
 	return callMethodWithVector(node, setProperty, args)
 
-func setActorVector(property, args) -> Status:
+func setActorPropertyWithVector(property, args) -> Status:
 	var result = getActor(args[0])
 	if result.isError(): return result
-	return setNodeVector(result.value, property, args.slice(1))
+	return setNodePropertyWithVector(result.value, property, args.slice(1))
 
-func setAnimationVector(property, args) -> Status:
+func setAnimationPropertyWithVector(property, args) -> Status:
 	var result = getActor(args[0])
 	if result.isError(): return result
 	var actor = result.value
-	var animation = actor.get_node("Offset/Animation")
-	return setNodeVector(animation, property, args.slice(1))
+	var animation = actor.get_node("Animation")
+	return setNodePropertyWithVector(animation, property, args.slice(1))
 
 ## Sets the value for the N axis of any Vector [param property] (position, scale, ...) of any actor.
 ## For example: /position/x would set the [method actor.get_position().x] value.
 ## [param args\[0\]] is the actor name.
 ## [param args[1]] is the value.
-func setNodeVectorN(node, property, value) -> Status:
+func setNodePropertyWithVectorN(node, property, value) -> Status:
 	var vec = node.call("get_" + property.get_slice("/", 1).to_snake_case())
 	var axis = property.get_slice("/", 2).to_snake_case()
 	value = float(value)
@@ -359,18 +359,18 @@ func setNodeVectorN(node, property, value) -> Status:
 #	Log.debug("Set %s %s -- %s: %s" % [property, actor.get_position(), vec, value])
 	return Status.ok("Set %s.%s: %s" % [vec, axis, value])
 
-func setActorVectorN(property, args) -> Status:
+func setActorPropertyWithVectorN(property, args) -> Status:
 	var result = getActor(args[0])
 	if result.isError(): return result
 	var actor = result.value
-	return setNodeVectorN(actor, property, args[1])
+	return setNodePropertyWithVectorN(actor, property, args[1])
 
-func setAnimationVectorN(property, args) -> Status:
+func setAnimationPropertyWithVectorN(property, args) -> Status:
 	var result = getActor(args[0])
 	if result.isError(): return result
 	var actor = result.value
-	var animation = actor.get_node("Offset/Animation")
-	return setNodeVectorN(animation, property, args[1])
+	var animation = actor.get_node("Animation")
+	return setNodePropertyWithVectorN(animation, property, args[1])
 
 func setActorProperty(property, args) -> Status:
 	var result = getActor(args[0])
@@ -385,7 +385,7 @@ func setAnimationProperty(property, args) -> Status:
 	var result = getActor(args[0])
 	if result.isError(): return result
 	var actor = result.value
-	var animation = actor.get_node("Offset/Animation")
+	var animation = actor.get_node("Animation")
 	property = "set_" + property.substr(1).replace("/", "_").to_lower()
 	var value: Variant = args.slice(1)
 	animation.callv(property, value)
@@ -407,7 +407,7 @@ func callAnimationMethod(method, args) -> Status:
 	var result = getActor(args[0])
 	if result.isError(): return result
 	var actor = result.value
-	var animation = actor.get_node("Offset/Animation")
+	var animation = actor.get_node("Animation")
 	method = method.substr(1).replace("/", "_").to_lower()
 	args = args.slice(1)
 	if len(args) == 0:
@@ -435,3 +435,4 @@ func callMethodWithVector(object: Variant, method: String, args: Array) -> Statu
 		_:
 			return Status.error("callActorMethodWithVector xpected between 1 and 4 arguments, received: %s" % [len(args.slice(1))])
 	return Status.ok(true, "Called %s.%s(Vector%d(%s))" % [object.get_name(), method, args.slice(1)])
+	

@@ -34,9 +34,8 @@ n.sendMsg("/position/y", "x", 200);
 n.sendMsg("/position", "x", 500);
 n.sendMsg("/scale", "x", 1);
 n.sendMsg("/scale/x", "x", 2);
-n.sendMsg("/scale/y", "x", 1);
+n.sendMsg("/scale/y", "x", 3);
 n.sendMsg("/apply/scale", "x", 2,2);
-n.sendMsg("/angle", "x", 0.1);
 n.sendMsg("/rotation", "x", 180);
 n.sendMsg("/rotation/degrees", "x", 90);
 n.sendMsg("/stop", "x");
@@ -53,3 +52,6 @@ n.sendMsg("/speed/scale", "x", 2);
 n.sendMsg("/speed", "x", 1);
 n.sendMsg("/offset", "x", 0, 200);
 n.sendMsg("/offset/y", "x", -200);
+n.sendMsg("/offset/x", "x", -200);
+
+n.sendMsg("/create", "x", "balloon-01");
