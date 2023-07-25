@@ -54,8 +54,7 @@ var nodeCommands: Dictionary = {
 	"/play": callAnimationMethod,
 	"/play/backwards": callAnimationMethod,
 	"/reverse": "/play/backwards",
-	"/set/animation/loop": callAnimationFramesMethod,
-	"/loop": "/set/animation/loop",
+	"/animation/loop": setAnimationFramesProperty,
 	"/stop": callAnimationMethod,
 	"/frame": setAnimationProperty,
 	"/frame/progress": setAnimationProperty,
@@ -375,29 +374,20 @@ func setAnimationPropertyWithVectorN(property, args) -> Status:
 	return setNodePropertyWithVectorN(animation, property, args[1])
 
 func setActorProperty(property, args) -> Status:
-	var result = getActor(args[0])
-	if result.isError(): return result
-	var actor = result.value
-	property = "set_" + property.substr(1).replace("/", "_").to_lower()
-	var value = args[1]
-	actor.call(property, value)
-	return Status.ok(true, "Set %s.%s: %s" % [actor.get_name(), property, value])
-	
+	return callActorMethod("/set" + property, args)
+
 func setAnimationProperty(property, args) -> Status:
-	var result = getActor(args[0])
-	if result.isError(): return result
-	var actor = result.value
-	var animation = actor.get_node("Animation")
-	property = "set_" + property.substr(1).replace("/", "_").to_lower()
-	var value: Variant = args.slice(1)
-	animation.callv(property, value)
-	return Status.ok(true, "Set %s.%s.%s: %s" % [actor.get_name(), animation.get_animation(), property, value])
+	return callAnimationMethod("/set" + property, args)
+
+func setAnimationFramesProperty(property, args) -> Status:
+	return callAnimationFramesMethod("/set" + property, args)
 
 func callActorMethod(method, args) -> Status:
 	var result = getActor(args[0])
 	if result.isError(): return result
 	var actor = result.value
-	method = method.substr(1)
+	if method.begins_with("/"): method = method.substr(1)
+	method = method.replace("/", "_")
 	args = args.slice(1)
 	if len(args) == 0:
 		result = actor.call(method)
