@@ -67,6 +67,7 @@ var nodeCommands: Dictionary = {
 	"/scale": setActorVector,
 	"/scale/x": setActorVectorN,
 	"/scale/y": setActorVectorN,
+	"/apply/scale": callActorMethodWithVector,
 	"/position": setActorVector,
 	"/position/x": setActorVectorN,
 	"/position/y": setActorVectorN,
@@ -314,27 +315,17 @@ func setActorAnimation(actorName, animation) -> Status:
 	result.value.get_node(animationNodePath).play(animation)
 	return Status.ok(true, "Set animation for '%s': %s" % [actorName, animation])
 
-## Sets any Vector [param property] of any actor. 
-## [param args\[0\]] is the actor name.
+## Sets any Vector [param property] of any node. 
 ## [param args[1..]] are the vector values (between 2 and 4). If only 1 value is passed, it will set the same value on all axes.
 func setNodeVector(node, property, args) -> Status:
 	var setProperty = "set_%s" % [property.get_slice("/",1)]
 	var vec = node.call("get_%s" % [property.get_slice("/",1)])
-	match len(args):
-		1: 
-			match typeof(vec):
-				TYPE_VECTOR2: node.call(setProperty, Vector2(args[0], args[0]))
-				TYPE_VECTOR3: node.call(setProperty, Vector3(args[0], args[0], args[0]))
-				TYPE_VECTOR4: node.call(setProperty, Vector4(args[0], args[0], args[0], args[0]))
-		2:
-			node.call(setProperty, Vector2(args[0], args[1]))
-		3:
-			node.call(setProperty, Vector3(args[0], args[1], args[2]))
-		4:
-			node.call(setProperty, Vector4(args[0], args[1], args[2], args[3]))
-		_:
-			return Status.error("callActorMethodWithVector xpected between 1 and 4 arguments, received: %s" % [len(args.slice(1))])
-	return Status.ok(true, "Called %s.%s(Vector%d(%s))" % [node.get_name(), property, args.slice(1)])
+	if len(args) < 2:
+		match typeof(vec):
+			TYPE_VECTOR2: args = [args[0], args[0]]
+			TYPE_VECTOR3: args = [args[0], args[0], args[0]]
+			TYPE_VECTOR4: args = [args[0], args[0], args[0], args[0]]
+	return callMethodWithVector(node, setProperty, args)
 
 func setActorVector(property, args) -> Status:
 	var result = getActor(args[0])
@@ -411,7 +402,7 @@ func callActorMethod(method, args) -> Status:
 	else:
 		result = actor.callv(method, args)
 	return Status.ok(result, "Called %s.%s(%s): %s" % [actor.get_name(), method, args, result])
-
+	
 func callAnimationMethod(method, args) -> Status:
 	var result = getActor(args[0])
 	if result.isError(): return result
@@ -424,3 +415,23 @@ func callAnimationMethod(method, args) -> Status:
 	else:
 		result = animation.callv(method, args)
 	return Status.ok(result, "Called %s.%s.%s(%s): %s" % [actor.get_name(), animation.get_animation(), method, args, result])
+
+func callActorMethodWithVector(method, args) -> Status:
+	var result = getActor(args[0])
+	if result.isError(): return result
+	var actor = result.value
+	return callMethodWithVector(actor, method, args.slice(1))
+
+func callMethodWithVector(object: Variant, method: String, args: Array) -> Status:
+	method = method.substr(1) if method.begins_with("/") else method
+	method = method.replace("/", "_").to_lower()
+	match len(args):
+		2:
+			object.call(method, Vector2(args[0], args[1]))
+		3:
+			object.call(method, Vector3(args[0], args[1], args[2]))
+		4:
+			object.call(method, Vector4(args[0], args[1], args[2], args[3]))
+		_:
+			return Status.error("callActorMethodWithVector xpected between 1 and 4 arguments, received: %s" % [len(args.slice(1))])
+	return Status.ok(true, "Called %s.%s(Vector%d(%s))" % [object.get_name(), method, args.slice(1)])
