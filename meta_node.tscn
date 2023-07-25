@@ -4,9 +4,7 @@
 
 [node name="MetaNode" type="CharacterBody2D"]
 
-[node name="Offset" type="Node2D" parent="."]
-
-[node name="Animation" type="AnimatedSprite2D" parent="Offset"]
+[node name="Animation" type="AnimatedSprite2D" parent="."]
 sprite_frames = SubResource("SpriteFrames_g6lqa")
 
 [node name="CollisionShape2D" type="CollisionShape2D" parent="."]

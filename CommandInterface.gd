@@ -12,7 +12,6 @@ signal command_error(msg, sender)
 
 var status := preload("res://Status.gd")
 var metanode := preload("res://meta_node.tscn")
-@onready var animationNodePath := "Offset/Animation"
 @onready var main := get_parent()
 @onready var actorsNode := main.get_node("Actors")
 var animationsLibrary: SpriteFrames ## The meta node containing these frames needs to be initialized in _ready
@@ -202,7 +201,7 @@ func listActors() -> Status:
 	Log.info("List of actors (%s)" % [len(actors)])
 	for actor in actors:
 		var name: String = actor.get_name()
-		var anim: String = actor.get_node(animationNodePath).get_animation()
+		var anim: String = actor.get_node("Animation").get_animation()
 		actorsList.append("%s (%s)" % [name, anim])
 		Log.info(actorsList.back())
 	actorsList.sort()
@@ -291,7 +290,7 @@ func createActor(name: String, anim: String) -> Status:
 	Log.debug(msg)
 	actor.set_name(name)
 	actor.set_position(Vector2(0.5,0.5) * get_parent().get_viewport_rect().size)
-	var animationNode = actor.get_node(animationNodePath)
+	var animationNode = actor.get_node("Animation")
 	animationNode.set_sprite_frames(animationsLibrary)
 	animationNode.play(anim)
 	animationNode.get_sprite_frames().set_animation_speed(anim, 12)
@@ -312,7 +311,7 @@ func setActorAnimation(actorName, animation) -> Status:
 	var result = getActor(actorName)
 	if result.isError(): return result
 	if not animationsLibrary.has_animation(animation): return Status.error("Animation not found: %s" % [animation])
-	result.value.get_node(animationNodePath).play(animation)
+	result.value.get_node("Animation").play(animation)
 	return Status.ok(true, "Set animation for '%s': %s" % [actorName, animation])
 
 ## Sets any Vector [param property] of any node. 
@@ -336,7 +335,7 @@ func setAnimationVector(property, args) -> Status:
 	var result = getActor(args[0])
 	if result.isError(): return result
 	var actor = result.value
-	var animation = actor.get_node("Offset/Animation")
+	var animation = actor.get_node("Animation")
 	return setNodeVector(animation, property, args.slice(1))
 
 ## Sets the value for the N axis of any Vector [param property] (position, scale, ...) of any actor.
@@ -369,7 +368,7 @@ func setAnimationVectorN(property, args) -> Status:
 	var result = getActor(args[0])
 	if result.isError(): return result
 	var actor = result.value
-	var animation = actor.get_node("Offset/Animation")
+	var animation = actor.get_node("Animation")
 	return setNodeVectorN(animation, property, args[1])
 
 func setActorProperty(property, args) -> Status:
@@ -385,7 +384,7 @@ func setAnimationProperty(property, args) -> Status:
 	var result = getActor(args[0])
 	if result.isError(): return result
 	var actor = result.value
-	var animation = actor.get_node("Offset/Animation")
+	var animation = actor.get_node("Animation")
 	property = "set_" + property.substr(1).replace("/", "_").to_lower()
 	var value: Variant = args.slice(1)
 	animation.callv(property, value)
@@ -435,3 +434,4 @@ func callMethodWithVector(object: Variant, method: String, args: Array) -> Statu
 		_:
 			return Status.error("callActorMethodWithVector xpected between 1 and 4 arguments, received: %s" % [len(args.slice(1))])
 	return Status.ok(true, "Called %s.%s(Vector%d(%s))" % [object.get_name(), method, args.slice(1)])
+	
