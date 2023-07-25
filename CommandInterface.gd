@@ -50,6 +50,8 @@ var coreCommands: Dictionary = {
 ## the expected GDScript method. If a different command name is needed, use a [method def].
 var nodeCommands: Dictionary = {
 	"/play": callAnimationMethod,
+	"/play/backwards": callAnimationMethod,
+	"/reverse": "/play/backwards",
 	"/stop": callAnimationMethod,
 	"/frame": setAnimationProperty,
 	"/frame/progress": setAnimationProperty,

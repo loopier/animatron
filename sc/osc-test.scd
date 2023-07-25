@@ -38,6 +38,8 @@ n.sendMsg("/rotation", "x", 180);
 n.sendMsg("/rotation/degrees", "x", 90);
 n.sendMsg("/stop", "x");
 n.sendMsg("/play", "x");
+n.sendMsg("/play/backwards", "x");
+n.sendMsg("/reverse", "x");
 n.sendMsg("/frame", "x", 0);
 n.sendMsg("/frame", "x", 3);
 n.sendMsg("/frame", "x", -1);
