@@ -1,8 +1,8 @@
 extends Node2D
 
 var osc: OscReceiver
-static var variablesPath = "res://config/vars.ocl"
-static var configPath = "res://config/config.ocl"
+static var variablesPath := "res://config/vars.ocl"
+static var configPath := "res://config/config.ocl"
 var metanode := preload("res://meta_node.tscn")
 @onready var actors := get_node("Actors")
 @onready var cmdInterface := get_node("CommandInterface") as CommandInterface
@@ -30,8 +30,8 @@ func _on_osc_msg_received(addr: String, args: Array, sender: String):
 
 func _on_command_finished(msg: String, sender: String):
 	Log.info("Command finished:\n%s" % [msg])
-	Log.debug("TODO: Report message back to: %s" % [sender])
+	cmdInterface.reportStatus(msg, sender)
 
 func _on_command_error(msg: String, sender: String):
 	Log.error("Command error: %s" % [msg])
-	Log.debug("TODO: Report error back to: %s" % [sender])
+	cmdInterface.reportError(msg, sender)

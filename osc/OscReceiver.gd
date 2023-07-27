@@ -18,8 +18,12 @@ var serverPort: int = 56101 :
 	get = getServerPort,
 	set = setServerPort
 
+var oscBuf := StreamPeerBuffer.new()
+var oscArgBuf := StreamPeerBuffer.new()
+
 func _ready():
-	pass
+	oscBuf.big_endian = true
+	oscArgBuf.big_endian = true
 
 func startServer():
 	var err := socketUdp.bind(serverPort)
@@ -110,27 +114,46 @@ func getArgTypesIndex(buf: StreamPeer) -> int:
 func getArgs(_buf: StreamPeer) -> Array:
 	return []
 
-func sendTo(target: String, oscAddr: String, oscArgs: Array):
-	var buf := StreamPeerBuffer.new()
-	buf.big_endian = true
-	buf.put_data(oscAddr.to_ascii_buffer())
-	var padding := oscAddr.length() % 4
-	if padding == 0:
+static func addString(buf: StreamPeer, str: String):
+	buf.put_data(str.to_ascii_buffer())
+	var padding := 4 - str.length() % 4
+	if padding == 4:
 		buf.put_32(0)
 	else:
 		for i in range(padding):
 			buf.put_8(0)
-	buf.put_data(",i".to_ascii_buffer())
-	buf.put_16(0)
-	buf.put_32(260)
-	
-	print(buf.data_array)
+
+func sendMessage(target: String, oscAddr: String, oscArgs: Array):
+	oscBuf.clear()
+	oscArgBuf.clear()
+	addString(oscBuf, oscAddr)
+	var argTags := ","
+	for arg in oscArgs:
+		match typeof(arg):
+			TYPE_FLOAT:
+				argTags += "f"
+				oscArgBuf.put_float(arg)
+			TYPE_INT:
+				argTags += "i"
+				oscArgBuf.put_32(arg)
+			TYPE_STRING, TYPE_STRING_NAME:
+				argTags += "s"
+				addString(oscArgBuf, arg)
+			TYPE_BOOL:
+				argTags += "T" if arg else "F"
+			TYPE_NIL:
+				argTags += "N"
+			_:
+				Log.error("Unsupported OSC type: %s" % typeof(arg))				
+			
+	addString(oscBuf, argTags)
+	oscBuf.put_data(oscArgBuf.data_array)
 	
 	var addrPort := target.split("/")
 	if addrPort.size() == 2:
 		Log.verbose("Replying %s to %s/%s" % [oscAddr, addrPort[0], addrPort[1] as int])
 		socketUdp.set_dest_address(addrPort[0], addrPort[1] as int)
-		socketUdp.put_packet(buf.data_array)
+		socketUdp.put_packet(oscBuf.data_array)
 
 #func _thread_function(userdata):
 #	print("I'm a thread! Userdata is: ", userdata)
