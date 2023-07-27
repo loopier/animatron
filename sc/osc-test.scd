@@ -3,6 +3,7 @@ n = NetAddr("localhost", 56101);
 n.sendMsg("/list");
 n.sendMsg("/commands/list");
 n.sendMsg("/assets/list");
+n.sendMsg("/variables/list");
 
 n.sendMsg("/load", "numbers");
 n.sendMsg("/animations/list");
@@ -17,7 +18,7 @@ n.sendMsg("/animation", "x", "bla");
 (
 n.sendMsg("/load", "mama");
 n.sendMsg("/load", "numbers");
-n.sendMsg("/create", "x", "mama");
+// n.sendMsg("/create", "x", "mama");
 // n.sendMsg("/create", "n", "numbers");
 )
 n.sendMsg("/remove", "n");
@@ -56,3 +57,7 @@ n.sendMsg("/offset/x", "x", -200);
 n.sendMsg("/animation/loop", "x", 0);
 n.sendMsg("/loop", "x", 1);
 n.sendMsg("/play", "x");
+
+n.sendMsg("/def", "/red/mama", "/create", "x", "mama", ",", "/speed", "x", 2);
+n.sendMsg("/set", "/x", "mama");
+n.sendMsg("/red/mama")

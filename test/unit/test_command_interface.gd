@@ -22,3 +22,15 @@ func test_listCommands():
 
 func test_listAssets():
 	assert_eq(cmd.listAssets().value, [])
+
+func test_splitArray():
+	var arr = ["/alo", ",", 1]
+	assert_eq(cmd._splitArray(",", arr), [["/alo"],[1]])
+	arr = ["/alo", "x", 1, ",", "/bla", "zzz"]
+	assert_eq(cmd._splitArray(",", arr), [["/alo", "x", 1], ["/bla", "zzz"]])
+	arr = ["/alo", "x", 1]
+	assert_eq(cmd._splitArray(",", arr), [["/alo", "x", 1]])
+
+func test_setDef():
+	var cmds = ["/alo", "x", 1]
+	assert_eq(cmd.setDef(cmds), [["/alo", "x", 1]])

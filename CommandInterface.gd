@@ -29,7 +29,7 @@ var coreCommands: Dictionary = {
 	"/set": setVar,
 	"/get": getVar,
 	# general commands
-	"/commands/list": listCommands,
+	"/commands/list": listAllCommands,
 	# assets
 	"/load": loadAnimationAsset,
 	"/assets/list": listAnimationAssets, # available in disk
@@ -39,6 +39,16 @@ var coreCommands: Dictionary = {
 	"/remove": removeActor,
 	"/free": "/remove",
 }
+## Commands that need to pass the incoming parameters as an array.
+## Couldn't find a more elegant way to deal with /def which seems to be the
+## only command that needs to pass on arguments as an array.
+var arrayCommands: Dictionary = {
+	"/def": setDef,
+}
+
+## Custom command definitions
+var defCommands := {}
+
 ## Node commands map.
 ## Node commands are parsed differently than [param coreCommands]. They use 
 ## OSC address as method name (by removing the forward slash), and first argument is
@@ -96,7 +106,7 @@ func reportStatus(msg: String, sender = null):
 
 ## Different behaviours depend on the [param command] contents in the different [member xxxCommands] dictionaries.
 func parseCommand(key: String, args: Array, sender: String) -> Status:
-	var commandDicts := [coreCommands, nodeCommands]
+	var commandDicts := [coreCommands, nodeCommands, arrayCommands, defCommands]
 	var commandValue: Variant
 	var commandDict: Dictionary
 	var result := Status.new()
@@ -113,13 +123,46 @@ func parseCommand(key: String, args: Array, sender: String) -> Status:
 	match commandDict:
 		coreCommands: result = commandValue.callv(args)
 		nodeCommands: result = commandValue.call(key, args)
+		arrayCommands: result = commandValue.call(args)
+		defCommands: result = parseCommandsArray(commandValue)
 		_: command_error.emit("Command not found: %s" % [key], sender)
-	
+
 	match result.type:
 		Status.OK: command_finished.emit(result.msg, sender)
 		Status.ERROR: command_error.emit(result.msg, sender)
 		_: pass
 
+	return result
+
+func parseCommandsArray(commands):
+	var result: Status
+	for command in commands:
+		result = parseCommand(command[0], command.slice(1), "")
+	return result
+
+func setDef(args: Array) -> Status:
+	var splits = _splitArray(":", args)
+	var commandDef = splits[0]
+	var subCommands = _splitArray(",", splits[1])
+	var commandName = commandDef[0]
+	var commandArgs = commandDef.slice(1)
+	TODO
+	defCommands[key] = subCommands
+	return Status.ok(true, "Added command def: %s" % [key])
+
+## Similar to [method String.split] but with for arrays.
+## Returns a 2D array
+func _splitArray(delimiter: String, args: Array) -> Array:
+	var result := []
+	var last := 0
+	for i in len(args):
+		if typeof(args[i]) == TYPE_STRING and args[i] == delimiter:
+			result.append(args.slice(last, i))
+			i += 1
+			last = i
+	# when no delimiter is found, append everything as one single item, or
+	# append everything after the last delimiter.
+	result.append(args.slice(last))
 	return result
 
 ## Read a file with a [param filename] and return its OSC constent in a string
@@ -182,20 +225,32 @@ func remove(key, dict) -> Status:
 func _list(dict: Dictionary) -> Status:
 	var list := []
 	var msg := ""
-	for key in dict:
+	for key in dict.keys():
 		list.append(key)
 		msg += "%s: %s" % [key, dict[key]]
 	list.sort()
 	return Status.ok(list, msg)
 	
 
-func listCommands() -> Status:
-	var list := "\nCommands:\n"
-	var commands = coreCommands.keys()
-	commands.append_array(nodeCommands.keys())
-	for command in commands:
+func listAllCommands() -> Status:
+	var list := "\nCore Commands:\n"
+	list += listCommands(coreCommands).value
+	list += "\nNode Commands:\n"
+	list += listCommands(nodeCommands).value
+	list += "\nArray Commands:\n"
+	list += listCommands(arrayCommands).value
+	list += "\nDef Commands:\n"
+	list += listCommands(defCommands).value
+	return Status.ok(list, list)
+	
+
+func listCommands(commands: Dictionary) -> Status:
+	var list := "\n--\n"
+	var keys = commands.keys()
+	keys.sort()
+	for command in keys:
 		list += "%s\n" % [command]
-	return Status.ok(commands, list)
+	return Status.ok(list)
 
 func listActors() -> Status:
 	var actorsList := []
