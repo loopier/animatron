@@ -6,7 +6,7 @@ class OscMessage:
 	var args: Array
 	var semder: String # IP
 
-signal osc_msg_received(addr, args, sender)
+signal osc_msg_received(addr: String, args: Array, sender: String)
 
 var socketUdp := PacketPeerUDP.new()
 var senderIP: String
@@ -18,11 +18,15 @@ var serverPort: int = 56101 :
 	get = getServerPort,
 	set = setServerPort
 
+var oscBuf := StreamPeerBuffer.new()
+var oscArgBuf := StreamPeerBuffer.new()
+
 func _ready():
-	pass
+	oscBuf.big_endian = true
+	oscArgBuf.big_endian = true
 
 func startServer():
-	var err = socketUdp.bind(serverPort)
+	var err := socketUdp.bind(serverPort)
 	if err != 0:
 		Log.error("OSC ERROR while trying to listen on port: %s" % [serverPort])
 	else:
@@ -32,12 +36,12 @@ func startServerOn(listenPort: int):
 	serverPort = listenPort
 	startServer()	
 
-# Called every frame. 'delta' is the elapsed time since the previous frame.
-func _process(_delta):
+# 'delta' is the elapsed time since the previous update.
+func _physics_process(_delta):
 	if socketUdp.get_available_packet_count() > 0:
 		var msg := parseOsc(socketUdp.get_packet())
-		var sender := socketUdp.get_packet_ip()
-		Log.verbose("OSC message received from '%s': %s %s" % [socketUdp.get_packet_ip(), msg.addr, msg.args])
+		var sender := "%s/%d" % [socketUdp.get_packet_ip(), socketUdp.get_packet_port()]
+		Log.verbose("OSC message received from %s: %s %s" % [sender, msg.addr, msg.args])
 		osc_msg_received.emit(msg.addr, msg.args, sender)
 #	print(sockestUdp.get_available_packet_count())
 #	print(socketUdp.get_local_port())
@@ -88,27 +92,68 @@ func parseOsc(packet: PackedByteArray) -> OscMessage:
 	
 	return msg
 
-func getString(buf) -> String:
+func getString(buf: StreamPeer) -> String:
 	var result := ""
 	for i in buf.get_size():
-		var c = buf.get_u8()
+		var c := buf.get_u8()
 		# keep moving the cursor until the next multiple of 4
 		if c == 0 and buf.get_position() % 4 == 0: break
 		result += char(c)
 	return result
 
-func getFloat(buf) -> float:
+func getFloat(buf: StreamPeer) -> float:
 	return buf.get_float()
 	
-func getInt(buf) -> int:
+func getInt(buf: StreamPeer) -> int:
 	return buf.get_32()
 	
 # osc messages define the arg types in a byte = 44 (,)
-func getArgTypesIndex(buf) -> int:
+func getArgTypesIndex(buf: StreamPeer) -> int:
 	return buf.get_data_array().find(",".to_ascii_buffer()[0])
 
-func getArgs(_buf: StreamPeerBuffer) -> Array:
+func getArgs(_buf: StreamPeer) -> Array:
 	return []
+
+static func addString(buf: StreamPeer, str: String):
+	buf.put_data(str.to_ascii_buffer())
+	var padding := 4 - str.length() % 4
+	if padding == 4:
+		buf.put_32(0)
+	else:
+		for i in range(padding):
+			buf.put_8(0)
+
+func sendMessage(target: String, oscAddr: String, oscArgs: Array):
+	oscBuf.clear()
+	oscArgBuf.clear()
+	addString(oscBuf, oscAddr)
+	var argTags := ","
+	for arg in oscArgs:
+		match typeof(arg):
+			TYPE_FLOAT:
+				argTags += "f"
+				oscArgBuf.put_float(arg)
+			TYPE_INT:
+				argTags += "i"
+				oscArgBuf.put_32(arg)
+			TYPE_STRING, TYPE_STRING_NAME:
+				argTags += "s"
+				addString(oscArgBuf, arg)
+			TYPE_BOOL:
+				argTags += "T" if arg else "F"
+			TYPE_NIL:
+				argTags += "N"
+			_:
+				Log.error("Unsupported OSC type: %s" % typeof(arg))				
+			
+	addString(oscBuf, argTags)
+	oscBuf.put_data(oscArgBuf.data_array)
+	
+	var addrPort := target.split("/")
+	if addrPort.size() == 2:
+		Log.verbose("Replying %s to %s/%s" % [oscAddr, addrPort[0], addrPort[1] as int])
+		socketUdp.set_dest_address(addrPort[0], addrPort[1] as int)
+		socketUdp.put_packet(oscBuf.data_array)
 
 #func _thread_function(userdata):
 #	print("I'm a thread! Userdata is: ", userdata)

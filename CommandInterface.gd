@@ -15,8 +15,8 @@ var metanode := preload("res://meta_node.tscn")
 @onready var main := get_parent()
 @onready var actorsNode := main.get_node("Actors")
 var animationsLibrary: SpriteFrames ## The meta node containing these frames needs to be initialized in _ready
-var assetsPath = "user://assets"
-var animationAssetsPath = assetsPath + "/animations"
+var assetsPath := "user://assets"
+var animationAssetsPath := assetsPath + "/animations"
 
 ## A dictionary used to store variables accessible from OSC messages.
 ## They are stored in a file, and loaded into this dictionary.
@@ -97,12 +97,15 @@ func _ready():
 func _process(_delta):
 	pass
 
-func reportError(msg: String, _sender = null):
+func reportError(msg: String, sender = null):
 	Log.error(msg)
+	if sender:
+		main.osc.sendMessage(sender, "/error/reply", [msg])
 
 func reportStatus(msg: String, sender = null):
-	Log.verbose("TODO: report message back to '%s'" % [sender])
 	Log.info(msg)
+	if sender:
+		main.osc.sendMessage(sender, "/status/reply", [msg])
 
 ## Different behaviours depend on the [param command] contents in the different [member xxxCommands] dictionaries.
 func parseCommand(key: String, args: Array, sender: String) -> Status:
