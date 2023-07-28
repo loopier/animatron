@@ -87,16 +87,6 @@ func _ready():
 func _process(_delta):
 	pass
 
-func reportError(msg: String, sender = null):
-	Log.error(msg)
-	if sender:
-		main.osc.sendMessage(sender, "/error/reply", [msg])
-
-func reportStatus(msg: String, sender = null):
-	Log.info(msg)
-	if sender:
-		main.osc.sendMessage(sender, "/status/reply", [msg])
-
 ## Different behaviours depend on the [param command] contents in the different [member xxxCommands] dictionaries.
 func parseCommand(key: String, args: Array, sender: String) -> Status:
 	var commandDicts := [coreCommands, nodeCommands]
@@ -164,7 +154,6 @@ func setVar(varName: String, value: Variant) -> Status:
 	variables[varName] = [value]
 	if Log.getLevel() == Log.LOG_LEVEL_VERBOSE:
 		_list(variables)
-	reportStatus(variables[varName][0], null)
 	return Status.ok(variables[varName][0])
 
 func getCommand(command: String) -> Status:
@@ -176,7 +165,6 @@ func getCommand(command: String) -> Status:
 func remove(key, dict) -> Status:
 	if variables.has(key): 
 		variables.erase(key)
-		reportStatus("Removed '%s' from %s" % [key, dict], null)
 		return Status.ok(null, "Removed '%s' from %s" % [key, dict])
 	else:
 		return Status.error("Key not found in %s: '%s'" % [dict, key])
