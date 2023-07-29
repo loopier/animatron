@@ -82,6 +82,9 @@ func parseOsc(packet: PackedByteArray) -> OscMessage:
 			"i": args.append(getInt(buf))
 			"f": args.append(getFloat(buf))
 			"s": args.append(getString(buf))
+			"T": args.append(true)
+			"F": args.append(false)
+			"N": args.append(null)
 			_: continue
 		typeIndex += 1
 #		print("OSC arg %s: %s(%s)" % [i, args.back(), type])
