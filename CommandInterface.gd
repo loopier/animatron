@@ -12,6 +12,7 @@ signal command_error(msg, sender)
 
 var status := preload("res://Status.gd")
 var metanode := preload("res://meta_node.tscn")
+var assetHelpers := preload("res://asset_helpers.gd")
 @onready var main := get_parent()
 @onready var actorsNode := main.get_node("Actors")
 var animationsLibrary: SpriteFrames ## The meta node containing these frames needs to be initialized in _ready
@@ -224,10 +225,17 @@ func listAnimationAssets() -> Status:
 	return Status.ok(assetNames, msg)
 
 func loadAnimationAsset(assetName: String) -> Status:
-	var path = animationAssetsPath.path_join(assetName)
+	var path := animationAssetsPath.path_join(assetName)
 	Log.debug("TODO: load sprites and image sequences from disk: %s" % [path])
-	var result = loadImageSequence(path)
-	if result.isError(): return Status.error("Assets not found: %s" % [path])
+	var dir := DirAccess.open(animationAssetsPath)
+	if dir.dir_exists(assetName):
+		var result = loadImageSequence(path)
+		if result.isError(): return Status.error("Image sequence assets not loaded: %s" % [path])
+	elif dir.file_exists(assetName):
+		var result = loadImage(path)
+		if result.isError(): return Status.error("Image asset not loaded: %s" % [path])
+	else:
+		return Status.error("Asset not found: %s" % [path])
 	return Status.ok(true)
 
 func loadImageSequence(path: String) -> Status:
