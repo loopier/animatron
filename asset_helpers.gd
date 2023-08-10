@@ -1,9 +1,10 @@
-extends Node
+class_name AssetHelpers
+extends Object
 
 var spriteFilenameRegex : RegEx
 var sequenceFilenameRegex : RegEx
 
-func _ready():
+func _init():
 	spriteFilenameRegex = RegEx.new()
 	spriteFilenameRegex.compile("(.+?)(?:_(\\d+)dir)?_(\\d+)x(\\d+)_(\\d+)fps")
 	sequenceFilenameRegex = RegEx.new()
@@ -35,7 +36,9 @@ static func getAnimSequenceFrames(path: String) -> Array:
 
 static func getAssetFilesMatching(path: String, nameWildcard: String) -> Dictionary:
 	var dir := DirAccess.open(path)
-	var files := { sprites = [], seqs = [] }
+	var sprites : Array[String] = []
+	var seqs : Array[String] = []
+	var files := { sprites = sprites, seqs = seqs }
 	if dir:
 		dir.list_dir_begin()
 		var filename := dir.get_next()
@@ -57,13 +60,14 @@ static func getAssetFilesMatching(path: String, nameWildcard: String) -> Diction
 	return files
 
 
-static func getExternalTexture(path: String) -> Texture2D:
-	var img := Image.new()
-	img.load(path)
-	var texture := ImageTexture.new()
+static func loadImage(path: String) -> ImageTexture:
+	Log.verbose("Loading image: %s" % [path])
+	var img := Image.load_from_file(path)
+	var texture := ImageTexture.create_from_image(img)
 	# We don't want interpolation or repeats here
-	texture.create_from_image(img) # used to use: Texture.FLAG_MIPMAPS
+	# We used to set: Texture.FLAG_MIPMAPS
 	return texture
+
 
 func getSpriteFileInfo(name: String) -> Dictionary:
 	var dict := {}
@@ -124,13 +128,11 @@ func addSubSprites(animFramesLibrary: SpriteFrames, atlas: Texture2D, suffixes: 
 			frameId += 1
 
 
-func loadSprites(animFramesLibrary: SpriteFrames, sprites: Array[String]) -> void:
+func loadSprites(animFramesLibrary: SpriteFrames, sprites: Array[String]) -> Status:
 	Log.debug("Runtime sprites: %s" % [sprites])
 	# Add the runtime-loaded sprites to our pre-existing library
 	for spritePath in sprites:
-		var res : Texture2D
-		# res = load(spritePath)
-		if !res: res = getExternalTexture(spritePath)
+		var res := loadImage(spritePath)
 		if res:
 			var info = getSpriteFileInfo(spritePath.get_file().get_basename())
 			if info.directions == 8:
@@ -138,6 +140,10 @@ func loadSprites(animFramesLibrary: SpriteFrames, sprites: Array[String]) -> voi
 				addSubSprites(animFramesLibrary, res, dirSuffixes, info)
 			else:
 				addSubSprites(animFramesLibrary, res, [""], info)
+			Log.verbose("Loaded %s frames: %s" % [animFramesLibrary.get_frame_count(info.name), info.name])
+		else:
+			return Status.error("Unable to load sprite: '%s'" % [spritePath])
+	return Status.ok(true, "Loaded %d sprites" % [sprites.size()])
 
 
 func loadSequences(animFramesLibrary: SpriteFrames, sequences: Array[String]):
@@ -150,7 +156,7 @@ func loadSequences(animFramesLibrary: SpriteFrames, sequences: Array[String]):
 		animFramesLibrary.set_animation_speed(info.name, info.fps)
 		var frameId := 0
 		for img in getAnimSequenceFrames(seqPath):
-			var texture := getExternalTexture(seqPath + "/" + img)
+			var texture := loadImage(seqPath + "/" + img)
 			if texture:
 				var width := texture.get_size().x
 				var height := texture.get_size().y
