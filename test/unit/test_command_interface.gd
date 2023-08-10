@@ -32,5 +32,18 @@ func test_splitArray():
 	assert_eq(cmd._splitArray(",", arr), [["/alo", "x", 1]])
 
 func test_setDef():
-	var cmds = ["/alo", "x", 1]
-	assert_eq(cmd.setDef(cmds), [["/alo", "x", 1]])
+	var def = ["/alo", "x", 1, ",", "/create", "ma", "mama"]
+	assert_eq(cmd.setDef(def).value, ["/alo", ["x", 1], [["/create", "ma", "mama"]]])
+	def = ["/alo", "x", 1, ",", "/create", "ma", "mama", ",", "/size", "ma", 0.5]
+	assert_eq(cmd.setDef(def).value, ["/alo", ["x", 1], [["/create", "ma", "mama"], ["/size", "ma", 0.5]]])
+	def = ["/red/mama", "argA", "argB", ",", "/create", "x", "mama", ",", "/speed", "x", 2]
+	assert_eq(cmd.setDef(def).value, ["/red/mama", ["argA", "argB"], [["/create", "x", "mama"], ["/speed", "x", 2]]])
+
+func test_parseCommand():
+	cmd.setVar("/x", 1)
+	assert_eq(cmd.parseCommand("/get", ["/x"], "").value, 1)
+
+func test_parseArgs():
+	cmd.setVar("/x", 1)
+	assert_eq(cmd.parseArgs([]), [])
+	assert_eq(cmd.parseArgs(["/x"]), [1])

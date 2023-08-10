@@ -123,11 +123,13 @@ func parseCommand(key: String, args: Array, sender: String) -> Status:
 	if typeof(commandValue) == TYPE_STRING: 
 		return parseCommand(commandValue, args, sender) 
 	
+	args = parseArgs(args)
+	
 	match commandDict:
 		coreCommands: result = commandValue.callv(args)
 		nodeCommands: result = commandValue.call(key, args)
 		arrayCommands: result = commandValue.call(args)
-		defCommands: result = parseCommandsArray(commandValue)
+		defCommands: result = parseCommandsArray(key, args)
 		_: command_error.emit("Command not found: %s" % [key], sender)
 
 	match result.type:
@@ -137,21 +139,37 @@ func parseCommand(key: String, args: Array, sender: String) -> Status:
 
 	return result
 
-func parseCommandsArray(commands):
+func parseCommandsArray(key, commands):
+	Log.debug("Parsing commands array: %s" % [key])
 	var result: Status
-	for command in commands:
+	for command in defCommands[key]:
+		Log.debug("Parsing command array: %s" % [command])
 		result = parseCommand(command[0], command.slice(1), "")
 	return result
 
+func parseArgs(args: Array) -> Array:
+	var resultingArgs := []
+	for arg in args:
+		if typeof(arg) == TYPE_STRING && arg.begins_with("/"):
+			var v = getVar(arg)
+			if v.value != null: resultingArgs.append(v.value)
+			else: resultingArgs.append(arg)
+			continue
+		resultingArgs.append(arg)
+	return resultingArgs
+
 func setDef(args: Array) -> Status:
-	var splits = _splitArray(":", args)
+	var splits = _splitArray(",", args)
 	var commandDef = splits[0]
-	var subCommands = _splitArray(",", splits[1])
 	var commandName = commandDef[0]
 	var commandArgs = commandDef.slice(1)
-	TODO
-	defCommands[key] = subCommands
-	return Status.ok(true, "Added command def: %s" % [key])
+	var subCommands = splits.slice(1)
+	
+	defCommands[commandName] = subCommands
+#	Log.debug("def args: %s" % [args])
+#	Log.debug("def: name:%s args:%s sub:%s" % [commandName, commandArgs, subCommands])
+#	Log.debug("defs: %s" % [defCommands])
+	return Status.ok([commandName, commandArgs, subCommands], "Added command def: %s %s" % [commandName, commandArgs, subCommands])
 
 ## Similar to [method String.split] but with for arrays.
 ## Returns a 2D array
@@ -207,7 +225,7 @@ func setVar(varName: String, value: Variant) -> Status:
 	variables[varName] = [value]
 	if Log.getLevel() == Log.LOG_LEVEL_VERBOSE:
 		_list(variables)
-	reportStatus(variables[varName][0], null)
+	reportStatus("%s" % [variables[varName][0]], null)
 	return Status.ok(variables[varName][0])
 
 func getCommand(command: String) -> Status:
