@@ -30,8 +30,10 @@ func _on_osc_msg_received(addr: String, args: Array, sender: String):
 
 func _on_command_finished(msg: String, sender: String):
 	Log.info("Command finished:\n%s" % [msg])
-	cmdInterface.reportStatus(msg, sender)
+	if sender:
+		osc.sendMessage(sender, "/status/reply", [msg])
 
 func _on_command_error(msg: String, sender: String):
 	Log.error("Command error: %s" % [msg])
-	cmdInterface.reportError(msg, sender)
+	if sender:
+		osc.sendMessage(sender, "/error/reply", [msg])

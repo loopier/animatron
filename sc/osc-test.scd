@@ -1,4 +1,8 @@
+(
 n = NetAddr("localhost", 56101);
+OSCdef(\status, { arg args, time, srcAddr, port; args[1..].first.postln; }, "/status/reply");
+OSCdef(\error, { arg args, time, srcAddr, port; args[1..].first.postln; }, "/error/reply");
+)
 
 n.sendMsg("/list");
 n.sendMsg("/commands/list");
@@ -6,12 +10,16 @@ n.sendMsg("/assets/list");
 n.sendMsg("/variables/list");
 
 n.sendMsg("/load", "numbers");
+n.sendMsg("/load", "canon-man");
+n.sendMsg("/load", "om-walk-e");
+n.sendMsg("/load", "fox-walk");
 n.sendMsg("/animations/list");
 n.sendMsg("/actors/list");
 
 n.sendMsg("/load", "mama");
 n.sendMsg("/load", "numbers");
-n.sendMsg("/create", "x", "mama");
+n.sendMsg("/create", "x", "fox-walk");
+n.sendMsg("/create", "x", "om-walk-e");
 n.sendMsg("/animation", "x", "numbers");
 n.sendMsg("/animation", "x", "bla");
 

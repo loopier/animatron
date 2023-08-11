@@ -12,6 +12,7 @@ signal command_error(msg, sender)
 
 var status := preload("res://Status.gd")
 var metanode := preload("res://meta_node.tscn")
+var assetHelpers := preload("res://asset_helpers.gd").new()
 @onready var main := get_parent()
 @onready var actorsNode := main.get_node("Actors")
 var animationsLibrary: SpriteFrames ## The meta node containing these frames needs to be initialized in _ready
@@ -96,16 +97,6 @@ func _ready():
 # Called every frame. 'delta' is the elapsed time since the previous frame.
 func _process(_delta):
 	pass
-
-func reportError(msg: String, sender = null):
-	Log.error(msg)
-	if sender:
-		main.osc.sendMessage(sender, "/error/reply", [msg])
-
-func reportStatus(msg: String, sender = null):
-	Log.info(msg)
-	if sender:
-		main.osc.sendMessage(sender, "/status/reply", [msg])
 
 ## Different behaviours depend on the [param command] contents in the different [member xxxCommands] dictionaries.
 func parseCommand(key: String, args: Array, sender: String) -> Status:
@@ -225,7 +216,10 @@ func setVar(varName: String, value: Variant) -> Status:
 	variables[varName] = [value]
 	if Log.getLevel() == Log.LOG_LEVEL_VERBOSE:
 		_list(variables)
+<<<<<<< HEAD
 	reportStatus("%s" % [variables[varName][0]], null)
+=======
+>>>>>>> develop
 	return Status.ok(variables[varName][0])
 
 func getCommand(command: String) -> Status:
@@ -237,7 +231,6 @@ func getCommand(command: String) -> Status:
 func remove(key, dict) -> Status:
 	if variables.has(key): 
 		variables.erase(key)
-		reportStatus("Removed '%s' from %s" % [key, dict], null)
 		return Status.ok(null, "Removed '%s' from %s" % [key, dict])
 	else:
 		return Status.error("Key not found in %s: '%s'" % [dict, key])
@@ -309,10 +302,19 @@ func listAnimationAssets() -> Status:
 	return Status.ok(assetNames, msg)
 
 func loadAnimationAsset(assetName: String) -> Status:
-	var path = animationAssetsPath.path_join(assetName)
+	var path := animationAssetsPath.path_join(assetName)
 	Log.debug("TODO: load sprites and image sequences from disk: %s" % [path])
-	var result = loadImageSequence(path)
-	if result.isError(): return Status.error("Assets not found: %s" % [path])
+	var dir := DirAccess.open(animationAssetsPath)
+	var assets := assetHelpers.getAssetFilesMatching(animationAssetsPath, assetName)
+	if not assets.sprites.is_empty():
+		var result := assetHelpers.loadSprites(animationsLibrary, assets.sprites)
+		if result.isError(): return Status.error("Image asset not loaded: %s" % [path])
+	if not assets.seqs.is_empty():
+		for seqPath in assets.seqs:
+			var result := loadImageSequence(seqPath)
+			if result.isError(): return Status.error("Image sequence assets not loaded: %s" % [path])
+	if assets.sprites.is_empty() and assets.seqs.is_empty():
+		return Status.error("Asset not found: %s" % [path])
 	return Status.ok(true)
 
 func loadImageSequence(path: String) -> Status:
@@ -324,16 +326,11 @@ func loadImageSequence(path: String) -> Status:
 	for file in filenames:
 		if file.ends_with(".png"):
 #			Log.debug("Loading img to '%s': %s" % [animName, path.path_join(file)])
-			var texture := loadImage(path.path_join(file))
+			var texture := assetHelpers.loadImage(path.path_join(file))
 			animationsLibrary.add_frame(animName, texture)
 	
 	return Status.ok(true, "Loaded %s frames: %s" % [animationsLibrary.get_frame_count(animName), animName])
 
-func loadImage(path: String) -> ImageTexture:
-	Log.verbose("Loading image: %s" % [path])
-	var img = Image.load_from_file(path)
-	var texture = ImageTexture.create_from_image(img)
-	return texture
 
 func getAllActors() -> Status:
 	return Status.ok(actorsNode.get_children())
