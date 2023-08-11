@@ -124,7 +124,7 @@ func addSubSprites(animFramesLibrary: SpriteFrames, atlas: Texture2D, suffixes: 
 			texture.margin = Rect2(0, 0, 0, 0)
 			var subAnim := frameId / subFrames
 			var animName : String = info.name + suffixes[subAnim]
-			animFramesLibrary.add_frame(animName, texture, frameId % subFrames)
+			animFramesLibrary.add_frame(animName, texture, 1, frameId % subFrames)
 			frameId += 1
 
 
