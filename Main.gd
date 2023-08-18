@@ -5,7 +5,7 @@ static var variablesPath := "res://config/vars.ocl"
 static var configPath := "res://config/config.ocl"
 var metanode := preload("res://meta_node.tscn")
 @onready var actors := get_node("Actors")
-@onready var cmdInterface := get_node("CommandInterface") as CommandInterface
+@onready var cmdInterface := get_node("CommandInterface")
 
 func _ready():
 	Log.setLevel(Log.LOG_LEVEL_VERBOSE)

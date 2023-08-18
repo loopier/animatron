@@ -1,5 +1,6 @@
 class_name CommandInterface
 extends Node
+
 ## Map OSC commands to Godot functionality
 ##
 ## Using dictionaries to store variable values and function pointers.
