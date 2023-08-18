@@ -14,11 +14,11 @@ func _for(args: Array) -> Array:
 	var items = args.slice(2)
 	
 	for i in range:
-		result.append(_getVariable(variableName, i, items))
+		result.append(_replaceVariable(variableName, i, items))
 	return result
 
 ## Replaces all instances of the [param variable] in the [param args] by the [param value]. 
-func _getVariable(variable: String, value: Variant, args: Array) -> Array:
+func _replaceVariable(variable: String, value: Variant, args: Array) -> Array:
 	var newArgs = args.duplicate()
 	for i in len(newArgs):
 		if typeof(newArgs[i]) == TYPE_STRING and variable in newArgs[i]:

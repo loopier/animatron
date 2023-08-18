@@ -11,6 +11,7 @@ extends Node
 signal command_finished(msg, sender)
 signal command_error(msg, sender)
 
+var ocl := preload("res://ocl.gd")
 var status := preload("res://Status.gd")
 var metanode := preload("res://meta_node.tscn")
 var assetHelpers := preload("res://asset_helpers.gd").new()
@@ -217,10 +218,6 @@ func setVar(varName: String, value: Variant) -> Status:
 	variables[varName] = [value]
 	if Log.getLevel() == Log.LOG_LEVEL_VERBOSE:
 		_list(variables)
-<<<<<<< HEAD
-	reportStatus("%s" % [variables[varName][0]], null)
-=======
->>>>>>> develop
 	return Status.ok(variables[varName][0])
 
 func getCommand(command: String) -> Status:
