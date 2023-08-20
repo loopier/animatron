@@ -1,5 +1,6 @@
 class_name CommandInterface
 extends Node
+
 ## Map OSC commands to Godot functionality
 ##
 ## Using dictionaries to store variable values and function pointers.
@@ -10,6 +11,7 @@ extends Node
 signal command_finished(msg, sender)
 signal command_error(msg, sender)
 
+var ocl := preload("res://ocl.gd").new()
 var status := preload("res://Status.gd")
 var metanode := preload("res://meta_node.tscn")
 var assetHelpers := preload("res://asset_helpers.gd").new()
@@ -30,7 +32,7 @@ var coreCommands: Dictionary = {
 	"/set": setVar,
 	"/get": getVar,
 	# general commands
-	"/commands/list": listCommands,
+	"/commands/list": listAllCommands,
 	# assets
 	"/load": loadAnimationAsset,
 	"/assets/list": listAnimationAssets, # available in disk
@@ -40,6 +42,16 @@ var coreCommands: Dictionary = {
 	"/remove": removeActor,
 	"/free": "/remove",
 }
+## Commands that need to pass the incoming parameters as an array.
+## Couldn't find a more elegant way to deal with /def which seems to be the
+## only command that needs to pass on arguments as an array.
+var arrayCommands: Dictionary = {
+	"/def": setDef,
+}
+
+## Custom command definitions
+var defCommands := {}
+
 ## Node commands map.
 ## Node commands are parsed differently than [param coreCommands]. They use 
 ## OSC address as method name (by removing the forward slash), and first argument is
@@ -90,7 +102,7 @@ func _process(_delta):
 
 ## Different behaviours depend on the [param command] contents in the different [member xxxCommands] dictionaries.
 func parseCommand(key: String, args: Array, sender: String) -> Status:
-	var commandDicts := [coreCommands, nodeCommands]
+	var commandDicts := [coreCommands, nodeCommands, arrayCommands, defCommands]
 	var commandValue: Variant
 	var commandDict: Dictionary
 	var result := Status.new()
@@ -100,20 +112,82 @@ func parseCommand(key: String, args: Array, sender: String) -> Status:
 			commandDict = dict
 			break
 	
-	# aliases
+	# call recursively for aliases
 	if typeof(commandValue) == TYPE_STRING: 
-		return parseCommand(commandValue, args, sender) 
+		return parseCommand(commandValue, args, sender)
+	
+	# defs need to be called before regular commands with variables,
+	# otherwise 'parseArgs' removes the '/' from /def commands
+	if commandDict == defCommands:
+		result = parseDef(key, args)
+		for cmd in result.value:
+			result = parseCommand(cmd[0], cmd.slice(1), sender)
+	
+	args = parseArgs(args)
 	
 	match commandDict:
 		coreCommands: result = commandValue.callv(args)
 		nodeCommands: result = commandValue.call(key, args)
+		arrayCommands: result = commandValue.call(args)
 		_: command_error.emit("Command not found: %s" % [key], sender)
-	
+
 	match result.type:
 		Status.OK: command_finished.emit(result.msg, sender)
 		Status.ERROR: command_error.emit(result.msg, sender)
 		_: pass
 
+	return result
+
+func parseArgs(args: Array) -> Array:
+	var resultingArgs := []
+	for arg in args:
+		if typeof(arg) == TYPE_STRING && arg.begins_with("/"):
+			var v = getVar(arg)
+			if v.value != null: resultingArgs.append(v.value)
+			else: resultingArgs.append(arg)
+			continue
+		resultingArgs.append(arg)
+	return resultingArgs
+
+func parseDef(key, args) -> Status:
+	Log.debug("Parsing def commands: %s %s" % [key, defCommands[key]])
+	var def = defCommands[key]
+	for i in len(args):
+		var variableKey = def.variables.keys()[i]
+		def.variables[variableKey] = args[i]
+	var subcommands = ocl._def(def.variables, def.subcommands)
+	return Status.ok(subcommands, "Parsing subcommands: %s" % [subcommands])
+
+func setDef(args: Array) -> Status:
+	var splits = _splitArray(",", args)
+	var commandDef = splits[0]
+	var commandName = commandDef[0]
+	var commandVariables = commandDef.slice(1)
+	var subCommands = splits.slice(1)
+	
+	var variables := {}
+	for variableName in commandVariables:
+		variables[variableName] = ""
+	
+	defCommands[commandName] = {"variables": variables, "subcommands": subCommands}
+#	Log.debug("def args: %s" % [args])
+	Log.debug("def: name:%s args:%s sub:%s" % [commandName, variables, subCommands])
+#	Log.debug("defs: %s" % [defCommands])
+	return Status.ok([commandName, variables, subCommands], "Added command def: %s %s" % [commandName, variables, subCommands])
+
+## Similar to [method String.split] but with for arrays.
+## Returns a 2D array
+func _splitArray(delimiter: String, args: Array) -> Array:
+	var result := []
+	var last := 0
+	for i in len(args):
+		if typeof(args[i]) == TYPE_STRING and args[i] == delimiter:
+			result.append(args.slice(last, i))
+			i += 1
+			last = i
+	# when no delimiter is found, append everything as one single item, or
+	# append everything after the last delimiter.
+	result.append(args.slice(last))
 	return result
 
 ## Read a file with a [param filename] and return its OSC constent in a string
@@ -174,20 +248,32 @@ func remove(key, dict) -> Status:
 func _list(dict: Dictionary) -> Status:
 	var list := []
 	var msg := ""
-	for key in dict:
+	for key in dict.keys():
 		list.append(key)
 		msg += "%s: %s" % [key, dict[key]]
 	list.sort()
 	return Status.ok(list, msg)
 	
 
-func listCommands() -> Status:
-	var list := "\nCommands:\n"
-	var commands = coreCommands.keys()
-	commands.append_array(nodeCommands.keys())
-	for command in commands:
+func listAllCommands() -> Status:
+	var list := "\nCore Commands:\n"
+	list += listCommands(coreCommands).value
+	list += "\nNode Commands:\n"
+	list += listCommands(nodeCommands).value
+	list += "\nArray Commands:\n"
+	list += listCommands(arrayCommands).value
+	list += "\nDef Commands:\n"
+	list += listCommands(defCommands).value
+	return Status.ok(list, list)
+	
+
+func listCommands(commands: Dictionary) -> Status:
+	var list := "\n--\n"
+	var keys = commands.keys()
+	keys.sort()
+	for command in keys:
 		list += "%s\n" % [command]
-	return Status.ok(commands, list)
+	return Status.ok(list)
 
 func listActors() -> Status:
 	var actorsList := []

@@ -7,6 +7,7 @@ OSCdef(\error, { arg args, time, srcAddr, port; args[1..].first.postln; }, "/err
 n.sendMsg("/list");
 n.sendMsg("/commands/list");
 n.sendMsg("/assets/list");
+n.sendMsg("/variables/list");
 
 n.sendMsg("/load", "numbers");
 n.sendMsg("/load", "canon-man");
@@ -64,3 +65,22 @@ n.sendMsg("/offset/x", "x", -200);
 n.sendMsg("/animation/loop", "x", 0);
 n.sendMsg("/loop", "x", 1);
 n.sendMsg("/play", "x");
+
+(
+n.sendMsg("/load", "mama");
+// n.sendMsg("/create", "x", "mama");
+)
+n.sendMsg("/set", "/x", 2);
+n.sendMsg("/def", "/red/mama", "argA", "argB", ",", "/create", "x", "mama", ",", "/speed", "x", "/x", ",", "/color", "x", 1, 0, 0);
+n.sendMsg("/red/mama")
+
+// def
+n.sendMsg("/commands/list")
+n.sendMsg("/assets/list")
+n.sendMsg("/load", "mama");
+n.sendMsg("/def", "/ma", "actor", "anim", "scale", ",", "/create", "$actor", "$anim", ",", "/scale", "$actor", "$scale", "$scale");
+n.sendMsg("/ma", "alo", "mama", 0.5);
+n.sendMsg("/position/x", "alo", 0.2);
+n.sendMsg("/ma", "ola", "mama", 0.5);
+n.sendMsg("/list")
+n.sendMsg("/free", "*");

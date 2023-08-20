@@ -22,3 +22,28 @@ func test_listCommands():
 
 func test_listAssets():
 	assert_eq(cmd.listAssets().value, [])
+
+func test_splitArray():
+	var arr = ["/alo", ",", 1]
+	assert_eq(cmd._splitArray(",", arr), [["/alo"],[1]])
+	arr = ["/alo", "x", 1, ",", "/bla", "zzz"]
+	assert_eq(cmd._splitArray(",", arr), [["/alo", "x", 1], ["/bla", "zzz"]])
+	arr = ["/alo", "x", 1]
+	assert_eq(cmd._splitArray(",", arr), [["/alo", "x", 1]])
+
+func test_setDef():
+	var def = ["/alo", "x", 1, ",", "/create", "ma", "mama"]
+	assert_eq(cmd.setDef(def).value, ["/alo", ["x", 1], [["/create", "ma", "mama"]]])
+	def = ["/alo", "x", 1, ",", "/create", "ma", "mama", ",", "/size", "ma", 0.5]
+	assert_eq(cmd.setDef(def).value, ["/alo", ["x", 1], [["/create", "ma", "mama"], ["/size", "ma", 0.5]]])
+	def = ["/red/mama", "argA", "argB", ",", "/create", "x", "mama", ",", "/speed", "x", 2]
+	assert_eq(cmd.setDef(def).value, ["/red/mama", ["argA", "argB"], [["/create", "x", "mama"], ["/speed", "x", 2]]])
+
+func test_parseCommand():
+	cmd.setVar("/x", 1)
+	assert_eq(cmd.parseCommand("/get", ["/x"], "").value, 1)
+
+func test_parseArgs():
+	cmd.setVar("/x", 1)
+	assert_eq(cmd.parseArgs([]), [])
+	assert_eq(cmd.parseArgs(["/x"]), [1])
