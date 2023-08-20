@@ -11,7 +11,7 @@ extends Node
 signal command_finished(msg, sender)
 signal command_error(msg, sender)
 
-var ocl := preload("res://ocl.gd")
+var ocl := preload("res://ocl.gd").new()
 var status := preload("res://Status.gd")
 var metanode := preload("res://meta_node.tscn")
 var assetHelpers := preload("res://asset_helpers.gd").new()
@@ -112,9 +112,16 @@ func parseCommand(key: String, args: Array, sender: String) -> Status:
 			commandDict = dict
 			break
 	
-	# aliases
+	# call recursively for aliases
 	if typeof(commandValue) == TYPE_STRING: 
-		return parseCommand(commandValue, args, sender) 
+		return parseCommand(commandValue, args, sender)
+	
+	# defs need to be called before regular commands with variables,
+	# otherwise 'parseArgs' removes the '/' from /def commands
+	if commandDict == defCommands:
+		result = parseDef(key, args)
+		for cmd in result.value:
+			result = parseCommand(cmd[0], cmd.slice(1), sender)
 	
 	args = parseArgs(args)
 	
@@ -122,7 +129,6 @@ func parseCommand(key: String, args: Array, sender: String) -> Status:
 		coreCommands: result = commandValue.callv(args)
 		nodeCommands: result = commandValue.call(key, args)
 		arrayCommands: result = commandValue.call(args)
-		defCommands: result = parseCommandsArray(key, args)
 		_: command_error.emit("Command not found: %s" % [key], sender)
 
 	match result.type:
@@ -130,14 +136,6 @@ func parseCommand(key: String, args: Array, sender: String) -> Status:
 		Status.ERROR: command_error.emit(result.msg, sender)
 		_: pass
 
-	return result
-
-func parseCommandsArray(key, commands):
-	Log.debug("Parsing commands array: %s" % [key])
-	var result: Status
-	for command in defCommands[key]:
-		Log.debug("Parsing command array: %s" % [command])
-		result = parseCommand(command[0], command.slice(1), "")
 	return result
 
 func parseArgs(args: Array) -> Array:
@@ -151,18 +149,31 @@ func parseArgs(args: Array) -> Array:
 		resultingArgs.append(arg)
 	return resultingArgs
 
+func parseDef(key, args) -> Status:
+	Log.debug("Parsing def commands: %s %s" % [key, defCommands[key]])
+	var def = defCommands[key]
+	for i in len(args):
+		var variableKey = def.variables.keys()[i]
+		def.variables[variableKey] = args[i]
+	var subcommands = ocl._def(def.variables, def.subcommands)
+	return Status.ok(subcommands, "Parsing subcommands: %s" % [subcommands])
+
 func setDef(args: Array) -> Status:
 	var splits = _splitArray(",", args)
 	var commandDef = splits[0]
 	var commandName = commandDef[0]
-	var commandArgs = commandDef.slice(1)
+	var commandVariables = commandDef.slice(1)
 	var subCommands = splits.slice(1)
 	
-	defCommands[commandName] = subCommands
+	var variables := {}
+	for variableName in commandVariables:
+		variables[variableName] = ""
+	
+	defCommands[commandName] = {"variables": variables, "subcommands": subCommands}
 #	Log.debug("def args: %s" % [args])
-#	Log.debug("def: name:%s args:%s sub:%s" % [commandName, commandArgs, subCommands])
+	Log.debug("def: name:%s args:%s sub:%s" % [commandName, variables, subCommands])
 #	Log.debug("defs: %s" % [defCommands])
-	return Status.ok([commandName, commandArgs, subCommands], "Added command def: %s %s" % [commandName, commandArgs, subCommands])
+	return Status.ok([commandName, variables, subCommands], "Added command def: %s %s" % [commandName, variables, subCommands])
 
 ## Similar to [method String.split] but with for arrays.
 ## Returns a 2D array
