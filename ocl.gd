@@ -28,3 +28,20 @@ func _replaceVariable(variable: String, value: Variant, args: Array) -> Array:
 			else:
 				newArgs[i] = newArgs[i].replace(variable, "%s" % [value])
 	return newArgs
+
+## Returns the array of commands with all the variables replaced
+## [param variables] is a [class Dictionary] where the key is the variable name.
+## [param commands] is an [class Array] of commands with variables
+func _def(variables: Dictionary, commands: Array) -> Array:
+	var result = []
+	for cmd in commands:
+		print(cmd)
+		for i in len(cmd):
+			var item = cmd[i]
+			if typeof(item) == TYPE_STRING and item.contains("$"):
+				var varName = item.substr(item.find("$"))
+				var value = variables[varName.substr(1)] if variables.has(varName.substr(1)) else item
+				cmd = _replaceVariable(varName, value, cmd)
+		result.append(cmd)
+	print(result)
+	return result
