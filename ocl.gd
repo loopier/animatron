@@ -35,7 +35,6 @@ func _replaceVariable(variable: String, value: Variant, args: Array) -> Array:
 func _def(variables: Dictionary, commands: Array) -> Array:
 	var result = []
 	for cmd in commands:
-		print(cmd)
 		for i in len(cmd):
 			var item = cmd[i]
 			if typeof(item) == TYPE_STRING and item.contains("$"):
@@ -43,5 +42,4 @@ func _def(variables: Dictionary, commands: Array) -> Array:
 				var value = variables[varName.substr(1)] if variables.has(varName.substr(1)) else item
 				cmd = _replaceVariable(varName, value, cmd)
 		result.append(cmd)
-	print(result)
 	return result

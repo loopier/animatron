@@ -29,8 +29,8 @@ func test_def():
 	assert_eq(ocl._def({"arg1": "val1"}, [["/cmdA", "$arg1", "paramB", "$arg1"]]), [["/cmdA", "val1", "paramB", "val1"]])
 	assert_eq(ocl._def({"arg1": 2}, [["/cmdA", "$arg1", "paramB", "$arg1"], ["/cmdB", "bla", "$arg2"]]), [["/cmdA", 2, "paramB", 2], ["/cmdB", "bla", "$arg2"]])
 	assert_eq(ocl._def({"arg1": "val1"}, [["/cmdA", "$arg1", "paramB$arg1"]]), [["/cmdA", "val1", "paramBval1"]])
-	assert_eq(ocl._def({"arg1": 1}, [["/cmdA", "$arg1", "paramB$arg1"]]), [["/cmdA", "val1", "paramB1"]])
-	assert_eq(ocl._def({"arg1": 1.1}, [["/cmdA", "$arg1", "paramB$arg1"]]), [["/cmdA", "val1", "paramB1.1"]])
+	assert_eq(ocl._def({"arg1": 1}, [["/cmdA", "$arg1", "paramB$arg1"]]), [["/cmdA", 1, "paramB1"]])
+	assert_eq(ocl._def({"arg1": 1.1}, [["/cmdA", "$arg1", "paramB$arg1"]]), [["/cmdA", 1.1, "paramB1.1"]])
 
 func test_replaceVariable():
 	assert_eq(ocl._replaceVariable("$i", 0, ["/post", "$i"]), ["/post", 0])
