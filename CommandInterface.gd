@@ -11,6 +11,8 @@ extends Node
 signal command_finished(msg, sender)
 signal command_error(msg, sender)
 
+signal new_routine(msg)
+
 var ocl := preload("res://ocl.gd").new()
 var status := preload("res://Status.gd")
 var metanode := preload("res://meta_node.tscn")
@@ -47,6 +49,7 @@ var coreCommands: Dictionary = {
 ## only command that needs to pass on arguments as an array.
 var arrayCommands: Dictionary = {
 	"/def": setDef,
+	"/routine": newRoutine,
 }
 
 ## Custom command definitions
@@ -523,4 +526,11 @@ func callMethodWithVector(object: Variant, method: String, args: Array) -> Statu
 		_:
 			return Status.error("callActorMethodWithVector xpected between 1 and 4 arguments, received: %s" % [len(args.slice(1))])
 	return Status.ok(true, "Called %s.%s(Vector%d(%s))" % [object.get_name(), method, args.slice(1)])
-	
+
+func newRoutine(args: Array) -> Status:
+	var name: String = args[0]
+	var repeats: int = args[1] if typeof(args[1]) == TYPE_INT else -1
+	var interval: float = args[2]
+	var command: Array = args.slice(3)
+	new_routine.emit(name, repeats, interval, command)
+	return Status.ok()

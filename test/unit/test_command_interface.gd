@@ -47,3 +47,6 @@ func test_parseArgs():
 	cmd.setVar("/x", 1)
 	assert_eq(cmd.parseArgs([]), [])
 	assert_eq(cmd.parseArgs(["/x"]), [1])
+
+func test_newRoutine():
+	assert_eq(cmd.newRoutine(["routineA", "inf", 1, "/cmdA", "argA", 2]), Status.new())

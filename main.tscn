@@ -10,3 +10,5 @@ script = ExtResource("1_70ykf")
 
 [node name="CommandInterface" type="Node" parent="."]
 script = ExtResource("2_xp2d0")
+
+[node name="Routines" type="Node" parent="."]

@@ -84,3 +84,8 @@ n.sendMsg("/position/x", "alo", 0.2);
 n.sendMsg("/ma", "ola", "mama", 0.5);
 n.sendMsg("/list")
 n.sendMsg("/free", "*");
+
+// routine
+n.sendMsg("/routine", "routineA", "inf", 0.5, "/cmdA", "argA", 2.3);
+n.sendMsg("/routine", "routineA", 4, 0.5, "/cmdA", "argA", 2.3);
+n.sendMsg("/routine", "routineA", "bla", 0.5, "/cmdA", "argA", 2.3);

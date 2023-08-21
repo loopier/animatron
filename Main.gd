@@ -6,6 +6,8 @@ static var configPath := "res://config/config.ocl"
 var metanode := preload("res://meta_node.tscn")
 @onready var actors := get_node("Actors")
 @onready var cmdInterface := get_node("CommandInterface")
+@onready var Routine := preload("res://RoutineNode.tscn")
+@onready var routines := get_node("Routines")
 
 func _ready():
 	Log.setLevel(Log.LOG_LEVEL_VERBOSE)
@@ -16,6 +18,7 @@ func _ready():
 	osc.osc_msg_received.connect(_on_osc_msg_received)
 	cmdInterface.command_finished.connect(_on_command_finished)
 	cmdInterface.command_error.connect(_on_command_error)
+	cmdInterface.new_routine.connect(_on_new_routine)
 	
 	# saving osc maps for variables to .osc files can be used as config files
 	# load osc variable maps to a dictionary
@@ -37,3 +40,18 @@ func _on_command_error(msg: String, sender: String):
 	Log.error("Command error: %s" % [msg])
 	if sender:
 		osc.sendMessage(sender, "/error/reply", [msg])
+
+func _on_new_routine(name: String, repeats: int, interval: float, command: Array):
+	Log.verbose("New routine '%s' (%s times every %s): %s" % [name, repeats, interval, command])
+	var routine: Node
+	if routines.has_node(name):
+		routine = routines.get_node(name)
+	else:
+		routine = Routine.instantiate()
+		routine.name = name
+		routines.add_child(routine)
+	routine.repeats = repeats
+	routine.set_wait_time(interval)
+	routine.command = command
+	routine.start()
+	
