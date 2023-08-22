@@ -89,3 +89,4 @@ n.sendMsg("/free", "*");
 n.sendMsg("/routine", "routineA", "inf", 0.5, "/cmdA", "argA", 2.3);
 n.sendMsg("/routine", "routineA", 4, 0.5, "/cmdA", "argA", 2.3);
 n.sendMsg("/routine", "routineA", "bla", 0.5, "/cmdA", "argA", 2.3);
+n.sendMsg("/routines/list")
