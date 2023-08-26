@@ -485,7 +485,8 @@ func toggleProperty(property, object) -> Status:
 	property = property.replace("/", "_")
 	var value = object.get(property)
 	object.set(property, not(value))
-	return Status.ok(object.get(property), "Toggle %s.%s: %s -> %s" % [object.name, property, value, object.get(property)])
+#	Log.verbose("Toggle %s.%s: %s -> %s" % [object.name, property, value, object.get(property)])
+	return Status.ok(object.get(property))
 
 func toggleActorProperty(property, args) -> Status:
 	var result = getActor(args[0])

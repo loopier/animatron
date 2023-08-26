@@ -81,7 +81,7 @@ func _on_free_routine(name: String):
 	for routine in routines.find_children(name, "", true, false):
 		routine.stop()
 		routines.remove_child(routine)
-		routine.free()
+		routine.queue_free()
 		# FIX: change the following line to send OSC message
 		Log.debug("Routine removed: %s" % [name])
 
@@ -90,3 +90,6 @@ func _on_start_routine(name: String):
 	
 func _on_stop_routine(name: String):
 	routines.get_node(name).stop()
+
+func _on_routine_finished(name: String):
+	_on_free_routine(name)

@@ -100,6 +100,7 @@ n.sendMsg("/routine", "flipe", "inf", 1, "/flip/v", "x");
 )
 n.sendMsg("/routine/free", "flip*")
 n.sendMsg("/routines/list");
+n.sendMsg("/routine", "flipa", 3, 0.5, "/flip/v", "x");
 
 // toggle property
 (

@@ -5,20 +5,28 @@ extends Timer
 # single routine.
 
 signal eval_command(command)
+signal routine_finished(command)
 
 var command := []
-@onready var repeats = 0
-@onready var iteration = 0
+@onready var repeats := 0
+@onready var iteration := 0
+@onready var main := get_parent().get_parent()
 
 func _ready():
 	wait_time = 1.0
 	timeout.connect(_next)
-	var main = get_parent().get_parent()
 	eval_command.connect(main._on_eval_command)
+	routine_finished.connect(main._on_routine_finished)
 
 func _next():
-#	Log.debug("Timeout %s:%s %s" % [name, iteration, command])
+	Log.debug("Timeout %s:%s %s" % [name, iteration, command])
+	if repeats > 0 and iteration >= repeats:
+		routine_finished.emit(name)
+		return
 	eval_command.emit(command)
+	iteration = iteration + 1
 
 func _exit_tree():
 	timeout.disconnect(_next)
+	eval_command.disconnect(main._on_eval_command)
+	routine_finished.disconnect(main._on_routine_finished)
