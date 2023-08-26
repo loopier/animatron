@@ -17,6 +17,10 @@ signal free_routine(msg)
 signal start_routine(msg)
 signal stop_routine(msg)
 
+signal list_states()
+signal add_state(name, commands)
+signal free_state(name: String)
+
 var ocl := preload("res://ocl.gd").new()
 var status := preload("res://Status.gd")
 var metanode := preload("res://meta_node.tscn")
@@ -49,10 +53,13 @@ var coreCommands: Dictionary = {
 	"/remove": removeActor,
 	"/free": "/remove",
 	# routines
-	"/routines/list": listRoutines,
+	"/routines": listRoutines,
 	"/routine/start": startRoutine,
 	"/routine/stop": stopRoutine,
 	"/routine/free": freeRoutine,
+	# state machine
+	"/states": listStates,
+	"/state/free": freeState,
 }
 ## Commands that need to pass the incoming parameters as an array.
 ## Couldn't find a more elegant way to deal with /def which seems to be the
@@ -60,6 +67,7 @@ var coreCommands: Dictionary = {
 var arrayCommands: Dictionary = {
 	"/def": setDef,
 	"/routine": newRoutine,
+	"/state": addState,
 }
 
 ## Custom command definitions
@@ -583,3 +591,17 @@ func startRoutine(args: Array) -> Status:
 func stopRoutine(args: Array) -> Status:
 	stop_routine.emit(name)
 	return Status.ok(true)
+
+func listStates() -> Status:
+	list_states.emit()
+	return Status.ok()
+
+func addState(args: Array) -> Status:
+	Log.debug("add: %s %s" % [args[0], args.slice(1)])
+	add_state.emit(args[0], args.slice(1))
+	return Status.ok()
+
+func freeState(name: String) -> Status:
+	Log.debug("remove")
+	free_state.emit(name)
+	return Status.ok()

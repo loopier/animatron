@@ -9,9 +9,11 @@ var metanode := preload("res://meta_node.tscn")
 @onready var Routine := preload("res://RoutineNode.tscn")
 @onready var routines := get_node("Routines")
 
+@onready var stateMachines := {}
+
 func _ready():
 	Log.setLevel(Log.LOG_LEVEL_VERBOSE)
-#	Log.setLevel(Log.LOG_LEVEL_DEBUG)
+	Log.setLevel(Log.LOG_LEVEL_DEBUG)
 	
 	osc = OscReceiver.new()
 	self.add_child.call_deferred(osc)
@@ -24,6 +26,9 @@ func _ready():
 	cmdInterface.free_routine.connect(_on_free_routine)
 	cmdInterface.start_routine.connect(_on_start_routine)
 	cmdInterface.stop_routine.connect(_on_stop_routine)
+	cmdInterface.list_states.connect(_on_list_states)
+	cmdInterface.add_state.connect(_on_add_state)
+	cmdInterface.free_state.connect(_on_free_state)
 	
 	# saving osc maps for variables to .osc files can be used as config files
 	# load osc variable maps to a dictionary
@@ -93,3 +98,20 @@ func _on_stop_routine(name: String):
 
 func _on_routine_finished(name: String):
 	_on_free_routine(name)
+
+func _on_list_states():
+	# FIX: change to send OSC
+	Log.info("State machines:")
+	var states = stateMachines.keys()
+	states.sort()
+	for state in states:
+		Log.info("%s: %s" % [state, stateMachines[state]])
+
+func _on_add_state(name: String, commands: String):
+	NOT WORKING
+	Log.verbose("Add state machine '%s': %s" % [name, commands])
+	stateMachines[name] = commands
+
+func _on_free_state(name: String):
+	Log.verbose("Remove state machine: %s" % [name])
+	stateMachines.erase(name)

@@ -91,7 +91,7 @@ n.sendMsg("/free", "*");
 n.sendMsg("/routine", "routineA", "inf", 1.0, "/cmdA", "argA", 2.3);
 n.sendMsg("/routine", "routineA", 4, 0.5, "/cmdA", "argA", 1.3);
 n.sendMsg("/routine", "routineA", "bla", 0.5, "/cmdA", "argA", 2.3);
-n.sendMsg("/routines/list")
+n.sendMsg("/routines")
 (
 n.sendMsg("/load", "mama");
 n.sendMsg("/create", "x", "mama");
@@ -99,7 +99,7 @@ n.sendMsg("/routine", "flipa", "inf", 0.25, "/flip/h", "x");
 n.sendMsg("/routine", "flipe", "inf", 1, "/flip/v", "x");
 )
 n.sendMsg("/routine/free", "flip*")
-n.sendMsg("/routines/list");
+n.sendMsg("/routines");
 n.sendMsg("/routine", "flipa", 3, 0.5, "/flip/v", "x");
 
 // toggle property
@@ -111,3 +111,8 @@ n.sendMsg("/create", "x", "mama");
 n.sendMsg("/flip/v", "x");
 // actor propertyArray
 n.sendMsg("/visible", "x");
+
+// state machines
+n.sendMsg("/state", "bla", "bli", "blo");
+n.sendMsg("/state/free", "bla");
+n.sendMsg("/states");
