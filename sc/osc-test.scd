@@ -65,6 +65,8 @@ n.sendMsg("/offset/x", "x", -200);
 n.sendMsg("/animation/loop", "x", 0);
 n.sendMsg("/loop", "x", 1);
 n.sendMsg("/play", "x");
+n.sendMsg("/hide", "x");
+n.sendMsg("/show", "x");
 
 (
 n.sendMsg("/load", "mama");
@@ -92,9 +94,19 @@ n.sendMsg("/routine", "routineA", "bla", 0.5, "/cmdA", "argA", 2.3);
 n.sendMsg("/routines/list")
 (
 n.sendMsg("/load", "mama");
-n.sendMsg("/create", "ma", "mama");
-n.sendMsg("/routine", "flipa", "inf", 0.25, "/flip/h", "ma");
-n.sendMsg("/routine", "flipe", "inf", 1, "/flip/v", "ma", 1);
+n.sendMsg("/create", "x", "mama");
+n.sendMsg("/routine", "flipa", "inf", 0.25, "/flip/h", "x");
+n.sendMsg("/routine", "flipe", "inf", 1, "/flip/v", "x");
 )
 n.sendMsg("/routine/free", "flip*")
 n.sendMsg("/routines/list");
+
+// toggle property
+(
+n.sendMsg("/load", "mama");
+n.sendMsg("/create", "x", "mama");
+)
+// animation property
+n.sendMsg("/flip/v", "x");
+// actor propertyArray
+n.sendMsg("/visible", "x");

@@ -86,8 +86,11 @@ var nodeCommands: Dictionary = {
 	"/frame/progress": setAnimationProperty,
 	"/speed/scale": setAnimationProperty,
 	"/speed": "/speed/scale",
-	"/flip/v": setAnimationProperty,
-	"/flip/h": setAnimationProperty,
+	"/flip/v": toggleAnimationProperty,
+	"/flip/h": toggleAnimationProperty,
+	"/visible": toggleActorProperty,
+	"/hide": callActorMethod,
+	"/show": callActorMethod,
 	"/offset": setAnimationPropertyWithVector,
 	"/offset/x": setAnimationPropertyWithVectorN,
 	"/offset/y": setAnimationPropertyWithVectorN,
@@ -476,6 +479,25 @@ func setAnimationProperty(property, args) -> Status:
 
 func setAnimationFramesProperty(property, args) -> Status:
 	return callAnimationFramesMethod("/set" + property, args)
+
+func toggleProperty(property, object) -> Status:
+	if property.begins_with("/"): property = property.substr(1)
+	property = property.replace("/", "_")
+	var value = object.get(property)
+	object.set(property, not(value))
+	return Status.ok(object.get(property), "Toggle %s.%s: %s -> %s" % [object.name, property, value, object.get(property)])
+
+func toggleActorProperty(property, args) -> Status:
+	var result = getActor(args[0])
+	if result.isError(): return result
+	var actor = result.value
+	return toggleProperty(property, actor)
+
+func toggleAnimationProperty(property, args) -> Status:
+	var result = getActor(args[0])
+	if result.isError(): return result
+	var animation = result.value.get_node("Animation")
+	return toggleProperty(property, animation)
 
 func callActorMethod(method, args) -> Status:
 	var result = getActor(args[0])
