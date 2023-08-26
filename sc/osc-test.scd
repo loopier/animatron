@@ -86,7 +86,15 @@ n.sendMsg("/list")
 n.sendMsg("/free", "*");
 
 // routine
-n.sendMsg("/routine", "routineA", "inf", 0.5, "/cmdA", "argA", 2.3);
-n.sendMsg("/routine", "routineA", 4, 0.5, "/cmdA", "argA", 2.3);
+n.sendMsg("/routine", "routineA", "inf", 1.0, "/cmdA", "argA", 2.3);
+n.sendMsg("/routine", "routineA", 4, 0.5, "/cmdA", "argA", 1.3);
 n.sendMsg("/routine", "routineA", "bla", 0.5, "/cmdA", "argA", 2.3);
 n.sendMsg("/routines/list")
+(
+n.sendMsg("/load", "mama");
+n.sendMsg("/create", "ma", "mama");
+n.sendMsg("/routine", "flipa", "inf", 0.25, "/flip/h", "ma");
+n.sendMsg("/routine", "flipe", "inf", 1, "/flip/v", "ma", 1);
+)
+n.sendMsg("/routine/free", "flip*")
+n.sendMsg("/routines/list");

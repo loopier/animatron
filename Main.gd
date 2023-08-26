@@ -11,6 +11,7 @@ var metanode := preload("res://meta_node.tscn")
 
 func _ready():
 	Log.setLevel(Log.LOG_LEVEL_VERBOSE)
+#	Log.setLevel(Log.LOG_LEVEL_DEBUG)
 	
 	osc = OscReceiver.new()
 	self.add_child.call_deferred(osc)
@@ -35,8 +36,11 @@ func _on_osc_msg_received(addr: String, args: Array, sender: String):
 	cmdInterface.parseCommand(addr, args, sender)
 #	osc.sendTo(sender, "/testing", [16])
 
+func _on_eval_command(command: Array):
+	cmdInterface.parseCommand(command[0], command.slice(1), "")
+
 func _on_command_finished(msg: String, sender: String):
-	Log.info("Command finished:\n%s" % [msg])
+	Log.verbose("Command finished:\n%s" % [msg])
 	if sender:
 		osc.sendMessage(sender, "/status/reply", [msg])
 
@@ -46,11 +50,13 @@ func _on_command_error(msg: String, sender: String):
 		osc.sendMessage(sender, "/error/reply", [msg])
 
 func _on_list_routines():
-	var routineNames = routines.keys()
-	routineNames.sort()
-	for routineName in routineNames:
+	var routineList := []
+	for child in routines.get_children():
+		routineList.append("%s(%s/%s): %s" % [child.name, child.iteration, child.repeats, child.command])
+	routineList.sort()
+	for routine in routineList:
 		# FIX: send OSC message
-		Log.info(routineName)
+		Log.info(routine)
 
 func _on_new_routine(name: String, repeats: int, interval: float, command: Array):
 	Log.verbose("New routine '%s' (%s times every %s): %s" % [name, repeats, interval, command])
@@ -67,15 +73,17 @@ func _on_new_routine(name: String, repeats: int, interval: float, command: Array
 	routine.start()
 
 func _on_free_routine(name: String):
-	if routines.has_node(name):
-		var routine = routines.get_node(name)
+	# FIX: change the following line to send OSC message
+	Log.debug("Removing routine: %s" % [name])
+	Log.debug(routines.find_children(name))
+	Log.debug(routines.get_children()[0].name)
+	Log.debug(routines.find_child(name,true, false))
+	for routine in routines.find_children(name, "", true, false):
 		routine.stop()
-		routine.remove_and_skip()
+		routines.remove_child(routine)
+		routine.free()
 		# FIX: change the following line to send OSC message
-		Log.verbose("Routine removed: %s" % [name])
-	else:
-		# FIX: change the following line to send OSC message
-		Log.error("Routine not found: %s" % [name])
+		Log.debug("Routine removed: %s" % [name])
 
 func _on_start_routine(name: String):
 	routines.get_node(name).start()

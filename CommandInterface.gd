@@ -43,21 +43,23 @@ var coreCommands: Dictionary = {
 	"/load": loadAnimationAsset,
 	"/assets/list": listAnimationAssets, # available in disk
 	"/animations/list": listAnimations, # loaded
+	# actors
 	"/actors/list": listActors,
 	"/create": createActor,
 	"/remove": removeActor,
 	"/free": "/remove",
+	# routines
+	"/routines/list": listRoutines,
+	"/routine/start": startRoutine,
+	"/routine/stop": stopRoutine,
+	"/routine/free": freeRoutine,
 }
 ## Commands that need to pass the incoming parameters as an array.
 ## Couldn't find a more elegant way to deal with /def which seems to be the
 ## only command that needs to pass on arguments as an array.
 var arrayCommands: Dictionary = {
 	"/def": setDef,
-	"/routines/list": listRoutines,
 	"/routine": newRoutine,
-	"/routine/start": startRoutine,
-	"/routine/stop": stopRoutine,
-	"/routine/free": freeRoutine,
 }
 
 ## Custom command definitions
@@ -118,9 +120,9 @@ func parseCommand(key: String, args: Array, sender: String) -> Status:
 	var commandDict: Dictionary
 	var result := Status.new()
 	for dict in commandDicts:
-		commandValue = dict.get(key)
-		if commandValue != null: 
+		if dict.has(key):
 			commandDict = dict
+			commandValue = dict.get(key)
 			break
 	
 	# call recursively for aliases
@@ -467,7 +469,7 @@ func setAnimationPropertyWithVectorN(property, args) -> Status:
 	return setNodePropertyWithVectorN(animation, property, args[1])
 
 func setActorProperty(property, args) -> Status:
-	return callActorMethod("/set" + property, args)
+	return callActorMethod("/set" + property, args if len(args) > 0 else [])
 
 func setAnimationProperty(property, args) -> Status:
 	return callAnimationMethod("/set" + property, args)
@@ -537,7 +539,7 @@ func callMethodWithVector(object: Variant, method: String, args: Array) -> Statu
 
 func listRoutines() -> Status:
 	list_routines.emit()
-	return Status.ok()
+	return Status.ok(true)
 
 func newRoutine(args: Array) -> Status:
 	var name: String = args[0]
@@ -545,16 +547,16 @@ func newRoutine(args: Array) -> Status:
 	var interval: float = args[2]
 	var command: Array = args.slice(3)
 	new_routine.emit(name, repeats, interval, command)
-	return Status.ok()
+	return Status.ok(true)
 
 func freeRoutine(name: String) -> Status:
 	free_routine.emit(name)
-	return Status.ok()
+	return Status.ok(true)
 
 func startRoutine(args: Array) -> Status:
 	start_routine.emit(name)
-	return Status.ok()
+	return Status.ok(true)
 
 func stopRoutine(args: Array) -> Status:
 	stop_routine.emit(name)
-	return Status.ok()
+	return Status.ok(true)
