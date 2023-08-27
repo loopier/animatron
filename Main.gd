@@ -13,7 +13,7 @@ var metanode := preload("res://meta_node.tscn")
 
 func _ready():
 	Log.setLevel(Log.LOG_LEVEL_VERBOSE)
-	Log.setLevel(Log.LOG_LEVEL_DEBUG)
+#	Log.setLevel(Log.LOG_LEVEL_DEBUG)
 	
 	osc = OscReceiver.new()
 	self.add_child.call_deferred(osc)
@@ -22,7 +22,7 @@ func _ready():
 	cmdInterface.command_finished.connect(_on_command_finished)
 	cmdInterface.command_error.connect(_on_command_error)
 	cmdInterface.list_routines.connect(_on_list_routines)
-	cmdInterface.new_routine.connect(_on_new_routine)
+	cmdInterface.add_routine.connect(_on_add_routine)
 	cmdInterface.free_routine.connect(_on_free_routine)
 	cmdInterface.start_routine.connect(_on_start_routine)
 	cmdInterface.stop_routine.connect(_on_stop_routine)
@@ -63,7 +63,7 @@ func _on_list_routines():
 		# FIX: send OSC message
 		Log.info(routine)
 
-func _on_new_routine(name: String, repeats: int, interval: float, command: Array):
+func _on_add_routine(name: String, repeats: int, interval: float, command: Array):
 	Log.verbose("New routine '%s' (%s times every %s): %s" % [name, repeats, interval, command])
 	var routine: Node
 	if routines.has_node(name):
@@ -103,15 +103,18 @@ func _on_list_states():
 	# FIX: change to send OSC
 	Log.info("State machines:")
 	var states = stateMachines.keys()
+	Log.debug("%s" % [stateMachines])
 	states.sort()
 	for state in states:
 		Log.info("%s: %s" % [state, stateMachines[state]])
 
-func _on_add_state(name: String, commands: String):
-	NOT WORKING
+func _on_add_state(name: String, commands: Array):
 	Log.verbose("Add state machine '%s': %s" % [name, commands])
 	stateMachines[name] = commands
 
 func _on_free_state(name: String):
 	Log.verbose("Remove state machine: %s" % [name])
-	stateMachines.erase(name)
+	# there's no wildcard matching for Dictionary so we need to implement it ourselves
+	for key in stateMachines.keys():
+		if key.match(name):
+			stateMachines.erase(key)

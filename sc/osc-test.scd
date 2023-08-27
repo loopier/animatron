@@ -114,5 +114,7 @@ n.sendMsg("/visible", "x");
 
 // state machines
 n.sendMsg("/state", "bla", "bli", "blo");
-n.sendMsg("/state/free", "bla");
+n.sendMsg("/state", "ala", "ali", "alo");
+n.sendMsg("/state", "cla", "cli", "clo");
+n.sendMsg("/state/free", "*la");
 n.sendMsg("/states");

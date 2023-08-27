@@ -12,14 +12,14 @@ signal command_finished(msg, sender)
 signal command_error(msg, sender)
 
 signal list_routines()
-signal new_routine(msg)
+signal add_routine(msg)
 signal free_routine(msg)
 signal start_routine(msg)
 signal stop_routine(msg)
 
 signal list_states()
 signal add_state(name, commands)
-signal free_state(name: String)
+signal free_state(name)
 
 var ocl := preload("res://ocl.gd").new()
 var status := preload("res://Status.gd")
@@ -66,7 +66,7 @@ var coreCommands: Dictionary = {
 ## only command that needs to pass on arguments as an array.
 var arrayCommands: Dictionary = {
 	"/def": setDef,
-	"/routine": newRoutine,
+	"/routine": addRoutine,
 	"/state": addState,
 }
 
@@ -572,12 +572,12 @@ func listRoutines() -> Status:
 	list_routines.emit()
 	return Status.ok(true)
 
-func newRoutine(args: Array) -> Status:
+func addRoutine(args: Array) -> Status:
 	var name: String = args[0]
 	var repeats: int = args[1] if typeof(args[1]) == TYPE_INT else -1
 	var interval: float = args[2]
 	var command: Array = args.slice(3)
-	new_routine.emit(name, repeats, interval, command)
+	add_routine.emit(name, repeats, interval, command)
 	return Status.ok(true)
 
 func freeRoutine(name: String) -> Status:
@@ -599,6 +599,7 @@ func listStates() -> Status:
 func addState(args: Array) -> Status:
 	Log.debug("add: %s %s" % [args[0], args.slice(1)])
 	add_state.emit(args[0], args.slice(1))
+#	list_states.emit()
 	return Status.ok()
 
 func freeState(name: String) -> Status:
