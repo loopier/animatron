@@ -21,9 +21,9 @@ func next():
 	var nextIndex = randi() % len(states[current])
 	var nextState = states[current][nextIndex]
 	if not states.has(nextState):
-		Log.error("%s -- State not found: %s" % [name, nextState])
+		Log.error("%s(%s) -- State not found: %s" % [name, current, nextState])
 		return
-	Log.debug("%s(%s) -- Next state: %s -> %s" % [name, current, current, nextState])
+	Log.verbose("%s(%s) -- Next state: %s" % [name, current,  nextState])
 	current = nextState
 
 func isEmpty() -> bool:

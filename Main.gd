@@ -127,7 +127,7 @@ func _on_free_state(machine: String, state: String):
 				stateMachines.erase(machineKey)
 
 func _on_next_state(machine: String):
-	Log.verbose("Update state: %s" % [machine])
 	for machineKey in stateMachines.keys():
 		if machineKey.match(machine):
-			stateMachines[machine].next()
+			stateMachines[machineKey].next()
+			cmdInterface.parseCommand(stateMachines[machineKey].status(), [], "")

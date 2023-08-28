@@ -70,11 +70,17 @@ n.sendMsg("/show", "x");
 
 (
 n.sendMsg("/load", "mama");
-// n.sendMsg("/create", "x", "mama");
+n.sendMsg("/create", "x", "mama");
 )
 n.sendMsg("/set", "/x", 2);
 n.sendMsg("/def", "/red/mama", "argA", "argB", ",", "/create", "x", "mama", ",", "/speed", "x", "/x", ",", "/color", "x", 1, 0, 0);
+n.sendMsg("/def", "/ma/left", ",", "/position/x", "x", 0.2);
+n.sendMsg("/def", "/ma/right", ",", "/position/x", "x", 0.7);
 n.sendMsg("/red/mama")
+n.sendMsg("/ma/left")
+n.sendMsg("/ma/right")
+n.sendMsg("/position/x", "x", 0.7)
+n.sendMsg("/position/x", "x", 0.25)
 
 // def
 n.sendMsg("/commands/list")
@@ -114,11 +120,16 @@ n.sendMsg("/visible", "x");
 
 // state machines
 (
-n.sendMsg("/state", "machineA", "stateA1", "stateA2");
-n.sendMsg("/state", "machineA", "stateA2", "stateA1", "nonExistentState");
-n.sendMsg("/state", "machineA", "stateA3", "stateA1", "stateA3", "stateA2");
-n.sendMsg("/state", "machineB", "stateB1", "stateB1", "stateB2");
-n.sendMsg("/state", "machineB", "stateB2", "stateB2", "stateB1");
+n.sendMsg("/load", "mama");
+n.sendMsg("/create", "x", "mama");
+n.sendMsg("/def", "/stateA1", ",", "/position/x", "x", 0.2);
+n.sendMsg("/def", "/stateA2", ",", "/position/x", "x", 0.5);
+n.sendMsg("/def", "/stateA3", ",", "/position/x", "x", 0.7);
+n.sendMsg("/state", "machineA", "/stateA1", "/stateA2");
+n.sendMsg("/state", "machineA", "/stateA2", "/stateA1", "/stateA3");
+n.sendMsg("/state", "machineA", "/stateA3", "/stateA1", "/stateA3", "/stateA2");
+n.sendMsg("/state", "machineB", "/stateB1", "/stateB1", "/stateB2");
+n.sendMsg("/state", "machineB", "/stateB2", "/stateB2", "/stateB1");
 n.sendMsg("/states");
 )
 n.sendMsg("/state/free", "machineB", "stateB1");
@@ -127,3 +138,7 @@ n.sendMsg("/state/free", "machineA", "stateA3");
 n.sendMsg("/state/free", "machine*", "s*");
 
 n.sendMsg("/state/next", "machineA");
+n.sendMsg("/state/next", "machine*");
+n.sendMsg("/position/x", "x", 0.5);
+n.sendMsg("/stateA2");
+n.sendMsg("/commands/list");
