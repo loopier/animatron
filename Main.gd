@@ -108,48 +108,26 @@ func _on_list_states():
 	var machines = stateMachines.keys()
 	machines.sort()
 	for machine in machines:
-		listStateMachine(machine)
-
-## List states of one state machine.
-## [param machine] is the name of the state machine to be listed
-func listStateMachine(machine: String) -> Array:
-	Log.info("%s:" % [machine])
-	var states = stateMachines[machine].keys()
-	states.sort()
-	for state in states:
-		Log.info("%s: %s" % [state, stateMachines[machine][state]])
-	return states
+		Log.info("%s(%s): %s" % [machine, stateMachines[machine].status(), stateMachines[machine].list()])
 
 ## Add a [param state] to a [param machine]
 func _on_add_state(machine: String, state: String, commands: Array):
-	Log.verbose("Add state machine '%s:%s': %s" % [machine, state, commands])
-	if not stateMachines.has(machine): stateMachines[machine] = {}
-	stateMachines[machine][state] = commands
+	if not stateMachines.has(machine): 
+		stateMachines[machine] = StateMachine.new()
+		stateMachines[machine].name = machine
+	stateMachines[machine].addState(state, commands)
 
 ## Remove a [param state] from a [param machine] -- wildcard matching
 func _on_free_state(machine: String, state: String):
-	Log.verbose("Remove state machine: %s" % [name])
-	# There's no wildcard matching for Dictionary so we need to implement it ourselves,
-	# both for machine names and states -- on a separate method
+	# There's no wildcard matching for Dictionary so we need to implement it ourselves
 	for machineKey in stateMachines.keys():
 		if machineKey.match(machine):
-			freeState(machineKey, state)
-			if len(stateMachines[machineKey]) <= 0:
-				freeStateMachine(machineKey)
+			stateMachines[machineKey].removeState(state)
+			if stateMachines[machineKey].isEmpty():
+				stateMachines.erase(machineKey)
 
-## Removes any state from [param machine] with a name that matches [param state].
-func freeState(machine: String, state: String):
-	# There's no wildcard matching for Dictionary so we need to implement it ourselves
-	for key in stateMachines[machine].keys():
-		if key.match(state):
-			stateMachines[machine].erase(state)
-
-## Removes any state machine  with a name that name matches [param machine].
-func freeStateMachine(machine: String):
-	# There's no wildcard matching for Dictionary so we need to implement it ourselves
+func _on_next_state(machine: String):
+	Log.verbose("Update state: %s" % [machine])
 	for machineKey in stateMachines.keys():
-		if machineKey.match(machine): 
-			stateMachines.erase(machine)
-
-func _on_next_state(machine: String, name: String):
-	Log.verbose("Update state %s:%s" % [machine, name])
+		if machineKey.match(machine):
+			stateMachines[machine].next()

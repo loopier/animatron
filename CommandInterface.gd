@@ -20,7 +20,7 @@ signal stop_routine(msg)
 signal list_states()
 signal add_state(machine, state, commands)
 signal free_state(machine, state)
-signal next_state(machine, state)
+signal next_state(machine)
 
 var ocl := preload("res://ocl.gd").new()
 var status := preload("res://Status.gd")
@@ -607,7 +607,7 @@ func freeState(machine: String, state: String) -> Status:
 	free_state.emit(machine, state)
 	return Status.ok()
 
-func nextState(machine: String, state: String) -> Status:
-	Log.debug("next state %s:%s" % [machine, state])
-	next_state.emit(machine, state)
+func nextState(machine: String) -> Status:
+	Log.debug("next state:%s" % [machine])
+	next_state.emit(machine)
 	return Status.ok()

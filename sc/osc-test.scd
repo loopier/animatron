@@ -113,12 +113,17 @@ n.sendMsg("/flip/v", "x");
 n.sendMsg("/visible", "x");
 
 // state machines
+(
 n.sendMsg("/state", "machineA", "stateA1", "stateA2");
-n.sendMsg("/state", "machineA", "stateA2", "stateA1", "state3");
-n.sendMsg("/state", "machineA", "stateA3", "stateA1", "state3", "state2");
+n.sendMsg("/state", "machineA", "stateA2", "stateA1", "nonExistentState");
+n.sendMsg("/state", "machineA", "stateA3", "stateA1", "stateA3", "stateA2");
 n.sendMsg("/state", "machineB", "stateB1", "stateB1", "stateB2");
 n.sendMsg("/state", "machineB", "stateB2", "stateB2", "stateB1");
 n.sendMsg("/states");
+)
+n.sendMsg("/state/free", "machineB", "stateB1");
 n.sendMsg("/state/free", "machineB", "stateB2");
 n.sendMsg("/state/free", "machineA", "stateA3");
-n.sendMsg("/state/free", "machineB", "s*");
+n.sendMsg("/state/free", "machine*", "s*");
+
+n.sendMsg("/state/next", "machineA");
