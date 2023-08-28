@@ -8,6 +8,7 @@ var metanode := preload("res://meta_node.tscn")
 @onready var cmdInterface := get_node("CommandInterface")
 @onready var Routine := preload("res://RoutineNode.tscn")
 @onready var routines := get_node("Routines")
+var StateMachine := preload("res://StateMachine.gd")
 
 @onready var stateMachines := {}
 
@@ -29,6 +30,7 @@ func _ready():
 	cmdInterface.list_states.connect(_on_list_states)
 	cmdInterface.add_state.connect(_on_add_state)
 	cmdInterface.free_state.connect(_on_free_state)
+	cmdInterface.next_state.connect(_on_next_state)
 	
 	# saving osc maps for variables to .osc files can be used as config files
 	# load osc variable maps to a dictionary
@@ -99,22 +101,55 @@ func _on_stop_routine(name: String):
 func _on_routine_finished(name: String):
 	_on_free_routine(name)
 
+## List all state machines
 func _on_list_states():
 	# FIX: change to send OSC
 	Log.info("State machines:")
-	var states = stateMachines.keys()
-	Log.debug("%s" % [stateMachines])
+	var machines = stateMachines.keys()
+	machines.sort()
+	for machine in machines:
+		listStateMachine(machine)
+
+## List states of one state machine.
+## [param machine] is the name of the state machine to be listed
+func listStateMachine(machine: String) -> Array:
+	Log.info("%s:" % [machine])
+	var states = stateMachines[machine].keys()
 	states.sort()
 	for state in states:
-		Log.info("%s: %s" % [state, stateMachines[state]])
+		Log.info("%s: %s" % [state, stateMachines[machine][state]])
+	return states
 
-func _on_add_state(name: String, commands: Array):
-	Log.verbose("Add state machine '%s': %s" % [name, commands])
-	stateMachines[name] = commands
+## Add a [param state] to a [param machine]
+func _on_add_state(machine: String, state: String, commands: Array):
+	Log.verbose("Add state machine '%s:%s': %s" % [machine, state, commands])
+	if not stateMachines.has(machine): stateMachines[machine] = {}
+	stateMachines[machine][state] = commands
 
-func _on_free_state(name: String):
+## Remove a [param state] from a [param machine] -- wildcard matching
+func _on_free_state(machine: String, state: String):
 	Log.verbose("Remove state machine: %s" % [name])
-	# there's no wildcard matching for Dictionary so we need to implement it ourselves
-	for key in stateMachines.keys():
-		if key.match(name):
-			stateMachines.erase(key)
+	# There's no wildcard matching for Dictionary so we need to implement it ourselves,
+	# both for machine names and states -- on a separate method
+	for machineKey in stateMachines.keys():
+		if machineKey.match(machine):
+			freeState(machineKey, state)
+			if len(stateMachines[machineKey]) <= 0:
+				freeStateMachine(machineKey)
+
+## Removes any state from [param machine] with a name that matches [param state].
+func freeState(machine: String, state: String):
+	# There's no wildcard matching for Dictionary so we need to implement it ourselves
+	for key in stateMachines[machine].keys():
+		if key.match(state):
+			stateMachines[machine].erase(state)
+
+## Removes any state machine  with a name that name matches [param machine].
+func freeStateMachine(machine: String):
+	# There's no wildcard matching for Dictionary so we need to implement it ourselves
+	for machineKey in stateMachines.keys():
+		if machineKey.match(machine): 
+			stateMachines.erase(machine)
+
+func _on_next_state(machine: String, name: String):
+	Log.verbose("Update state %s:%s" % [machine, name])

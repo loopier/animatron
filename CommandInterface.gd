@@ -18,8 +18,9 @@ signal start_routine(msg)
 signal stop_routine(msg)
 
 signal list_states()
-signal add_state(name, commands)
-signal free_state(name)
+signal add_state(machine, state, commands)
+signal free_state(machine, state)
+signal next_state(machine, state)
 
 var ocl := preload("res://ocl.gd").new()
 var status := preload("res://Status.gd")
@@ -60,6 +61,7 @@ var coreCommands: Dictionary = {
 	# state machine
 	"/states": listStates,
 	"/state/free": freeState,
+	"/state/next": nextState,
 }
 ## Commands that need to pass the incoming parameters as an array.
 ## Couldn't find a more elegant way to deal with /def which seems to be the
@@ -597,12 +599,15 @@ func listStates() -> Status:
 	return Status.ok()
 
 func addState(args: Array) -> Status:
-	Log.debug("add: %s %s" % [args[0], args.slice(1)])
-	add_state.emit(args[0], args.slice(1))
+	add_state.emit(args[0], args[1], args.slice(2))
 #	list_states.emit()
 	return Status.ok()
 
-func freeState(name: String) -> Status:
-	Log.debug("remove")
-	free_state.emit(name)
+func freeState(machine: String, state: String) -> Status:
+	free_state.emit(machine, state)
+	return Status.ok()
+
+func nextState(machine: String, state: String) -> Status:
+	Log.debug("next state %s:%s" % [machine, state])
+	next_state.emit(machine, state)
 	return Status.ok()

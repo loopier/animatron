@@ -113,8 +113,12 @@ n.sendMsg("/flip/v", "x");
 n.sendMsg("/visible", "x");
 
 // state machines
-n.sendMsg("/state", "bla", "bli", "blo");
-n.sendMsg("/state", "ala", "ali", "alo");
-n.sendMsg("/state", "cla", "cli", "clo");
-n.sendMsg("/state/free", "*la");
+n.sendMsg("/state", "machineA", "stateA1", "stateA2");
+n.sendMsg("/state", "machineA", "stateA2", "stateA1", "state3");
+n.sendMsg("/state", "machineA", "stateA3", "stateA1", "state3", "state2");
+n.sendMsg("/state", "machineB", "stateB1", "stateB1", "stateB2");
+n.sendMsg("/state", "machineB", "stateB2", "stateB2", "stateB1");
 n.sendMsg("/states");
+n.sendMsg("/state/free", "machineB", "stateB2");
+n.sendMsg("/state/free", "machineA", "stateA3");
+n.sendMsg("/state/free", "machineB", "s*");
