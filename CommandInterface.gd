@@ -42,6 +42,8 @@ var coreCommands: Dictionary = {
 	"/test": getActor, ## used to test random stuff
 	"/set": setVar,
 	"/get": getVar,
+	# log
+	"/log/level": setLogLevel,
 	# general commands
 	"/commands/list": listAllCommands,
 	"/commands": "/commands/list",
@@ -220,6 +222,16 @@ func _splitArray(delimiter: String, args: Array) -> Array:
 	# append everything after the last delimiter.
 	result.append(args.slice(last))
 	return result
+
+func setLogLevel(level: String) -> Status:
+	match level:
+		"fatal": Log.setLevel(Log.LOG_LEVEL_FATAL)
+		"error": Log.setLevel(Log.LOG_LEVEL_ERROR)
+		"warn": Log.setLevel(Log.LOG_LEVEL_WARNING)
+		"info": Log.setLevel(Log.LOG_LEVEL_INFO)
+		"debug": Log.setLevel(Log.LOG_LEVEL_DEBUG)
+		"verbose": Log.setLevel(Log.LOG_LEVEL_VERBOSE)
+	return Status.ok(Log.getLevel(), "Log level: %s" % [Log.getLevel()])
 
 func post(args: Array) -> Status:
 	for arg in args:
