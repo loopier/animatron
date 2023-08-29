@@ -109,6 +109,7 @@ var nodeCommands: Dictionary = {
 	"/scale/y": setActorPropertyWithVectorN,
 	"/apply/scale": callActorMethodWithVector,
 	"/set/position": callActorMethodWithVector,
+	"/position": setActorPropertyWithVector,
 	"/position/x": setActorPropertyWithVectorN,
 	"/position/y": setActorPropertyWithVectorN,
 	"/rotation": "/rotation/degrees",
@@ -138,13 +139,13 @@ func parseCommand(key: String, args: Array, sender: String) -> Status:
 			commandValue = dict.get(key)
 			break
 	
-	# call recursively for aliases
+	# recursive call for aliases
 	if typeof(commandValue) == TYPE_STRING: 
 		return parseCommand(commandValue, args, sender)
 	
 	# defs need to be called before regular commands with variables,
 	# otherwise 'parseArgs' removes the '/' from /def commands
-	if commandDict == defCommands:
+	if not defCommands.is_empty() and commandDict == defCommands:
 		result = parseDef(key, args)
 		for cmd in result.value:
 			result = parseCommand(cmd[0], cmd.slice(1), sender)
