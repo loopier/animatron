@@ -146,3 +146,6 @@ n.sendMsg("/position/x", "x", 500);
 n.sendMsg("/stateA2");
 n.sendMsg("/commands/list");
 n.sendMsg("/commands");
+
+// post
+n.sendMsg("/post", "alo", "bla bla bla");

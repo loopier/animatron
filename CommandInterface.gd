@@ -73,6 +73,7 @@ var arrayCommands: Dictionary = {
 	"/def": setDef,
 	"/routine": addRoutine,
 	"/state": addState,
+	"/post": post,
 }
 
 ## Custom command definitions
@@ -220,6 +221,11 @@ func _splitArray(delimiter: String, args: Array) -> Array:
 	result.append(args.slice(last))
 	return result
 
+func post(args: Array) -> Status:
+	for arg in args:
+		Log.info(arg)
+	return Status.ok()
+
 ## Read a file with a [param filename] and return its OSC constent in a string
 func loadFile(filename: String) -> Status:
 	Log.verbose("Reading: %s" % [filename])
@@ -283,7 +289,6 @@ func _list(dict: Dictionary) -> Status:
 		msg += "%s: %s" % [key, dict[key]]
 	list.sort()
 	return Status.ok(list, msg)
-	
 
 func listAllCommands() -> Status:
 	var list := "\nCore Commands:\n"
@@ -295,7 +300,6 @@ func listAllCommands() -> Status:
 	list += "\nDef Commands:\n"
 	list += listCommands(defCommands).value
 	return Status.ok(list, list)
-	
 
 func listCommands(commands: Dictionary) -> Status:
 	var list := "\n--\n"
