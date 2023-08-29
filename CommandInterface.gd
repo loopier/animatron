@@ -48,7 +48,9 @@ var coreCommands: Dictionary = {
 	# assets
 	"/load": loadAnimationAsset,
 	"/assets/list": listAnimationAssets, # available in disk
+	"/assets": "/assets/list",
 	"/animations/list": listAnimations, # loaded
+	"/animations": "/animations/list",
 	# actors
 	"/actors/list": listActors,
 	"/create": createActor,

@@ -7,13 +7,16 @@ OSCdef(\error, { arg args, time, srcAddr, port; args[1..].first.postln; }, "/err
 n.sendMsg("/list");
 n.sendMsg("/commands/list");
 n.sendMsg("/assets/list");
+n.sendMsg("/assets");
 n.sendMsg("/variables/list");
 
 n.sendMsg("/load", "numbers");
 n.sendMsg("/load", "canon-man");
 n.sendMsg("/load", "om-walk-e");
 n.sendMsg("/load", "fox-walk");
+n.sendMsg("/load", "mama");
 n.sendMsg("/animations/list");
+n.sendMsg("/animations");
 n.sendMsg("/actors/list");
 
 n.sendMsg("/load", "mama");
