@@ -44,6 +44,7 @@ var coreCommands: Dictionary = {
 	"/get": getVar,
 	# general commands
 	"/commands/list": listAllCommands,
+	"/commands": "/commands/list",
 	# assets
 	"/load": loadAnimationAsset,
 	"/assets/list": listAnimationAssets, # available in disk
