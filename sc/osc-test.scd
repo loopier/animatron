@@ -148,7 +148,8 @@ n.sendMsg("/commands/list");
 n.sendMsg("/commands");
 
 // post
-n.sendMsg("/post", "alo", "bla bla bla");
+n.sendMsg("/post", "alo\n", "bla bla bla");
+
 // log
 n.sendMsg("/log/level", "fatal");
 n.sendMsg("/log/level", "error");
@@ -156,3 +157,5 @@ n.sendMsg("/log/level", "warn");
 n.sendMsg("/log/level", "info");
 n.sendMsg("/log/level", "debug");
 n.sendMsg("/log/level", "verbose");
+
+n.sendMsg("/mame", "a")

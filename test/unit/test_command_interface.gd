@@ -50,3 +50,6 @@ func test_parseArgs():
 
 func test_newRoutine():
 	assert_eq(cmd.newRoutine(["routineA", "inf", 1, "/cmdA", "argA", 2]), Status.new())
+
+func test_getTextBlocks():
+	assert_eq(cmd.getTextBlocks("bla bla\nalo\n\nzirlit"), ["bla bla\nalo", "zirlit"])

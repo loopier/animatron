@@ -48,15 +48,18 @@ func _on_osc_msg_received(addr: String, args: Array, sender: String):
 #	osc.sendTo(sender, "/testing", [16])
 
 func _on_load_config(filename: String):
-	Log.debug("TODO load config: %s" % [filename])
+	var configCmds = cmdInterface.loadCommandFile(filename).value
+	for cmd in configCmds:
+		cmdInterface.parseCommand(cmd[0], cmd.slice(1), "")
 
 func _on_eval_command(command: Array):
 	cmdInterface.parseCommand(command[0], command.slice(1), "")
 
 func _on_command_finished(msg: String, sender: String):
-	Log.verbose("Command finished:\n%s" % [msg])
-	if sender:
-		osc.sendMessage(sender, "/status/reply", [msg])
+	if not msg.is_empty():
+		Log.verbose("Command finished:\n%s" % [msg])
+		if sender:
+			osc.sendMessage(sender, "/status/reply", [msg])
 
 func _on_command_error(msg: String, sender: String):
 	Log.error("Command error: %s" % [msg])

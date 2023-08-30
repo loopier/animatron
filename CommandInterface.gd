@@ -213,6 +213,43 @@ func defineCommand(args: Array) -> Status:
 #	Log.debug("defs: %s" % [defCommands])
 	return Status.ok([commandName, variables, subCommands], "Added command def: %s %s" % [commandName, variables, subCommands])
 
+## Load commands from a file and return an array
+func loadCommandFile(path: String) -> Status:
+	var file = FileAccess.open(path, FileAccess.READ)
+	var contents = file.get_as_text()
+	var cmds: Array = convertTextToCommands(contents).value
+	return Status.ok(cmds, "Loaded commands from: %s" % [path])
+
+## Converts multiple lines of text to an array of commands, ignoring empty lines and comments
+func convertTextToCommands(input: String) -> Status:
+	var cmds := []
+	var lines := Array(input.split("\n")) # convert from PackedStringArray
+	lines = lines.filter(filterComments)
+	lines = lines.filter(filterEmptyLines)
+	for line in lines:
+		var cmd := convertTextLineToCommand(line)
+		cmds.append(cmd)
+		Log.verbose("Converted text to command: %s" % [cmd])
+	return Status.ok(cmds)
+
+## Returns an array of strings as text blocks
+func getTextBlocks(input: String) -> Array:
+	return input.split("\n\n")
+
+func getTextLines(input: String) -> Array:
+	return input.split("\n")
+
+## To be used with [method Array.filter()]
+func filterComments(line: String) -> bool:
+	return not line.begins_with("#")
+
+## To be used with [method Array.filter()]
+func filterEmptyLines(line: String) -> bool:
+	return not line.is_empty()
+
+func convertTextLineToCommand(line: String) -> Array:
+	return line.split(" ")
+
 ## Similar to [method String.split] but with for arrays.
 ## Returns a 2D array
 func _splitArray(delimiter: String, args: Array) -> Array:
@@ -239,6 +276,7 @@ func setLogLevel(level: String) -> Status:
 	return Status.ok(Log.getLevel(), "Log level: %s" % [Log.getLevel()])
 
 func post(args: Array) -> Status:
+	args = " ".join(PackedStringArray(args)).split("\\n")
 	for arg in args:
 		Log.info(arg)
 	return Status.ok()
