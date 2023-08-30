@@ -9,6 +9,7 @@ var metanode := preload("res://meta_node.tscn")
 @onready var Routine := preload("res://RoutineNode.tscn")
 @onready var routines := get_node("Routines")
 var StateMachine := preload("res://StateMachine.gd")
+var config := preload("res://Config.gd").new()
 
 @onready var stateMachines := {}
 
@@ -20,6 +21,7 @@ func _ready():
 	self.add_child.call_deferred(osc)
 	osc.startServer()
 	osc.osc_msg_received.connect(_on_osc_msg_received)
+	config.load_config.connect(_on_load_config)
 	cmdInterface.command_finished.connect(_on_command_finished)
 	cmdInterface.command_error.connect(_on_command_error)
 	cmdInterface.list_routines.connect(_on_list_routines)
@@ -32,6 +34,8 @@ func _ready():
 	cmdInterface.free_state.connect(_on_free_state)
 	cmdInterface.next_state.connect(_on_next_state)
 	
+	config.loadConfig("startup.osc")
+	
 	# saving osc maps for variables to .osc files can be used as config files
 	# load osc variable maps to a dictionary
 
@@ -42,6 +46,9 @@ func _process(_delta):
 func _on_osc_msg_received(addr: String, args: Array, sender: String):
 	cmdInterface.parseCommand(addr, args, sender)
 #	osc.sendTo(sender, "/testing", [16])
+
+func _on_load_config(filename: String):
+	Log.debug("TODO load config: %s" % [filename])
 
 func _on_eval_command(command: Array):
 	cmdInterface.parseCommand(command[0], command.slice(1), "")
