@@ -72,7 +72,7 @@ var coreCommands: Dictionary = {
 ## Couldn't find a more elegant way to deal with /def which seems to be the
 ## only command that needs to pass on arguments as an array.
 var arrayCommands: Dictionary = {
-	"/def": setDef,
+	"/def": defineCommand,
 	"/routine": addRoutine,
 	"/state": addState,
 	"/post": post,
@@ -191,7 +191,12 @@ func parseDef(key, args) -> Status:
 	var subcommands = ocl._def(def.variables, def.subcommands)
 	return Status.ok(subcommands, "Parsing subcommands: %s" % [subcommands])
 
-func setDef(args: Array) -> Status:
+## Adds a custom command definition
+# The subcommands need to be an array, so we have to use an array for the whole arguments.
+# It would be better to separate the arguments in the signature (defCommand: String, defArgs: Array, commandList: Array)
+# but then we'd need to do it in parseCommand and would clutter the code. Maybe we can change it when
+# we implement other methods with comma-sparated arguments -- or any other separator
+func defineCommand(args: Array) -> Status:
 	var splits = _splitArray(",", args)
 	var commandDef = splits[0]
 	var commandName = commandDef[0]
