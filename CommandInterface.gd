@@ -192,10 +192,10 @@ func parseDef(key, args) -> Status:
 	return Status.ok(subcommands, "Parsing subcommands: %s" % [subcommands])
 
 ## Adds a custom command definition
-# The subcommands need to be an array, so we have to use an array for the whole arguments.
-# It would be better to separate the arguments in the signature (defCommand: String, defArgs: Array, commandList: Array)
-# but then we'd need to do it in parseCommand and would clutter the code. Maybe we can change it when
-# we implement other methods with comma-sparated arguments -- or any other separator
+## The subcommands need to be an array, so we have to use an array for the whole arguments.
+## It would be better to separate the arguments in the signature (defCommand: String, defArgs: Array, commandList: Array)
+## but then we'd need to do it in parseCommand and would clutter the code. Maybe we can change it when
+## we implement other methods with comma-sparated arguments -- or any other separator
 func defineCommand(args: Array) -> Status:
 	var splits = _splitArray(",", args)
 	var commandDef = splits[0]
@@ -208,9 +208,6 @@ func defineCommand(args: Array) -> Status:
 		variables[variableName] = ""
 	
 	defCommands[commandName] = {"variables": variables, "subcommands": subCommands}
-#	Log.debug("def args: %s" % [args])
-	Log.debug("def: name:%s args:%s sub:%s" % [commandName, variables, subCommands])
-#	Log.debug("defs: %s" % [defCommands])
 	return Status.ok([commandName, variables, subCommands], "Added command def: %s %s" % [commandName, variables, subCommands])
 
 ## Load commands from a file and return an array
@@ -223,14 +220,49 @@ func loadCommandFile(path: String) -> Status:
 ## Converts multiple lines of text to an array of commands, ignoring empty lines and comments
 func convertTextToCommands(input: String) -> Status:
 	var cmds := []
-	var lines := Array(input.split("\n")) # convert from PackedStringArray
+	var blocks := getTextBlocks(input)
+	for block in blocks:
+		if isDef(block):
+			cmds.append(convertDefBlockToCommand(block))
+		else:
+			cmds.append_array(convertTextBlockToCommands(block))
+	return Status.ok(cmds)
+
+func convertTextBlockToCommands(block: String) -> Array:
+	var cmds := []
+	var lines := Array(getTextLines(block)) # convert from PackedStringArray
 	lines = lines.filter(filterComments)
 	lines = lines.filter(filterEmptyLines)
 	for line in lines:
 		var cmd := convertTextLineToCommand(line)
 		cmds.append(cmd)
-		Log.verbose("Converted text to command: %s" % [cmd])
-	return Status.ok(cmds)
+		Log.verbose("Converted text to command: '%s' %s" % [block, cmds])
+	return cmds
+
+## Converts a [method /def] block of text, to a parsable [method /def] command
+## inserting "," between lines
+func convertDefBlockToCommand(input: String) -> Array:
+	var lines := getTextLines(input)
+	lines = lines.filter(filterComments)
+	lines = lines.filter(filterEmptyLines)
+	var def := []
+	for i in len(lines):
+		var cmd = convertTextLineToCommand(lines[i])
+		def.append_array(cmd)
+		if i < len(lines) - 1:
+			def.append(",")
+	Log.verbose("Converted text def to command:\n%s\n%s" % [input.strip_edges(), def])
+	return def
+
+func convertTextLineToCommand(line: String) -> Array:
+	return line.strip_edges().split(" ")
+
+func isDef(input: String) -> bool:
+	var regex = RegEx.new()
+	# accept as def a block with a comment, it's be removed when converted to command
+	regex.compile("(^#.*\\n)*/def\\s+(.*)(\\n\\s+.*|^\\s#)*")
+	var result = regex.search(input)
+	return result != null
 
 ## Returns an array of strings as text blocks
 func getTextBlocks(input: String) -> Array:
@@ -241,14 +273,14 @@ func getTextLines(input: String) -> Array:
 
 ## To be used with [method Array.filter()]
 func filterComments(line: String) -> bool:
-	return not line.begins_with("#")
+	var regex = RegEx.new()
+	regex.compile("^\\s*#")
+	var result = regex.search(line)
+	return not result
 
 ## To be used with [method Array.filter()]
 func filterEmptyLines(line: String) -> bool:
 	return not line.is_empty()
-
-func convertTextLineToCommand(line: String) -> Array:
-	return line.split(" ")
 
 ## Similar to [method String.split] but with for arrays.
 ## Returns a 2D array

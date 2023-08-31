@@ -53,3 +53,11 @@ func test_newRoutine():
 
 func test_getTextBlocks():
 	assert_eq(cmd.getTextBlocks("bla bla\nalo\n\nzirlit"), ["bla bla\nalo", "zirlit"])
+
+func test_isDef():
+	var def = "/def /bla x y\n /alo $x $y"
+	assert_eq(cmd.isDef(def), true)
+
+func test_convertDefBlockToCommand():
+	var def = "/def /bla x y\n /alo $x $y\n /ixi $x 2"
+	assert_eq(cmd.convertDefBlockToCommand(def), ["/def", "/bla", "x", "y", ",", "/alo", "$x", "$y", ",", "/ixi", "$x", "2"])
