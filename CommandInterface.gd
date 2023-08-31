@@ -236,7 +236,7 @@ func convertTextBlockToCommands(block: String) -> Array:
 	for line in lines:
 		var cmd := convertTextLineToCommand(line)
 		cmds.append(cmd)
-		Log.verbose("Converted text to command: '%s' %s" % [block, cmds])
+		Log.verbose("Converted text to command: %s" % [cmds])
 	return cmds
 
 ## Converts a [method /def] block of text, to a parsable [method /def] command
@@ -251,7 +251,7 @@ func convertDefBlockToCommand(input: String) -> Array:
 		def.append_array(cmd)
 		if i < len(lines) - 1:
 			def.append(",")
-	Log.verbose("Converted text def to command:\n%s\n%s" % [input.strip_edges(), def])
+	Log.verbose("Converted text def to command: %s" % [def])
 	return def
 
 func convertTextLineToCommand(line: String) -> Array:

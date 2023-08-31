@@ -10,6 +10,9 @@ var metanode := preload("res://meta_node.tscn")
 @onready var routines := get_node("Routines")
 var StateMachine := preload("res://StateMachine.gd")
 var config := preload("res://Config.gd").new()
+@onready var editor := get_node("HSplitContainer/CodeEdit")
+@onready var helpWindow := get_node("HSplitContainer/VBoxContainer/HelpWindow")
+@onready var postWindow := get_node("HSplitContainer/VBoxContainer/PostWindow")
 
 @onready var stateMachines := {}
 
@@ -35,6 +38,7 @@ func _ready():
 	cmdInterface.next_state.connect(_on_next_state)
 	
 	config.loadConfig("startup.osc")
+	
 	
 	# saving osc maps for variables to .osc files can be used as config files
 	# load osc variable maps to a dictionary
