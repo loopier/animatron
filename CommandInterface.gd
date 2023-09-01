@@ -118,7 +118,7 @@ var nodeCommands: Dictionary = {
 	"/position": setActorPropertyWithVector,
 	"/position/x": setActorPropertyWithVectorN,
 	"/position/y": setActorPropertyWithVectorN,
-	"/rotation": "/rotation/degrees",
+	"/angle": "/rotation/degrees",
 	"/rotation/degrees": setActorProperty,
 }
 
