@@ -37,8 +37,7 @@ func _ready():
 	cmdInterface.free_state.connect(_on_free_state)
 	cmdInterface.next_state.connect(_on_next_state)
 	
-	config.loadConfig("startup.osc")
-	
+	editor.eval_code.connect(_on_eval_code)
 	
 	# saving osc maps for variables to .osc files can be used as config files
 	# load osc variable maps to a dictionary
@@ -145,3 +144,7 @@ func _on_next_state(machine: String):
 		if machineKey.match(machine):
 			stateMachines[machineKey].next()
 			cmdInterface.parseCommand(stateMachines[machineKey].status(), [], "")
+
+func _on_eval_code(text: String):
+	var cmds = cmdInterface.convertTextBlockToCommands(text)
+	cmdInterface.parseCommandsArray(cmds)

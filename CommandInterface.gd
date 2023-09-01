@@ -133,6 +133,12 @@ func _ready():
 func _process(_delta):
 	pass
 
+func parseCommandsArray(cmds: Array) -> Status:
+	var result: Status
+	for cmd in cmds:
+		result = parseCommand(cmd[0], cmd.slice(1), "")
+	return result
+
 ## Different behaviours depend on the [param command] contents in the different [member xxxCommands] dictionaries.
 func parseCommand(key: String, args: Array, sender: String) -> Status:
 	var commandDicts := [coreCommands, nodeCommands, arrayCommands, defCommands]
@@ -654,6 +660,9 @@ func callActorMethodWithVector(method, args) -> Status:
 func callMethodWithVector(object: Variant, method: String, args: Array) -> Status:
 	method = method.substr(1) if method.begins_with("/") else method
 	method = method.replace("/", "_").to_lower()
+	for i in len(args):
+		args[i] = float(args[i])
+	
 	match len(args):
 		2:
 			object.call(method, Vector2(args[0], args[1]))

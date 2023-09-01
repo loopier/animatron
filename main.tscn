@@ -36,7 +36,9 @@ text = "/def /example code
 	/bla $code 1.0
 
 # comment
-/bla x"
+/load mama
+/create ma mama
+/scale ma 0.5 0.5"
 placeholder_text = "code editor"
 highlight_all_occurrences = true
 syntax_highlighter = SubResource("CodeHighlighter_833ra")
@@ -62,4 +64,6 @@ layout_mode = 2
 theme = ExtResource("3_fotw2")
 theme_override_styles/normal = ExtResource("5_efpnp")
 placeholder_text = "post window"
-delimiter_strings = Array[String](["\" \"", "' '"])
+
+[node name="FileDialog" type="FileDialog" parent="."]
+size = Vector2i(392, 162)
