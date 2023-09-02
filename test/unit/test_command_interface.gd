@@ -61,3 +61,8 @@ func test_isDef():
 func test_convertDefBlockToCommand():
 	var def = "/def /bla x y\n /alo $x $y\n /ixi $x 2"
 	assert_eq(cmd.convertDefBlockToCommand(def), ["/def", "/bla", "x", "y", ",", "/alo", "$x", "$y", ",", "/ixi", "$x", "2"])
+
+func test_arrayToVector():
+	assert_eq(cmd.arrayToVector(["0", "0"]), Vector2(0.0,0.0))
+	assert_eq(cmd.arrayToVector(["0", "0", "0"]), Vector3(0.0,0.0,0.0))
+	assert_eq(cmd.arrayToVector(["0", "0", "0", "0"]), Vector4(0.0,0.0,0.0,0.0))

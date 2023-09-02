@@ -160,7 +160,11 @@ n.sendMsg("/log/level", "verbose");
 
 // relative property values
 (
-n.sendMsg("/load", "mama");
-n.sendMsg("/create", "x", "mama");
-n.sendMsg("/relative", "/scale", "x", 0.5);
+n.sendMsg("/load", "line");
+n.sendMsg("/create", "x", "line");
+n.sendMsg("/angle", "x", 0);
+n.sendMsg("/position/x", "x", 100);
+n.sendMsg("/relative", "/rotation/degrees", "x", -45);
+n.sendMsg("/relative", "/position/x", "x", 100);
+// n.sendMsg("/relative", "/scale", "x", 0.5);
 )

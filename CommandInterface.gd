@@ -622,17 +622,31 @@ func setRelativeProperty(args: Array) -> Status:
 	property = property.replace("/", "_")
 	var object = actor if actor.has_method("get_"+property) else actor.get_node("Animation")
 	var currentValue = object.get(property)
+	var modifier: Variant
 	Log.debug("property: %s.%s" % [object.name, property])
 	Log.debug("values: %s -> %s" % [currentValue, values])
 	if currentValue == null: return Status.error("Property not found: %s.%s" % [object.name, property])
 	match typeof(currentValue):
-		TYPE_ARRAY:
-			object.set(property, currentValue + values)
-		TYPE_VECTOR2, TYPE_VECTOR3, TYPE_VECTOR4:
-			setNodePropertyWithVector(object, property, values)
+		TYPE_VECTOR2, TYPE_VECTOR3, TYPE_VECTOR4: 
+			modifier = arrayToVector(values)
+			setNodePropertyWithVector(object, property, currentValue + modifier)
+			return Status.ok(object.get(property))
+		TYPE_ARRAY: modifier = values
+		TYPE_FLOAT: modifier = float(values[0])
+		TYPE_INT: modifier = int(values[0])
 		_:
-			object.set(property, currentValue + values[0])
+			modifier = values[0]
+	object.set(property, currentValue + modifier)
 	return Status.ok(object.get(property))
+
+func arrayToVector(input: Array) -> Variant:
+	for i in len(input):
+		input[i] = float(input[i])
+	match len(input):
+		2: return Vector2(input[0], input[1])
+		3: return Vector3(input[0], input[1], input[2])
+		4: return Vector4(input[0], input[1], input[2], input[3])
+		_: return null
 
 func callActorMethod(method, args) -> Status:
 	var result = getActor(args[0])
