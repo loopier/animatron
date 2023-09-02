@@ -32,13 +32,11 @@ layout_mode = 2
 size_flags_horizontal = 3
 size_flags_vertical = 3
 theme = ExtResource("3_fotw2")
-text = "/def /example code
-	/bla $code 1.0
+text = "/load mama
 
-# comment
-/load mama
 /create ma mama
-/scale ma 0.5 0.5"
+/relative /scale ma 0.5 0.5
+/relative /bla ma 1"
 placeholder_text = "code editor"
 highlight_all_occurrences = true
 syntax_highlighter = SubResource("CodeHighlighter_833ra")

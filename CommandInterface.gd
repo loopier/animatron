@@ -76,6 +76,7 @@ var arrayCommands: Dictionary = {
 	"/routine": addRoutine,
 	"/state": addState,
 	"/post": post,
+	"/relative": setRelativeProperty,
 }
 
 ## Custom command definitions
@@ -610,6 +611,28 @@ func toggleAnimationProperty(property, args) -> Status:
 	if result.isError(): return result
 	var animation = result.value.get_node("Animation")
 	return toggleProperty(property, animation)
+
+func setRelativeProperty(args: Array) -> Status:
+	var result = getActor(args[1])
+	if result.isError(): return result
+	var actor = result.value
+	var property = args[0]
+	var values = args.slice(2)
+	if property.begins_with("/"): property = property.substr(1)
+	property = property.replace("/", "_")
+	var object = actor if actor.has_method("get_"+property) else actor.get_node("Animation")
+	var currentValue = object.get(property)
+	Log.debug("property: %s.%s" % [object.name, property])
+	Log.debug("values: %s -> %s" % [currentValue, values])
+	if currentValue == null: return Status.error("Property not found: %s.%s" % [object.name, property])
+	match typeof(currentValue):
+		TYPE_ARRAY:
+			object.set(property, currentValue + values)
+		TYPE_VECTOR2, TYPE_VECTOR3, TYPE_VECTOR4:
+			setNodePropertyWithVector(object, property, values)
+		_:
+			object.set(property, currentValue + values[0])
+	return Status.ok(object.get(property))
 
 func callActorMethod(method, args) -> Status:
 	var result = getActor(args[0])

@@ -157,3 +157,10 @@ n.sendMsg("/log/level", "warn");
 n.sendMsg("/log/level", "info");
 n.sendMsg("/log/level", "debug");
 n.sendMsg("/log/level", "verbose");
+
+// relative property values
+(
+n.sendMsg("/load", "mama");
+n.sendMsg("/create", "x", "mama");
+n.sendMsg("/relative", "/scale", "x", 0.5);
+)
