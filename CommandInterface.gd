@@ -39,6 +39,7 @@ var variables: Dictionary:
 	get: return variables
 ## Core ommands map.
 var coreCommands: Dictionary = {
+	"/load/file": loadCommandFile,
 	"/test": getActor, ## used to test random stuff
 	"/set": setVar,
 	"/get": getVar,
@@ -162,7 +163,8 @@ func parseCommand(key: String, args: Array, sender: String) -> Status:
 		result = parseDef(key, args)
 		for cmd in result.value:
 			result = parseCommand(cmd[0], cmd.slice(1), sender)
-	
+		command_finished.emit(result.msg, sender)
+		return result
 	args = parseArgs(args)
 	
 	match commandDict:
@@ -190,7 +192,7 @@ func parseArgs(args: Array) -> Array:
 	return resultingArgs
 
 func parseDef(key, args) -> Status:
-	Log.debug("Parsing def commands: %s %s" % [key, defCommands[key]])
+#	Log.debug("Parsing def commands: %s %s" % [key, defCommands[key]])
 	var def = defCommands[key]
 	for i in len(args):
 		var variableKey = def.variables.keys()[i]
@@ -240,10 +242,11 @@ func convertTextBlockToCommands(block: String) -> Array:
 	var lines := Array(getTextLines(block)) # convert from PackedStringArray
 	lines = lines.filter(filterComments)
 	lines = lines.filter(filterEmptyLines)
+	
 	for line in lines:
 		var cmd := convertTextLineToCommand(line)
 		cmds.append(cmd)
-		Log.verbose("Converted text to command: %s" % [cmds])
+	Log.verbose("Converted text block to command: %s" % [cmds])
 	return cmds
 
 ## Converts a [method /def] block of text, to a parsable [method /def] command
@@ -258,7 +261,7 @@ func convertDefBlockToCommand(input: String) -> Array:
 		def.append_array(cmd)
 		if i < len(lines) - 1:
 			def.append(",")
-	Log.verbose("Converted text def to command: %s" % [def])
+	Log.verbose("Converted text def block to command: %s" % [def])
 	return def
 
 func convertTextLineToCommand(line: String) -> Array:
@@ -440,7 +443,6 @@ func listAnimationAssets() -> Status:
 
 func loadAnimationAsset(assetName: String) -> Status:
 	var path := animationAssetsPath.path_join(assetName)
-	Log.debug("TODO: load sprites and image sequences from disk: %s" % [path])
 	var dir := DirAccess.open(animationAssetsPath)
 	var assets := assetHelpers.getAssetFilesMatching(animationAssetsPath, assetName)
 	if not assets.sprites.is_empty():
@@ -485,13 +487,12 @@ func getActors(namePattern: String) -> Status:
 	return Status.ok(actors)
 
 func createActor(actorName: String, anim: String) -> Status:
-	Log.debug("TODO Add anim to actor on creation '%s': %s" % [actorName, anim])
 	if not animationsLibrary.has_animation(anim):
 		return Status.error("Animation not found: %s" % [anim])
 	var actor: Variant
 	var msg: String
 	var result = getActor(actorName)
-	Log.debug(result.msg)
+#	Log.debug(result.msg)
 	if result.value != null:
 		actor = getActor(actorName).value
 		msg = "Actor already exists: %s\n" % [actor]
@@ -499,7 +500,7 @@ func createActor(actorName: String, anim: String) -> Status:
 	else:
 		actor = metanode.instantiate()
 		msg = "Created new actor '%s': %s" % [actorName, anim]
-	Log.debug(msg)
+#	Log.debug(msg)
 	actor.set_name(actorName)
 	actor.set_position(Vector2(0.5,0.5) * get_parent().get_viewport_rect().size)
 	var animationNode = actor.get_node("Animation")
@@ -623,8 +624,8 @@ func setRelativeProperty(args: Array) -> Status:
 	var object = actor if actor.has_method("get_"+property) else actor.get_node("Animation")
 	var currentValue = object.get(property)
 	var modifier: Variant
-	Log.debug("property: %s.%s" % [object.name, property])
-	Log.debug("values: %s -> %s" % [currentValue, values])
+#	Log.debug("property: %s.%s" % [object.name, property])
+#	Log.debug("values: %s -> %s" % [currentValue, values])
 	if currentValue == null: return Status.error("Property not found: %s.%s" % [object.name, property])
 	match typeof(currentValue):
 		TYPE_VECTOR2, TYPE_VECTOR3, TYPE_VECTOR4: 
@@ -749,6 +750,6 @@ func freeState(machine: String, state: String) -> Status:
 	return Status.ok()
 
 func nextState(machine: String) -> Status:
-	Log.debug("next state:%s" % [machine])
+#	Log.debug("next state:%s" % [machine])
 	next_state.emit(machine)
 	return Status.ok()

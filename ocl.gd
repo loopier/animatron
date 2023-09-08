@@ -42,5 +42,5 @@ func _def(variables: Dictionary, commands: Array) -> Array:
 				var value = variables[varName.substr(1)] if variables.has(varName.substr(1)) else item
 				cmd = _replaceVariable(varName, value, cmd)
 		result.append(cmd)
-	Log.debug("processed def: %s" % [result])
+#	Log.debug("processed def: %s" % [result])
 	return result

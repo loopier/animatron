@@ -16,22 +16,24 @@ func _input(event):
 	if event.is_action_pressed("eval_block"): evalBlock()
 	if event.is_action_pressed("eval_line"): evalLine()
 
-func evalSelectedText():
-	var text = get_selected_text().strip_edges()
+func evalText(text):
+	text = text.strip_edges()
 	eval_code.emit(text)
 	deselect()
 
 func evalLine():
-	Log.debug("line")
 	var ln = get_caret_line()
 	var col = get_caret_column()
 	selectLine(ln)
-	evalSelectedText()
+	evalText(get_selected_text())
 
 func evalBlock():
 	if get_selected_text().is_empty():
 		selectBlock()
-	evalSelectedText()
+	
+	var blocks = get_selected_text().split("\n\n")
+	for block in blocks:
+		evalText(block)
 
 func selectLine(line: int):
 	select(line, 0, line, len(get_line(line)))
@@ -44,7 +46,7 @@ func selectBlock():
 
 func findPrevLinebreak(line: int) -> int:
 	var ln = line
-	while ln > 0:
+	while ln >= 0:
 		ln = ln - 1
 		if get_line(ln) == "": break
 	return ln + 1

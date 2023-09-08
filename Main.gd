@@ -58,6 +58,15 @@ func _on_load_config(filename: String):
 func _on_eval_command(command: Array):
 	cmdInterface.parseCommand(command[0], command.slice(1), "")
 
+func _on_eval_code(text: String):
+	var cmds := []
+	if text.begins_with("/def"):
+		# putting /def cmd in an array so we can use the same call for both cases
+		cmds.append(cmdInterface.convertDefBlockToCommand(text))
+	else:
+		cmds = cmdInterface.convertTextBlockToCommands(text)
+	cmdInterface.parseCommandsArray(cmds)
+
 func _on_command_finished(msg: String, sender: String):
 	if not msg.is_empty():
 		Log.verbose("Command finished:\n%s" % [msg])
@@ -123,7 +132,7 @@ func _on_list_states():
 	for machine in machines:
 		Log.info("%s(%s): %s" % [machine, stateMachines[machine].status(), stateMachines[machine].list()])
 
-## Add a [param state] to a [param machine]
+## Add a [param state] to a [param mijachine]
 func _on_add_state(machine: String, state: String, commands: Array):
 	if not stateMachines.has(machine): 
 		stateMachines[machine] = StateMachine.new()
@@ -144,7 +153,3 @@ func _on_next_state(machine: String):
 		if machineKey.match(machine):
 			stateMachines[machineKey].next()
 			cmdInterface.parseCommand(stateMachines[machineKey].status(), [], "")
-
-func _on_eval_code(text: String):
-	var cmds = cmdInterface.convertTextBlockToCommands(text)
-	cmdInterface.parseCommandsArray(cmds)
