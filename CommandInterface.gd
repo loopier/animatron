@@ -143,7 +143,7 @@ func parseCommandsArray(cmds: Array) -> Status:
 
 ## Different behaviours depend on the [param command] contents in the different [member xxxCommands] dictionaries.
 func parseCommand(key: String, args: Array, sender: String) -> Status:
-	var commandDicts := [coreCommands, nodeCommands, arrayCommands, defCommands]
+	var commandDicts := [coreCommands, nodeCommands, arrayCommands, defCommands,ocl.reservedWords]
 	var commandValue: Variant
 	var commandDict: Dictionary
 	var result := Status.new()
@@ -171,6 +171,7 @@ func parseCommand(key: String, args: Array, sender: String) -> Status:
 		coreCommands: result = commandValue.callv(args)
 		nodeCommands: result = commandValue.call(key, args)
 		arrayCommands: result = commandValue.call(args)
+		ocl.reservedWords: parseCommandsArray(commandValue.call(args))
 		_: command_error.emit("Command not found: %s" % [key], sender)
 
 	match result.type:

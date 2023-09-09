@@ -7,7 +7,8 @@
 [ext_resource type="StyleBox" uid="uid://dqdhrgvrn3l8a" path="res://styles/left-margin-transparent.stylebox" id="5_efpnp"]
 
 [sub_resource type="CodeHighlighter" id="CodeHighlighter_833ra"]
-number_color = Color(0.862715, 0.611612, 0.407904, 1)
+number_color = Color(0.862745, 0.611765, 0.407843, 1)
+symbol_color = Color(0.862745, 0.611765, 0.407843, 1)
 
 [node name="Main" type="Node2D"]
 script = ExtResource("1_70ykf")
@@ -28,10 +29,23 @@ theme_override_constants/separation = 0
 split_offset = 426
 
 [node name="CodeEdit" type="CodeEdit" parent="HSplitContainer"]
+z_index = 1
 layout_mode = 2
 size_flags_horizontal = 3
 size_flags_vertical = 3
 theme = ExtResource("3_fotw2")
+text = "/load mama
+
+/def /ma name val
+    /create $name mama
+    /angle $name val 0 0
+    
+    
+
+/for i 20 /ma ma$i $i 
+/for i 20 /angle ma$i $i0 
+/for i 20 /frame ma$i $i
+/for i 20 /position/x ma$i $i00"
 placeholder_text = "code editor"
 highlight_all_occurrences = true
 syntax_highlighter = SubResource("CodeHighlighter_833ra")

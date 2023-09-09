@@ -7,6 +7,7 @@ var reservedWords: Dictionary = {
 func _processReservedWord(word: String, args: Array) -> Variant:
 	return reservedWords.get(word).callv(args)
 
+## Example: [code]/for i 4 /post $i[/code]
 func _for(args: Array) -> Array:
 	var result = []
 	var variableName = "$%s" % [args[0]]
