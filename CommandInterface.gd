@@ -153,6 +153,9 @@ func parseCommand(key: String, args: Array, sender: String) -> Status:
 			commandValue = dict.get(key)
 			break
 	
+	Log.verbose("TODO: need to parse '$' variables before calculating")
+	args = ocl.processArgs(args)
+	
 	# recursive call for aliases
 	if typeof(commandValue) == TYPE_STRING: 
 		return parseCommand(commandValue, args, sender)

@@ -1,8 +1,41 @@
 class_name OpenControlLanguage 
 
 var reservedWords: Dictionary = {
-	"/for": _for
+	"/for": _for,
+	"/+": _binaryOp,
+	"/-": _binaryOp,
+	"/*": _binaryOp,
+	"//": _binaryOp,
+	"/%": _binaryOp,
 }
+
+var operators: Array = ["/+","/-", "*", "/", "%"]
+
+## Process arguments
+func processArgs(args: Array) -> Array:
+	var processed := []
+	print("processing args: %s" % [args])
+	Log.debug("processing args: %s" % [args])
+	var i = 0
+	while i < len(args):
+#		print("%s: %s %s" % [i, args[i], reservedWords.has(args[i])])
+		if reservedWords.has(args[i]):
+			processed.append(_binaryOp(args[i].substr(1), args[i+1], args[i+2]))
+			i = i + 3
+		else:
+			processed.append(args[i])
+			i = i + 1
+	print("%s" % [processed])
+	return processed
+
+func _binaryOp(operator: String, a: Variant, b: Variant) -> Variant:
+	match operator:
+		"+": return float(a) + float(b)
+		"-": return float(a) - float(b)
+		"*": return float(a) * float(b)
+		"/": return float(a) / float(b)
+		"%": return int(a) % int(b)
+	return -1
 
 func _processReservedWord(word: String, args: Array) -> Variant:
 	return reservedWords.get(word).callv(args)

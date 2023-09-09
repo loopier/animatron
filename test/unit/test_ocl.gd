@@ -15,6 +15,22 @@ func before_all():
 func after_all():
 	gut.p("ran run teardown logger", 2)
 
+func test_processArgs():
+	var args = ["bla", 0.2]
+	assert_eq(ocl.processArgs(args), args)
+	args = ["bla", "/+", 1, 2]
+	assert_eq(ocl.processArgs(args), ["bla", 3])
+	args = ["bla", "/-", 1, 2]
+	assert_eq(ocl.processArgs(args), ["bla", -1])
+	args = ["bla", "/*", 1.5, 2]
+	assert_eq(ocl.processArgs(args), ["bla", 3.0])
+	args = ["bla", "//", 1.0, 2]
+	assert_eq(ocl.processArgs(args), ["bla", 0.5])
+	args = ["bla", "/%", 4, 3]
+	assert_eq(ocl.processArgs(args), ["bla", 1])
+	args = ["bla", "/*", 4, "/+", 1, 3]
+	assert_eq(ocl.processArgs(args), ["bla", 16])
+
 func test_processReserveWord():
 	assert_eq(ocl._processReservedWord("/for", ["i", 4, "/post", "$i"]), [])
 	assert_eq(ocl._processReservedWord("/for", ["i", 4, "/post", "$i"]), [["/post", 0], ["/post", 1], ["/post", 2], ["/post", 4]])
