@@ -2,40 +2,93 @@ class_name OpenControlLanguage
 
 var reservedWords: Dictionary = {
 	"/for": _for,
-	"/+": _binaryOp,
-	"/-": _binaryOp,
-	"/*": _binaryOp,
-	"//": _binaryOp,
-	"/%": _binaryOp,
+	"/+": _calc,
+	"/-": _calc,
+	"/*": _calc,
+	"//": _calc,
+	"/%": _calc,
 }
 
 var operators: Array = ["/+","/-", "*", "/", "%"]
 
-## Process arguments
+## Replace variables and arithmetic for their values.
 func processArgs(args: Array) -> Array:
 	var processed := []
-	print("processing args: %s" % [args])
+#	print("processing args: %s" % [args])
 	Log.debug("processing args: %s" % [args])
 	var i = 0
 	while i < len(args):
 #		print("%s: %s %s" % [i, args[i], reservedWords.has(args[i])])
 		if reservedWords.has(args[i]):
-			processed.append(_binaryOp(args[i].substr(1), args[i+1], args[i+2]))
+			processed.append(_binaryOp(args[i], args[i+1], args[i+2]))
 			i = i + 3
 		else:
 			processed.append(args[i])
 			i = i + 1
-	print("%s" % [processed])
+	print("%s -> %s" % [args, processed])
 	return processed
 
-func _binaryOp(operator: String, a: Variant, b: Variant) -> Variant:
-	match operator:
-		"+": return float(a) + float(b)
-		"-": return float(a) - float(b)
-		"*": return float(a) * float(b)
-		"/": return float(a) / float(b)
-		"%": return int(a) % int(b)
-	return -1
+## Calculate the arithmetic operation represented by [param operator].[br]
+## [br]
+## [param operator] is a [String] representing an arithmetic operator.[br]
+## [param args] is an [Array] of 2 or more elements.[br]
+## [br]
+## All binary ops accept [b]2 OPERANDS ONLY[/b]. If [param args]'s size is greater than 2,
+## any items beyond index 1 will be ignored, [b]unless[/b] it contains another operator within range.
+## [br][br]
+## For example:
+## [codeblock]
+## _binaryOp("/+", [10, 11]) ## returns 21
+## _binaryOp("/+", [10, 11, 2]) ## returns 21 -- disregarding '2'
+## _binaryOp("/*", ["/+", 10, 11, 2]) ## returns 42 -- (10 + 11) * 2
+## _binaryOp("/*", [10, "/+", 11, 2]) ## returns 130 -- 10 * (/+ 11 + 2)
+## _binaryOp("/*", [10, "/+", 11, 2, 3]) ## returns 130 -- 10 * (t11 + 2) -- disregarding '3'
+## ... etc
+## [/codeblock] 
+func _calc(operator: String, args: Array) -> float:
+	var ops = _binaryGroups(operator, args)
+	print("%s -> %s" % [[operator] + args, ops])
+	for i in len(ops):
+		var op = ops[i]
+		if op is Array:
+			ops[i] = _calc(op[0], op.slice(1))
+	var result = _binaryOp(ops[0], ops[1], ops[2])
+	print("%s %s %s = %s" % [ops[0], ops[1], ops[2], result])
+	return result
+	
+## Group binary operations into arrays of [code][operator, operandA, opernadB][/code]
+func _binaryGroups(operator: String, args: Array) -> Array:
+	var groups := [operator]
+	var a := []
+	var b := []
+	if reservedWords.has(args[0]):
+		a = _binaryGroups(args[0], args.slice(1))
+	var index = len(a) if len(a) > 0 else 1
+	if reservedWords.has(args[index]):
+		b = _binaryGroups(args[index], args.slice(index + 1))
+	if len(a) == 0: a = [args[0]]
+	if len(b) == 0: b = [args[len(a)]]
+	match len(a):
+		1: groups.append(args[0])
+		_: groups.append(a)
+	match len(b):
+		1: groups.append(args[len(Helper.flatArray(a))])
+		_: groups.append(b)
+	Log.verbose("%s %s --> %s" % [operator, args, groups])
+	return groups
+
+## Calculate the arithmetic result of [code]a operator b[/code]
+func _binaryOp(operator: String, a: float, b: float) -> float:
+	var result := 0.0
+	match operator.substr(1):
+		"+": result = float(a) + float(b)
+		"-": result = float(a) - float(b)
+		"*": result = float(a) * float(b)
+		"/": result = float(a) / float(b)
+		"%": result = int(a) % int(b)
+	print("input: %s %s %s" % [operator, a, b])
+	print("output: %s %s %s = %s\n" % [a, operator.substr(1), b, result])
+	return result
 
 func _processReservedWord(word: String, args: Array) -> Variant:
 	return reservedWords.get(word).callv(args)

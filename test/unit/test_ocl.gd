@@ -16,7 +16,7 @@ func after_all():
 	gut.p("ran run teardown logger", 2)
 
 func test_processArgs():
-	var args = ["bla", 0.2]
+	var args := ["bla", 0.2]
 	assert_eq(ocl.processArgs(args), args)
 	args = ["bla", "/+", 1, 2]
 	assert_eq(ocl.processArgs(args), ["bla", 3])
@@ -30,6 +30,48 @@ func test_processArgs():
 	assert_eq(ocl.processArgs(args), ["bla", 1])
 	args = ["bla", "/*", 4, "/+", 1, 3]
 	assert_eq(ocl.processArgs(args), ["bla", 16])
+
+func test_calc():
+	print("---")
+	var args = ["/+", 1, 2]
+	assert_eq(ocl._calc(args[0], args.slice(1)), 3)
+	print("---")
+	args = ["/+", 1, "/*", 2, 3]
+	assert_eq(ocl._calc(args[0], args.slice(1)), 7)
+	print("---")
+	args = ["/+", "/*", 1, 2, 3]
+	assert_eq(ocl._calc(args[0], args.slice(1)), 5)
+	print("---")
+	args = ["/+", "/*", 1, "/-", 2, 3, 4]
+	assert_eq(ocl._calc(args[0], args.slice(1)), 3)
+	print("---")
+	args = ["/+", "/*", 1, 2, "/-", 3, 4]
+	assert_eq(ocl._calc(args[0], args.slice(1)), 1)
+
+func test_binaryGroups():
+	print("---")
+	var args := []
+	args = ["/+", 1, "/*", 2, 3]
+	assert_eq(ocl._binaryGroups(args[0], args.slice(1)), ["/+", 1, ["/*", 2, 3]])
+	print("---")
+	args = ["/+", "/*", 1, 2, 3]
+	assert_eq(ocl._binaryGroups(args[0], args.slice(1)), ["/+", ["/*", 1, 2], 3])
+	print("---")
+	args = ["/+", "/*", 1, 2.0, "/-", 3, 4]
+	assert_eq(ocl._binaryGroups(args[0], args.slice(1)), ["/+", ["/*", 1, 2.0], ["/-", 3, 4]])
+	print("---")
+	args = ["/+", "/*", 1, "/-", 2, 3, 4]
+	assert_eq(ocl._binaryGroups(args[0], args.slice(1)), ["/+", ["/*", 1, ["/-", 2, 3]], 4])
+
+func test_binaryOp():
+	assert_eq(ocl._binaryOp("/+", 1, 2), 3)
+	assert_eq(ocl._binaryOp("/-", 1, 2), -1)
+	assert_eq(ocl._binaryOp("/*", 1, 2), 2)
+	assert_eq(ocl._binaryOp("//", 1, 2), 0.5)
+	assert_eq(ocl._binaryOp("/%", 1, 2), 1)
+	assert_eq(ocl._binaryOp("/%", 3, 2), 1)
+	assert_eq(ocl._binaryOp("/%", 4, 2), 0)
+
 
 func test_processReserveWord():
 	assert_eq(ocl._processReservedWord("/for", ["i", 4, "/post", "$i"]), [])
