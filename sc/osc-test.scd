@@ -10,6 +10,7 @@ n.sendMsg("/assets/list");
 
 n.sendMsg("/load", "numbers");
 n.sendMsg("/load", "canon-man");
+n.sendMsg("/load", "Explosion01-light");
 n.sendMsg("/load", "om-walk-e");
 n.sendMsg("/load", "fox-walk");
 n.sendMsg("/animations/list");
@@ -18,10 +19,12 @@ n.sendMsg("/actors/list");
 n.sendMsg("/load", "mama");
 n.sendMsg("/load", "numbers");
 n.sendMsg("/create", "x", "fox-walk");
+n.sendMsg("/create", "y", "canon-man");
+n.sendMsg("/create", "z", "Explosion01-light");
 n.sendMsg("/create", "x", "om-walk-e");
 n.sendMsg("/animation", "x", "numbers");
 n.sendMsg("/animation", "x", "bla");
-
+n.sendMsg("/color", "z", 0.5, 0.2, 0.9)
 (
 n.sendMsg("/load", "mama");
 n.sendMsg("/load", "numbers");

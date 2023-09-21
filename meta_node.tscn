@@ -1,10 +1,18 @@
-[gd_scene load_steps=2 format=3 uid="uid://bv4h4a2us0yne"]
+[gd_scene load_steps=4 format=3 uid="uid://bv4h4a2us0yne"]
+
+[ext_resource type="Shader" path="res://meta_node.gdshader" id="1_srg6k"]
+
+[sub_resource type="ShaderMaterial" id="ShaderMaterial_lhcii"]
+shader = ExtResource("1_srg6k")
+shader_parameter/uAddColor = Vector3(0, 0, 0)
+shader_parameter/uSelected = false
 
 [sub_resource type="SpriteFrames" id="SpriteFrames_g6lqa"]
 
 [node name="MetaNode" type="CharacterBody2D"]
 
 [node name="Animation" type="AnimatedSprite2D" parent="."]
+material = SubResource("ShaderMaterial_lhcii")
 sprite_frames = SubResource("SpriteFrames_g6lqa")
 
 [node name="CollisionShape2D" type="CollisionShape2D" parent="."]

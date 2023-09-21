@@ -39,6 +39,7 @@ var coreCommands: Dictionary = {
 	"/create": createActor,
 	"/remove": removeActor,
 	"/free": "/remove",
+	"/color": colorActor,
 }
 ## Node commands map.
 ## Node commands are parsed differently than [param coreCommands]. They use 
@@ -438,3 +439,16 @@ func callMethodWithVector(object: Variant, method: String, args: Array) -> Statu
 			return Status.error("callActorMethodWithVector xpected between 1 and 4 arguments, received: %s" % [len(args.slice(1))])
 	return Status.ok(true, "Called %s.%s(Vector%d(%s))" % [object.get_name(), method, args.slice(1)])
 	
+
+func colorActor(actorName: String, red: float, green: float, blue: float) -> Status:
+	var result := getActor(actorName)
+	if result.isError(): return result
+	var actor := result.value as Node
+	var animation := actor.get_node("Animation") as AnimatedSprite2D
+	var rgb := Vector3(red, green, blue)
+	setImageShaderUniform(animation, "uAddColor", rgb)
+	return Status.ok(result, "Set actor '%s' color to %s" % [actor.get_name(), rgb])
+
+
+static func setImageShaderUniform(image: AnimatedSprite2D, uName: StringName, uValue: Variant) -> void:
+	image.material.set_shader_parameter(uName, uValue)
