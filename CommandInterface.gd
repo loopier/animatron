@@ -59,9 +59,7 @@ var coreCommands: Dictionary = {
 	"/create": createActor,
 	"/remove": removeActor,
 	"/free": "/remove",
-<<<<<<< HEAD
 	"/color": colorActor,
-=======
 	# routines
 	"/routines": listRoutines,
 	"/routine/start": startRoutine,
@@ -71,7 +69,6 @@ var coreCommands: Dictionary = {
 	"/states": listStates,
 	"/state/free": freeState,
 	"/state/next": nextState,
->>>>>>> develop
 }
 ## Commands that need to pass the incoming parameters as an array.
 ## Couldn't find a more elegant way to deal with /def which seems to be the
