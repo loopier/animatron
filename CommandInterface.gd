@@ -717,13 +717,16 @@ func callMethodWithVector(object: Variant, method: String, args: Array) -> Statu
 			return Status.error("callActorMethodWithVector xpected between 1 and 4 arguments, received: %s" % [len(args.slice(1))])
 	return Status.ok(true, "Called %s.%s(Vector%d(%s))" % [object.get_name(), method, args.slice(1)])
 
-
-func colorActor(actorName: String, red: float, green: float, blue: float) -> Status:
+# Note that the red/green/blue arguments can't have static typing,
+# because the Callable.callv() call will fail (Array members can't
+# have types) if the args are Strings or ints and thus need conversion
+# to float. See https://github.com/godotengine/godot/issues/62838
+func colorActor(actorName: String, red, green, blue) -> Status:
 	var result := getActor(actorName)
 	if result.isError(): return result
 	var actor := result.value as Node
 	var animation := actor.get_node("Animation") as AnimatedSprite2D
-	var rgb := Vector3(red, green, blue)
+	var rgb := Vector3(red as float, green as float, blue as float)
 	setImageShaderUniform(animation, "uAddColor", rgb)
 	return Status.ok(result, "Set actor '%s' color to %s" % [actor.get_name(), rgb])
 
