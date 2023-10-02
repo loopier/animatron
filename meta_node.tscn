@@ -3,6 +3,7 @@
 [ext_resource type="Shader" path="res://meta_node.gdshader" id="1_srg6k"]
 
 [sub_resource type="ShaderMaterial" id="ShaderMaterial_lhcii"]
+resource_local_to_scene = true
 shader = ExtResource("1_srg6k")
 shader_parameter/uAddColor = Vector3(0, 0, 0)
 shader_parameter/uSelected = false
