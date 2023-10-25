@@ -136,66 +136,6 @@ func _ready():
 func _process(_delta):
 	pass
 
-func parseCommandsArray(cmds: Array) -> Status:
-	var result: Status
-	for cmd in cmds:
-		result = parseCommand(cmd[0], cmd.slice(1), "")
-	return result
-
-## Different behaviours depend on the [param command] contents in the different [member xxxCommands] dictionaries.
-func parseCommand(key: String, args: Array, sender: String) -> Status:
-	var commandDicts := [coreCommands, nodeCommands, arrayCommands, defCommands,ocl.reservedWords]
-	var commandValue: Variant
-	var commandDict: Dictionary
-	var result := Status.new()
-	for dict in commandDicts:
-		if dict.has(key):
-			commandDict = dict
-			commandValue = dict.get(key)
-			break
-	
-	Log.verbose("TODO: need to parse '$' variables before calculating")
-	args = ocl.processArgs(args)
-	
-	# recursive call for aliases
-	if typeof(commandValue) == TYPE_STRING: 
-		return parseCommand(commandValue, args, sender)
-	
-	# defs need to be called before regular commands with variables,
-	# otherwise 'parseArgs' removes the '/' from /def commands
-	if not defCommands.is_empty() and commandDict == defCommands:
-		result = parseDef(key, args)
-		for cmd in result.value:
-			result = parseCommand(cmd[0], cmd.slice(1), sender)
-		command_finished.emit(result.msg, sender)
-		return result
-	args = parseArgs(args)
-	
-	match commandDict:
-		coreCommands: result = commandValue.callv(args)
-		nodeCommands: result = commandValue.call(key, args)
-		arrayCommands: result = commandValue.call(args)
-		ocl.reservedWords: parseCommandsArray(commandValue.call(args))
-		_: command_error.emit("Command not found: %s" % [key], sender)
-
-	match result.type:
-		Status.OK: command_finished.emit(result.msg, sender)
-		Status.ERROR: command_error.emit(result.msg, sender)
-		_: pass
-
-	return result
-
-func parseArgs(args: Array) -> Array:
-	var resultingArgs := []
-	for arg in args:
-		if typeof(arg) == TYPE_STRING && arg.begins_with("/"):
-			var v = getVar(arg)
-			if v.value != null: resultingArgs.append(v.value)
-			else: resultingArgs.append(arg)
-			continue
-		resultingArgs.append(arg)
-	return resultingArgs
-
 func parseDef(key, args) -> Status:
 #	Log.debug("Parsing def commands: %s %s" % [key, defCommands[key]])
 	var def = defCommands[key]

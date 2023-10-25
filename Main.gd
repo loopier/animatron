@@ -47,8 +47,43 @@ func _process(_delta):
 	pass
 
 func _on_osc_msg_received(addr: String, args: Array, sender: String):
-	cmdInterface.parseCommand(addr, args, sender)
-#	osc.sendTo(sender, "/testing", [16])
+	# TODO: send [addr, args] to OCL interpreter and receive an array of commands
+	var dummyArrayOfCmds := [[addr] + args]
+	# TODO: iterate the array of commands to evaluate them
+	Log.debug("osc_msg_received: %s %s - %s" % [addr, args, sender])
+	evalCommands(dummyArrayOfCmds)
+
+func evalCommands(cmds: Array):
+	for cmd in cmds:
+		var addr : String = cmd[0]
+		var args : Array = cmd.slice(1)
+		var callable : Variant
+		if cmdInterface.coreCommands.has(cmd[0]):
+			callable = cmdInterface.coreCommands[addr]
+			Log.debug("core cmd: %s %s" % [addr, callable])
+			if callable is String:
+				evalCommands([[callable] + args])
+				return
+			callable.callv(args)
+		elif cmdInterface.nodeCommands.has(addr):
+			callable = cmdInterface.nodeCommands[addr]
+			Log.debug("node cmd: %s %s" % [addr, callable])
+			if callable is String:
+				evalCommands([[callable] + args])
+				return
+			callable.call(addr, args)
+		elif cmdInterface.arrayCommands.has(addr):
+			callable = cmdInterface.arrayCommands[addr]
+			Log.debug("array cmd: %s %s" % [addr, callable])
+			if callable is String:
+				evalCommands([[callable] + args])
+				return
+			callable.call(args)
+		# elif cmdInterface.defCommands.has(addr):
+		# 	Log.debug("def cmd: %s %s" % [addr, cmdInterface.defCommands[addr]])
+		else:
+			Log.debug("cmd not found: %s %s" % [addr, args])
+	
 
 func _on_load_config(filename: String):
 	var configCmds = cmdInterface.loadCommandFile(filename).value
@@ -56,7 +91,8 @@ func _on_load_config(filename: String):
 		cmdInterface.parseCommand(cmd[0], cmd.slice(1), "")
 
 func _on_eval_command(command: Array):
-	cmdInterface.parseCommand(command[0], command.slice(1), "")
+	Log.debug("eval_osc_command: %s" % [command])
+	evalCommands(command)
 
 func _on_eval_code(text: String):
 	var cmds := []
@@ -65,7 +101,7 @@ func _on_eval_code(text: String):
 		cmds.append(cmdInterface.convertDefBlockToCommand(text))
 	else:
 		cmds = cmdInterface.convertTextBlockToCommands(text)
-	cmdInterface.parseCommandsArray(cmds)
+	evalCommands(cmds)
 
 func _on_command_finished(msg: String, sender: String):
 	if not msg.is_empty():
