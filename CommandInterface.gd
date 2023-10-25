@@ -759,7 +759,7 @@ func listRoutines() -> Status:
 func addRoutine(args: Array) -> Status:
 	var name: String = args[0]
 	var repeats: int = args[1] if typeof(args[1]) == TYPE_INT else -1
-	var interval: float = args[2]
+	var interval: float = args[2] as float
 	var command: Array = args.slice(3)
 	add_routine.emit(name, repeats, interval, command)
 	return Status.ok(true)
