@@ -58,7 +58,7 @@ func evalCommands(cmds: Array):
 		var addr : String = cmd[0]
 		var args : Array = cmd.slice(1)
 		var callable : Variant
-		var result : Status
+		var result := Status.new()
 		if cmdInterface.coreCommands.has(addr):
 			callable = cmdInterface.coreCommands[addr]
 			Log.debug("core cmd: %s %s" % [addr, callable])
