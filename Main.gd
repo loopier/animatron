@@ -1,4 +1,5 @@
 extends Node2D
+class_name Main
 
 var osc: OscReceiver
 static var variablesPath := "res://config/vars.ocl"

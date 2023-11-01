@@ -37,7 +37,15 @@ var animationAssetsPath := assetsPath + "/animations"
 var variables: Dictionary:
 	set(value): variables = value
 	get: return variables
-## Core ommands map.
+## Core commands map.
+## [code]
+##
+##   /load/file path:s
+##   /test actor:s
+##   /set varName:s value
+##   /get varName:s
+##   ...
+## [/code]
 var coreCommands: Dictionary = {
 	"/load/file": loadCommandFile,
 	"/test": getActor, ## used to test random stuff
@@ -73,6 +81,12 @@ var coreCommands: Dictionary = {
 ## Commands that need to pass the incoming parameters as an array.
 ## Couldn't find a more elegant way to deal with /def which seems to be the
 ## only command that needs to pass on arguments as an array.
+## [code]
+##
+##   /def cmdName [subCommand] ...      # cmdName may include argument names
+##   /routine  name:s repeats:i interval:f cmd:...
+##   ...
+## [/code]
 var arrayCommands: Dictionary = {
 	"/def": defineCommand,
 	"/routine": addRoutine,
@@ -94,6 +108,12 @@ var defCommands := {}
 ## the expected GDScript method. If a different command name is needed, use a [method def].
 ## To expose new methods or properties, just replace the snake_case underscore in the method for
 ## a slash '/' in the osc command.
+## [code]
+##
+##   /animation ...tbd...
+##   /play ...tbd...
+##   ...
+## [/code]
 var nodeCommands: Dictionary = {
 	"/animation": setAnimationProperty,
 	"/play": callAnimationMethod,

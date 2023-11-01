@@ -1,8 +1,8 @@
 extends GutTest
 
-var log := preload("res://Log.gd")
-var main := preload("res://main.tscn").instantiate()
-var cmd: Node = main.get_node("CommandInterface")
+var log : Log
+var main : Main
+var cmd: Node
 
 func before_each():
 	gut.p("ran setup logger", 2)
@@ -13,15 +13,18 @@ func after_each():
 
 func before_all():
 	gut.p("ran run setup logger", 2)
+	log = Log.new() # preload("res://Log.gd")
+	main = preload("res://main.tscn").instantiate()
+	cmd = main.get_node("CommandInterface")
 
 func after_all():
 	gut.p("ran run teardown logger", 2)
 
 func test_listCommands():
-	assert_eq(cmd.listCommands().value, cmd.commands.keys())
+	assert_eq(cmd.listCommands(cmd.coreCommands).value, cmd.coreCommands.keys())
 
 func test_listAssets():
-	assert_eq(cmd.listAssets().value, [])
+	assert_eq(cmd.listAnimationAssets().value, [])
 
 func test_splitArray():
 	var arr = ["/alo", ",", 1]
@@ -33,15 +36,15 @@ func test_splitArray():
 
 func test_setDef():
 	var def = ["/alo", "x", 1, ",", "/create", "ma", "mama"]
-	assert_eq(cmd.setDef(def).value, ["/alo", ["x", 1], [["/create", "ma", "mama"]]])
+	assert_eq(cmd.defineCommand(def).value, ["/alo", ["x", 1], [["/create", "ma", "mama"]]])
 	def = ["/alo", "x", 1, ",", "/create", "ma", "mama", ",", "/size", "ma", 0.5]
-	assert_eq(cmd.setDef(def).value, ["/alo", ["x", 1], [["/create", "ma", "mama"], ["/size", "ma", 0.5]]])
+	assert_eq(cmd.defineCommand(def).value, ["/alo", ["x", 1], [["/create", "ma", "mama"], ["/size", "ma", 0.5]]])
 	def = ["/red/mama", "argA", "argB", ",", "/create", "x", "mama", ",", "/speed", "x", 2]
-	assert_eq(cmd.setDef(def).value, ["/red/mama", ["argA", "argB"], [["/create", "x", "mama"], ["/speed", "x", 2]]])
+	assert_eq(cmd.defineCommand(def).value, ["/red/mama", ["argA", "argB"], [["/create", "x", "mama"], ["/speed", "x", 2]]])
 
 func test_parseCommand():
 	cmd.setVar("/x", 1)
-	assert_eq(cmd.parseCommand("/get", ["/x"], "").value, 1)
+	assert_eq(main.evalCommands([["/get"] + ["/x"]]).value, 1)
 
 func test_parseArgs():
 	cmd.setVar("/x", 1)

@@ -1,6 +1,6 @@
+class_name Status
 ## All methods that are mapped from OSC messages must return an instance of this class,
 ## in order to determine wether it has succeeded of failed.
-class_name Status
 
 enum { NULL = -1, ERROR = 0, OK = 1 }
 
