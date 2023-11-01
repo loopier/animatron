@@ -1,15 +1,15 @@
 class_name OpenControlLanguage 
 
-var reservedWords: Dictionary = {
-	"/for": _for,
-	"/+": _calc,
-	"/-": _calc,
-	"/*": _calc,
-	"//": _calc,
-	"/%": _calc,
-}
+var reservedWords := {
+		"/for": _for,
+		"/+": func(args: Array): return _calc("/+", args),
+		"/-": func(args: Array): return _calc("/-", args),
+		"/*": func(args: Array): return _calc("/*", args),
+		"//": func(args: Array): return _calc("//", args),
+		"/%": func(args: Array): return _calc("/%", args),
+	}
 
-var operators: Array = ["/+","/-", "*", "/", "%"]
+var operators := ["/+","/-", "*", "/", "%"]
 
 ## Replace variables and arithmetic for their values.
 func processArgs(args: Array) -> Array:
@@ -91,7 +91,8 @@ func _binaryOp(operator: String, a: float, b: float) -> float:
 	return result
 
 func _processReservedWord(word: String, args: Array) -> Variant:
-	return reservedWords.get(word).callv(args)
+	var fn = reservedWords.get(word)
+	return fn.call(args)
 
 ## Example: [code]/for i 4 /post $i[/code]
 func _for(args: Array) -> Array:
