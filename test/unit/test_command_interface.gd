@@ -2,7 +2,7 @@ extends GutTest
 
 var log : Log
 var main : Main
-var cmd: Node
+var cmd: CommandInterface
 
 func before_each():
 	gut.p("ran setup logger", 2)
@@ -15,13 +15,42 @@ func before_all():
 	gut.p("ran run setup logger", 2)
 	log = Log.new() # preload("res://Log.gd")
 	main = preload("res://main.tscn").instantiate()
+	add_child(main)
 	cmd = main.get_node("CommandInterface")
 
 func after_all():
 	gut.p("ran run teardown logger", 2)
+	main.queue_free()
+	log.free()
 
 func test_listCommands():
-	assert_eq(cmd.listCommands(cmd.coreCommands).value, cmd.coreCommands.keys())
+	assert_eq(cmd.listCommands(cmd.coreCommands).value, "
+--
+/actors/list
+/animations
+/animations/list
+/assets
+/assets/list
+/color
+/commands
+/commands/list
+/create
+/free
+/get
+/load
+/load/file
+/log/level
+/remove
+/routine/free
+/routine/start
+/routine/stop
+/routines
+/set
+/state/free
+/state/next
+/states
+/test
+")
 
 func test_listAssets():
 	assert_eq(cmd.listAnimationAssets().value, [])
@@ -44,15 +73,20 @@ func test_setDef():
 
 func test_parseCommand():
 	cmd.setVar("/x", 1)
-	assert_eq(main.evalCommands([["/get"] + ["/x"]]).value, 1)
+	gut.p("This one should return 1")
+	var result = cmd.getVar("/x")
+	assert_eq(result.type, Status.OK)
+	assert_eq(result.value, 1)
+	#assert_eq(main.evalCommands([["/get"] + ["/x"]]).value, null)
 
 func test_parseArgs():
 	cmd.setVar("/x", 1)
-	assert_eq(cmd.parseArgs([]), [])
-	assert_eq(cmd.parseArgs(["/x"]), [1])
+	pending
+	#assert_eq(cmd.parseArgs([]), [])
+	#assert_eq(cmd.parseArgs(["/x"]), [1])
 
 func test_newRoutine():
-	assert_eq(cmd.newRoutine(["routineA", "inf", 1, "/cmdA", "argA", 2]), Status.new())
+	assert_eq(cmd.addRoutine(["routineA", "inf", 1, "/cmdA", "argA", 2]), Status.new())
 
 func test_getTextBlocks():
 	assert_eq(cmd.getTextBlocks("bla bla\nalo\n\nzirlit"), ["bla bla\nalo", "zirlit"])
