@@ -96,10 +96,6 @@ func _on_load_config(filename: String):
 	for cmd in configCmds:
 		cmdInterface.parseCommand(cmd[0], cmd.slice(1), "")
 
-func _on_eval_command(command: Array):
-	Log.debug("eval_osc_command: %s" % [command])
-	evalCommands(command, "NULL_SENDER")
-
 func _on_eval_code(text: String):
 	var cmds := []
 	if text.begins_with("/def"):
