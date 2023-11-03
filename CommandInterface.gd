@@ -165,22 +165,6 @@ func parseDef(key, args) -> Status:
 	var subcommands = ocl._def(def.variables, def.subcommands)
 	return Status.ok(subcommands, "Parsing subcommands: %s" % [subcommands])
 
-## Evaluate a string expression (possibly with variables)
-## Example of use:
-##	var exprStr := "5*i + 8"
-##	var result = evalExpr(exprStr, ["i"], [3])
-##	print("expression '%s' result: %f" % [exprStr, result])
-func evalExpr(exprStr: String, vars: PackedStringArray, varValues: Array) -> Variant:
-	var expr := Expression.new()
-	var error := expr.parse(exprStr, vars)
-	if error != OK:
-		print(expr.get_error_text())
-		return
-	var result = expr.execute(varValues)
-	if not expr.has_execute_failed():
-		Log.info("expression '%s' result: %f" % [exprStr, result])
-	return result
-
 
 ## Adds a custom command definition
 ## The subcommands need to be an array, so we have to use an array for the whole arguments.

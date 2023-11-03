@@ -72,7 +72,6 @@ func test_binaryOp():
 	assert_eq(ocl._binaryOp("/%", 3, 2), 1.0)
 	assert_eq(ocl._binaryOp("/%", 4, 2), 0.0)
 
-
 func test_processReserveWord():
 	assert_eq(ocl._processReservedWord("/for", ["i", 4, "/post", "$i"]), [["/post", 0], ["/post", 1], ["/post", 2], ["/post", 3]])
 	assert_eq(ocl._processReservedWord("/*", [3, 4]), 12.0)
@@ -97,3 +96,6 @@ func test_replaceVariable():
 	
 	assert_eq(ocl._replaceVariable("$i", 0, ["/scale", "bla$i", 0.5, 0.5]), ["/scale", "bla0", 0.5, 0.5])
 	assert_eq(ocl._replaceVariable("$i", 1, ["/scale", "bla$i", 0.5, 0.5]), ["/scale", "bla1", 0.5, 0.5])
+
+func test_evalExpr():
+	assert_eq(ocl._evalExpr("5 + i", ["i"], [1]), 6)

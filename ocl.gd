@@ -132,3 +132,20 @@ func _def(variables: Dictionary, commands: Array) -> Array:
 		result.append(cmd)
 #	Log.debug("processed def: %s" % [result])
 	return result
+
+
+## Evaluate a string expression (possibly with variables)
+## Example of use:
+##	var exprStr := "5*i + 8"
+##	var result = evalExpr(exprStr, ["i"], [3])
+##	print("expression '%s' result: %f" % [exprStr, result])
+func _evalExpr(exprStr: String, vars: PackedStringArray, varValues: Array) -> Variant:
+	var expr := Expression.new()
+	var error := expr.parse(exprStr, vars)
+	if error != OK:
+		print(expr.get_error_text())
+		return
+	var result = expr.execute(varValues)
+	if not expr.has_execute_failed():
+		Log.info("expression '%s' result: %f" % [exprStr, result])
+	return result
