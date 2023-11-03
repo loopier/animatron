@@ -4,7 +4,7 @@ OSCdef(\status, { arg args, time, srcAddr, port; args[1..].first.postln; }, "/st
 OSCdef(\error, { arg args, time, srcAddr, port; args[1..].first.postln; }, "/error/reply");
 )
 
-n.sendMsg("/list");
+n.sendMsg("/list", "x");
 n.sendMsg("/commands/list");
 n.sendMsg("/assets/list");
 n.sendMsg("/assets");

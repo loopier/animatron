@@ -52,9 +52,9 @@ func _on_osc_msg_received(addr: String, args: Array, sender: String):
 	var dummyArrayOfCmds := [[addr] + args]
 	# TODO: iterate the array of commands to evaluate them
 	Log.debug("osc_msg_received: %s %s - %s" % [addr, args, sender])
-	evalCommands(dummyArrayOfCmds)
+	evalCommands(dummyArrayOfCmds, sender)
 
-func evalCommands(cmds: Array):
+func evalCommands(cmds: Array, sender: String):
 	for cmd in cmds:
 		var addr : String = cmd[0]
 		var args : Array = cmd.slice(1)
@@ -64,31 +64,31 @@ func evalCommands(cmds: Array):
 			callable = cmdInterface.coreCommands[addr]
 			Log.debug("core cmd: %s %s" % [addr, callable])
 			if callable is String:
-				evalCommands([[callable] + args])
+				evalCommands([[callable] + args], sender)
 				return
 			result = callable.callv(args)
 		elif cmdInterface.nodeCommands.has(addr):
 			callable = cmdInterface.nodeCommands[addr]
 			Log.debug("node cmd: %s %s" % [addr, callable])
 			if callable is String:
-				evalCommands([[callable] + args])
+				evalCommands([[callable] + args], sender)
 				return
 			result = callable.call(addr, args)
 		elif cmdInterface.arrayCommands.has(addr):
 			callable = cmdInterface.arrayCommands[addr]
 			Log.debug("array cmd: %s %s" % [addr, callable])
 			if callable is String:
-				evalCommands([[callable] + args])
+				evalCommands([[callable] + args], sender)
 				return
 			result = callable.call(args)
 		# elif cmdInterface.defCommands.has(addr):
 		# 	Log.debug("def cmd: %s %s" % [addr, cmdInterface.defCommands[addr]])
 		else:
-			Log.debug("cmd not found: %s %s" % [addr, args])
-	
+			result = Status.error("cmd not found: %s %s" % [addr, args])
+		
 		match result.type:
-			Status.OK: cmdInterface.command_finished.emit(result.msg, "sender")
-			Status.ERROR: cmdInterface.command_error.emit(result.msg, "sender")
+			Status.OK: _on_command_finished(result.msg, sender)
+			Status.ERROR: _on_command_error(result.msg, sender)
 			_: pass
 
 func _on_load_config(filename: String):
@@ -98,7 +98,7 @@ func _on_load_config(filename: String):
 
 func _on_eval_command(command: Array):
 	Log.debug("eval_osc_command: %s" % [command])
-	evalCommands(command)
+	evalCommands(command, "NULL_SENDER")
 
 func _on_eval_code(text: String):
 	var cmds := []
@@ -107,7 +107,7 @@ func _on_eval_code(text: String):
 		cmds.append(cmdInterface.convertDefBlockToCommand(text))
 	else:
 		cmds = cmdInterface.convertTextBlockToCommands(text)
-	evalCommands(cmds)
+	evalCommands(cmds, "NULL_SENDER")
 
 func _on_command_finished(msg: String, sender: String):
 	if not msg.is_empty():
