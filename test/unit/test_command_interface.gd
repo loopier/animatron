@@ -2,7 +2,7 @@ extends GutTest
 
 var log : Log
 var main : Main
-var cmd: CommandInterface
+var cmd
 
 func before_each():
 	gut.p("ran setup logger", 2)
@@ -22,6 +22,14 @@ func after_all():
 	gut.p("ran run teardown logger", 2)
 	main.queue_free()
 	log.free()
+
+func test_getCommand():
+	var aCommand = cmd.getCommandDescription("/load")
+	assert_eq(aCommand.callable, cmd.loadAnimationAsset)
+	assert_eq(aCommand.argsDescription, "animation:s")
+	assert_eq(aCommand.description, "Load an ANIMATION asset from disk. It will create an animation with the same name as the asset. Wildcards are supported, so several animations can be loaded at once. See also: `/list/assets`.")
+	assert_eq(aCommand.argsAsArray, false)
+	assert_eq(aCommand.toGdScript, false)
 
 func test_listCommands():
 	assert_eq(cmd.listCommands(cmd.coreCommands).value, "

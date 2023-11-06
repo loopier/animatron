@@ -37,62 +37,53 @@ var animationAssetsPath := assetsPath + "/animations"
 var variables: Dictionary:
 	set(value): variables = value
 	get: return variables
-## Core commands map.
-## [code]
-##
-##   /load/file path:s
-##   /test actor:s
-##   /set varName:s value
-##   /get varName:s
-##   ...
-## [/code]
+## Core commands map.[br]
 var coreCommands: Dictionary = {
-	"/load/file": loadCommandFile,
-	"/test": getActor, ## used to test random stuff
-	"/set": setVar,
-	"/get": getVar,
+	"/load/file": CommandDescription.new(loadCommandFile, "path:s", "Load a custom command definitions file, which should have the format described below."),
+	"/test": CommandDescription.new(getActor, "", "This is just a test"), ## used to test random stuff
+	"/set": CommandDescription.new(setVar, "", "TODO"),
+	"/get": CommandDescription.new(getVar, "", "TODO"),
 	# log
-	"/log/level": setLogLevel,
+	"/log/level": CommandDescription.new(setLogLevel, "level:s", "Set the log level to either 'fatal', 'error', 'warn', 'debug' or 'verbose'"),
 	# general commands
-	"/commands/list": listAllCommands,
+	"/commands/list": CommandDescription.new(listAllCommands, "", "Get list of available commands."),
 	"/commands": "/commands/list",
 	# assets
-	"/load": loadAnimationAsset,
-	"/assets/list": listAnimationAssets, # available in disk
+	"/load": CommandDescription.new(loadAnimationAsset, "animation:s", "Load an ANIMATION asset from disk. It will create an animation with the same name as the asset. Wildcards are supported, so several animations can be loaded at once. See also: `/list/assets`."),
+	"/assets/list": CommandDescription.new(listAnimationAssets, "", "Get the list of available (unloaded) assets. Assets must be loaded as animations in order to create actor instances."), # available in disk
 	"/assets": "/assets/list",
-	"/animations/list": listAnimations, # loaded
+	"/animations/list": CommandDescription.new(listAnimations, "", "Get the list of available (loaded) animations."), # loaded
 	"/animations": "/animations/list",
 	# actors
-	"/actors/list": listActors,
-	"/create": createActor,
-	"/remove": removeActor,
+	"/actors/list": CommandDescription.new(listActors, "", "Get list of current actor instances. Returns /list/actors/reply OSC message."),
+	"/create": CommandDescription.new(createActor, "actor:s animation:s", "Create an ACTOR that plays ANIMATION."),
+	"/remove": CommandDescription.new(removeActor, "actor:s", "Delete the ACTOR by name (remove its instance). "),
 	"/free": "/remove",
-	"/color": colorActor,
+	"/color": CommandDescription.new(colorActor, "actor:s r:f g:f b:f", "Add an RGB colour to the ACTOR. R, G and B should be in the 0-1 range (can be negative to subtract colour). Set to black (0,0,0) to restore its original colour."),
 	# routines
-	"/routines": listRoutines,
-	"/routine/start": startRoutine,
-	"/routine/stop": stopRoutine,
-	"/routine/free": freeRoutine,
+	"/routines": CommandDescription.new(listRoutines, "", "Get the list of routines."),
+	"/routine/start": CommandDescription.new(startRoutine, "name:s", "Start the routine named NAME."),
+	"/routine/stop": CommandDescription.new(stopRoutine, "name:s", "Stop the routine named NAME."),
+	"/routine/free": CommandDescription.new(freeRoutine, "name:s", "Remove the routine named NAME"),
 	# state machine
-	"/states": listStates,
-	"/state/free": freeState,
-	"/state/next": nextState,
+	"/states": CommandDescription.new(listStates, "", "Get a list of states for the given ACTOR."),
+	"/state/free": CommandDescription.new(freeState, "actor:s state:s", "Remove the STATE from the ACTOR's state machine."),
+	"/state/next": CommandDescription.new(nextState, "actor:s", "Change ACTOR to next STATE."),
 }
 ## Commands that need to pass the incoming parameters as an array.
 ## Couldn't find a more elegant way to deal with /def which seems to be the
 ## only command that needs to pass on arguments as an array.
-## [code]
-##
+## [codeblock]
 ##   /def cmdName [subCommand] ...      # cmdName may include argument names
 ##   /routine  name:s repeats:i interval:f cmd:...
 ##   ...
-## [/code]
+## [/codeblock]
 var arrayCommands: Dictionary = {
-	"/def": defineCommand,
-	"/routine": addRoutine,
-	"/state": addState,
-	"/post": post,
-	"/relative": setRelativeProperty,
+	"/def": CommandDescription.new(defineCommand, "cmdName:s [args:v] subcommands:c", "Define a custom OSC command that is a list of other OSC commands. This may be recursive, so each SUBCOMMAND may reference one of the built-in commands, or another custom-defined command. Another way to define custom commands is via the file commands/init.osc. The CMDNAME string (first argument) may include argument names (ARG1 ... ARGN), which may be referenced as SUBCOMMAND arguments using $ARG1 ... $ARGN. Example: /def \"/addsel actor anim\" \"/create $actor $anim\" \"/select $actor\". "),
+	"/routine": CommandDescription.new(addRoutine, "name:s repeats:i interval:f cmd:...", "Start a routine named NAME that sends CMD every INTERVAL of time (in seconds) for an arbitrary number of REPEATS."),
+	"/state/add": CommandDescription.new(addState, "actor:s new:s ... next:s", "Add a NEW state to the ACTOR's state machine. NEXT states is an arbitrary number of next possible states. States are animation names."),
+	"/post": CommandDescription.new(post, "msg:s", "Print MSG in the post window."),
+	"/relative": CommandDescription.new(setRelativeProperty, "", "TODO"),
 }
 
 ## Custom command definitions
@@ -101,48 +92,51 @@ var defCommands := {}
 ## Node commands map.
 ## Node commands are parsed differently than [param coreCommands]. They use 
 ## OSC address as method name (by removing the forward slash), and first argument is
-## usually the actor's name (the node's name).
+## usually the actor's name (the node's name).[br]
+## [br]
 ## Using meta methods filtered by parameter types allows to automatically map a lot
-## of OSC messages to a few actual GDScript functions and methods.
+## of OSC messages to a few actual GDScript functions and methods.[br]
+## [br]
 ## Keep in mind, though, that the command (OSC address) has to have the same signature as
-## the expected GDScript method. If a different command name is needed, use a [method def].
+## the expected GDScript method. If a different command name is needed, use a [method def].[br]
+## [br]
 ## To expose new methods or properties, just replace the snake_case underscore in the method for
 ## a slash '/' in the osc command.
-## [code]
 ##
+## [codeblock]
 ##   /animation ...tbd...
 ##   /play ...tbd...
 ##   ...
-## [/code]
+## [/codeblock]
 var nodeCommands: Dictionary = {
-	"/animation": setAnimationProperty,
-	"/play": callAnimationMethod,
-	"/play/backwards": callAnimationMethod,
+	"/animation": CommandDescription.new(setAnimationProperty, "", ""),
+	"/play": CommandDescription.new(callAnimationMethod, "", ""),
+	"/play/backwards": CommandDescription.new(callAnimationMethod, "", ""),
 	"/reverse": "/play/backwards",
-	"/animation/loop": setAnimationFramesProperty,
-	"/stop": callAnimationMethod,
-	"/frame": setAnimationProperty,
-	"/frame/progress": setAnimationProperty,
-	"/speed/scale": setAnimationProperty,
+	"/animation/loop": CommandDescription.new(setAnimationFramesProperty, "", ""),
+	"/stop": CommandDescription.new(callAnimationMethod, "", ""),
+	"/frame": CommandDescription.new(setAnimationProperty, "", ""),
+	"/frame/progress": CommandDescription.new(setAnimationProperty, "", ""),
+	"/speed/scale": CommandDescription.new(setAnimationProperty, "", ""),
 	"/speed": "/speed/scale",
-	"/flip/v": toggleAnimationProperty,
-	"/flip/h": toggleAnimationProperty,
-	"/visible": toggleActorProperty,
-	"/hide": callActorMethod,
-	"/show": callActorMethod,
-	"/offset": setAnimationPropertyWithVector,
-	"/offset/x": setAnimationPropertyWithVectorN,
-	"/offset/y": setAnimationPropertyWithVectorN,
-	"/scale": setActorPropertyWithVector,
-	"/scale/x": setActorPropertyWithVectorN,
-	"/scale/y": setActorPropertyWithVectorN,
-	"/apply/scale": callActorMethodWithVector,
-	"/set/position": callActorMethodWithVector,
-	"/position": setActorPropertyWithVector,
-	"/position/x": setActorPropertyWithVectorN,
-	"/position/y": setActorPropertyWithVectorN,
+	"/flip/v": CommandDescription.new(toggleAnimationProperty, "", ""),
+	"/flip/h": CommandDescription.new(toggleAnimationProperty, "", ""),
+	"/visible": CommandDescription.new(toggleActorProperty, "", ""),
+	"/hide": CommandDescription.new(callActorMethod, "", ""),
+	"/show": CommandDescription.new(callActorMethod, "", ""),
+	"/offset": CommandDescription.new(setAnimationPropertyWithVector, "", ""),
+	"/offset/x": CommandDescription.new(setAnimationPropertyWithVectorN, "", ""),
+	"/offset/y": CommandDescription.new(setAnimationPropertyWithVectorN, "", ""),
+	"/scale": CommandDescription.new(setActorPropertyWithVector, "", ""),
+	"/scale/x": CommandDescription.new(setActorPropertyWithVectorN, "", ""),
+	"/scale/y": CommandDescription.new(setActorPropertyWithVectorN, "", ""),
+	"/apply/scale": CommandDescription.new(callActorMethodWithVector, "", ""),
+	"/set/position": CommandDescription.new(callActorMethodWithVector, "", ""),
+	"/position": CommandDescription.new(setActorPropertyWithVector, "", ""),
+	"/position/x": CommandDescription.new(setActorPropertyWithVectorN, "", ""),
+	"/position/y": CommandDescription.new(setActorPropertyWithVectorN, "", ""),
+	"/rotation/degrees": CommandDescription.new(setActorProperty, "", ""),
 	"/angle": "/rotation/degrees",
-	"/rotation/degrees": setActorProperty,
 }
 
 # Called when the node enters the scene tree for the first time.
@@ -346,10 +340,14 @@ func setVar(varName: String, value: Variant) -> Status:
 		_list(variables)
 	return Status.ok(variables[varName][0])
 
-func getCommand(command: String) -> Status:
-	var value = coreCommands[command] if coreCommands.has(command) else null
-	if value == null: Status.error("Command '%s' not found" % [command])
-	return Status.ok(value, "Command found '%s': %s" % [command, value])
+## Returns the value of a command to be executed.
+## If no description is found, it returns [code]null[/code].
+func getCommandDescription(command: String) -> Variant:
+	if coreCommands.has(command): return coreCommands[command]
+	elif nodeCommands.has(command): return nodeCommands[command]
+	elif arrayCommands.has(command): return arrayCommands[command]
+	elif defCommands.has(command): return defCommands[command]
+	else: return null
 
 ## Remove the [param key] and its value from [param dict]
 func remove(key, dict) -> Status:

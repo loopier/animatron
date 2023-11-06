@@ -56,40 +56,69 @@ func _on_osc_msg_received(addr: String, args: Array, sender: String):
 
 func evalCommands(cmds: Array, sender: String):
 	for cmd in cmds:
-		var addr : String = cmd[0]
-		var args : Array = cmd.slice(1)
-		var callable : Variant
-		var result := Status.new()
-		if cmdInterface.coreCommands.has(addr):
-			callable = cmdInterface.coreCommands[addr]
-			Log.debug("core cmd: %s %s" % [addr, callable])
-			if callable is String:
-				evalCommands([[callable] + args], sender)
-				return
-			result = callable.callv(args)
-		elif cmdInterface.nodeCommands.has(addr):
-			callable = cmdInterface.nodeCommands[addr]
-			Log.debug("node cmd: %s %s" % [addr, callable])
-			if callable is String:
-				evalCommands([[callable] + args], sender)
-				return
-			result = callable.call(addr, args)
-		elif cmdInterface.arrayCommands.has(addr):
-			callable = cmdInterface.arrayCommands[addr]
-			Log.debug("array cmd: %s %s" % [addr, callable])
-			if callable is String:
-				evalCommands([[callable] + args], sender)
-				return
-			result = callable.call(args)
-		# elif cmdInterface.defCommands.has(addr):
-		# 	Log.debug("def cmd: %s %s" % [addr, cmdInterface.defCommands[addr]])
-		else:
-			result = Status.error("cmd not found: %s %s" % [addr, args])
-		
-		match result.type:
-			Status.OK: _on_command_finished(result.msg, sender)
-			Status.ERROR: _on_command_error(result.msg, sender)
-			_: pass
+		evalCommand(cmd, sender)
+
+func evalCommand(cmdArray: Array, sender: String) -> Status:
+	var cmd : String = cmdArray[0]
+	var args : Array = cmdArray.slice(1)
+	var callable : Variant
+	var result := Status.new()
+	var cmdDescription : Variant = cmdInterface.getCommandDescription(cmd)
+	if cmdDescription is String: 
+		result = evalCommand([cmdDescription] + args, sender)
+	elif cmdDescription is CommandDescription:
+		result = executeCommand(cmdDescription, args)
+	else:
+		result = Status.error("Command not found: %s" % [cmd])
+	
+	# post and reply result
+	_on_command_finished(result, sender)
+	return result
+	
+#		if cmdInterface.coreCommands.has(addr):
+#			callable = cmdInterface.coreCommands[addr]
+#			Log.debug("core cmd: %s %s" % [addr, callable])
+#			if callable is String:
+#				evalCommands([[callable] + args], sender)
+#				return
+#			result = callable.callv(args)
+#		elif cmdInterface.nodeCommands.has(addr):
+#			callable = cmdInterface.nodeCommands[addr]
+#			Log.debug("node cmd: %s %s" % [addr, callable])
+#			if callable is String:
+#				evalCommands([[callable] + args], sender)
+#				return
+#			result = callable.call(addr, args)
+#		elif cmdInterface.arrayCommands.has(addr):
+#			callable = cmdInterface.arrayCommands[addr]
+#			Log.debug("array cmd: %s %s" % [addr, callable])
+#			if callable is String:
+#				evalCommands([[callable] + args], sender)
+#				return
+#			result = callable.call(args)
+#		else:
+#			result = Status.error("cmd not found: %s %s" % [addr, args])
+#
+#		match result.type:
+#			Status.OK: _on_command_finished(result.msg, sender)
+#			Status.ERROR: _on_command_error(result.msg, sender)
+#			_: pass
+
+## Executes a [param command] described in a [CommandDescription], with the given [param args].
+func executeCommand(command: CommandDescription, args: Array) -> Status:
+	var result := checkNumberOfArguments(command.argsDescription, args)
+	if result.isError(): return result
+	
+	return Status.ok()
+
+func checkNumberOfArguments(argsDescription: String, args: Array) -> Status:
+	var expectedNumberOfArgs := argsDescription.split(" ").size() if len(argsDescription) > 0 else 0
+	var actualNumberOfArgs := args.size()
+	if actualNumberOfArgs < expectedNumberOfArgs:
+		return Status.error("Not enough arguments - expected: %s - received: %s" % [expectedNumberOfArgs, actualNumberOfArgs])
+	if actualNumberOfArgs > expectedNumberOfArgs:
+		return Status.ok(expectedNumberOfArgs, "Received more arguments (%s) than needed (%s). Using: %s" % [actualNumberOfArgs,  expectedNumberOfArgs, args.slice(0,expectedNumberOfArgs)])
+	return Status.ok(expectedNumberOfArgs, "")
 
 func _on_load_config(filename: String):
 	var configCmds = cmdInterface.loadCommandFile(filename).value
@@ -105,11 +134,14 @@ func _on_eval_code(text: String):
 		cmds = cmdInterface.convertTextBlockToCommands(text)
 	evalCommands(cmds, "NULL_SENDER")
 
-func _on_command_finished(msg: String, sender: String):
-	if not msg.is_empty():
-		Log.verbose("Command finished:\n%s" % [msg])
-		if sender:
-			osc.sendMessage(sender, "/status/reply", [msg])
+func _on_command_finished(result: Status, sender: String):
+	if result.isError():
+		_on_command_error(result.msg, sender)
+		return
+	if result.msg.is_empty(): return
+	Log.verbose("Command finished:\n%s" % [result.msg])
+	if sender:
+		osc.sendMessage(sender, "/status/reply", [result.msg])
 
 func _on_command_error(msg: String, sender: String):
 	Log.error("Command error: %s" % [msg])
