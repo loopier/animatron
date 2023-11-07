@@ -149,3 +149,11 @@ func _evalExpr(exprStr: String, vars: PackedStringArray, varValues: Array) -> Va
 	if not expr.has_execute_failed():
 		Log.info("expression '%s' result: %f" % [exprStr, result])
 	return result
+
+## Parse a string to see if it contains an expression
+## clause, and if so, return that clause.
+func _getExpression(str: String) -> String:
+	var regex := RegEx.new()
+	regex.compile("^\\{([^{}]*)\\}$")
+	var result := regex.search(str)
+	return result.strings[1].strip_edges() if result else ""

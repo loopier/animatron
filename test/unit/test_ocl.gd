@@ -99,3 +99,10 @@ func test_replaceVariable():
 
 func test_evalExpr():
 	assert_eq(ocl._evalExpr("5 + i", ["i"], [1]), 6)
+
+func test_findExprString():
+	assert_eq(ocl._getExpression("{5 / 8 - 2}"), "5 / 8 - 2")
+	assert_eq(ocl._getExpression("{   5 / 8 - 2 \t\n}"), "5 / 8 - 2") # Remove whitespace around
+	assert_eq(ocl._getExpression("{sin(t*6.28) * exp(-0.5)"), "") # Missing closing brace
+	assert_eq(ocl._getExpression("sin(t*6.28) * exp(-0.5)}"), "") # Missing opening brace
+	assert_eq(ocl._getExpression("{ sin(t*6.28) * exp(-0.5) }"), "sin(t*6.28) * exp(-0.5)")

@@ -15,7 +15,7 @@ var command := []
 func _ready():
 	wait_time = 1.0
 	timeout.connect(_next)
-	eval_command.connect(main._on_eval_command)
+	eval_command.connect(main.evalCommands)
 	routine_finished.connect(main._on_routine_finished)
 
 func _next():
@@ -28,5 +28,5 @@ func _next():
 
 func _exit_tree():
 	timeout.disconnect(_next)
-	eval_command.disconnect(main._on_eval_command)
+	eval_command.disconnect(main.evalCommands)
 	routine_finished.disconnect(main._on_routine_finished)
