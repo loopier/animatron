@@ -17,17 +17,25 @@ func before_all():
 func after_all():
 	gut.p("ran run teardown logger", 2)
 
+func test_listAssets():
+	var result = main.evalCommand(["/assets/list"], "127.0.0.1")
+	assert_eq(result.type, Status.OK)
+	# commented the following because we may have different assets list
+#	assert_eq(result.value, true)
+#	assert_eq(result.msg, "")
+
 func test_load():
 	# asset doesn't exist
 	var result = main.evalCommand(["/load", "xyz"], "127.0.0.1")
 	assert_eq(result.type, Status.ERROR)
 	assert_eq(result.value, null)
-	assert_eq(result.msg, "Animation not loaded: xyz")
+	assert_eq(result.msg, "Asset not found: user://assets/animations/xyz")
 	# should pass
 	result = main.evalCommand(["/load", "default"], "127.0.0.1")
 	assert_eq(result.type, Status.OK)
 	assert_eq(result.value, true)
-	assert_eq(result.msg, "")
+	# commented the following because we may have different assets list
+#	assert_eq(result.msg, "")
 
 func test_createActor():
 	# animation doesn't exist

@@ -108,8 +108,13 @@ func evalCommand(cmdArray: Array, sender: String) -> Status:
 func executeCommand(command: CommandDescription, args: Array) -> Status:
 	var result := checkNumberOfArguments(command.argsDescription, args)
 	if result.isError(): return result
-	
-	return Status.ok()
+	if args.size() == 0:
+		result = command.callable.call()
+	elif command.argsAsArray:
+		result = command.callable.call(args)
+	else:
+		result = command.callable.callv(args)
+	return result
 
 func checkNumberOfArguments(argsDescription: String, args: Array) -> Status:
 	var expectedNumberOfArgs := argsDescription.split(" ").size() if len(argsDescription) > 0 else 0

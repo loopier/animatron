@@ -6,7 +6,7 @@ extends Node
 ## OSC command
 var cmd: String
 ## Function to be called when command is received.
-var callable: Variant
+var callable: Callable
 ## Arguments with type signature. For example: [code]name:s[/code].
 var argsDescription: String
 ## Documentation string of the command.
@@ -17,7 +17,7 @@ var description: String
 var argsAsArray: bool
 var toGdScript: bool
 
-func _init(fn: Variant, args: String, desc: String, asArray := false, toGdScript := false):
+func _init(fn: Callable, args: String, desc: String, asArray := false, toGdScript := false):
 	callable = fn
 	argsDescription = args
 	description = desc

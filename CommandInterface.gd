@@ -39,36 +39,37 @@ var variables: Dictionary:
 	get: return variables
 ## Core commands map.[br]
 var coreCommands: Dictionary = {
-	"/load/file": CommandDescription.new(loadCommandFile, "path:s", "Load a custom command definitions file, which should have the format described below."),
-	"/test": CommandDescription.new(getActor, "", "This is just a test"), ## used to test random stuff
-	"/set": CommandDescription.new(setVar, "", "TODO"),
-	"/get": CommandDescription.new(getVar, "", "TODO"),
+	"/load/file": CommandDescription.new(Callable(self, "loadCommandFile"), "path:s", "Load a custom command definitions file, which should have the format described below."),
+	"/test": CommandDescription.new(Callable(self, "getActor"), "", "This is just a test"), ## used to test random stuff
+	"/set": CommandDescription.new(Callable(self, "setVar"), "", "TODO"),
+	"/get": CommandDescription.new(Callable(self, "getVar"), "", "TODO"),
 	# log
-	"/log/level": CommandDescription.new(setLogLevel, "level:s", "Set the log level to either 'fatal', 'error', 'warn', 'debug' or 'verbose'"),
+	"/log/level": CommandDescription.new(Callable(self, "setLogLevel"), "level:s", "Set the log level to either 'fatal', 'error', 'warn', 'debug' or 'verbose'"),
 	# general commands
-	"/commands/list": CommandDescription.new(listAllCommands, "", "Get list of available commands."),
+	"/commands/list": CommandDescription.new(Callable(self, "listAllCommands"), "", "Get list of available commands."),
 	"/commands": "/commands/list",
 	# assets
-	"/load": CommandDescription.new(loadAnimationAsset, "animation:s", "Load an ANIMATION asset from disk. It will create an animation with the same name as the asset. Wildcards are supported, so several animations can be loaded at once. See also: `/list/assets`."),
-	"/assets/list": CommandDescription.new(listAnimationAssets, "", "Get the list of available (unloaded) assets. Assets must be loaded as animations in order to create actor instances."), # available in disk
+	"/load": CommandDescription.new(Callable(self, "loadAnimationAsset"), "animation:s", "Load an ANIMATION asset from disk. It will create an animation with the same name as the asset. Wildcards are supported, so several animations can be loaded at once. See also: `/assets/list`."),
+	"/assets/list": CommandDescription.new(Callable(self, "listAnimationAssets"), "", "Get the list of available (unloaded) assets. Assets must be loaded as animations in order to create actor instances."), # available in disk
+#	"/assets/list": CommandDescription.new(main.bla, "", "a bla"),
 	"/assets": "/assets/list",
-	"/animations/list": CommandDescription.new(listAnimations, "", "Get the list of available (loaded) animations."), # loaded
+	"/animations/list": CommandDescription.new(Callable(self, "listAnimations"), "", "Get the list of available (loaded) animations."), # loaded
 	"/animations": "/animations/list",
 	# actors
-	"/actors/list": CommandDescription.new(listActors, "", "Get list of current actor instances. Returns /list/actors/reply OSC message."),
-	"/create": CommandDescription.new(createActor, "actor:s animation:s", "Create an ACTOR that plays ANIMATION."),
-	"/remove": CommandDescription.new(removeActor, "actor:s", "Delete the ACTOR by name (remove its instance). "),
+	"/actors/list": CommandDescription.new(Callable(self, "listActors"), "", "Get list of current actor instances. Returns /list/actors/reply OSC message."),
+	"/create": CommandDescription.new(Callable(self, "createActor"), "actor:s animation:s", "Create an ACTOR that plays ANIMATION."),
+	"/remove": CommandDescription.new(Callable(self, "removeActor"), "actor:s", "Delete the ACTOR by name (remove its instance). "),
 	"/free": "/remove",
-	"/color": CommandDescription.new(colorActor, "actor:s r:f g:f b:f", "Add an RGB colour to the ACTOR. R, G and B should be in the 0-1 range (can be negative to subtract colour). Set to black (0,0,0) to restore its original colour."),
+	"/color": CommandDescription.new(Callable(self, "colorActor"), "actor:s r:f g:f b:f", "Add an RGB colour to the ACTOR. R, G and B should be in the 0-1 range (can be negative to subtract colour). Set to black (0,0,0) to restore its original colour."),
 	# routines
-	"/routines": CommandDescription.new(listRoutines, "", "Get the list of routines."),
-	"/routine/start": CommandDescription.new(startRoutine, "name:s", "Start the routine named NAME."),
-	"/routine/stop": CommandDescription.new(stopRoutine, "name:s", "Stop the routine named NAME."),
-	"/routine/free": CommandDescription.new(freeRoutine, "name:s", "Remove the routine named NAME"),
+	"/routines": CommandDescription.new(Callable(self, "listRoutines"), "", "Get the list of routines."),
+	"/routine/start": CommandDescription.new(Callable(self, "startRoutine"), "name:s", "Start the routine named NAME."),
+	"/routine/stop": CommandDescription.new(Callable(self, "stopRoutine"), "name:s", "Stop the routine named NAME."),
+	"/routine/free": CommandDescription.new(Callable(self, "freeRoutine"), "name:s", "Remove the routine named NAME"),
 	# state machine
-	"/states": CommandDescription.new(listStates, "", "Get a list of states for the given ACTOR."),
-	"/state/free": CommandDescription.new(freeState, "actor:s state:s", "Remove the STATE from the ACTOR's state machine."),
-	"/state/next": CommandDescription.new(nextState, "actor:s", "Change ACTOR to next STATE."),
+	"/states": CommandDescription.new(Callable(self, "listStates"), "", "Get a list of states for the given ACTOR."),
+	"/state/free": CommandDescription.new(Callable(self, "freeState"), "actor:s state:s", "Remove the STATE from the ACTOR's state machine."),
+	"/state/next": CommandDescription.new(Callable(self, "nextState"), "actor:s", "Change ACTOR to next STATE."),
 }
 ## Commands that need to pass the incoming parameters as an array.
 ## Couldn't find a more elegant way to deal with /def which seems to be the
@@ -79,11 +80,11 @@ var coreCommands: Dictionary = {
 ##   ...
 ## [/codeblock]
 var arrayCommands: Dictionary = {
-	"/def": CommandDescription.new(defineCommand, "cmdName:s [args:v] subcommands:c", "Define a custom OSC command that is a list of other OSC commands. This may be recursive, so each SUBCOMMAND may reference one of the built-in commands, or another custom-defined command. Another way to define custom commands is via the file commands/init.osc. The CMDNAME string (first argument) may include argument names (ARG1 ... ARGN), which may be referenced as SUBCOMMAND arguments using $ARG1 ... $ARGN. Example: /def \"/addsel actor anim\" \"/create $actor $anim\" \"/select $actor\". "),
-	"/routine": CommandDescription.new(addRoutine, "name:s repeats:i interval:f cmd:...", "Start a routine named NAME that sends CMD every INTERVAL of time (in seconds) for an arbitrary number of REPEATS."),
-	"/state/add": CommandDescription.new(addState, "actor:s new:s ... next:s", "Add a NEW state to the ACTOR's state machine. NEXT states is an arbitrary number of next possible states. States are animation names."),
-	"/post": CommandDescription.new(post, "msg:s", "Print MSG in the post window."),
-	"/relative": CommandDescription.new(setRelativeProperty, "", "TODO"),
+	"/def": CommandDescription.new(Callable(self, "defineCommand"), "cmdName:s [args:v] subcommands:c", "Define a custom OSC command that is a list of other OSC commands. This may be recursive, so each SUBCOMMAND may reference one of the built-in commands, or another custom-defined command. Another way to define custom commands is via the file commands/init.osc. The CMDNAME string (first argument) may include argument names (ARG1 ... ARGN), which may be referenced as SUBCOMMAND arguments using $ARG1 ... $ARGN. Example: /def \"/addsel actor anim\" \"/create $actor $anim\" \"/select $actor\". "),
+	"/routine": CommandDescription.new(Callable(self, "addRoutine"), "name:s repeats:i interval:f cmd:...", "Start a routine named NAME that sends CMD every INTERVAL of time (in seconds) for an arbitrary number of REPEATS."),
+	"/state/add": CommandDescription.new(Callable(self, "addState"), "actor:s new:s ... next:s", "Add a NEW state to the ACTOR's state machine. NEXT states is an arbitrary number of next possible states. States are animation names."),
+	"/post": CommandDescription.new(Callable(self, "post"), "msg:s", "Print MSG in the post window."),
+	"/relative": CommandDescription.new(Callable(self, "setRelativeProperty"), "", "TODO"),
 }
 
 ## Custom command definitions
@@ -109,33 +110,33 @@ var defCommands := {}
 ##   ...
 ## [/codeblock]
 var nodeCommands: Dictionary = {
-	"/animation": CommandDescription.new(setAnimationProperty, "", ""),
-	"/play": CommandDescription.new(callAnimationMethod, "", ""),
-	"/play/backwards": CommandDescription.new(callAnimationMethod, "", ""),
+	"/animation": CommandDescription.new(Callable(self, "setAnimationProperty"), "", ""),
+	"/play": CommandDescription.new(Callable(self, "callAnimationMethod"), "", ""),
+	"/play/backwards": CommandDescription.new(Callable(self, "callAnimationMethod"), "", ""),
 	"/reverse": "/play/backwards",
-	"/animation/loop": CommandDescription.new(setAnimationFramesProperty, "", ""),
-	"/stop": CommandDescription.new(callAnimationMethod, "", ""),
-	"/frame": CommandDescription.new(setAnimationProperty, "", ""),
-	"/frame/progress": CommandDescription.new(setAnimationProperty, "", ""),
-	"/speed/scale": CommandDescription.new(setAnimationProperty, "", ""),
+	"/animation/loop": CommandDescription.new(Callable(self, "setAnimationFramesProperty"), "", ""),
+	"/stop": CommandDescription.new(Callable(self, "callAnimationMethod"), "", ""),
+	"/frame": CommandDescription.new(Callable(self, "setAnimationProperty"), "", ""),
+	"/frame/progress": CommandDescription.new(Callable(self, "setAnimationProperty"), "", ""),
+	"/speed/scale": CommandDescription.new(Callable(self, "setAnimationProperty"), "", ""),
 	"/speed": "/speed/scale",
-	"/flip/v": CommandDescription.new(toggleAnimationProperty, "", ""),
-	"/flip/h": CommandDescription.new(toggleAnimationProperty, "", ""),
-	"/visible": CommandDescription.new(toggleActorProperty, "", ""),
-	"/hide": CommandDescription.new(callActorMethod, "", ""),
-	"/show": CommandDescription.new(callActorMethod, "", ""),
-	"/offset": CommandDescription.new(setAnimationPropertyWithVector, "", ""),
-	"/offset/x": CommandDescription.new(setAnimationPropertyWithVectorN, "", ""),
-	"/offset/y": CommandDescription.new(setAnimationPropertyWithVectorN, "", ""),
-	"/scale": CommandDescription.new(setActorPropertyWithVector, "", ""),
-	"/scale/x": CommandDescription.new(setActorPropertyWithVectorN, "", ""),
-	"/scale/y": CommandDescription.new(setActorPropertyWithVectorN, "", ""),
-	"/apply/scale": CommandDescription.new(callActorMethodWithVector, "", ""),
-	"/set/position": CommandDescription.new(callActorMethodWithVector, "", ""),
-	"/position": CommandDescription.new(setActorPropertyWithVector, "", ""),
-	"/position/x": CommandDescription.new(setActorPropertyWithVectorN, "", ""),
-	"/position/y": CommandDescription.new(setActorPropertyWithVectorN, "", ""),
-	"/rotation/degrees": CommandDescription.new(setActorProperty, "", ""),
+	"/flip/v": CommandDescription.new(Callable(self, "toggleAnimationProperty"), "", ""),
+	"/flip/h": CommandDescription.new(Callable(self, "toggleAnimationProperty"), "", ""),
+	"/visible": CommandDescription.new(Callable(self, "toggleActorProperty"), "", ""),
+	"/hide": CommandDescription.new(Callable(self, "callActorMethod"), "", ""),
+	"/show": CommandDescription.new(Callable(self, "callActorMethod"), "", ""),
+	"/offset": CommandDescription.new(Callable(self, "setAnimationPropertyWithVector"), "", ""),
+	"/offset/x": CommandDescription.new(Callable(self, "setAnimationPropertyWithVectorN"), "", ""),
+	"/offset/y": CommandDescription.new(Callable(self, "setAnimationPropertyWithVectorN"), "", ""),
+	"/scale": CommandDescription.new(Callable(self, "setActorPropertyWithVector"), "", ""),
+	"/scale/x": CommandDescription.new(Callable(self, "setActorPropertyWithVectorN"), "", ""),
+	"/scale/y": CommandDescription.new(Callable(self, "setActorPropertyWithVectorN"), "", ""),
+	"/apply/scale": CommandDescription.new(Callable(self, "callActorMethodWithVector"), "", ""),
+	"/set/position": CommandDescription.new(Callable(self, "callActorMethodWithVector"), "", ""),
+	"/position": CommandDescription.new(Callable(self, "setActorPropertyWithVector"), "", ""),
+	"/position/x": CommandDescription.new(Callable(self, "setActorPropertyWithVectorN"), "", ""),
+	"/position/y": CommandDescription.new(Callable(self, "setActorPropertyWithVectorN"), "", ""),
+	"/rotation/degrees": CommandDescription.new(Callable(self, "setActorProperty"), "", ""),
 	"/angle": "/rotation/degrees",
 }
 
@@ -422,24 +423,26 @@ func listAnimationAssets() -> Status:
 	return Status.ok(assetNames, msg)
 
 func loadAnimationAsset(assetName: String) -> Status:
+	var result : Status
 	var path := animationAssetsPath.path_join(assetName)
 	var dir := DirAccess.open(animationAssetsPath)
 	var assets := assetHelpers.getAssetFilesMatching(animationAssetsPath, assetName)
 	if not assets.sprites.is_empty():
-		var result := assetHelpers.loadSprites(animationsLibrary, assets.sprites)
+		result = assetHelpers.loadSprites(animationsLibrary, assets.sprites)
 		if result.isError(): return Status.error("Image asset not loaded: %s" % [path])
 	if not assets.seqs.is_empty():
 		for seqPath in assets.seqs:
-			var result := loadImageSequence(seqPath)
+			result = loadImageSequence(seqPath)
 			if result.isError(): return Status.error("Image sequence assets not loaded: %s" % [path])
 	if assets.sprites.is_empty() and assets.seqs.is_empty():
 		return Status.error("Asset not found: %s" % [path])
-	return Status.ok(true)
+	return result
 
 func loadImageSequence(path: String) -> Status:
 	var filenames := DirAccess.get_files_at(path)
 	var animName := path.get_basename().split("/")[-1]
-	if animationsLibrary.has_animation(animName):
+	var names = animationsLibrary.get_animation_names()
+	if animName != "default" and animationsLibrary.has_animation(animName):
 		return Status.error("Animation already loaded: '%s'" % [animName])
 	animationsLibrary.add_animation(animName)
 	for file in filenames:
