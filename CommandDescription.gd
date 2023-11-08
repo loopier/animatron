@@ -1,5 +1,4 @@
 class_name CommandDescription
-extends Node
 
 ## Describes an OSC command including the documentation.
 
