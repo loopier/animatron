@@ -526,7 +526,7 @@ func setActorPropertyWithVector(args) -> Status:
 	var result = getActor(args[1])
 	if result.isError(): return result
 	var property = args[0]
-	return setNodePropertyWithVector(result.value, property, args.slice(1))
+	return setNodePropertyWithVector(result.value, property, args.slice(2))
 
 func setAnimationPropertyWithVector(property, args) -> Status:
 	var result = getActor(args[0])

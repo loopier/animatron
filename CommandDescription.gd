@@ -7,6 +7,8 @@ extends Node
 var cmd: String
 ## Function to be called when command is received.
 var callable: Callable
+var callableObject: String
+var callableMethod: String
 ## Arguments with type signature. For example: [code]name:s[/code].
 var argsDescription: String
 ## Documentation string of the command.
@@ -19,6 +21,8 @@ var toGdScript: bool
 
 func _init(fn: Callable, args: String, desc: String, asArray := false, gdScript := false):
 	callable = fn
+	callableObject = callable.get_object().get_class()
+	callableMethod = callable.get_method()
 	argsDescription = args
 	description = desc
 	argsAsArray = asArray
