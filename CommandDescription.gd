@@ -17,11 +17,12 @@ var description: String
 var argsAsArray: bool
 var toGdScript: bool
 
-func _init(fn: Callable, args: String, desc: String, asArray := false, toGdScript := false):
+func _init(fn: Callable, args: String, desc: String, asArray := false, gdScript := false):
 	callable = fn
 	argsDescription = args
 	description = desc
 	argsAsArray = asArray
+	toGdScript = gdScript
 
 func execute(cmd: Array) -> Status:
 	var result := Status.new()

@@ -67,6 +67,7 @@ func evalCommand(cmdArray: Array, sender: String) -> Status:
 	if cmdDescription is String: 
 		result = evalCommand([cmdDescription] + args, sender)
 	elif cmdDescription is CommandDescription:
+		if cmdDescription.toGdScript: args = cmdArray
 		result = executeCommand(cmdDescription, args)
 	else:
 		result = Status.error("Command not found: %s" % [cmd])
@@ -74,35 +75,6 @@ func evalCommand(cmdArray: Array, sender: String) -> Status:
 	# post and reply result
 	_on_command_finished(result, sender)
 	return result
-	
-#		if cmdInterface.coreCommands.has(addr):
-#			callable = cmdInterface.coreCommands[addr]
-#			Log.debug("core cmd: %s %s" % [addr, callable])
-#			if callable is String:
-#				evalCommands([[callable] + args], sender)
-#				return
-#			result = callable.callv(args)
-#		elif cmdInterface.nodeCommands.has(addr):
-#			callable = cmdInterface.nodeCommands[addr]
-#			Log.debug("node cmd: %s %s" % [addr, callable])
-#			if callable is String:
-#				evalCommands([[callable] + args], sender)
-#				return
-#			result = callable.call(addr, args)
-#		elif cmdInterface.arrayCommands.has(addr):
-#			callable = cmdInterface.arrayCommands[addr]
-#			Log.debug("array cmd: %s %s" % [addr, callable])
-#			if callable is String:
-#				evalCommands([[callable] + args], sender)
-#				return
-#			result = callable.call(args)
-#		else:
-#			result = Status.error("cmd not found: %s %s" % [addr, args])
-#
-#		match result.type:
-#			Status.OK: _on_command_finished(result.msg, sender)
-#			Status.ERROR: _on_command_error(result.msg, sender)
-#			_: pass
 
 ## Executes a [param command] described in a [CommandDescription], with the given [param args].
 func executeCommand(command: CommandDescription, args: Array) -> Status:
@@ -110,9 +82,12 @@ func executeCommand(command: CommandDescription, args: Array) -> Status:
 	if result.isError(): return result
 	if args.size() == 0:
 		result = command.callable.call()
-	elif command.argsAsArray:
+	elif command.argsAsArray or command.toGdScript:
 		result = command.callable.call(args)
 	else:
+#		var method = command.callable.get_method()
+#		var obj = command.callable.get_object()
+#		Callable(obj, method).call(args)
 		result = command.callable.callv(args)
 	return result
 

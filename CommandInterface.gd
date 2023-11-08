@@ -118,7 +118,7 @@ var nodeCommands: Dictionary = {
 	"/stop": CommandDescription.new(Callable(self, "callAnimationMethod"), "", ""),
 	"/frame": CommandDescription.new(Callable(self, "setAnimationProperty"), "", ""),
 	"/frame/progress": CommandDescription.new(Callable(self, "setAnimationProperty"), "", ""),
-	"/speed/scale": CommandDescription.new(Callable(self, "setAnimationProperty"), "", ""),
+	"/speed/scale": CommandDescription.new(Callable(self, "setAnimationProperty"), "", "", false, true),
 	"/speed": "/speed/scale",
 	"/flip/v": CommandDescription.new(Callable(self, "toggleAnimationProperty"), "", ""),
 	"/flip/h": CommandDescription.new(Callable(self, "toggleAnimationProperty"), "", ""),
@@ -128,10 +128,10 @@ var nodeCommands: Dictionary = {
 	"/offset": CommandDescription.new(Callable(self, "setAnimationPropertyWithVector"), "", ""),
 	"/offset/x": CommandDescription.new(Callable(self, "setAnimationPropertyWithVectorN"), "", ""),
 	"/offset/y": CommandDescription.new(Callable(self, "setAnimationPropertyWithVectorN"), "", ""),
-	"/scale": CommandDescription.new(Callable(self, "setActorPropertyWithVector"), "", ""),
-	"/scale/x": CommandDescription.new(Callable(self, "setActorPropertyWithVectorN"), "", ""),
-	"/scale/y": CommandDescription.new(Callable(self, "setActorPropertyWithVectorN"), "", ""),
-	"/apply/scale": CommandDescription.new(Callable(self, "callActorMethodWithVector"), "", ""),
+	"/scale": CommandDescription.new(Callable(self, "setActorPropertyWithVector"), "", "", false, true),
+	"/scale/x": CommandDescription.new(Callable(self, "setActorPropertyWithVectorN"), "", "", false, true),
+	"/scale/y": CommandDescription.new(Callable(self, "setActorPropertyWithVectorN"), "", "", false, true),
+	"/apply/scale": CommandDescription.new(Callable(self, "callActorMethodWithVector"), "", "", false, true),
 	"/set/position": CommandDescription.new(Callable(self, "callActorMethodWithVector"), "", ""),
 	"/position": CommandDescription.new(Callable(self, "setActorPropertyWithVector"), "", ""),
 	"/position/x": CommandDescription.new(Callable(self, "setActorPropertyWithVectorN"), "", ""),
@@ -522,9 +522,10 @@ func setNodePropertyWithVector(node, property, args) -> Status:
 			TYPE_VECTOR4: args = [args[0], args[0], args[0], args[0]]
 	return callMethodWithVector(node, setProperty, args)
 
-func setActorPropertyWithVector(property, args) -> Status:
-	var result = getActor(args[0])
+func setActorPropertyWithVector(args) -> Status:
+	var result = getActor(args[1])
 	if result.isError(): return result
+	var property = args[0]
 	return setNodePropertyWithVector(result.value, property, args.slice(1))
 
 func setAnimationPropertyWithVector(property, args) -> Status:
@@ -673,7 +674,7 @@ func callAnimationFramesMethod(method, args) -> Status:
 	return Status.ok(result, "Called %s.%s.frames.%s(%s): %s" % [actor.get_name(), animation.get_animation(), method, args, result])
 
 func callActorMethodWithVector(method, args) -> Status:
-	var result = getActor(args[0])
+	var result = getActor(args[1])
 	if result.isError(): return result
 	var actor = result.value
 	return callMethodWithVector(actor, method, args.slice(1))

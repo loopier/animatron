@@ -42,9 +42,17 @@ func test_createActor():
 	var result = main.evalCommand(["/create", "bla", "xyz"], "127.0.0.1")
 	assert_eq(result.type, Status.ERROR)
 	assert_eq(result.value, null)
-	assert_eq(result.msg, "Animation not loaded: xyz")
+	assert_eq(result.msg, "Animation not found: xyz")
 	# should pass
 	result = main.evalCommand(["/create", "bla", "default"], "127.0.0.1")
 	assert_eq(result.type, Status.OK)
+#	assert_eq(result.value, true) # returns an object
+	assert_eq(result.msg, "Created new actor 'bla': default")
+
+func test_scale():
+	var result = main.evalCommand(["/load", "default"], "127.0.0.1")
+	result = main.evalCommand(["/create", "x", "default"], "127.0.0.1")
+	result = main.evalCommand(["/scale", "x", 2], "127.0.0.1")
+	assert_eq(result.type, Status.OK)
 	assert_eq(result.value, true)
-	assert_eq(result.msg, "")
+	assert_eq(result.msg, "set_scale")
