@@ -56,3 +56,11 @@ func test_scale():
 	assert_eq(result.type, Status.OK)
 	assert_eq(result.value, true)
 	assert_eq(result.msg, "set_scale")
+
+func test_speed():
+	var result = main.evalCommand(["/load", "default"], "127.0.0.1")
+	result = main.evalCommand(["/create", "x", "default"], "127.0.0.1")
+	result = main.evalCommand(["/speed", "x", 2], "127.0.0.1")
+	assert_eq(result.type, Status.OK)
+#	assert_eq(result.value, true)
+#	assert_eq(result.msg, "set_scale")
