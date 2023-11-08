@@ -34,34 +34,34 @@ func test_evalCommand():
 	assert_eq(checkResult.value, null)
 	assert_eq(checkResult.msg, "Not enough arguments - expected: 2 - received: 1")
 	# more arguments than needed
-	cmd = ["/load", "bla", 1, 2.3]
+	cmd = ["/load", "default", 1, 2.3]
 	checkResult = main.evalCommand(cmd, "localhost")
 	assert_eq(checkResult.type, Status.OK)
 	assert_eq(checkResult.value, true)
-	assert_eq(checkResult.msg, "")
+	assert_eq(checkResult.msg, "Loaded 1 sprites")
 	# correct number of arguments
-	cmd = ["/create", "x", "bla"]
+	cmd = ["/create", "x", "default"]
 	checkResult = main.evalCommand(cmd, "localhost")
 	assert_eq(checkResult.type, Status.OK)
-	assert_eq(checkResult.value, true)
-	assert_eq(checkResult.msg, "")
+	assert_is(checkResult.value, CharacterBody2D)
+	assert_eq(checkResult.msg, "Created new actor 'x': default")
 	# no arguments
 	cmd = ["/actors/list", ""]
 	checkResult = main.evalCommand(cmd, "localhost")
 	assert_eq(checkResult.type, Status.OK)
-	assert_eq(checkResult.value, true)
+	assert_typeof(checkResult.value, TYPE_ARRAY)
 	assert_eq(checkResult.msg, "")
 	# command not a callable
 	cmd = ["/commands"]
 	checkResult = main.evalCommand(cmd, "localhost")
 	assert_eq(checkResult.type, Status.OK)
-	assert_eq(checkResult.value, true)
-	assert_eq(checkResult.msg, "")
+	assert_true(checkResult.value.begins_with("\nCore Commands:\n"))
+	assert_true(checkResult.msg.begins_with("\nCore Commands:\n"))
 	
 
 func test_executeCommand():
 	# less arguments than expected
-	var cmdDescription = CommandDescription.new(func x(): pass, "str:s", "")
+	var cmdDescription = CommandDescription.new(func x(s: String) -> Status: return Status.ok(5, "all fine"), "str:s", "")
 	var cmdArgs = []
 	var checkResult = main.executeCommand(cmdDescription, cmdArgs)
 	assert_eq(checkResult.type, Status.ERROR)
@@ -71,14 +71,14 @@ func test_executeCommand():
 	cmdArgs = ["bla", 1, 2.1, "more"]
 	checkResult = main.executeCommand(cmdDescription, cmdArgs)
 	assert_eq(checkResult.type, Status.OK)
-	assert_eq(checkResult.value, true)
-	assert_eq(checkResult.msg, "")
+	assert_eq(checkResult.value, 5)
+	assert_eq(checkResult.msg, "all fine")
 	# exact number of arguments
 	cmdArgs = ["bla"]
 	checkResult = main.executeCommand(cmdDescription, cmdArgs)
 	assert_eq(checkResult.type, Status.OK)
-	assert_eq(checkResult.value, true)
-	assert_eq(checkResult.msg, "")
+	assert_eq(checkResult.value, 5)
+	assert_eq(checkResult.msg, "all fine")
 
 func test_checkNumberNumberOfArguments():
 	# less arguments than expected

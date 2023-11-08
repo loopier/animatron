@@ -87,7 +87,8 @@ func executeCommand(command: CommandDescription, args: Array) -> Status:
 	elif command.toGdScript:
 		result = command.callable.call(args[0], args.slice(1))
 	else:
-		result = command.callable.callv(args)
+		# Reduce the number of args to the expected size, else callv will fail
+		result = command.callable.callv(args.slice(0, result.value))
 	return result
 
 func checkNumberOfArguments(argsDescription: String, args: Array) -> Status:
