@@ -82,12 +82,11 @@ func executeCommand(command: CommandDescription, args: Array) -> Status:
 	if result.isError(): return result
 	if args.size() == 0:
 		result = command.callable.call()
-	elif command.argsAsArray or command.toGdScript:
+	elif command.argsAsArray:
 		result = command.callable.call(args)
+	elif command.toGdScript:
+		result = command.callable.call(args[0], args.slice(1))
 	else:
-#		var method = command.callable.get_method()
-#		var obj = command.callable.get_object()
-#		Callable(obj, method).call(args)
 		result = command.callable.callv(args)
 	return result
 

@@ -522,11 +522,10 @@ func setNodePropertyWithVector(node, property, args) -> Status:
 			TYPE_VECTOR4: args = [args[0], args[0], args[0], args[0]]
 	return callMethodWithVector(node, setProperty, args)
 
-func setActorPropertyWithVector(args) -> Status:
-	var result = getActor(args[1])
+func setActorPropertyWithVector(property, args) -> Status:
+	var result = getActor(args[0])
 	if result.isError(): return result
-	var property = args[0]
-	return setNodePropertyWithVector(result.value, property, args.slice(2))
+	return setNodePropertyWithVector(result.value, property, args.slice(1))
 
 func setAnimationPropertyWithVector(property, args) -> Status:
 	var result = getActor(args[0])
