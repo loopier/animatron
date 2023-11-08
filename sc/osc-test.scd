@@ -22,7 +22,7 @@ n.sendMsg("/actors/list");
 
 n.sendMsg("/load", "mama");
 n.sendMsg("/load", "numbers");
-n.sendMsg("/create", "x", "fox-walk");
+n.sendMsg("/create", "x", "mama");
 n.sendMsg("/create", "y", "canon-man");
 n.sendMsg("/create", "z", "Explosion01-light");
 n.sendMsg("/create", "x", "om-walk-e");
