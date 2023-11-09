@@ -185,6 +185,7 @@ func defineCommand(args: Array) -> Status:
 func loadCommandFile(path: String) -> Status:
 	var file = FileAccess.open(path, FileAccess.READ)
 	if file == null: file = FileAccess.open("user://" + path, FileAccess.READ)
+	if file == null: return Status.ok([], "No command file '%s' found to load" % [path])
 	var contents = file.get_as_text()
 	var cmds: Array = convertTextToCommands(contents).value
 	
