@@ -80,10 +80,10 @@ var coreCommands: Dictionary = {
 ##   ...
 ## [/codeblock]
 var arrayCommands: Dictionary = {
-	"/def": CommandDescription.new(defineCommand, "cmdName:s [args:v] subcommands:c", "Define a custom OSC command that is a list of other OSC commands. This may be recursive, so each SUBCOMMAND may reference one of the built-in commands, or another custom-defined command. Another way to define custom commands is via the file commands/init.osc. The CMDNAME string (first argument) may include argument names (ARG1 ... ARGN), which may be referenced as SUBCOMMAND arguments using $ARG1 ... $ARGN. Example: /def \"/addsel actor anim\" \"/create $actor $anim\" \"/select $actor\". "),
+	"/def": CommandDescription.new(defineCommand, "cmdName:s [args:v] subcommands:c", "Define a custom OSC command that is a list of other OSC commands. This may be recursive, so each SUBCOMMAND may reference one of the built-in commands, or another custom-defined command. Another way to define custom commands is via the file commands/init.osc. The CMDNAME string (first argument) may include argument names (ARG1 ... ARGN), which may be referenced as SUBCOMMAND arguments using $ARG1 ... $ARGN. Example: /def \"/addsel actor anim\" \"/create $actor $anim\" \"/select $actor\". ", true),
 	"/routine": CommandDescription.new(addRoutine, "name:s repeats:i interval:f cmd:...", "Start a routine named NAME that sends CMD every INTERVAL of time (in seconds) for an arbitrary number of REPEATS."),
 	"/state/add": CommandDescription.new(addState, "actor:s new:s ... next:s", "Add a NEW state to the ACTOR's state machine. NEXT states is an arbitrary number of next possible states. States are animation names."),
-	"/post": CommandDescription.new(post, "msg:s", "Print MSG in the post window."),
+	"/post": CommandDescription.new(post, "msg:s", "Print MSG in the post window.", true),
 	"/relative": CommandDescription.new(setRelativeProperty, "", "TODO"),
 }
 
