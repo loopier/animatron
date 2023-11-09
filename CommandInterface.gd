@@ -183,8 +183,10 @@ func defineCommand(args: Array) -> Status:
 ## Load commands from a file and return an array
 func loadCommandFile(path: String) -> Status:
 	var file = FileAccess.open(path, FileAccess.READ)
+	if file == null: file = FileAccess.open("user://" + path, FileAccess.READ)
 	var contents = file.get_as_text()
 	var cmds: Array = convertTextToCommands(contents).value
+	
 	return Status.ok(cmds, "Loaded commands from: %s" % [path])
 
 ## Converts multiple lines of text to an array of commands, ignoring empty lines and comments

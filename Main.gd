@@ -2,8 +2,7 @@ extends Node2D
 class_name Main
 
 var osc: OscReceiver
-static var variablesPath := "res://config/vars.ocl"
-static var configPath := "res://config/config.ocl"
+static var configPath := "user://config/config.ocl"
 var metanode := preload("res://meta_node.tscn")
 @onready var actors := get_node("Actors")
 @onready var cmdInterface : CommandInterface = get_node("CommandInterface")
@@ -25,7 +24,6 @@ func _ready():
 	self.add_child.call_deferred(osc)
 	osc.startServer()
 	osc.osc_msg_received.connect(_on_osc_msg_received)
-	config.load_config.connect(_on_load_config)
 	cmdInterface.command_finished.connect(_on_command_finished)
 	cmdInterface.command_error.connect(_on_command_error)
 	cmdInterface.list_routines.connect(_on_list_routines)
@@ -40,8 +38,7 @@ func _ready():
 	
 	editor.eval_code.connect(_on_eval_code)
 	
-	# saving osc maps for variables to .osc files can be used as config files
-	# load osc variable maps to a dictionary
+	loadConfig(configPath)
 
 # Called every frame. 'delta' is the elapsed time since the previous frame./
 func _process(_delta):
@@ -100,10 +97,11 @@ func checkNumberOfArguments(argsDescription: String, args: Array) -> Status:
 		return Status.ok(expectedNumberOfArgs, "Received more arguments (%s) than needed (%s). Using: %s" % [actualNumberOfArgs,  expectedNumberOfArgs, args.slice(0,expectedNumberOfArgs)])
 	return Status.ok(expectedNumberOfArgs, "")
 
-func _on_load_config(filename: String):
+func loadConfig(filename: String):
 	var configCmds = cmdInterface.loadCommandFile(filename).value
-	for cmd in configCmds:
-		cmdInterface.parseCommand(cmd[0], cmd.slice(1), "")
+	evalCommands(configCmds, "config")
+#	for cmd in configCmds:
+#		cmdInterface.parseCommand(cmd[0], cmd.slice(1), "")
 
 func _on_eval_code(text: String):
 	var cmds := []
