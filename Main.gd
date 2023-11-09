@@ -9,6 +9,8 @@ var metanode := preload("res://meta_node.tscn")
 @onready var Routine := preload("res://RoutineNode.tscn")
 @onready var routines := get_node("Routines")
 var StateMachine := preload("res://StateMachine.gd")
+var OpenControlLanguage := preload("res://ocl.gd")
+var ocl: OpenControlLanguage
 var config := preload("res://Config.gd").new()
 @onready var editor := get_node("HSplitContainer/CodeEdit")
 @onready var helpWindow := get_node("HSplitContainer/VBoxContainer/HelpWindow")
@@ -36,6 +38,7 @@ func _ready():
 	cmdInterface.free_state.connect(_on_free_state)
 	cmdInterface.next_state.connect(_on_next_state)
 	
+	ocl = OpenControlLanguage.new()
 	editor.eval_code.connect(_on_eval_code)
 	
 	loadConfig(configPath)
@@ -51,9 +54,11 @@ func _on_osc_msg_received(addr: String, args: Array, sender: String):
 	Log.debug("osc_msg_received: %s %s - %s" % [addr, args, sender])
 	evalCommands(dummyArrayOfCmds, sender)
 
-func evalCommands(cmds: Array, sender: String):
+func evalCommands(cmds: Array, sender: String) -> Status:
+	var result : Status
 	for cmd in cmds:
-		evalCommand(cmd, sender)
+		result = evalCommand(cmd, sender)
+	return result
 
 func evalCommand(cmdArray: Array, sender: String) -> Status:
 	var cmd : String = cmdArray[0]
@@ -64,9 +69,8 @@ func evalCommand(cmdArray: Array, sender: String) -> Status:
 	if cmdDescription is String: 
 		result = evalCommand([cmdDescription] + args, sender)
 	elif cmdDescription is Dictionary:
-		# /def returns a dictionary with 2 keys: variables and subcomands
-		# it's not clear who should parse that, CommandInterface or OCL -- pending on decision
-		Log.warn("TODO: trying to run a /def, which has not yet been implemented - see Main.evalCommand()")
+		var subcommands = ocl._def(cmdDescription.variables, cmdDescription.subcommands)
+		result = evalCommands(subcommands, sender)
 	elif cmdDescription is CommandDescription:
 		if cmdDescription.toGdScript: args = cmdArray
 		result = executeCommand(cmdDescription, args)
