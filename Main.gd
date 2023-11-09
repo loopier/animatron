@@ -63,6 +63,10 @@ func evalCommand(cmdArray: Array, sender: String) -> Status:
 	var cmdDescription : Variant = cmdInterface.getCommandDescription(cmd)
 	if cmdDescription is String: 
 		result = evalCommand([cmdDescription] + args, sender)
+	elif cmdDescription is Dictionary:
+		# /def returns a dictionary with 2 keys: variables and subcomands
+		# it's not clear who should parse that, CommandInterface or OCL -- pending on decision
+		Log.warn("TODO: trying to run a /def, which has not yet been implemented - see Main.evalCommand()")
 	elif cmdDescription is CommandDescription:
 		if cmdDescription.toGdScript: args = cmdArray
 		result = executeCommand(cmdDescription, args)

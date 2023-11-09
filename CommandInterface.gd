@@ -40,7 +40,7 @@ var variables: Dictionary:
 ## Core commands map.[br]
 var coreCommands: Dictionary = {
 	"/load/file": CommandDescription.new(loadCommandFile, "path:s", "Load a custom command definitions file, which should have the format described below."),
-	"/test": CommandDescription.new(getActor, "", "This is just a test"), ## used to test random stuff
+#	"/test": CommandDescription.new(getActor, "", "This is just a test"), ## used to test random stuff
 	"/set": CommandDescription.new(setVar, "", "TODO"),
 	"/get": CommandDescription.new(getVar, "", "TODO"),
 	# log
