@@ -51,12 +51,6 @@ size_flags_horizontal = 3
 theme_override_constants/separation = 0
 split_offset = 384
 
-[node name="HelpWindow" type="CodeEdit" parent="HSplitContainer/VBoxContainer"]
-layout_mode = 2
-theme = ExtResource("3_fotw2")
-theme_override_styles/normal = ExtResource("5_efpnp")
-placeholder_text = "help window"
-
 [node name="PostWindow" type="CodeEdit" parent="HSplitContainer/VBoxContainer"]
 layout_mode = 2
 theme = ExtResource("3_fotw2")

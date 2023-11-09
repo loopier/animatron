@@ -39,6 +39,7 @@ var variables: Dictionary:
 	get: return variables
 ## Core commands map.[br]
 var coreCommands: Dictionary = {
+	"/help": CommandDescription.new(getHelp, "cmd:s", "Get documentation about CMD."),
 	"/load/file": CommandDescription.new(loadCommandFile, "path:s", "Load a custom command definitions file, which should have the format described below."),
 #	"/test": CommandDescription.new(getActor, "", "This is just a test"), ## used to test random stuff
 	"/set": CommandDescription.new(setVar, "", "TODO"),
@@ -285,6 +286,14 @@ func post(args: Array) -> Status:
 	for arg in args:
 		Log.info(arg)
 	return Status.ok()
+
+func getHelp(cmd: String) -> Status:
+	var cmdDesc = getCommandDescription(cmd)
+	if not(cmd.begins_with("/")): 
+		return getHelp("/" + cmd)
+	if cmdDesc == null:
+		return Status.error("Help not found: %s" % [cmd])
+	return Status.ok(cmdDesc, "[HELP] %s %s - %s" % [cmd, cmdDesc.argsDescription, cmdDesc.description])
 
 ## Read a file with a [param filename] and return its OSC constent in a string
 func loadFile(filename: String) -> Status:

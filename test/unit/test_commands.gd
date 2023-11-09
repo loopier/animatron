@@ -64,3 +64,17 @@ func test_speed():
 	assert_eq(result.type, Status.OK)
 #	assert_eq(result.value, true)
 #	assert_eq(result.msg, "set_scale")
+
+func test_help():
+	var result = main.evalCommand(["/help", "/create"], "")
+	assert_eq(result.type, Status.OK)
+	assert_is(result.value, CommandDescription)
+	assert_typeof(result.msg, TYPE_STRING)
+	# typo - no leading slash
+	result = main.evalCommand(["/help", "create"], "")
+	assert_eq(result.type, Status.OK)
+	assert_is(result.value, CommandDescription)
+	assert_typeof(result.msg, TYPE_STRING)
+	# command does not exist
+	result = main.evalCommand(["/help", "bla"], "")
+	assert_eq(result.type, Status.ERROR)

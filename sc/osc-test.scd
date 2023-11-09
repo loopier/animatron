@@ -171,3 +171,6 @@ n.sendMsg("/relative", "/rotation/degrees", "x", -45);
 n.sendMsg("/relative", "/position/x", "x", 100);
 // n.sendMsg("/relative", "/scale", "x", 0.5);
 )
+
+// help system
+n.sendMsg("/help", "/create");
