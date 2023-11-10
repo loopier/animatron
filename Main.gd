@@ -86,6 +86,12 @@ func evalCommand(cmdArray: Array, sender: String) -> Status:
 func executeCommand(command: CommandDescription, args: Array) -> Status:
 	var result := checkNumberOfArguments(command.argsDescription, args)
 	if result.isError(): return result
+	# Handle expressions in arguments
+	for i in args.size():
+		var expr := ocl._getExpression(args[i])
+		if not expr.is_empty():
+			var expResult : float = ocl._evalExpr(expr, ["time"], [Time.get_ticks_msec() * 1e-3])
+			args[i] = expResult
 	if args.size() == 0:
 		result = command.callable.call()
 	elif command.argsAsArray:
@@ -99,6 +105,9 @@ func executeCommand(command: CommandDescription, args: Array) -> Status:
 
 func checkNumberOfArguments(argsDescription: String, args: Array) -> Status:
 	var expectedNumberOfArgs := argsDescription.split(" ").size() if len(argsDescription) > 0 else 0
+	# For now, allow arbitrary upper bound when the argsDescription includes repeats
+	if argsDescription.contains("..."):
+		expectedNumberOfArgs = max(expectedNumberOfArgs, args.size())
 	var actualNumberOfArgs := args.size()
 	if actualNumberOfArgs < expectedNumberOfArgs:
 		return Status.error("Not enough arguments - expected: %s - received: %s" % [expectedNumberOfArgs, actualNumberOfArgs])
