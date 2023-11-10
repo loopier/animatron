@@ -58,6 +58,7 @@ func evalCommands(cmds: Array, sender: String) -> Status:
 	var result : Status
 	for cmd in cmds:
 		result = evalCommand(cmd, sender)
+		if result.isError(): break
 	return result
 
 func evalCommand(cmdArray: Array, sender: String) -> Status:

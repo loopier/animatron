@@ -20,6 +20,20 @@ func before_all():
 func after_all():
 	gut.p("ran run teardown logger", 2)
 
+func test_evalCommands():
+	# stop upon error
+	var cmds = [["/load", "default"], ["/bla", "alo", 1, 2.3], ["/create", "x", "default"]]
+	var checkResult = main.evalCommands(cmds, "localhost")
+	assert_eq(checkResult.type, Status.ERROR)
+	assert_eq(checkResult.value, null)
+	assert_eq(checkResult.msg, "Command not found: /bla")
+	# should pass
+	cmds = [["/load", "default"], ["/create", "x", "default"]]
+	checkResult = main.evalCommands(cmds, "localhost")
+	assert_eq(checkResult.type, Status.OK)
+	assert_is(checkResult.value, CharacterBody2D)
+	assert_typeof(checkResult.msg, TYPE_STRING)
+
 func test_evalCommand():
 	# command not found
 	var cmd = ["/bla", "alo", 1, 2.3]
