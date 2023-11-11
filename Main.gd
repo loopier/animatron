@@ -15,6 +15,7 @@ var config := preload("res://Config.gd").new()
 @onready var editor := get_node("HSplitContainer/CodeEdit")
 @onready var helpWindow := get_node("HSplitContainer/VBoxContainer/HelpWindow")
 @onready var postWindow := get_node("HSplitContainer/VBoxContainer/PostWindow")
+var rnd := RandomNumberGenerator.new()
 
 @onready var stateMachines := {}
 
@@ -90,7 +91,7 @@ func executeCommand(command: CommandDescription, args: Array) -> Status:
 	for i in args.size():
 		var expr := ocl._getExpression(args[i])
 		if not expr.is_empty():
-			var expResult : float = ocl._evalExpr(expr, ["time"], [Time.get_ticks_msec() * 1e-3])
+			var expResult : float = ocl._evalExpr(expr, ["time", "rnd"], [Time.get_ticks_msec() * 1e-3, rnd])
 			args[i] = expResult
 	if args.size() == 0:
 		result = command.callable.call()
