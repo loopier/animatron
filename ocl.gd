@@ -159,3 +159,23 @@ func _getExpression(str) -> String:
 	regex.compile("^\\{([^{}]*)\\}$")
 	var result := regex.search(str)
 	return result.strings[1].strip_edges() if result else ""
+
+## In a string with expressions (e.g. "some {5 + 7    } stuff"),
+## remove the spaces within the expression ("some {5+7} stuff").
+func _removeExpressionSpaces(str: String) -> String:
+	var regex := RegEx.new()
+	regex.compile("\\{([^{}]*)\\}")
+	var removedStr := ""
+	var lastIndex := 0
+	for result in regex.search_all(str):
+		print("result %d to %d: '%s'" % [result.get_start(), result.get_end(), result.get_string()])
+		removedStr += str.substr(lastIndex, result.get_start() - lastIndex)
+		removedStr += _removeSpaces(result.get_string())
+		lastIndex = result.get_end()
+	removedStr += str.substr(lastIndex)
+	return removedStr
+
+func _removeSpaces(str: String) -> String:
+	var regex := RegEx.new()
+	regex.compile("\\s+")
+	return regex.sub(str, "", true)
