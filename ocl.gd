@@ -152,7 +152,9 @@ func _evalExpr(exprStr: String, vars: PackedStringArray, varValues: Array) -> Va
 
 ## Parse a string to see if it contains an expression
 ## clause, and if so, return that clause.
-func _getExpression(str: String) -> String:
+func _getExpression(str) -> String:
+	if typeof(str) != TYPE_STRING:
+		return ""
 	var regex := RegEx.new()
 	regex.compile("^\\{([^{}]*)\\}$")
 	var result := regex.search(str)

@@ -42,6 +42,7 @@ func _ready():
 	ocl = OpenControlLanguage.new()
 	editor.eval_code.connect(_on_eval_code)
 	
+	
 	loadConfig(configPath)
 
 # Called every frame. 'delta' is the elapsed time since the previous frame./
@@ -156,13 +157,14 @@ func _on_list_routines():
 
 func _on_add_routine(name: String, repeats: int, interval: float, command: Array):
 	Log.verbose("New routine '%s' (%s times every %s): %s" % [name, repeats, interval, command])
-	var routine: Node
+	var routine: Routine
 	if routines.has_node(name):
 		routine = routines.get_node(name)
 	else:
 		routine = Routine.instantiate()
 		routine.name = name
 		routines.add_child(routine)
+
 	routine.repeats = repeats
 	routine.set_wait_time(interval)
 	routine.command = command
