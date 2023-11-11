@@ -725,11 +725,11 @@ func freeRoutine(name: String) -> Status:
 	free_routine.emit(name)
 	return Status.ok(true)
 
-func startRoutine(args: Array) -> Status:
+func startRoutine(name: String) -> Status:
 	start_routine.emit(name)
 	return Status.ok(true)
 
-func stopRoutine(args: Array) -> Status:
+func stopRoutine(name: String) -> Status:
 	stop_routine.emit(name)
 	return Status.ok(true)
 
