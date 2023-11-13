@@ -125,6 +125,7 @@ func loadConfig(filename: String):
 
 func _on_eval_code(text: String):
 	var cmds := []
+	text = ocl._removeExpressionSpaces(text)
 	if text.begins_with("/def"):
 		# putting /def cmd in an array so we can use the same call for both cases
 		cmds.append(cmdInterface.convertDefBlockToCommand(text))
