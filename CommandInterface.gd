@@ -31,6 +31,7 @@ var assetHelpers := preload("res://asset_helpers.gd").new()
 var animationsLibrary: SpriteFrames ## The meta node containing these frames needs to be initialized in _ready
 var assetsPath := "user://assets"
 var animationAssetsPath := assetsPath + "/animations"
+var Flags := CommandDescription.Flags
 
 ## A dictionary used to store variables accessible from OSC messages.
 ## They are stored in a file, and loaded into this dictionary.
@@ -81,11 +82,11 @@ var coreCommands: Dictionary = {
 ##   ...
 ## [/codeblock]
 var arrayCommands: Dictionary = {
-	"/def": CommandDescription.new(defineCommand, "cmdName:s [args:v] subcommands:c", "Define a custom OSC command that is a list of other OSC commands. This may be recursive, so each SUBCOMMAND may reference one of the built-in commands, or another custom-defined command. Another way to define custom commands is via the file commands/init.osc. The CMDNAME string (first argument) may include argument names (ARG1 ... ARGN), which may be referenced as SUBCOMMAND arguments using $ARG1 ... $ARGN. Example: /def \"/addsel actor anim\" \"/create $actor $anim\" \"/select $actor\". ", true),
-	"/routine": CommandDescription.new(addRoutine, "name:s repeats:i interval:f cmd:...", "Start a routine named NAME that sends CMD every INTERVAL of time (in seconds) for an arbitrary number of REPEATS.", true),
-	"/state/add": CommandDescription.new(addState, "actor:s new:s ... next:s", "Add a NEW state to the ACTOR's state machine. NEXT states is an arbitrary number of next possible states. States are animation names.", true),
-	"/post": CommandDescription.new(post, "msg:s", "Print MSG in the post window.", true),
-	"/relative": CommandDescription.new(setRelativeProperty, "", "TODO", true),
+	"/def": CommandDescription.new(defineCommand, "cmdName:s [args:v] subcommands:c", "Define a custom OSC command that is a list of other OSC commands. This may be recursive, so each SUBCOMMAND may reference one of the built-in commands, or another custom-defined command. Another way to define custom commands is via the file commands/init.osc. The CMDNAME string (first argument) may include argument names (ARG1 ... ARGN), which may be referenced as SUBCOMMAND arguments using $ARG1 ... $ARGN. Example: /def \"/addsel actor anim\" \"/create $actor $anim\" \"/select $actor\". ", Flags.asArray(true)),
+	"/routine": CommandDescription.new(addRoutine, "name:s repeats:i interval:f cmd:...", "Start a routine named NAME that sends CMD every INTERVAL of time (in seconds) for an arbitrary number of REPEATS.", Flags.asArray(true)),
+	"/state/add": CommandDescription.new(addState, "actor:s new:s ... next:s", "Add a NEW state to the ACTOR's state machine. NEXT states is an arbitrary number of next possible states. States are animation names.", Flags.asArray(true)),
+	"/post": CommandDescription.new(post, "msg:s", "Print MSG in the post window.", Flags.asArray(false)),
+	"/relative": CommandDescription.new(setRelativeProperty, "", "TODO", Flags.asArray(false)),
 }
 
 ## Custom command definitions
@@ -111,33 +112,33 @@ var defCommands := {}
 ##   ...
 ## [/codeblock]
 var nodeCommands: Dictionary = {
-	"/animation": CommandDescription.new(setAnimationProperty, "", "", false, true),
-	"/play": CommandDescription.new(callAnimationMethod, "", "", false, true),
-	"/play/backwards": CommandDescription.new(callAnimationMethod, "", "", false, true),
+	"/animation": CommandDescription.new(setAnimationProperty, "", "", Flags.gdScript()),
+	"/play": CommandDescription.new(callAnimationMethod, "", "", Flags.gdScript()),
+	"/play/backwards": CommandDescription.new(callAnimationMethod, "", "", Flags.gdScript()),
 	"/reverse": "/play/backwards",
-	"/animation/loop": CommandDescription.new(setAnimationFramesProperty, "", "", false, true),
-	"/stop": CommandDescription.new(callAnimationMethod, "", "", false, true),
-	"/frame": CommandDescription.new(setAnimationProperty, "", "", false, true),
-	"/frame/progress": CommandDescription.new(setAnimationProperty, "", "", false, true),
-	"/speed/scale": CommandDescription.new(setAnimationProperty, "", "", false, true),
+	"/animation/loop": CommandDescription.new(setAnimationFramesProperty, "", "", Flags.gdScript()),
+	"/stop": CommandDescription.new(callAnimationMethod, "", "", Flags.gdScript()),
+	"/frame": CommandDescription.new(setAnimationProperty, "", "", Flags.gdScript()),
+	"/frame/progress": CommandDescription.new(setAnimationProperty, "", "", Flags.gdScript()),
+	"/speed/scale": CommandDescription.new(setAnimationProperty, "", "", Flags.gdScript()),
 	"/speed": "/speed/scale",
 	"/flip/v": CommandDescription.new(toggleAnimationProperty, "", ""),
 	"/flip/h": CommandDescription.new(toggleAnimationProperty, "", ""),
 	"/visible": CommandDescription.new(toggleActorProperty, "", ""),
-	"/hide": CommandDescription.new(callActorMethod, "", "", false, true),
-	"/show": CommandDescription.new(callActorMethod, "", "", false, true),
-	"/offset": CommandDescription.new(setAnimationPropertyWithVector, "", "", false, true),
-	"/offset/x": CommandDescription.new(setAnimationPropertyWithVectorN, "", "", false, true),
-	"/offset/y": CommandDescription.new(setAnimationPropertyWithVectorN, "", "", false, true),
-	"/scale": CommandDescription.new(setActorPropertyWithVector, "", "", false, true),
-	"/scale/x": CommandDescription.new(setActorPropertyWithVectorN, "", "", false, true),
-	"/scale/y": CommandDescription.new(setActorPropertyWithVectorN, "", "", false, true),
-	"/apply/scale": CommandDescription.new(callActorMethodWithVector, "", "", false, true),
-	"/set/position": CommandDescription.new(callActorMethodWithVector, "", "", false, true),
-	"/position": CommandDescription.new(setActorPropertyWithVector, "", "", false, true),
-	"/position/x": CommandDescription.new(setActorPropertyWithVectorN, "", "", false, true),
-	"/position/y": CommandDescription.new(setActorPropertyWithVectorN, "", "", false, true),
-	"/rotation/degrees": CommandDescription.new(setActorProperty, "", "", false, true),
+	"/hide": CommandDescription.new(callActorMethod, "", "", Flags.gdScript()),
+	"/show": CommandDescription.new(callActorMethod, "", "", Flags.gdScript()),
+	"/offset": CommandDescription.new(setAnimationPropertyWithVector, "", "", Flags.gdScript()),
+	"/offset/x": CommandDescription.new(setAnimationPropertyWithVectorN, "", "", Flags.gdScript()),
+	"/offset/y": CommandDescription.new(setAnimationPropertyWithVectorN, "", "", Flags.gdScript()),
+	"/scale": CommandDescription.new(setActorPropertyWithVector, "", "", Flags.gdScript()),
+	"/scale/x": CommandDescription.new(setActorPropertyWithVectorN, "", "", Flags.gdScript()),
+	"/scale/y": CommandDescription.new(setActorPropertyWithVectorN, "", "", Flags.gdScript()),
+	"/apply/scale": CommandDescription.new(callActorMethodWithVector, "", "", Flags.gdScript()),
+	"/set/position": CommandDescription.new(callActorMethodWithVector, "", "", Flags.gdScript()),
+	"/position": CommandDescription.new(setActorPropertyWithVector, "", "", Flags.gdScript()),
+	"/position/x": CommandDescription.new(setActorPropertyWithVectorN, "", "", Flags.gdScript()),
+	"/position/y": CommandDescription.new(setActorPropertyWithVectorN, "", "", Flags.gdScript()),
+	"/rotation/degrees": CommandDescription.new(setActorProperty, "", "", Flags.gdScript()),
 	"/angle": "/rotation/degrees",
 }
 

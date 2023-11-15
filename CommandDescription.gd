@@ -17,15 +17,34 @@ var description: String
 ## See [method Callable.call] vs. [method Callable.callv].
 var argsAsArray: bool
 var toGdScript: bool
+var deferEvalExpressions: bool
 
-func _init(fn: Callable, args: String, desc: String, asArray := false, gdScript := false):
+# Inner helper class to specify the boolean flags for the CommandDescription constructor
+class Flags:
+	var argsAsArray := false
+	var toGdScript := false
+	var deferEvalExpressions := false
+
+	static func asArray(deferEvalExpr : bool):
+		var f := Flags.new()
+		f.argsAsArray = true
+		f.deferEvalExpressions = deferEvalExpr
+		return f
+	
+	static func gdScript():
+		var f := Flags.new()
+		f.toGdScript = true
+		return f
+		
+func _init(fn: Callable, args: String, desc: String, flags = null):
 	callable = fn
 	callableObject = callable.get_object().get_class()
 	callableMethod = callable.get_method()
 	argsDescription = args
 	description = desc
-	argsAsArray = asArray
-	toGdScript = gdScript
+	argsAsArray = flags.argsAsArray if typeof(flags) != TYPE_NIL else false
+	toGdScript = flags.toGdScript if typeof(flags) != TYPE_NIL else false
+	deferEvalExpressions = flags.deferEvalExpressions if typeof(flags) != TYPE_NIL else false
 
 func execute(cmd: Array) -> Status:
 	var result := Status.new()

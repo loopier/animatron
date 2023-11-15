@@ -88,12 +88,15 @@ func evalCommand(cmdArray: Array, sender: String) -> Status:
 func executeCommand(command: CommandDescription, args: Array) -> Status:
 	var result := checkNumberOfArguments(command.argsDescription, args)
 	if result.isError(): return result
-	# Handle expressions in arguments
-	for i in args.size():
-		var expr := ocl._getExpression(args[i])
-		if not expr.is_empty():
-			var expResult : float = ocl._evalExpr(expr, ["time", "rnd"], [Time.get_ticks_msec() * 1e-3, rnd])
-			args[i] = expResult
+	if not command.deferEvalExpressions:
+		# Don't modify the incoming arguments (so expression strings stay as exprsesions)
+		args = args.duplicate()
+		# Handle expressions in arguments
+		for i in args.size():
+			var expr := ocl._getExpression(args[i])
+			if not expr.is_empty():
+				var expResult : float = ocl._evalExpr(expr, ["time", "rnd"], [Time.get_ticks_msec() * 1e-3, rnd])
+				args[i] = expResult
 	if args.size() == 0:
 		result = command.callable.call()
 	elif command.argsAsArray:
