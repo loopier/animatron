@@ -64,19 +64,18 @@ var coreCommands: Dictionary = {
 	"/free": "/remove",
 	"/color": CommandDescription.new(colorActor, "actor:s r:f g:f b:f", "Add an RGB colour to the ACTOR. R, G and B should be in the 0-1 range (can be negative to subtract colour). Set to black (0,0,0) to restore its original colour."),
 	# routines
+	"/routine": CommandDescription.new(addRoutine, "name:s repeats:i interval:f cmd:...", "Start a routine named NAME that sends CMD every INTERVAL of time (in seconds) for an arbitrary number of REPEATS.", Flags.asArray(true)),
 	"/routines": CommandDescription.new(listRoutines, "", "Get the list of routines."),
 	"/routine/start": CommandDescription.new(startRoutine, "name:s", "Start the routine named NAME."),
 	"/routine/stop": CommandDescription.new(stopRoutine, "name:s", "Stop the routine named NAME."),
 	"/routine/free": CommandDescription.new(freeRoutine, "name:s", "Remove the routine named NAME"),
 	# state machine
+	"/state/add": CommandDescription.new(addState, "actor:s new:s ... next:s", "Add a NEW state to the ACTOR's state machine. NEXT states is an arbitrary number of next possible states. States are animation names.", Flags.asArray(true)),
 	"/states": CommandDescription.new(listStates, "", "Get a list of states for the given ACTOR."),
 	"/state/free": CommandDescription.new(freeState, "actor:s state:s", "Remove the STATE from the ACTOR's state machine."),
 	"/state/next": CommandDescription.new(nextState, "actor:s", "Change ACTOR to next STATE."),
 	# def
 	"/def": CommandDescription.new(defineCommand, "cmdName:s [args:v] subcommands:c", "Define a custom OSC command that is a list of other OSC commands. This may be recursive, so each SUBCOMMAND may reference one of the built-in commands, or another custom-defined command. Another way to define custom commands is via the file commands/init.osc. The CMDNAME string (first argument) may include argument names (ARG1 ... ARGN), which may be referenced as SUBCOMMAND arguments using $ARG1 ... $ARGN. Example: /def \"/addsel actor anim\" \"/create $actor $anim\" \"/select $actor\". ", Flags.asArray(true)),
-	# routine
-	"/routine": CommandDescription.new(addRoutine, "name:s repeats:i interval:f cmd:...", "Start a routine named NAME that sends CMD every INTERVAL of time (in seconds) for an arbitrary number of REPEATS.", Flags.asArray(true)),
-	"/state/add": CommandDescription.new(addState, "actor:s new:s ... next:s", "Add a NEW state to the ACTOR's state machine. NEXT states is an arbitrary number of next possible states. States are animation names.", Flags.asArray(true)),
 	# post
 	"/post": CommandDescription.new(post, "msg:s", "Print MSG in the post window.", Flags.asArray(false)),
 	# utils
