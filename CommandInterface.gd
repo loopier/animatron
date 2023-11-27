@@ -147,16 +147,6 @@ func _ready():
 func _process(_delta):
 	pass
 
-func parseDef(key, args) -> Status:
-#	Log.debug("Parsing def commands: %s %s" % [key, defCommands[key]])
-	var def = defCommands[key]
-	for i in len(args):
-		var variableKey = def.variables.keys()[i]
-		def.variables[variableKey] = args[i]
-	var subcommands = ocl._def(def.variables, def.subcommands)
-	return Status.ok(subcommands, "Parsing subcommands: %s" % [subcommands])
-
-
 ## Adds a custom command definition
 ## The subcommands need to be an array, so we have to use an array for the whole arguments.
 ## It would be better to separate the arguments in the signature (defCommand: String, defArgs: Array, commandList: Array)
