@@ -123,9 +123,12 @@ var nodeCommands: Dictionary = {
 	"/offset": CommandDescription.new(setAnimationPropertyWithVector, "", "", Flags.gdScript()),
 	"/offset/x": CommandDescription.new(setAnimationPropertyWithVectorN, "", "", Flags.gdScript()),
 	"/offset/y": CommandDescription.new(setAnimationPropertyWithVectorN, "", "", Flags.gdScript()),
-	"/scale": CommandDescription.new(setActorPropertyWithVector, "", "", Flags.gdScript()),
-	"/scale/x": CommandDescription.new(setActorPropertyWithVectorN, "", "", Flags.gdScript()),
-	"/scale/y": CommandDescription.new(setActorPropertyWithVectorN, "", "", Flags.gdScript()),
+	"/size": CommandDescription.new(size, "actor:s size:f", "Set the ACTOR SIZE on both axes (same value for with and height).", Flags.asArray(true)),
+	"/size/x": CommandDescription.new(sizeX, "actor:s size:f", "Set the ACTOR SIZE on the X axis.", Flags.asArray(true)),
+	"/size/y": CommandDescription.new(sizeY, "actor:s size:f", "Set the ACTOR SIZE on the Y axis.", Flags.asArray(true)),
+	"/scale": CommandDescription.new(scale, "actor:s multiply:f", "MULTIPLY the ACTOR's size (use values < 1.0 to devide).", Flags.asArray(true)),
+	"/scale/x": CommandDescription.new(scaleX, "actor:s multiply:f", "MULTIPLY the ACTOR's size on the X axis (use values < 1.0 to devide).", Flags.asArray(true)),
+	"/scale/y": CommandDescription.new(scaleY, "actor:s multiply:f", "MULTIPLY the ACTOR's size on the Y axis (use values < 1.0 to devide).", Flags.asArray(true)),
 	"/apply/scale": CommandDescription.new(callActorMethodWithVector, "", "", Flags.gdScript()),
 	"/set/position": CommandDescription.new(callActorMethodWithVector, "", "", Flags.gdScript()),
 	"/position": CommandDescription.new(setActorPropertyWithVector, "", "", Flags.gdScript()),
@@ -746,12 +749,10 @@ func nextState(machine: String) -> Status:
 	return Status.ok()
 
 func rotate(args: Array) -> Status:
-	var result : Status = setRelativeProperty(["/rotation/degrees"] + args)
-	return Status.ok()
+	return setRelativeProperty(["/rotation/degrees"] + args)
 
 func move(args: Array) -> Status:
-	var result : Status = setRelativeProperty(["/position"] + args)
-	return Status.ok()
+	return setRelativeProperty(["/position"] + args)
 
 func moveX(args: Array) -> Status:
 	args.append(0)
@@ -760,3 +761,41 @@ func moveX(args: Array) -> Status:
 func moveY(args: Array) -> Status:
 	args.insert(1,0)
 	return move(args)
+
+func size(args: Array) -> Status:
+	return setActorPropertyWithVector("/scale", args)
+
+func sizeX(args: Array) -> Status:
+	var result = getActor(args[0])
+	if result.isError(): return result
+	var actor = result.value
+	actor.scale.x = float(args[1])
+	return Status.ok(actor)
+
+func sizeY(args: Array) -> Status:
+	var result = getActor(args[0])
+	if result.isError(): return result
+	var actor = result.value
+	actor.scale.y = float(args[1])
+	return Status.ok(actor)
+
+func scale(args: Array) -> Status:
+	var result = getActor(args[0])
+	if result.isError(): return result
+	var actor = result.value
+	actor.scale *= Vector2(float(args[1]), float(args[1]))
+	return Status.ok(actor)
+
+func scaleX(args: Array) -> Status:
+	var result = getActor(args[0])
+	if result.isError(): return result
+	var actor = result.value
+	actor.scale.x *= float(args[1])
+	return Status.ok(actor)
+
+func scaleY(args: Array) -> Status:
+	var result = getActor(args[0])
+	if result.isError(): return result
+	var actor = result.value
+	actor.scale.y *= float(args[1])
+	return Status.ok(actor)
