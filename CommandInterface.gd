@@ -132,6 +132,7 @@ var nodeCommands: Dictionary = {
 	"/position/x": CommandDescription.new(setActorPropertyWithVectorN, "", "", Flags.gdScript()),
 	"/position/y": CommandDescription.new(setActorPropertyWithVectorN, "", "", Flags.gdScript()),
 	"/move/x": CommandDescription.new(moveX, "actor:s xcoord:f", "Move ACTOR to XCOORD relative to the current position.", Flags.asArray(true)),
+	"/move/y": CommandDescription.new(moveY, "actor:s ycoord:f", "Move ACTOR to YCOORD relative to the current position.", Flags.asArray(true)),
 	"/rotation/degrees": CommandDescription.new(setActorProperty, "", "", Flags.gdScript()),
 	"/angle": "/rotation/degrees",
 	"/rotate": CommandDescription.new(rotate, "actor:s degrees:f", "Rotate ACTOR a number of DEGREES relative to the current rotation.", Flags.asArray(true)),
@@ -748,5 +749,11 @@ func rotate(args: Array) -> Status:
 	return Status.ok()
 
 func moveX(args: Array) -> Status:
-	var result : Status = setRelativeProperty(["/position"] + args + [0])
+	args.append(0)
+	var result : Status = setRelativeProperty(["/position"] + args)
+	return Status.ok()
+
+func moveY(args: Array) -> Status:
+	args.insert(1,0)
+	var result : Status = setRelativeProperty(["/position"] + args)
 	return Status.ok()
