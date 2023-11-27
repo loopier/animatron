@@ -131,6 +131,7 @@ var nodeCommands: Dictionary = {
 	"/position": CommandDescription.new(setActorPropertyWithVector, "", "", Flags.gdScript()),
 	"/position/x": CommandDescription.new(setActorPropertyWithVectorN, "", "", Flags.gdScript()),
 	"/position/y": CommandDescription.new(setActorPropertyWithVectorN, "", "", Flags.gdScript()),
+	"/move/x": CommandDescription.new(moveX, "actor:s xcoord:f", "Move ACTOR to XCOORD relative to the current position.", Flags.asArray(true)),
 	"/rotation/degrees": CommandDescription.new(setActorProperty, "", "", Flags.gdScript()),
 	"/angle": "/rotation/degrees",
 	"/rotate": CommandDescription.new(rotate, "actor:s degrees:f", "Rotate ACTOR a number of DEGREES relative to the current rotation.", Flags.asArray(true)),
@@ -518,7 +519,7 @@ func setAnimationPropertyWithVector(property, args) -> Status:
 ## [param args[1]] is the value.
 func setNodePropertyWithVectorN(node, property, value) -> Status:
 	var vec = node.call("get_" + property.get_slice("/", 1).to_snake_case())
-	var axis = property.get_slice("/", 2).to_snake_case()
+	var axis = property.get_slice("/", 2)
 	value = float(value)
 	match axis:
 		"x": vec.x = value
@@ -590,8 +591,17 @@ func setRelativeProperty(args: Array) -> Status:
 	if currentValue == null: return Status.error("Property not found: %s.%s" % [object.name, property])
 	match typeof(currentValue):
 		TYPE_VECTOR2, TYPE_VECTOR3, TYPE_VECTOR4: 
+			# need to convert values to vector to do the math, then convert them
+			# back to array for setNodePropertyWithVector, which only accepts array arguments
+			# because it's a callabe in a CommandDescription which can't pass vector carguments. 
 			modifier = arrayToVector(values)
-			setNodePropertyWithVector(object, property, currentValue + modifier)
+			var modifiedVec = currentValue + modifier
+			var modifiedValues : Array
+			match typeof(currentValue):
+				TYPE_VECTOR2: modifiedValues = [modifiedVec.x, modifiedVec.y]
+				TYPE_VECTOR3: modifiedValues = [modifiedVec.x, modifiedVec.y, modifiedVec.y]
+				TYPE_VECTOR4: modifiedValues = [modifiedVec.x, modifiedVec.y, modifiedVec.y, modifiedVec.z]
+			setNodePropertyWithVector(object, property, modifiedValues)
 			return Status.ok(object.get(property))
 		TYPE_ARRAY: modifier = values
 		TYPE_FLOAT: modifier = float(values[0])
@@ -734,7 +744,9 @@ func nextState(machine: String) -> Status:
 	return Status.ok()
 
 func rotate(args: Array) -> Status:
-	args = ["/rotation/degrees"] + args
-	Log.debug("rotate: %s" % [args])
-	var result : Status = setRelativeProperty(args)
+	var result : Status = setRelativeProperty(["/rotation/degrees"] + args)
+	return Status.ok()
+
+func moveX(args: Array) -> Status:
+	var result : Status = setRelativeProperty(["/position"] + args + [0])
 	return Status.ok()
