@@ -133,6 +133,7 @@ var nodeCommands: Dictionary = {
 	"/position/y": CommandDescription.new(setActorPropertyWithVectorN, "", "", Flags.gdScript()),
 	"/rotation/degrees": CommandDescription.new(setActorProperty, "", "", Flags.gdScript()),
 	"/angle": "/rotation/degrees",
+	"/rotate": CommandDescription.new(rotate, "actor:s degrees:f", "Rotate ACTOR a number of DEGREES relative to the current rotation.", Flags.asArray(true)),
 }
 
 # Called when the node enters the scene tree for the first time.
@@ -732,3 +733,8 @@ func nextState(machine: String) -> Status:
 	next_state.emit(machine)
 	return Status.ok()
 
+func rotate(args: Array) -> Status:
+	args = ["/rotation/degrees"] + args
+	Log.debug("rotate: %s" % [args])
+	var result : Status = setRelativeProperty(args)
+	return Status.ok()
