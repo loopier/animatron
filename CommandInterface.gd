@@ -72,20 +72,14 @@ var coreCommands: Dictionary = {
 	"/states": CommandDescription.new(listStates, "", "Get a list of states for the given ACTOR."),
 	"/state/free": CommandDescription.new(freeState, "actor:s state:s", "Remove the STATE from the ACTOR's state machine."),
 	"/state/next": CommandDescription.new(nextState, "actor:s", "Change ACTOR to next STATE."),
-}
-## Commands that need to pass the incoming parameters as an array.
-## Couldn't find a more elegant way to deal with /def which seems to be the
-## only command that needs to pass on arguments as an array.
-## [codeblock]
-##   /def cmdName [subCommand] ...      # cmdName may include argument names
-##   /routine  name:s repeats:i interval:f cmd:...
-##   ...
-## [/codeblock]
-var arrayCommands: Dictionary = {
+	# def
 	"/def": CommandDescription.new(defineCommand, "cmdName:s [args:v] subcommands:c", "Define a custom OSC command that is a list of other OSC commands. This may be recursive, so each SUBCOMMAND may reference one of the built-in commands, or another custom-defined command. Another way to define custom commands is via the file commands/init.osc. The CMDNAME string (first argument) may include argument names (ARG1 ... ARGN), which may be referenced as SUBCOMMAND arguments using $ARG1 ... $ARGN. Example: /def \"/addsel actor anim\" \"/create $actor $anim\" \"/select $actor\". ", Flags.asArray(true)),
+	# routine
 	"/routine": CommandDescription.new(addRoutine, "name:s repeats:i interval:f cmd:...", "Start a routine named NAME that sends CMD every INTERVAL of time (in seconds) for an arbitrary number of REPEATS.", Flags.asArray(true)),
 	"/state/add": CommandDescription.new(addState, "actor:s new:s ... next:s", "Add a NEW state to the ACTOR's state machine. NEXT states is an arbitrary number of next possible states. States are animation names.", Flags.asArray(true)),
+	# post
 	"/post": CommandDescription.new(post, "msg:s", "Print MSG in the post window.", Flags.asArray(false)),
+	# utils
 	"/relative": CommandDescription.new(setRelativeProperty, "", "TODO", Flags.asArray(false)),
 }
 
@@ -343,7 +337,6 @@ func setVar(varName: String, value: Variant) -> Status:
 func getCommandDescription(command: String) -> Variant:
 	if coreCommands.has(command): return coreCommands[command]
 	elif nodeCommands.has(command): return nodeCommands[command]
-	elif arrayCommands.has(command): return arrayCommands[command]
 	elif defCommands.has(command): return defCommands[command]
 	else: return null
 
@@ -370,8 +363,6 @@ func listAllCommands() -> Status:
 	list += listCommands(coreCommands).value
 	list += "\nNode Commands:\n"
 	list += listCommands(nodeCommands).value
-	list += "\nArray Commands:\n"
-	list += listCommands(arrayCommands).value
 	list += "\nDef Commands:\n"
 	list += listCommands(defCommands).value
 	return Status.ok(list, list)
