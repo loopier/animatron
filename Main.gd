@@ -42,12 +42,15 @@ func _ready():
 	ocl = OpenControlLanguage.new()
 	editor.eval_code.connect(_on_eval_code)
 	
-	
 	loadConfig(configPath)
 
 # Called every frame. 'delta' is the elapsed time since the previous frame./
 func _process(_delta):
 	pass
+
+func _input(event):
+	if event.is_action_pressed("toggle_editor", true):
+		$HSplitContainer.set_visible(not($HSplitContainer.is_visible()))
 
 func _on_osc_msg_received(addr: String, args: Array, sender: String):
 	# TODO: send [addr, args] to OCL interpreter and receive an array of commands

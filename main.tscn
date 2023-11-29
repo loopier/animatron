@@ -21,8 +21,8 @@ script = ExtResource("2_xp2d0")
 [node name="Routines" type="Node" parent="."]
 
 [node name="HSplitContainer" type="HSplitContainer" parent="."]
-offset_right = 1280.0
-offset_bottom = 768.0
+offset_right = 1920.0
+offset_bottom = 1080.0
 size_flags_horizontal = 3
 size_flags_vertical = 3
 theme_override_constants/separation = 0
@@ -50,6 +50,8 @@ layout_mode = 2
 size_flags_horizontal = 3
 theme_override_constants/separation = 0
 split_offset = 384
+collapsed = true
+dragger_visibility = 2
 
 [node name="PostWindow" type="CodeEdit" parent="HSplitContainer/VBoxContainer"]
 layout_mode = 2
