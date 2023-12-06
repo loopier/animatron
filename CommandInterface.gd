@@ -105,9 +105,9 @@ var defCommands := {}
 ##   ...
 ## [/codeblock]
 var nodeCommands: Dictionary = {
-	"/animation": CommandDescription.new(setAnimationProperty, "", "", Flags.gdScript()),
-	"/play": CommandDescription.new(callAnimationMethod, "", "", Flags.gdScript()),
-	"/play/backwards": CommandDescription.new(callAnimationMethod, "", "", Flags.gdScript()),
+	"/animation": CommandDescription.new(setAnimationProperty, "actor:s animation:s", "Change the ACTOR's ANIMATION.", Flags.gdScript()),
+	"/play": CommandDescription.new(callAnimationMethod, "actor:s", "Start playing ACTOR's image sequence.", Flags.gdScript()),
+	"/play/backwards": CommandDescription.new(callAnimationMethod, "actor:s", "Play ACTOR's animation backwards.", Flags.gdScript()),
 	"/reverse": "/play/backwards",
 	"/animation/loop": CommandDescription.new(setAnimationFramesProperty, "", "", Flags.gdScript()),
 	"/stop": CommandDescription.new(callAnimationMethod, "", "", Flags.gdScript()),
