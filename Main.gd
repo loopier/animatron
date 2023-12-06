@@ -208,12 +208,12 @@ func _on_list_states():
 	for machine in machines:
 		Log.info("%s(%s): %s" % [machine, stateMachines[machine].status(), stateMachines[machine].list()])
 
-## Add a [param state] to a [param mijachine]
-func _on_add_state(machine: String, state: String, commands: Array):
+## Add a [param state] with a list of possible [param next] states to a [param machine].
+func _on_add_state(machine: String, state: String, next: Array):
 	if not stateMachines.has(machine): 
 		stateMachines[machine] = StateMachine.new()
 		stateMachines[machine].name = machine
-	stateMachines[machine].addState(state, commands)
+	stateMachines[machine].addState(state, next)
 
 ## Remove a [param state] from a [param machine] -- wildcard matching
 func _on_free_state(machine: String, state: String):
