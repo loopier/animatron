@@ -288,7 +288,7 @@ func getHelp(cmd: String) -> Status:
 	# this might change in the future if we convert /defs into CommandDescriptions.
 	# as for now it dumps the def's subcommands
 	if typeof(cmdDesc) == TYPE_DICTIONARY: 
-		var msg := "[HELP] custom definition\n%s" % [cmd]
+		var msg := "[HELP] custom definition\n/def %s" % [cmd]
 		for key in cmdDesc.variables.keys():
 			msg += " %s" % [key]
 		msg += "\n"
