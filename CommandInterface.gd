@@ -120,6 +120,8 @@ var nodeCommands: Dictionary = {
 	"/offset": CommandDescription.new(setAnimationPropertyWithVector, "actor:s x:i y:i", "Set the ACTOR's animation drawing offset in pixels.", Flags.gdScript()),
 	"/offset/x": CommandDescription.new(setAnimationPropertyWithVectorN, "actor:s pixels:i", "Set the ACTOR's animation drawing offset on the X axis.", Flags.gdScript()),
 	"/offset/y": CommandDescription.new(setAnimationPropertyWithVectorN, "actor:s pixels:i", "Set the ACTOR's animation drawing offset on the Y axis.", Flags.gdScript()),
+	"/front": CommandDescription.new(setInFrontOfActor, "actor:s target:s", "Draw the ACTOR in front of the TARGET."),
+	"/behind": CommandDescription.new(setBehindActor, "actor:s target:s", "Draw the ACTOR behind the TARGET."),
 	"/size": CommandDescription.new(size, "actor:s size:f", "Set the ACTOR SIZE on both axes (same value for with and height).", Flags.asArray(false)),
 	"/size/x": CommandDescription.new(sizeX, "actor:s size:f", "Set the ACTOR SIZE on the X axis.", Flags.asArray(false)),
 	"/size/y": CommandDescription.new(sizeY, "actor:s size:f", "Set the ACTOR SIZE on the Y axis.", Flags.asArray(false)),
@@ -824,3 +826,15 @@ func scaleY(args: Array) -> Status:
 	var actor = result.value
 	actor.scale.y *= float(args[1])
 	return Status.ok(actor)
+
+func setInFrontOfActor(args: Array) -> Status:
+	var result = getActor(args[0])
+	var targetResult = getActor(args[1])
+	if result.isError(): return result
+	if targetResult.isError(): return targetResult
+	var actor = result.value
+	var target = targetResult.value
+	return Status.ok()
+
+func setBehindActor(args: Array) -> Status:
+	return Status.error()
