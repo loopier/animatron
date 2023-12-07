@@ -6,6 +6,7 @@ static var configPath := "user://config/config.ocl"
 var metanode := preload("res://meta_node.tscn")
 @onready var actors := get_node("Actors")
 @onready var cmdInterface : CommandInterface = get_node("CommandInterface")
+@onready var lastSender : String = "localhost"
 @onready var Routine := preload("res://RoutineNode.tscn")
 @onready var routines := get_node("Routines")
 var StateMachine := preload("res://StateMachine.gd")
@@ -29,6 +30,7 @@ func _ready():
 	osc.osc_msg_received.connect(_on_osc_msg_received)
 	cmdInterface.command_finished.connect(_on_command_finished)
 	cmdInterface.command_error.connect(_on_command_error)
+	cmdInterface.command_file_loaded.connect(_on_command_file_loaded)
 	cmdInterface.list_routines.connect(_on_list_routines)
 	cmdInterface.add_routine.connect(_on_add_routine)
 	cmdInterface.free_routine.connect(_on_free_routine)
@@ -58,10 +60,12 @@ func _on_osc_msg_received(addr: String, args: Array, sender: String):
 	# TODO: iterate the array of commands to evaluate them
 	Log.debug("osc_msg_received: %s %s - %s" % [addr, args, sender])
 	evalCommands(dummyArrayOfCmds, sender)
+	lastSender = sender
 
 func evalCommands(cmds: Array, sender: String) -> Status:
 	var result : Status
 	for cmd in cmds:
+		if len(cmd) <= 0: continue
 		result = evalCommand(cmd, sender)
 		if result.isError(): break
 	return result
@@ -75,6 +79,8 @@ func evalCommand(cmdArray: Array, sender: String) -> Status:
 	if cmdDescription is String: 
 		result = evalCommand([cmdDescription] + args, sender)
 	elif cmdDescription is Dictionary:
+		# put variable values from the OSC command into the 
+		# CommandDescritpion.variables dictionary
 		for i in len(cmdDescription.variables.keys()):
 			var key = cmdDescription.variables.keys()[i]
 			cmdDescription.variables[key] = args[i]
@@ -155,6 +161,9 @@ func _on_command_error(msg: String, sender: String):
 	Log.error("Command error: %s" % [msg])
 	if sender:
 		osc.sendMessage(sender, "/error/reply", [msg])
+
+func _on_command_file_loaded(cmds: Array):
+	evalCommands(cmds, lastSender)
 
 func _on_list_routines():
 	var routineList := []

@@ -10,6 +10,7 @@ extends Node
 
 signal command_finished(msg, sender)
 signal command_error(msg, sender)
+signal command_file_loaded(cmds)
 
 signal list_routines()
 signal add_routine(msg)
@@ -177,7 +178,7 @@ func loadCommandFile(path: String) -> Status:
 	if file == null: return Status.ok([], "No command file '%s' found to load" % [path])
 	var contents = file.get_as_text()
 	var cmds: Array = convertTextToCommands(contents).value
-	
+	command_file_loaded.emit(cmds)
 	return Status.ok(cmds, "Loaded commands from: %s" % [path])
 
 ## Converts multiple lines of text to an array of commands, ignoring empty lines and comments
