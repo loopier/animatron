@@ -145,10 +145,6 @@ var nodeCommands: Dictionary = {
 
 # Called when the node enters the scene tree for the first time.
 func _ready():
-	#var animationsLibraryNode = AnimatedSprite2D.new()
-	#animationsLibraryNode.set_sprite_frames(SpriteFrames.new())
-	#animationsLibrary = animationsLibraryNode.get_sprite_frames()
-	#main.add_child.call_deferred(animationsLibraryNode)
 	pass
 
 # Called every frame. 'delta' is the elapsed time since the previous frame.
