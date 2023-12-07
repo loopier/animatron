@@ -284,6 +284,19 @@ func getHelp(cmd: String) -> Status:
 		return getHelp("/" + cmd)
 	if cmdDesc == null:
 		return Status.error("Help not found: %s" % [cmd])
+	
+	# this might change in the future if we convert /defs into CommandDescriptions.
+	# as for now it dumps the def's subcommands
+	if typeof(cmdDesc) == TYPE_DICTIONARY: 
+		var msg := "[HELP] custom definition\n%s" % [cmd]
+		for key in cmdDesc.variables.keys():
+			msg += " %s" % [key]
+		msg += "\n"
+		for subcmd in cmdDesc.subcommands:
+			msg += "\t%s\n" % [" ".join(subcmd)]
+		main.get_node("HSplitContainer/VBoxContainer/PostWindow").set_text(msg)
+		return Status.ok(cmdDesc, msg)
+	main.get_node("HSplitContainer/VBoxContainer/PostWindow").set_text("[HELP] %s %s\n\n%s" % [cmd, cmdDesc.argsDescription, cmdDesc.description])
 	return Status.ok(cmdDesc, "[HELP] %s %s - %s" % [cmd, cmdDesc.argsDescription, cmdDesc.description])
 
 ## Read a file with a [param filename] and return its OSC constent in a string

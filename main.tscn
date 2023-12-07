@@ -60,6 +60,7 @@ layout_mode = 2
 theme = ExtResource("3_fotw2")
 theme_override_styles/normal = ExtResource("5_efpnp")
 placeholder_text = "post window"
+wrap_mode = 1
 
 [node name="FileDialog" type="FileDialog" parent="."]
 size = Vector2i(392, 162)
