@@ -28,7 +28,7 @@ var status := preload("res://Status.gd")
 var metanode := preload("res://meta_node.tscn")
 var assetHelpers := preload("res://asset_helpers.gd").new()
 @onready var main := get_parent()
-@onready var actorsNode := main.get_node("Actors")
+@onready var actorsNode: Node
 var animationsLibrary: SpriteFrames ## The meta node containing these frames needs to be initialized in _ready
 var assetsPath := "user://assets"
 var animationAssetsPath := assetsPath + "/animations"

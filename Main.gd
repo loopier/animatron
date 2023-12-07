@@ -48,6 +48,7 @@ func _ready():
 	animationsLibrary = animationsLibraryNode.get_sprite_frames()
 	add_child.call_deferred(animationsLibraryNode)
 	cmdInterface.animationsLibrary = animationsLibrary
+	cmdInterface.actorsNode = get_node("Actors")
 	
 	ocl = OpenControlLanguage.new()
 	editor.eval_code.connect(_on_eval_code)
