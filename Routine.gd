@@ -20,7 +20,7 @@ func _ready():
 	routine_finished.connect(main._on_routine_finished)
 
 func _next():
-	Log.debug("Timeout %s:%s %s" % [name, iteration, command])
+	#Log.verbose("Timeout %s:%s %s" % [name, iteration, command])
 	if repeats > 0 and iteration >= repeats:
 		routine_finished.emit(name)
 		return

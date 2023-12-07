@@ -12,12 +12,6 @@ signal command_finished(msg, sender)
 signal command_error(msg, sender)
 signal command_file_loaded(cmds)
 
-signal list_routines()
-signal add_routine(msg)
-signal free_routine(msg)
-signal start_routine(msg)
-signal stop_routine(msg)
-
 signal list_states()
 signal add_state(machine, state, commands)
 signal free_state(machine, state)
@@ -26,9 +20,11 @@ signal next_state(machine)
 var ocl := preload("res://ocl.gd").new()
 var status := preload("res://Status.gd")
 var metanode := preload("res://meta_node.tscn")
+@onready var Routine := preload("res://RoutineNode.tscn")
 var assetHelpers := preload("res://asset_helpers.gd").new()
 @onready var postWindow: Node
 @onready var actorsNode: Node
+@onready var routinesNode: Node
 var animationsLibrary: SpriteFrames ## The meta node containing these frames needs to be initialized in _ready
 var assetsPath := "user://assets"
 var animationAssetsPath := assetsPath + "/animations"
@@ -716,7 +712,13 @@ static func setImageShaderUniform(image: AnimatedSprite2D, uName: StringName, uV
 
 
 func listRoutines() -> Status:
-	list_routines.emit()
+	var routineList := []
+	for child in routinesNode.get_children():
+		routineList.append("%s(%s/%s): %s" % [child.name, child.iteration, child.repeats, child.command])
+	routineList.sort()
+	for routine in routineList:
+		# FIX: send OSC message
+		Log.info(routine)
 	return Status.ok(true)
 
 func addRoutine(args: Array) -> Status:
@@ -724,19 +726,33 @@ func addRoutine(args: Array) -> Status:
 	var repeats := args[1] as int
 	var interval: float = args[2] as float
 	var command: Array = args.slice(3)
-	add_routine.emit(name, repeats, interval, command)
-	return Status.ok(true)
+	var routine: Routine
+	if routinesNode.has_node(name):
+		routine = routinesNode.get_node(name)
+	else:
+		routine = Routine.instantiate()
+		routine.name = name
+		routinesNode.add_child(routine)
+
+	routine.repeats = repeats
+	routine.set_wait_time(interval)
+	routine.command = command
+	routine.start()
+	return Status.ok(true, "New routine '%s' (%s times every %s): %s" % [name, repeats, interval, command])
 
 func freeRoutine(name: String) -> Status:
-	free_routine.emit(name)
-	return Status.ok(true)
+	for routine in routinesNode.find_children(name, "", true, false):
+		routine.stop()
+		routinesNode.remove_child(routine)
+		routine.queue_free()
+	return Status.ok(true, "Routine removed: %s" % [name])
 
 func startRoutine(name: String) -> Status:
-	start_routine.emit(name)
+	routinesNode.get_node(name).start()
 	return Status.ok(true)
 
 func stopRoutine(name: String) -> Status:
-	stop_routine.emit(name)
+	routinesNode.get_node(name).stop()
 	return Status.ok(true)
 
 func listStates() -> Status:

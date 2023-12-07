@@ -33,11 +33,6 @@ func _ready():
 	cmdInterface.command_finished.connect(_on_command_finished)
 	cmdInterface.command_error.connect(_on_command_error)
 	cmdInterface.command_file_loaded.connect(_on_command_file_loaded)
-	cmdInterface.list_routines.connect(_on_list_routines)
-	cmdInterface.add_routine.connect(_on_add_routine)
-	cmdInterface.free_routine.connect(_on_free_routine)
-	cmdInterface.start_routine.connect(_on_start_routine)
-	cmdInterface.stop_routine.connect(_on_stop_routine)
 	cmdInterface.list_states.connect(_on_list_states)
 	cmdInterface.add_state.connect(_on_add_state)
 	cmdInterface.free_state.connect(_on_free_state)
@@ -50,6 +45,7 @@ func _ready():
 	cmdInterface.animationsLibrary = animationsLibrary
 	cmdInterface.actorsNode = get_node("Actors")
 	cmdInterface.postWindow = get_node("HSplitContainer/VBoxContainer/PostWindow")
+	cmdInterface.routinesNode = get_node("Routines")
 	
 	ocl = OpenControlLanguage.new()
 	editor.eval_code.connect(_on_eval_code)
@@ -175,51 +171,9 @@ func _on_command_error(msg: String, sender: String):
 func _on_command_file_loaded(cmds: Array):
 	evalCommands(cmds, lastSender)
 
-func _on_list_routines():
-	var routineList := []
-	for child in routines.get_children():
-		routineList.append("%s(%s/%s): %s" % [child.name, child.iteration, child.repeats, child.command])
-	routineList.sort()
-	for routine in routineList:
-		# FIX: send OSC message
-		Log.info(routine)
-
-func _on_add_routine(name: String, repeats: int, interval: float, command: Array):
-	Log.verbose("New routine '%s' (%s times every %s): %s" % [name, repeats, interval, command])
-	var routine: Routine
-	if routines.has_node(name):
-		routine = routines.get_node(name)
-	else:
-		routine = Routine.instantiate()
-		routine.name = name
-		routines.add_child(routine)
-
-	routine.repeats = repeats
-	routine.set_wait_time(interval)
-	routine.command = command
-	routine.start()
-
-func _on_free_routine(name: String):
-	# FIX: change the following line to send OSC message
-	Log.debug("Removing routine: %s" % [name])
-	Log.debug(routines.find_children(name))
-	Log.debug(routines.get_children()[0].name)
-	Log.debug(routines.find_child(name,true, false))
-	for routine in routines.find_children(name, "", true, false):
-		routine.stop()
-		routines.remove_child(routine)
-		routine.queue_free()
-		# FIX: change the following line to send OSC message
-		Log.debug("Routine removed: %s" % [name])
-
-func _on_start_routine(name: String):
-	routines.get_node(name).start()
-	
-func _on_stop_routine(name: String):
-	routines.get_node(name).stop()
-
 func _on_routine_finished(name: String):
-	_on_free_routine(name)
+	#_on_free_routine(name)
+	pass
 
 ## List all state machines
 func _on_list_states():
