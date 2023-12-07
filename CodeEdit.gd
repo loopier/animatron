@@ -15,6 +15,8 @@ func _input(event):
 	var col := get_caret_column()
 	if event.is_action_pressed("eval_block"): evalBlock()
 	if event.is_action_pressed("eval_line"): evalLine()
+	if event.is_action_pressed("increase_editor_font"): increaseFont()
+	if event.is_action_pressed("decrease_editor_font"): decreaseFont()
 
 func evalText(text):
 	text = text.strip_edges()
@@ -58,3 +60,11 @@ func findNextLinebreak(line: int) -> int:
 		ln = ln + 1
 		if get_line(ln) == "": break
 	return ln - 1
+
+func increaseFont():
+	var fontSize = get_theme_font_size("font_size") + 1
+	add_theme_font_size_override("font_size", fontSize)
+
+func decreaseFont():
+	var fontSize = get_theme_font_size("font_size") - 1
+	add_theme_font_size_override("font_size", fontSize)
