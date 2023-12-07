@@ -75,6 +75,9 @@ func evalCommand(cmdArray: Array, sender: String) -> Status:
 	if cmdDescription is String: 
 		result = evalCommand([cmdDescription] + args, sender)
 	elif cmdDescription is Dictionary:
+		for i in len(cmdDescription.variables.keys()):
+			var key = cmdDescription.variables.keys()[i]
+			cmdDescription.variables[key] = args[i]
 		var subcommands = ocl._def(cmdDescription.variables, cmdDescription.subcommands)
 		result = evalCommands(subcommands, sender)
 	elif cmdDescription is CommandDescription:

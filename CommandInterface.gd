@@ -164,13 +164,11 @@ func defineCommand(args: Array) -> Status:
 	var commandName = commandDef[0]
 	var commandVariables = commandDef.slice(1)
 	var subCommands = splits.slice(1)
-	
-	var variables := {}
-	for variableName in commandVariables:
-		variables[variableName] = ""
-	
-	defCommands[commandName] = {"variables": variables, "subcommands": subCommands}
-	return Status.ok([commandName, variables, subCommands], "Added command def: %s %s" % [commandName, variables, subCommands])
+	defCommands[commandName] = {"variables": {}, "subcommands": subCommands}
+	# we need to initialize the variables placeholder 
+	for variable in commandVariables:
+		defCommands[commandName].variables[variable] = null
+	return Status.ok([commandName, commandVariables, subCommands], "Added command def: %s %s" % [commandName, commandVariables, subCommands])
 
 ## Load commands from a file and return an array
 func loadCommandFile(path: String) -> Status:
