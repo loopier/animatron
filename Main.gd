@@ -49,6 +49,7 @@ func _ready():
 	add_child.call_deferred(animationsLibraryNode)
 	cmdInterface.animationsLibrary = animationsLibrary
 	cmdInterface.actorsNode = get_node("Actors")
+	cmdInterface.postWindow = get_node("HSplitContainer/VBoxContainer/PostWindow")
 	
 	ocl = OpenControlLanguage.new()
 	editor.eval_code.connect(_on_eval_code)

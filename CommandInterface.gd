@@ -27,7 +27,7 @@ var ocl := preload("res://ocl.gd").new()
 var status := preload("res://Status.gd")
 var metanode := preload("res://meta_node.tscn")
 var assetHelpers := preload("res://asset_helpers.gd").new()
-@onready var main := get_parent()
+@onready var postWindow: Node
 @onready var actorsNode: Node
 var animationsLibrary: SpriteFrames ## The meta node containing these frames needs to be initialized in _ready
 var assetsPath := "user://assets"
@@ -291,9 +291,9 @@ func getHelp(cmd: String) -> Status:
 		msg += "\n"
 		for subcmd in cmdDesc.subcommands:
 			msg += "\t%s\n" % [" ".join(subcmd)]
-		main.get_node("HSplitContainer/VBoxContainer/PostWindow").set_text(msg)
+		postWindow.set_text(msg)
 		return Status.ok(cmdDesc, msg)
-	main.get_node("HSplitContainer/VBoxContainer/PostWindow").set_text("[HELP] %s %s\n\n%s" % [cmd, cmdDesc.argsDescription, cmdDesc.description])
+	postWindow.set_text("[HELP] %s %s\n\n%s" % [cmd, cmdDesc.argsDescription, cmdDesc.description])
 	return Status.ok(cmdDesc, "[HELP] %s %s - %s" % [cmd, cmdDesc.argsDescription, cmdDesc.description])
 
 ## Read a file with a [param filename] and return its OSC constent in a string
@@ -317,7 +317,7 @@ func oscStrToDict(oscStr: String) -> Dictionary:
 	return dict
 
 func isActor(actorName: String) -> bool:
-	return false if main.get_node("Actors").find_child(actorName) == null else true
+	return false if actorsNode.find_child(actorName) == null else true
 
 ## Get a variable value by [param varName].
 ##
