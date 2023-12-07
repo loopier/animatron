@@ -18,6 +18,8 @@ var config := preload("res://Config.gd").new()
 @onready var postWindow := get_node("HSplitContainer/VBoxContainer/PostWindow")
 var rnd := RandomNumberGenerator.new()
 
+@onready var animationsLibrary : SpriteFrames
+
 @onready var stateMachines := {}
 
 func _ready():
@@ -40,6 +42,12 @@ func _ready():
 	cmdInterface.add_state.connect(_on_add_state)
 	cmdInterface.free_state.connect(_on_free_state)
 	cmdInterface.next_state.connect(_on_next_state)
+	
+	var animationsLibraryNode = AnimatedSprite2D.new()
+	animationsLibraryNode.set_sprite_frames(SpriteFrames.new())
+	animationsLibrary = animationsLibraryNode.get_sprite_frames()
+	add_child.call_deferred(animationsLibraryNode)
+	cmdInterface.animationsLibrary = animationsLibrary
 	
 	ocl = OpenControlLanguage.new()
 	editor.eval_code.connect(_on_eval_code)
