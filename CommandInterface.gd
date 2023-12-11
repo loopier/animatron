@@ -63,7 +63,7 @@ var coreCommands: Dictionary = {
 	"/routine/stop": CommandDescription.new(stopRoutine, "name:s", "Stop the routine named NAME."),
 	"/routine/free": CommandDescription.new(freeRoutine, "name:s", "Remove the routine named NAME"),
 	# state machine
-	"/state/add": CommandDescription.new(addState, "actor:s new:s next:s", "Add a NEW state to the ACTOR's state machine. NEXT states is an arbitrary number of next possible states. States are /defs.", Flags.asArray(true)),
+	"/state/add": CommandDescription.new(addState, "actor:s new:s next:s", "Add a NEW state to the ACTOR's state machine. NEXT states is an arbitrary number of next possible states. Example: `/state/add mymachine state1 state1 state2` would create a new state1 in `mymachine` that would either repeat or move on to `state2.`", Flags.asArray(true)),
 	"/states": CommandDescription.new(listStates, "", "Get a list of states for the given ACTOR."),
 	"/state/free": CommandDescription.new(freeState, "actor:s state:s", "Remove the STATE from the ACTOR's state machine."),
 	"/state/next": CommandDescription.new(nextState, "actor:s", "Change ACTOR to next STATE."),
