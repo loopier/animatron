@@ -9,7 +9,8 @@ var metanode := preload("res://meta_node.tscn")
 @onready var lastSender : String = "localhost"
 @onready var Routine := preload("res://RoutineNode.tscn")
 @onready var routines := get_node("Routines")
-var StateMachine := preload("res://StateMachine.gd")
+@onready var StateMachine := preload("res://StateMachine.gd")
+@onready var stateMachines := {}
 var OpenControlLanguage := preload("res://ocl.gd")
 var ocl: OpenControlLanguage
 var config := preload("res://Config.gd").new()
@@ -19,8 +20,6 @@ var config := preload("res://Config.gd").new()
 var rnd := RandomNumberGenerator.new()
 
 @onready var animationsLibrary : SpriteFrames
-
-@onready var stateMachines := {}
 
 func _ready():
 	Log.setLevel(Log.LOG_LEVEL_VERBOSE)
@@ -33,10 +32,6 @@ func _ready():
 	cmdInterface.command_finished.connect(_on_command_finished)
 	cmdInterface.command_error.connect(_on_command_error)
 	cmdInterface.command_file_loaded.connect(_on_command_file_loaded)
-	cmdInterface.list_states.connect(_on_list_states)
-	cmdInterface.add_state.connect(_on_add_state)
-	cmdInterface.free_state.connect(_on_free_state)
-	cmdInterface.next_state.connect(_on_next_state)
 	
 	var animationsLibraryNode = AnimatedSprite2D.new()
 	animationsLibraryNode.set_sprite_frames(SpriteFrames.new())
@@ -46,6 +41,7 @@ func _ready():
 	cmdInterface.actorsNode = get_node("Actors")
 	cmdInterface.postWindow = get_node("HSplitContainer/VBoxContainer/PostWindow")
 	cmdInterface.routinesNode = get_node("Routines")
+	cmdInterface.stateMachines = Dictionary(stateMachines)
 	
 	ocl = OpenControlLanguage.new()
 	editor.eval_code.connect(_on_eval_code)
@@ -174,34 +170,3 @@ func _on_command_file_loaded(cmds: Array):
 func _on_routine_finished(name: String):
 	#_on_free_routine(name)
 	pass
-
-## List all state machines
-func _on_list_states():
-	# FIX: change to send OSC
-	Log.info("State machines:")
-	var machines = stateMachines.keys()
-	machines.sort()
-	for machine in machines:
-		Log.info("%s(%s): %s" % [machine, stateMachines[machine].status(), stateMachines[machine].list()])
-
-## Add a [param state] with a list of possible [param next] states to a [param machine].
-func _on_add_state(machine: String, state: String, next: Array):
-	if not stateMachines.has(machine): 
-		stateMachines[machine] = StateMachine.new()
-		stateMachines[machine].name = machine
-	stateMachines[machine].addState(state, next)
-
-## Remove a [param state] from a [param machine] -- wildcard matching
-func _on_free_state(machine: String, state: String):
-	# There's no wildcard matching for Dictionary so we need to implement it ourselves
-	for machineKey in stateMachines.keys():
-		if machineKey.match(machine):
-			stateMachines[machineKey].removeState(state)
-			if stateMachines[machineKey].isEmpty():
-				stateMachines.erase(machineKey)
-
-func _on_next_state(machine: String):
-	for machineKey in stateMachines.keys():
-		if machineKey.match(machine):
-			stateMachines[machineKey].next()
-			cmdInterface.parseCommand(stateMachines[machineKey].status(), [], "")

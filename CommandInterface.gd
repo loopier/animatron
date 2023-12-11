@@ -12,11 +12,6 @@ signal command_finished(msg, sender)
 signal command_error(msg, sender)
 signal command_file_loaded(cmds)
 
-signal list_states()
-signal add_state(machine, state, commands)
-signal free_state(machine, state)
-signal next_state(machine)
-
 var ocl := preload("res://ocl.gd").new()
 var status := preload("res://Status.gd")
 var metanode := preload("res://meta_node.tscn")
@@ -25,6 +20,7 @@ var assetHelpers := preload("res://asset_helpers.gd").new()
 @onready var postWindow: Node
 @onready var actorsNode: Node
 @onready var routinesNode: Node
+@onready var stateMachines: Dictionary
 var animationsLibrary: SpriteFrames ## The meta node containing these frames needs to be initialized in _ready
 var assetsPath := "user://assets"
 var animationAssetsPath := assetsPath + "/animations"
@@ -67,7 +63,7 @@ var coreCommands: Dictionary = {
 	"/routine/stop": CommandDescription.new(stopRoutine, "name:s", "Stop the routine named NAME."),
 	"/routine/free": CommandDescription.new(freeRoutine, "name:s", "Remove the routine named NAME"),
 	# state machine
-	"/state/add": CommandDescription.new(addState, "actor:s new:s ... next:s", "Add a NEW state to the ACTOR's state machine. NEXT states is an arbitrary number of next possible states. States are animation names.", Flags.asArray(true)),
+	"/state/add": CommandDescription.new(addState, "actor:s new:s next:s", "Add a NEW state to the ACTOR's state machine. NEXT states is an arbitrary number of next possible states. States are /defs.", Flags.asArray(true)),
 	"/states": CommandDescription.new(listStates, "", "Get a list of states for the given ACTOR."),
 	"/state/free": CommandDescription.new(freeState, "actor:s state:s", "Remove the STATE from the ACTOR's state machine."),
 	"/state/next": CommandDescription.new(nextState, "actor:s", "Change ACTOR to next STATE."),
@@ -760,22 +756,33 @@ func stopRoutine(name: String) -> Status:
 	return Status.ok(true)
 
 func listStates() -> Status:
-	list_states.emit()
-	return Status.ok()
+	var machines := stateMachines.keys()
+	machines.sort()
+	var msg := "State machines:"
+	for machine in machines:
+		msg += "%s(%s): %s" % [machine, stateMachines[machine].status(), stateMachines[machine].list()]
+	return Status.ok(machines, msg)
 
 func addState(args: Array) -> Status:
-	add_state.emit(args[0], args[1], args.slice(2))
-#	list_states.emit()
-	return Status.ok()
+	var machineName = args[0]
+	if not(stateMachines.has(machineName)):
+		var machine = StateMachine.new()
+		machine.name = machineName
+		stateMachines[machineName] = machine
+	stateMachines[machineName].addState(args[1], args.slice(2))
+	return Status.ok(stateMachines[machineName])
 
 func freeState(machine: String, state: String) -> Status:
-	free_state.emit(machine, state)
-	return Status.ok()
+	if stateMachines.has(machine):
+		stateMachines[machine].removeState(state)
+		return Status.ok(true, "%s -> Removed state: %s" % [machine, state])
+	return Status.error("Machine not found: %s" % [machine])
 
 func nextState(machine: String) -> Status:
-#	Log.debug("next state:%s" % [machine])
-	next_state.emit(machine)
-	return Status.ok()
+	if stateMachines.has(machine):
+		stateMachines[machine].next()
+		return Status.ok(true, "%s -> Next state: %s" % [machine, stateMachines[machine].status()])
+	return Status.error("Machine not found: %s" % [machine])
 
 func rotate(args: Array) -> Status:
 	return setRelativeProperty(["/rotation/degrees"] + args)
