@@ -48,6 +48,10 @@ func _ready():
 	ocl = OpenControlLanguage.new()
 	editor.eval_code.connect(_on_eval_code)
 	
+	$Midi.noteon.connect(_on_noteon)
+	$Midi.noteoff.connect(_on_noteoff)
+	$Midi.cc.connect(_on_cc)
+	
 	loadConfig(configPath)
 
 # Called every frame. 'delta' is the elapsed time since the previous frame./
@@ -176,3 +180,12 @@ func _on_routine_added(name: String):
 	# Doing it like this decouples `Routine` from `Main`, because `Routine` doesn't
 	# need to know what object calling the method (in this case `Main`).
 	routine.callOnNext = Callable(evalCommand)
+
+func _on_noteon(ch: int, num: int, velocity: int):
+	Log.verbose("MIDI Note On: %s %s %s" % [ch, num, velocity])
+
+func _on_noteoff(ch: int, num: int, velocity: int):
+	Log.verbose("MIDI Note Off: %s %s %s" % [ch, num, velocity])
+
+func _on_cc(ch: int, num: int, velocity: int):
+	Log.verbose("MIDI CC: %s %s %s" % [ch, num, velocity])

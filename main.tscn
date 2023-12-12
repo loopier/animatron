@@ -1,7 +1,8 @@
-[gd_scene load_steps=7 format=3 uid="uid://q56taxhy2mot"]
+[gd_scene load_steps=8 format=3 uid="uid://q56taxhy2mot"]
 
 [ext_resource type="Script" path="res://Main.gd" id="1_70ykf"]
 [ext_resource type="Script" path="res://CommandInterface.gd" id="2_xp2d0"]
+[ext_resource type="Script" path="res://Midi.gd" id="3_68liq"]
 [ext_resource type="Theme" uid="uid://cccwlwk873tqt" path="res://styles/code_edit.theme" id="3_fotw2"]
 [ext_resource type="Script" path="res://CodeEdit.gd" id="3_xiw00"]
 [ext_resource type="StyleBox" uid="uid://dqdhrgvrn3l8a" path="res://styles/left-margin-transparent.stylebox" id="5_efpnp"]
@@ -17,6 +18,9 @@ script = ExtResource("1_70ykf")
 
 [node name="CommandInterface" type="Node" parent="."]
 script = ExtResource("2_xp2d0")
+
+[node name="Midi" type="Node" parent="."]
+script = ExtResource("3_68liq")
 
 [node name="Routines" type="Node" parent="."]
 
@@ -36,6 +40,7 @@ size_flags_vertical = 3
 theme = ExtResource("3_fotw2")
 theme_override_colors/font_outline_color = Color(0, 0, 0, 1)
 theme_override_constants/outline_size = 10
+text = "/midi 0 60 /post x 0 1"
 placeholder_text = "code editor"
 caret_type = 1
 syntax_highlighter = SubResource("CodeHighlighter_833ra")

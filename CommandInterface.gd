@@ -74,6 +74,8 @@ var coreCommands: Dictionary = {
 	"/def": CommandDescription.new(defineCommand, "cmdName:s [args:v] subcommands:c", "Define a custom OSC command that is a list of other OSC commands. This may be recursive, so each SUBCOMMAND may reference one of the built-in commands, or another custom-defined command. Another way to define custom commands is via the file commands/init.osc. The CMDNAME string (first argument) may include argument names (ARG1 ... ARGN), which may be referenced as SUBCOMMAND arguments using $ARG1 ... $ARGN. Example: /def \"/addsel actor anim\" \"/create $actor $anim\" \"/select $actor\". ", Flags.asArray(true)),
 	# post
 	"/post": CommandDescription.new(post, "msg:s", "Print MSG in the post window.", Flags.asArray(false)),
+	# midi
+	"/midi": CommandDescription.new(midi, "channel:i num:i cmd:s", "Map the VELOCITY of a MIDI NOTE arriving on CHANNEL to a CMD.", Flags.asArray(true)),
 	# utils
 	"/relative": CommandDescription.new(setRelativeProperty, "", "TODO", Flags.asArray(false)),
 	"/rand": CommandDescription.new(randCmdValue, "cmd:s actor:s min:f max:f", "Send a CMD to an ACTOR with a random value between MIN and MAX. If a wildcard is used, e.g. `bl*`, all ACTORs with with a name that begins with `bl` will get a different value. *WARNING: This only works with single-value commands.*", Flags.asArray(true)),
@@ -273,6 +275,17 @@ func post(args: Array) -> Status:
 	args = " ".join(PackedStringArray(args)).split("\\n")
 	for arg in args:
 		Log.info(arg)
+	return Status.ok()
+
+func midi(args: Array) -> Status:
+	var num = float(args[0])
+	var min = float(args[-2])
+	var max = float(args[-1])
+	#var NewValue = (((OldValue - OldMin) * (NewMax - NewMin)) / (OldMax - OldMin)) + NewMin
+	var result = (num - 0) * (max - min) / (127 - 0) + min
+	Log.verbose(args)
+	Log.verbose("min:%s max:%s" % [min, max])
+	Log.verbose("range: %s" % [result])
 	return Status.ok()
 
 func getHelp(cmd: String) -> Status:
