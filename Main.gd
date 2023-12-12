@@ -32,6 +32,7 @@ func _ready():
 	cmdInterface.command_finished.connect(_on_command_finished)
 	cmdInterface.command_error.connect(_on_command_error)
 	cmdInterface.command_file_loaded.connect(_on_command_file_loaded)
+	cmdInterface.routine_added.connect(_on_routine_added)
 	
 	var animationsLibraryNode = AnimatedSprite2D.new()
 	animationsLibraryNode.set_sprite_frames(SpriteFrames.new())
@@ -167,6 +168,10 @@ func _on_command_error(msg: String, sender: String):
 func _on_command_file_loaded(cmds: Array):
 	evalCommands(cmds, lastSender)
 
-func _on_routine_finished(name: String):
-	#_on_free_routine(name)
-	pass
+func _on_routine_added(name: String):
+	var routine = $Routines.find_child(name, true, false)
+	# we need to capture the signal emmited when a routine has been added by OSC
+	# so we can set a call to `Main.evalCommand` from within the `Routine`.
+	# Doing it like this decouples `Routine` from `Main`, because `Routine` doesn't
+	# need to know what object calling the method (in this case `Main`).
+	routine.callOnNext = Callable(evalCommand)

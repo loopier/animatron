@@ -11,6 +11,7 @@ extends Node
 signal command_finished(msg, sender)
 signal command_error(msg, sender)
 signal command_file_loaded(cmds)
+signal routine_added(name)
 
 var ocl := preload("res://ocl.gd").new()
 var status := preload("res://Status.gd")
@@ -62,6 +63,7 @@ var coreCommands: Dictionary = {
 	"/routine/start": CommandDescription.new(startRoutine, "name:s", "Start the routine named NAME."),
 	"/routine/stop": CommandDescription.new(stopRoutine, "name:s", "Stop the routine named NAME."),
 	"/routine/free": CommandDescription.new(freeRoutine, "name:s", "Remove the routine named NAME"),
+	"/routine/finished": CommandDescription.new(finishedRoutine, "routine:s cmd:s", "Set the CMD to be sent when the ROUTINE (name) is finished.", Flags.asArray(true)),
 	# state machine
 	"/state/add": CommandDescription.new(addState, "actor:s new:s next:s", "Add a NEW state to the ACTOR's state machine. NEXT states is an arbitrary number of next possible states. Example: `/state/add mymachine state1 state1 state2` would create a new state1 in `mymachine` that would either repeat or move on to `state2.`", Flags.asArray(true)),
 	"/states": CommandDescription.new(listStates, "", "Get a list of states for the given ACTOR."),
@@ -734,6 +736,7 @@ func addRoutine(args: Array) -> Status:
 		routine = Routine.instantiate()
 		routine.name = name
 		routinesNode.add_child(routine)
+		routine_added.emit(name) # see Main._on_routine_added
 
 	routine.repeats = repeats
 	routine.set_wait_time(interval)
@@ -755,6 +758,13 @@ func startRoutine(name: String) -> Status:
 func stopRoutine(name: String) -> Status:
 	routinesNode.get_node(name).stop()
 	return Status.ok(true)
+
+func finishedRoutine(args: Array) -> Status:
+	var routine = routinesNode.get_node(args[0])
+	if routine == null:
+		return Status.error("Routine not found: %s" % [args[0]])
+	routine.lastCommand = args.slice(1)
+	return Status.ok(routine.name, "Set last command for routine: %s" % [routine.name])
 
 func listStates() -> Status:
 	var machines := stateMachines.keys()
