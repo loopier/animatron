@@ -29,6 +29,7 @@ func _ready():
 	self.add_child.call_deferred(osc)
 	osc.startServer()
 	osc.osc_msg_received.connect(_on_osc_msg_received)
+	cmdInterface.commandManger = self
 	cmdInterface.command_finished.connect(_on_command_finished)
 	cmdInterface.command_error.connect(_on_command_error)
 	cmdInterface.command_file_loaded.connect(_on_command_file_loaded)

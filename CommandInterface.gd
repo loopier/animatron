@@ -22,6 +22,7 @@ var assetHelpers := preload("res://asset_helpers.gd").new()
 @onready var actorsNode: Node
 @onready var routinesNode: Node
 @onready var stateMachines: Dictionary
+@onready var commandManger: Node
 var animationsLibrary: SpriteFrames ## The meta node containing these frames needs to be initialized in _ready
 var assetsPath := "user://assets"
 var animationAssetsPath := assetsPath + "/animations"
@@ -75,6 +76,7 @@ var coreCommands: Dictionary = {
 	"/post": CommandDescription.new(post, "msg:s", "Print MSG in the post window.", Flags.asArray(false)),
 	# utils
 	"/relative": CommandDescription.new(setRelativeProperty, "", "TODO", Flags.asArray(false)),
+	"/rand": CommandDescription.new(randCmdValue, "cmd:s actor:s min:f max:f", "Send a CMD to an ACTOR with a random value between MIN and MAX. If a wildcard is used, e.g. `bl*`, all ACTORs with with a name that begins with `bl` will get a different value. *WARNING: This only works with single-value commands.*", Flags.asArray(true)),
 }
 
 ## Custom command definitions
@@ -879,4 +881,13 @@ func setBottomActor(args: Array) -> Status:
 	if result.isError(): return result
 	var actor = result.value
 	actorsNode.move_child(actor, 0)
+	return Status.ok(true)
+
+func randCmdValue(args: Array) -> Status:
+	var command = args[0]
+	var result = getActors(args[1])
+	if result.isError(): return result
+	for actor in result.value:
+		var value = randf_range(float(args[2]), float(args[3]))
+		commandManger.evalCommand([command, actor.name, value], "CommandInterface")
 	return Status.ok(true)
