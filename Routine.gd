@@ -15,11 +15,14 @@ var command := []
 
 func _ready():
 	wait_time = 1.0
-	timeout.connect(_next)
+	timeout.connect(_on_timeout)
 	eval_command.connect(main.evalCommand)
 	routine_finished.connect(main._on_routine_finished)
 
-func _next():
+func _on_timeout():
+	next()
+
+func next():
 	#Log.verbose("Timeout %s:%s %s" % [name, iteration, command])
 	if repeats > 0 and iteration >= repeats:
 		routine_finished.emit(name)
@@ -28,7 +31,7 @@ func _next():
 	iteration = iteration + 1
 
 func _exit_tree():
-	timeout.disconnect(_next)
+	timeout.disconnect(_on_timeout)
 	eval_command.disconnect(main.evalCommands)
 	routine_finished.disconnect(main._on_routine_finished)
 
