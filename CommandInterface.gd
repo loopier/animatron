@@ -729,6 +729,7 @@ func addRoutine(args: Array) -> Status:
 	var routine: Routine
 	if routinesNode.has_node(name):
 		routine = routinesNode.get_node(name)
+		routine.reset()
 	else:
 		routine = Routine.instantiate()
 		routine.name = name

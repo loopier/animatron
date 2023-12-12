@@ -31,3 +31,6 @@ func _exit_tree():
 	timeout.disconnect(_next)
 	eval_command.disconnect(main.evalCommands)
 	routine_finished.disconnect(main._on_routine_finished)
+
+func reset():
+	iteration = 0
