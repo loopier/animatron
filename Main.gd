@@ -11,6 +11,7 @@ var metanode := preload("res://meta_node.tscn")
 @onready var routines := get_node("Routines")
 @onready var StateMachine := preload("res://StateMachine.gd")
 @onready var stateMachines := {}
+@onready var midiCommands := []
 var OpenControlLanguage := preload("res://ocl.gd")
 var ocl: OpenControlLanguage
 var config := preload("res://Config.gd").new()
@@ -20,6 +21,15 @@ var config := preload("res://Config.gd").new()
 var rnd := RandomNumberGenerator.new()
 
 @onready var animationsLibrary : SpriteFrames
+func _init_midi():
+	# separate commands by channel
+	midiCommands.resize(16)
+	# create a different dictionary for each channel
+	midiCommands.fill({"noteOn": [], "noteOnNum": [], "noteOnTrig": [], "noteOnNumVelocity": [], "noteOnVelocity": [], "noteOff": [], "noteOffNum": [], "cc": []})
+	for chan in midiCommands:
+		chan["cc"].resize(128)
+		chan["noteOnTrig"].resize(128)
+		chan["noteOnNumVelocity"].resize(128)
 
 func _ready():
 	Log.setLevel(Log.LOG_LEVEL_VERBOSE)
@@ -44,13 +54,15 @@ func _ready():
 	cmdInterface.postWindow = get_node("HSplitContainer/VBoxContainer/PostWindow")
 	cmdInterface.routinesNode = get_node("Routines")
 	cmdInterface.stateMachines = Dictionary(stateMachines)
+	_init_midi()
+	cmdInterface.midiCommands = midiCommands
 	
 	ocl = OpenControlLanguage.new()
 	editor.eval_code.connect(_on_eval_code)
 	
-	$Midi.noteon.connect(_on_noteon)
-	$Midi.noteoff.connect(_on_noteoff)
-	$Midi.cc.connect(_on_cc)
+	$Midi.midi_noteon.connect(_on_midi_noteon)
+	$Midi.midi_noteoff.connect(_on_midi_noteoff)
+	$Midi.midi_cc.connect(_on_midi_cc)
 	
 	loadConfig(configPath)
 
@@ -181,11 +193,15 @@ func _on_routine_added(name: String):
 	# need to know what object calling the method (in this case `Main`).
 	routine.callOnNext = Callable(evalCommand)
 
-func _on_noteon(ch: int, num: int, velocity: int):
+func _on_midi_noteon(ch: int, num: int, velocity: int):
 	Log.verbose("MIDI Note On: %s %s %s" % [ch, num, velocity])
+	
+	#var NewValue = (((OldValue - OldMin) * (NewMax - NewMin)) / (OldMax - OldMin)) + NewMin
+	# var result = (num - 0) * (max - min) / (127 - 0) + min
+	pass
 
-func _on_noteoff(ch: int, num: int, velocity: int):
+func _on_midi_noteoff(ch: int, num: int, velocity: int):
 	Log.verbose("MIDI Note Off: %s %s %s" % [ch, num, velocity])
 
-func _on_cc(ch: int, num: int, velocity: int):
+func _on_midi_cc(ch: int, num: int, velocity: int):
 	Log.verbose("MIDI CC: %s %s %s" % [ch, num, velocity])

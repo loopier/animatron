@@ -1,9 +1,9 @@
 class_name Midi
 extends Node
 
-signal noteon(ch, num, velocity)
-signal noteoff(ch, num, velocity)
-signal cc(ch, num, value)
+signal midi_noteon(ch, num, velocity)
+signal midi_noteoff(ch, num, velocity)
+signal midi_cc(ch, num, value)
 
 @onready var debug := false
 
@@ -21,11 +21,11 @@ func _input(event):
 		var value = 0
 		match msg:
 			MIDI_MESSAGE_NOTE_ON:
-				noteon.emit(ch, event.pitch, event.velocity)
+				midi_noteon.emit(ch, event.pitch, event.velocity)
 			MIDI_MESSAGE_NOTE_OFF:
-				noteoff.emit(ch, event.pitch, event.velocity)
+				midi_noteoff.emit(ch, event.pitch, event.velocity)
 			MIDI_MESSAGE_CONTROL_CHANGE:
-				cc.emit(ch, event.controller_number, event.controller_value)
+				midi_cc.emit(ch, event.controller_number, event.controller_value)
 
 func _print_midi_info(midi_event: InputEventMIDI):
 	print(midi_event)

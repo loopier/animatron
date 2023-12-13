@@ -23,6 +23,7 @@ var assetHelpers := preload("res://asset_helpers.gd").new()
 @onready var routinesNode: Node
 @onready var stateMachines: Dictionary
 @onready var commandManger: Node
+@onready var midiCommands: Array
 var animationsLibrary: SpriteFrames ## The meta node containing these frames needs to be initialized in _ready
 var assetsPath := "user://assets"
 var animationAssetsPath := assetsPath + "/animations"
@@ -75,7 +76,14 @@ var coreCommands: Dictionary = {
 	# post
 	"/post": CommandDescription.new(post, "msg:s", "Print MSG in the post window.", Flags.asArray(false)),
 	# midi
-	"/midi": CommandDescription.new(midi, "channel:i num:i cmd:s", "Map the VELOCITY of a MIDI NOTE arriving on CHANNEL to a CMD.", Flags.asArray(true)),
+	"/midi/cc": CommandDescription.new(midiCC, "channel:i cmd:s", "Map the control value to a CMD. The last 2 CMD arguments should be MIN and MAX, in that order. Example: /midi/cc 0 /position/x target 0 1920. *WARNING: this only works with commands that accept 1 argument.*", Flags.asArray(true)),
+	"/midi/noteon/num": CommandDescription.new(midiNoteOnNum, "channel:i cmd:s", "Map the pressed note number to a CMD. The last 2 CMD arguments should be MIN and MAX, in that order. Example: /midi/noteon/num 0 /position/x target 0 1920. *WARNING: this only works with commands that accept 1 argument.*", Flags.asArray(true)),
+	"/midi/noteon/trig": CommandDescription.new(midiNoteOnTrig, "channel:i note:i cmd:s", "Execute a CMD when a note-on event is triggered on a specific NOTE.", Flags.asArray(true)),
+	"/midi/noteon/num/velocity": CommandDescription.new(midiNoteOnNumVelocity, "channel:i note:i cmd:s", "Map the NOTE velocity to a CMD. The last 2 CMD arguments should be MIN and MAX, in that order. Example: /midi/noteon/num 0 60 /position/y target 0 1080. *WARNING: this only works with commands that accept 1 argument.*", Flags.asArray(true)),
+	"/midi/noteon/velocity": CommandDescription.new(midiNoteOnVelocity, "channel:i cmd:s", "Map the velocity of any note to a CMD. The last 2 CMD arguments should be MIN and MAX, in that order. Example: /midi/noteon/num 0 /position/y target 0 1080. *WARNING: this only works with commands that accept 1 argument.*.", Flags.asArray(true)),
+	"/midi/noteon": CommandDescription.new(midiNoteOn, "channel:i cmd:s", "Execute a CMD when a note-on MIDI event is triggered on any note.", Flags.asArray(true)),
+	"/midi/noteoff/num": CommandDescription.new(midiNoteOffNum, "channel:i cmd:s", "Map the released NOTE number to a CMD. The last 2 CMD arguments should be MIN and MAX, in that order. Example: /midi/noteon/num 0 /position/x target 0 1920. *WARNING: this only works with commands that accept 1 argument.*",Flags.asArray(true)),
+	"/midi/noteoff": CommandDescription.new(midiNoteOff, "channel:i cmd:s", "Execute a CMD when a note-off MIDI event is triggered on any note.", Flags.asArray(true)),
 	# utils
 	"/relative": CommandDescription.new(setRelativeProperty, "", "TODO", Flags.asArray(false)),
 	"/rand": CommandDescription.new(randCmdValue, "cmd:s actor:s min:f max:f", "Send a CMD to an ACTOR with a random value between MIN and MAX. If a wildcard is used, e.g. `bl*`, all ACTORs with with a name that begins with `bl` will get a different value. *WARNING: This only works with single-value commands.*", Flags.asArray(true)),
@@ -114,7 +122,7 @@ var nodeCommands: Dictionary = {
 	"/frame/progress": CommandDescription.new(setAnimationProperty, "", "", Flags.gdScript()),
 	"/speed/scale": CommandDescription.new(setAnimationProperty, "actor:s speed:f", "Set the ACTOR's animation SPEED (1 = normal speed, 2 = 2 x speed).", Flags.gdScript()),
 	"/speed": "/speed/scale",
-	"/flip/v": CommandDescription.new(toggleAnimationProperty, "actor:s", "Flip ACTOR vertically."),
+	"/flip/v": CommandDescription.new(toggleAnimationProperty, "actor:s", "Flip/ ACTOR vertically."),
 	"/flip/h": CommandDescription.new(toggleAnimationProperty, "actor:s", "Flip ACTOR horizontally."),
 	"/visible": CommandDescription.new(toggleActorProperty, "actor:s visibility:b", "Set ACTOR's VISIBILITY to either true or false."),
 	"/hide": CommandDescription.new(callActorMethod, "actor:s", "Show ACTOR (set visibility to true).", Flags.gdScript()),
@@ -277,15 +285,33 @@ func post(args: Array) -> Status:
 		Log.info(arg)
 	return Status.ok()
 
-func midi(args: Array) -> Status:
-	var num = float(args[0])
-	var min = float(args[-2])
-	var max = float(args[-1])
-	#var NewValue = (((OldValue - OldMin) * (NewMax - NewMin)) / (OldMax - OldMin)) + NewMin
-	var result = (num - 0) * (max - min) / (127 - 0) + min
-	Log.verbose(args)
-	Log.verbose("min:%s max:%s" % [min, max])
-	Log.verbose("range: %s" % [result])
+func midiCC(args: Array) -> Status:
+	return Status.ok()
+
+func midiNoteOnNum(args: Array) -> Status:
+	# TODO
+	
+	var chan = int(args[0])
+	var num = int(args[1])
+	midiCommands[chan]["noteOnNum"].append = args.slice(1)
+	return Status.ok()
+
+func midiNoteOnTrig(args: Array) -> Status:
+	return Status.ok()
+
+func midiNoteOnNumVelocity(args: Array) -> Status:
+	return Status.ok()
+
+func midiNoteOnVelocity(args: Array) -> Status:
+	return Status.ok()
+
+func midiNoteOn(args: Array) -> Status:
+	return Status.ok()
+
+func midiNoteOffNum(args: Array) -> Status:
+	return Status.ok()
+
+func midiNoteOff(args: Array) -> Status:
 	return Status.ok()
 
 func getHelp(cmd: String) -> Status:
