@@ -40,7 +40,8 @@ size_flags_vertical = 3
 theme = ExtResource("3_fotw2")
 theme_override_colors/font_outline_color = Color(0, 0, 0, 1)
 theme_override_constants/outline_size = 10
-text = "/midi/noteon/num 0 /post x 0 1"
+text = "/osc/remote localhost 57120
+/osc/send bla 1 0.5"
 placeholder_text = "code editor"
 caret_type = 1
 syntax_highlighter = SubResource("CodeHighlighter_833ra")

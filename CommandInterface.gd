@@ -24,6 +24,7 @@ var assetHelpers := preload("res://asset_helpers.gd").new()
 @onready var stateMachines: Dictionary
 @onready var commandManger: Node
 @onready var midiCommands: Array
+@onready var oscSender: OscReceiver
 var animationsLibrary: SpriteFrames ## The meta node containing these frames needs to be initialized in _ready
 var assetsPath := "user://assets"
 var animationAssetsPath := assetsPath + "/animations"
@@ -75,6 +76,9 @@ var coreCommands: Dictionary = {
 	"/def": CommandDescription.new(defineCommand, "cmdName:s [args:v] subcommands:c", "Define a custom OSC command that is a list of other OSC commands. This may be recursive, so each SUBCOMMAND may reference one of the built-in commands, or another custom-defined command. Another way to define custom commands is via the file commands/init.osc. The CMDNAME string (first argument) may include argument names (ARG1 ... ARGN), which may be referenced as SUBCOMMAND arguments using $ARG1 ... $ARGN. Example: /def \"/addsel actor anim\" \"/create $actor $anim\" \"/select $actor\". ", Flags.asArray(true)),
 	# post
 	"/post": CommandDescription.new(post, "msg:s", "Print MSG in the post window.", Flags.asArray(false)),
+	# osc
+	"/osc/remote": CommandDescription.new(connectOscRemote, "ip:s port:i", "Set the IP address and PORT number of a remote OSC server.", Flags.asArray(true)),
+	"/osc/send": CommandDescription.new(sendOscMsg, "msg:s", "Send an OSC message to a remote server. See `/osc/remote`.", Flags.asArray(true)),
 	# midi
 	"/midi/cc": CommandDescription.new(midiCC, "channel:i cmd:s", "Map the control value to a CMD. The last 2 CMD arguments should be MIN and MAX, in that order. Example: /midi/cc 0 /position/x target 0 1920. *WARNING: this only works with commands that accept 1 argument.*", Flags.asArray(true)),
 	"/midi/noteon/num": CommandDescription.new(midiNoteOnNum, "channel:i cmd:s", "Map the pressed note number to a CMD. The last 2 CMD arguments should be MIN and MAX, in that order. Example: /midi/noteon/num 0 /position/x target 0 1920. *WARNING: this only works with commands that accept 1 argument.*", Flags.asArray(true)),
@@ -155,7 +159,7 @@ var nodeCommands: Dictionary = {
 
 # Called when the node enters the scene tree for the first time.
 func _ready():
-	pass
+	oscSender = OscReceiver.new()
 
 # Called every frame. 'delta' is the elapsed time since the previous frame.
 func _process(_delta):
@@ -283,6 +287,16 @@ func post(args: Array) -> Status:
 	args = " ".join(PackedStringArray(args)).split("\\n")
 	for arg in args:
 		Log.info(arg)
+	return Status.ok()
+
+func connectOscRemote(args: Array) -> Status:
+	oscSender.senderIP = args[0]
+	oscSender.senderPort = int(args[1])
+	return Status.ok(oscSender.senderIP, "Connecting to OSC server: %s:%s" % [oscSender.senderIP, oscSender.senderPort])
+
+func sendOscMsg(msg: Array) -> Status:
+	var target = "%s/%s" % [oscSender.senderIP, oscSender.senderPort]
+	oscSender.sendMessage(target, msg[0], msg.slice(1))
 	return Status.ok()
 
 func midiCC(args: Array) -> Status:

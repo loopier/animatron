@@ -2,6 +2,7 @@ extends Node2D
 class_name Main
 
 var osc: OscReceiver
+var oscSender: OscReceiver # FIX: this is misleading.
 static var configPath := "user://config/config.ocl"
 var metanode := preload("res://meta_node.tscn")
 @onready var actors := get_node("Actors")
