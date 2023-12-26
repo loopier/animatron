@@ -74,6 +74,8 @@ var coreCommands: Dictionary = {
 	"/state/next": CommandDescription.new(nextState, "actor:s", "Change ACTOR to next STATE."),
 	# def
 	"/def": CommandDescription.new(defineCommand, "cmdName:s [args:v] subcommands:c", "Define a custom OSC command that is a list of other OSC commands. This may be recursive, so each SUBCOMMAND may reference one of the built-in commands, or another custom-defined command. Another way to define custom commands is via the file commands/init.osc. The CMDNAME string (first argument) may include argument names (ARG1 ... ARGN), which may be referenced as SUBCOMMAND arguments using $ARG1 ... $ARGN. Example: /def \"/addsel actor anim\" \"/create $actor $anim\" \"/select $actor\". ", Flags.asArray(true)),
+	# for (loop)
+	"/for": CommandDescription.new(forCommand, "varName:s iterations:i cmd:s", "Iterate `iterations` times over `varName`, substituting the current iteration value in each call to `cmd`.", Flags.asArray(true)),
 	# post
 	"/post": CommandDescription.new(post, "msg:s", "Print MSG in the post window.", Flags.asArray(false)),
 	# osc
@@ -182,6 +184,10 @@ func defineCommand(args: Array) -> Status:
 		defCommands[commandName].variables[variable] = null
 	return Status.ok([commandName, commandVariables, subCommands], "Added command def: %s %s" % [commandName, commandVariables, subCommands])
 
+func forCommand(args: Array) -> Status:
+	var cmds: Array = ocl._for(args);
+	return commandManger.evalCommands(cmds, "CommandInterface")
+	
 ## Load commands from a file and return an array
 func loadCommandFile(path: String) -> Status:
 	var file = FileAccess.open(path, FileAccess.READ)
