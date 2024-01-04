@@ -288,6 +288,7 @@ func post(args: Array) -> Status:
 	args = " ".join(PackedStringArray(args)).split("\\n")
 	for arg in args:
 		Log.info(arg)
+	postWindow.set_text("%s\n%s" % [postWindow.get_text(), " ".join(PackedStringArray(args))])
 	return Status.ok()
 
 func connectOscRemote(args: Array) -> Status:
