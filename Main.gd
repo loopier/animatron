@@ -115,6 +115,7 @@ func evalCommand(cmdArray: Array, sender: String) -> Status:
 	
 	# post and reply result
 	_on_command_finished(result, sender)
+	post(result.msg)
 	return result
 
 ## Executes a [param command] described in a [CommandDescription], with the given [param args].
@@ -206,3 +207,6 @@ func _on_midi_noteoff(ch: int, num: int, velocity: int):
 
 func _on_midi_cc(ch: int, num: int, velocity: int):
 	Log.verbose("MIDI CC: %s %s %s" % [ch, num, velocity])
+
+func post(msg: String):
+	$HSplitContainer/VBoxContainer/PostWindow.set_text($HSplitContainer/VBoxContainer/PostWindow.get_text() + msg)
