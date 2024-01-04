@@ -17,8 +17,12 @@ func _input(event):
 		evalBlock()
 		_ignoreEvent()
 	if event.is_action_pressed("eval_line"): evalLine()
-	if event.is_action_pressed("increase_editor_font"): increaseFont()
-	if event.is_action_pressed("decrease_editor_font"): decreaseFont()
+	if event.is_action_pressed("increase_editor_font"): 
+		increaseFont()
+		_ignoreEvent()
+	if event.is_action_pressed("decrease_editor_font"): 
+		decreaseFont()
+		_ignoreEvent()
 
 func _ignoreEvent():
 	get_parent().get_parent().get_parent().set_input_as_handled()
