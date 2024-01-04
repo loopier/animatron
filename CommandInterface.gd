@@ -52,6 +52,7 @@ var coreCommands: Dictionary = {
 	"/assets/list": CommandDescription.new(listAnimationAssets, "", "Get the list of available (unloaded) assets. Assets must be loaded as animations in order to create actor instances."), # available in disk
 #	"/assets/list": CommandDescription.new(main.bla, "", "a bla"),
 	"/assets": "/assets/list",
+	"/assets/path": CommandDescription.new(setAssetsPath, "path:s", "Set the path for the parent directory of the assets."), # available in disk
 	"/animations/list": CommandDescription.new(listAnimations, "", "Get the list of available (loaded) animations."), # loaded
 	"/animations": "/animations/list",
 	# actors
@@ -293,6 +294,7 @@ func post(args: Array) -> Status:
 	args = " ".join(PackedStringArray(args)).split("\\n")
 	for arg in args:
 		Log.info(arg)
+	postWindow.set_text("%s\n%s" % [postWindow.get_text(), " ".join(PackedStringArray(args))])
 	return Status.ok()
 
 func connectOscRemote(args: Array) -> Status:
@@ -473,6 +475,11 @@ func listAnimationAssets() -> Status:
 	for assetName in assetNames:
 		msg += "%s\n" % [assetName]
 	return Status.ok(assetNames, msg)
+
+func setAssetsPath(path: String) -> Status:
+	if path == "null": return Status.ok(animationAssetsPath, animationAssetsPath)
+	animationAssetsPath = path;
+	return Status.ok()
 
 func loadAnimationAsset(assetName: String) -> Status:
 	var result : Status
