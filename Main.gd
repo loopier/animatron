@@ -74,6 +74,10 @@ func _process(_delta):
 func _input(event):
 	if event.is_action_pressed("toggle_editor", true):
 		$HSplitContainer.set_visible(not($HSplitContainer.is_visible()))
+	if event.is_action_pressed("toggle_post", true):
+		$HSplitContainer/VBoxContainer.set_visible(not($HSplitContainer/VBoxContainer.is_visible()))
+	if event.is_action_pressed("clear_post", true):
+		$HSplitContainer/VBoxContainer/PostWindow.clear()
 
 func _on_osc_msg_received(addr: String, args: Array, sender: String):
 	# TODO: send [addr, args] to OCL interpreter and receive an array of commands
