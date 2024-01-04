@@ -209,4 +209,4 @@ func _on_midi_cc(ch: int, num: int, velocity: int):
 	Log.verbose("MIDI CC: %s %s %s" % [ch, num, velocity])
 
 func post(msg: String):
-	$HSplitContainer/VBoxContainer/PostWindow.set_text($HSplitContainer/VBoxContainer/PostWindow.get_text() + msg)
+	$HSplitContainer/VBoxContainer/PostWindow.set_text("%s\n%s" % [$HSplitContainer/VBoxContainer/PostWindow.get_text(), msg])

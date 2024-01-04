@@ -27,7 +27,7 @@ func evalText(text):
 	text = text.strip_edges()
 	eval_code.emit(text)
 	deselect()
-
+	
 func evalLine():
 	var ln = get_caret_line()
 	var col = get_caret_column()
@@ -73,3 +73,6 @@ func increaseFont():
 func decreaseFont():
 	var fontSize = get_theme_font_size("font_size") - 1
 	add_theme_font_size_override("font_size", fontSize)
+
+func append(text: String):
+	set_text("%s\n%s" % [get_text(), text])
