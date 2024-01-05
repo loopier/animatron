@@ -129,9 +129,9 @@ var nodeCommands: Dictionary = {
 	"/frame/progress": CommandDescription.new(setAnimationProperty, "", "", Flags.gdScript()),
 	"/speed/scale": CommandDescription.new(setAnimationProperty, "actor:s speed:f", "Set the ACTOR's animation SPEED (1 = normal speed, 2 = 2 x speed).", Flags.gdScript()),
 	"/speed": "/speed/scale",
-	"/flip/v": CommandDescription.new(toggleAnimationProperty, "actor:s", "Flip/ ACTOR vertically."),
-	"/flip/h": CommandDescription.new(toggleAnimationProperty, "actor:s", "Flip ACTOR horizontally."),
-	"/visible": CommandDescription.new(toggleActorProperty, "actor:s visibility:b", "Set ACTOR's VISIBILITY to either true or false."),
+	"/flip/v": CommandDescription.new(toggleAnimationProperty, "actor:s", "Flip/ ACTOR vertically.", Flags.gdScript()),
+	"/flip/h": CommandDescription.new(toggleAnimationProperty, "actor:s", "Flip ACTOR horizontally.", Flags.gdScript()),
+	"/visible": CommandDescription.new(toggleActorProperty, "actor:s visibility:b", "Set ACTOR's VISIBILITY to either true or false.", Flags.gdScript()),
 	"/hide": CommandDescription.new(callActorMethod, "actor:s", "Show ACTOR (set visibility to true).", Flags.gdScript()),
 	"/show": CommandDescription.new(callActorMethod, "actor:s", "Hide ACTOR (set visibility to false).", Flags.gdScript()),
 	"/offset": CommandDescription.new(setAnimationPropertyWithVector, "actor:s x:i y:i", "Set the ACTOR's animation drawing offset in pixels.", Flags.gdScript()),
@@ -558,18 +558,20 @@ func createActor(actorName: String, anim: String) -> Status:
 	return Status.ok(actor, msg)
 
 func removeActor(actorName: String) -> Status:
-	var result = getActor(actorName)
+	var result = getActors(actorName)
 	if result.isError(): return result
-	var actor = result.value
-	actorsNode.remove_child(actor)
-	return Status.ok(actor)
+	for actor in result.value:
+		actorsNode.remove_child(actor)
+	return Status.ok()
 
 func setActorAnimation(actorName, animation) -> Status:
-	var result = getActor(actorName)
+	var result = getActors(actorName)
 	if result.isError(): return result
 	if not animationsLibrary.has_animation(animation): return Status.error("Animation not found: %s" % [animation])
-	result.value.get_node("Animation").play(animation)
-	return Status.ok(true, "Set animation for '%s': %s" % [actorName, animation])
+	for actor in result.value:
+		actor.get_node("Animation").play(animation)
+	# return Status.ok(true, "Set animation for '%s': %s" % [actorName, animation])
+	return Status.ok()
 
 ## Sets any Vector [param property] of any node. 
 ## [param args[1..]] are the vector values (between 2 and 4). If only 1 value is passed, it will set the same value on all axes.
@@ -584,16 +586,19 @@ func setNodePropertyWithVector(node, property, args) -> Status:
 	return callMethodWithVector(node, setProperty, args)
 
 func setActorPropertyWithVector(property, args) -> Status:
-	var result = getActor(args[0])
+	var result = getActors(args[0])
 	if result.isError(): return result
-	return setNodePropertyWithVector(result.value, property, args.slice(1))
+	for actor in result.value:
+		setNodePropertyWithVector(actor, property, args.slice(1))
+	return Status.ok()
 
 func setAnimationPropertyWithVector(property, args) -> Status:
-	var result = getActor(args[0])
+	var result = getActors(args[0])
 	if result.isError(): return result
-	var actor = result.value
-	var animation = actor.get_node("Animation")
-	return setNodePropertyWithVector(animation, property, args.slice(1))
+	for actor in result.value:
+		var animation = actor.get_node("Animation")
+		setNodePropertyWithVector(animation, property, args.slice(1))
+	return Status.ok()
 
 ## Sets the value for the N axis of any Vector [param property] (position, scale, ...) of any actor.
 ## For example: /position/x would set the [method actor.get_position().x] value.
@@ -616,17 +621,19 @@ func setNodePropertyWithVectorN(node, property, value) -> Status:
 	return Status.ok("Set %s.%s: %s" % [vec, axis, value])
 
 func setActorPropertyWithVectorN(property, args) -> Status:
-	var result = getActor(args[0])
+	var result = getActors(args[0])
 	if result.isError(): return result
-	var actor = result.value
-	return setNodePropertyWithVectorN(actor, property, args[1])
+	for actor in result.value:
+		setNodePropertyWithVectorN(actor, property, args[1])
+	return Status.ok()
 
 func setAnimationPropertyWithVectorN(property, args) -> Status:
-	var result = getActor(args[0])
+	var result = getActors(args[0])
 	if result.isError(): return result
-	var actor = result.value
-	var animation = actor.get_node("Animation")
-	return setNodePropertyWithVectorN(animation, property, args[1])
+	for actor in result.value:
+		var animation = actor.get_node("Animation")
+		setNodePropertyWithVectorN(animation, property, args[1])
+	return Status.ok()
 
 func setActorProperty(property, args) -> Status:
 	return callActorMethod("/set" + property, args if len(args) > 0 else [])
@@ -646,52 +653,56 @@ func toggleProperty(property, object) -> Status:
 	return Status.ok(object.get(property))
 
 func toggleActorProperty(property, args) -> Status:
-	var result = getActor(args[0])
+	var result = getActors(args[0])
 	if result.isError(): return result
-	var actor = result.value
-	return toggleProperty(property, actor)
+	for actor in result.value:
+		toggleProperty(property, actor)
+	return Status.ok()
 
 func toggleAnimationProperty(property, args) -> Status:
-	var result = getActor(args[0])
+	var result = getActors(args[0])
 	if result.isError(): return result
-	var animation = result.value.get_node("Animation")
-	return toggleProperty(property, animation)
+	for actor in result.value:
+		var animation = actor.get_node("Animation")
+		toggleProperty(property, animation)
+	return Status.ok()
 
 func setRelativeProperty(args: Array) -> Status:
-	var result = getActor(args[1])
+	var result = getActors(args[1])
 	if result.isError(): return result
-	var actor = result.value
-	var property = args[0]
-	var values = args.slice(2)
-	if property.begins_with("/"): property = property.substr(1)
-	property = property.replace("/", "_")
-	var object = actor if actor.has_method("get_"+property) else actor.get_node("Animation")
-	var currentValue = object.get(property)
-	var modifier: Variant
-#	Log.debug("property: %s.%s" % [object.name, property])
-#	Log.debug("values: %s -> %s" % [currentValue, values])
-	if currentValue == null: return Status.error("Property not found: %s.%s" % [object.name, property])
-	match typeof(currentValue):
-		TYPE_VECTOR2, TYPE_VECTOR3, TYPE_VECTOR4: 
-			# need to convert values to vector to do the math, then convert them
-			# back to array for setNodePropertyWithVector, which only accepts array arguments
-			# because it's a callabe in a CommandDescription which can't pass vector carguments. 
-			modifier = arrayToVector(values)
-			var modifiedVec = currentValue + modifier
-			var modifiedValues : Array
-			match typeof(currentValue):
-				TYPE_VECTOR2: modifiedValues = [modifiedVec.x, modifiedVec.y]
-				TYPE_VECTOR3: modifiedValues = [modifiedVec.x, modifiedVec.y, modifiedVec.y]
-				TYPE_VECTOR4: modifiedValues = [modifiedVec.x, modifiedVec.y, modifiedVec.y, modifiedVec.z]
-			setNodePropertyWithVector(object, property, modifiedValues)
-			return Status.ok(object.get(property))
-		TYPE_ARRAY: modifier = values
-		TYPE_FLOAT: modifier = float(values[0])
-		TYPE_INT: modifier = int(values[0])
-		_:
-			modifier = values[0]
-	object.set(property, currentValue + modifier)
-	return Status.ok(object.get(property))
+	for actor in result.value:
+		var property = args[0]
+		var values = args.slice(2)
+		if property.begins_with("/"): property = property.substr(1)
+		property = property.replace("/", "_")
+		var object = actor if actor.has_method("get_"+property) else actor.get_node("Animation")
+		var currentValue = object.get(property)
+		var modifier: Variant
+	#	Log.debug("property: %s.%s" % [object.name, property])
+	#	Log.debug("values: %s -> %s" % [currentValue, values])
+		if currentValue == null: return Status.error("Property not found: %s.%s" % [object.name, property])
+		match typeof(currentValue):
+			TYPE_VECTOR2, TYPE_VECTOR3, TYPE_VECTOR4: 
+				# need to convert values to vector to do the math, then convert them
+				# back to array for setNodePropertyWithVector, which only accepts array arguments
+				# because it's a callabe in a CommandDescription which can't pass vector carguments. 
+				modifier = arrayToVector(values)
+				var modifiedVec = currentValue + modifier
+				var modifiedValues : Array
+				match typeof(currentValue):
+					TYPE_VECTOR2: modifiedValues = [modifiedVec.x, modifiedVec.y]
+					TYPE_VECTOR3: modifiedValues = [modifiedVec.x, modifiedVec.y, modifiedVec.y]
+					TYPE_VECTOR4: modifiedValues = [modifiedVec.x, modifiedVec.y, modifiedVec.y, modifiedVec.z]
+				setNodePropertyWithVector(object, property, modifiedValues)
+				return Status.ok(object.get(property))
+			TYPE_ARRAY: modifier = values
+			TYPE_FLOAT: modifier = float(values[0])
+			TYPE_INT: modifier = int(values[0])
+			_:
+				modifier = values[0]
+		object.set(property, currentValue + modifier)
+	#return Status.ok(object.get(property))
+	return Status.ok()
 
 func arrayToVector(input: Array) -> Variant:
 	for i in len(input):
@@ -703,50 +714,53 @@ func arrayToVector(input: Array) -> Variant:
 		_: return null
 
 func callActorMethod(method, args) -> Status:
-	var result = getActor(args[0])
+	var result = getActors(args[0])
 	if result.isError(): return result
-	var actor = result.value
-	if method.begins_with("/"): method = method.substr(1)
 	method = method.replace("/", "_")
 	args = args.slice(1)
-	if len(args) == 0:
-		result = actor.call(method)
-	else:
-		result = actor.callv(method, args)
-	return Status.ok(result, "Called %s.%s(%s): %s" % [actor.get_name(), method, args, result])
+	for actor in result.value:
+		if method.begins_with("/"): method = method.substr(1)
+		if len(args) == 0:
+			result = actor.call(method)
+		else:
+			result = actor.callv(method, args)
+	#return Status.ok(result, "Called %s.%s(%s): %s" % [actor.get_name(), method, args, result])
+	return Status.ok()
 	
 func callAnimationMethod(method, args) -> Status:
-	var result = getActor(args[0])
+	var result = getActors(args[0])
 	if result.isError(): return result
-	var actor = result.value
-	var animation = actor.get_node("Animation")
 	method = method.substr(1).replace("/", "_").to_lower()
 	args = args.slice(1)
-	if len(args) == 0:
-		result = animation.call(method)
-	else:
-		result = animation.callv(method, args)
-	return Status.ok(result, "Called %s.%s.%s(%s): %s" % [actor.get_name(), animation.get_animation(), method, args, result])
+	for actor in result.value:
+		var animation = actor.get_node("Animation")
+		if len(args) == 0:
+			result = animation.call(method)
+		else:
+			result = animation.callv(method, args)
+	#return Status.ok(result, "Called %s.%s.%s(%s): %s" % [actor.get_name(), animation.get_animation(), method, args, result])
+	return Status.ok()
 
 func callAnimationFramesMethod(method, args) -> Status:
-	var result = getActor(args[0])
+	var result = getActors(args[0])
 	if result.isError(): return result
-	var actor = result.value
-	var animation = actor.get_node("Animation")
-	var frames = animation.get_sprite_frames()
 	method = method.substr(1) if method.begins_with("/") else method
 	method = method.replace("/", "_").to_lower()
-	# replace first argument with animation name
-	# most of the SpriteFrames methods need the animation name as first argument
-	args[0] = animation.get_animation()
-	result = frames.callv(method, args)
-	return Status.ok(result, "Called %s.%s.frames.%s(%s): %s" % [actor.get_name(), animation.get_animation(), method, args, result])
+	for actor in result.value:
+		var animation = actor.get_node("Animation")
+		var frames = animation.get_sprite_frames()
+		# replace first argument with animation name
+		# most of the SpriteFrames methods need the animation name as first argument
+		args[0] = animation.get_animation()
+		result = frames.callv(method, args)
+	return Status.ok()
 
 func callActorMethodWithVector(method, args) -> Status:
-	var result = getActor(args[1])
+	var result = getActors(args[1])
 	if result.isError(): return result
-	var actor = result.value
-	return callMethodWithVector(actor, method, args.slice(1))
+	for actor in result.value:
+		callMethodWithVector(actor, method, args.slice(1))
+	return Status.ok()
 
 func callMethodWithVector(object: Variant, method: String, args: Array) -> Status:
 	method = method.substr(1) if method.begins_with("/") else method
@@ -770,13 +784,13 @@ func callMethodWithVector(object: Variant, method: String, args: Array) -> Statu
 # have types) if the args are Strings or ints and thus need conversion
 # to float. See https://github.com/godotengine/godot/issues/62838
 func colorActor(actorName: String, red, green, blue) -> Status:
-	var result := getActor(actorName)
+	var result := getActors(actorName)
 	if result.isError(): return result
-	var actor := result.value as Node
-	var animation := actor.get_node("Animation") as AnimatedSprite2D
-	var rgb := Vector3(red as float, green as float, blue as float)
-	setImageShaderUniform(animation, "uAddColor", rgb)
-	return Status.ok(result, "Set actor '%s' color to %s" % [actor.get_name(), rgb])
+	for actor in result.value:
+		var animation := actor.get_node("Animation") as AnimatedSprite2D
+		var rgb := Vector3(red as float, green as float, blue as float)
+		setImageShaderUniform(animation, "uAddColor", rgb)
+	return Status.ok()
 
 
 static func setImageShaderUniform(image: AnimatedSprite2D, uName: StringName, uValue: Variant) -> void:
@@ -883,73 +897,73 @@ func size(args: Array) -> Status:
 	return setActorPropertyWithVector("/scale", args)
 
 func sizeX(args: Array) -> Status:
-	var result = getActor(args[0])
+	var result = getActors(args[0])
 	if result.isError(): return result
-	var actor = result.value
-	actor.scale.x = float(args[1])
-	return Status.ok(actor)
+	for actor in result.value:
+		actor.scale.x = float(args[1])
+	return Status.ok()
 
 func sizeY(args: Array) -> Status:
-	var result = getActor(args[0])
+	var result = getActors(args[0])
 	if result.isError(): return result
-	var actor = result.value
-	actor.scale.y = float(args[1])
-	return Status.ok(actor)
+	for actor in result.value:
+		actor.scale.y = float(args[1])
+	return Status.ok()
 
 func scale(args: Array) -> Status:
-	var result = getActor(args[0])
+	var result = getActors(args[0])
 	if result.isError(): return result
-	var actor = result.value
-	actor.scale *= Vector2(float(args[1]), float(args[1]))
-	return Status.ok(actor)
+	for actor in result.value:
+		actor.scale *= Vector2(float(args[1]), float(args[1]))
+	return Status.ok()
 
 func scaleX(args: Array) -> Status:
-	var result = getActor(args[0])
+	var result = getActors(args[0])
 	if result.isError(): return result
-	var actor = result.value
-	actor.scale.x *= float(args[1])
-	return Status.ok(actor)
+	for actor in result.value:
+		actor.scale.x *= float(args[1])
+	return Status.ok()
 
 func scaleY(args: Array) -> Status:
-	var result = getActor(args[0])
+	var result = getActors(args[0])
 	if result.isError(): return result
-	var actor = result.value
-	actor.scale.y *= float(args[1])
-	return Status.ok(actor)
+	for actor in result.value:
+		actor.scale.y *= float(args[1])
+	return Status.ok()
 
 func setInFrontOfActor(args: Array) -> Status:
 	var result = getActor(args[0])
-	var targetResult = getActor(args[1])
+	var targetResult = getActors(args[1])
 	if result.isError(): return result
 	if targetResult.isError(): return targetResult
 	var actor = result.value
-	var target = targetResult.value
-	actorsNode.move_child(actor, target.get_index()+1)
-	return Status.ok(true)
+	for target in targetResult.value:
+		actorsNode.move_child(actor, target.get_index()+1)
+	return Status.ok()
 
 func setBehindActor(args: Array) -> Status:
 	var result = getActor(args[0])
-	var targetResult = getActor(args[1])
+	var targetResult = getActors(args[1])
 	if result.isError(): return result
 	if targetResult.isError(): return targetResult
 	var actor = result.value
-	var target = targetResult.value
-	actorsNode.move_child(target, actor.get_index()+1)
-	return Status.ok(true)
+	for target in targetResult.value:
+		actorsNode.move_child(actor, max(0, target.get_index()-1))
+	return Status.ok()
 
 func setTopActor(args: Array) -> Status:
-	var result = getActor(args[0])
+	var result = getActors(args[0])
 	if result.isError(): return result
-	var actor = result.value
-	actorsNode.move_child(actor, actorsNode.get_child_count())
+	for actor in result.value:
+		actorsNode.move_child(actor, actorsNode.get_child_count())
 	return Status.ok(true)
 
 func setBottomActor(args: Array) -> Status:
-	var result = getActor(args[0])
+	var result = getActors(args[0])
 	if result.isError(): return result
-	var actor = result.value
-	actorsNode.move_child(actor, 0)
-	return Status.ok(true)
+	for actor in result.value:
+		actorsNode.move_child(actor, 0)
+	return Status.ok()
 
 func randCmdValue(args: Array) -> Status:
 	var command = args[0]
