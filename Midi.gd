@@ -37,3 +37,6 @@ func _print_midi_info(midi_event: InputEventMIDI):
 	#print("Pressure " + str(midi_event.pressure))
 	#print("Controller number: " + str(midi_event.controller_number))
 	#print("Controller value: " + str(midi_event.controller_value))
+
+static func map(input: float, min: float, max: float) -> float:
+	return (input - 0) * (max - min) / (127 - 0) + min

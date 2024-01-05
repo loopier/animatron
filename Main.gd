@@ -29,8 +29,11 @@ func _init_midi():
 	midiCommands.fill({"noteOn": [], "noteOnNum": [], "noteOnTrig": [], "noteOnNumVelocity": [], "noteOnVelocity": [], "noteOff": [], "noteOffNum": [], "cc": []})
 	for chan in midiCommands:
 		chan["cc"].resize(128)
+		chan["cc"].fill([])
 		chan["noteOnTrig"].resize(128)
+		chan["noteOnTrig"].fill([])
 		chan["noteOnNumVelocity"].resize(128)
+		chan["noteOnNumVelocity"].fill([])
 
 func _ready():
 	Log.setLevel(Log.LOG_LEVEL_VERBOSE)
@@ -205,16 +208,34 @@ func _on_routine_added(name: String):
 	# need to know what object calling the method (in this case `Main`).
 	routine.callOnNext = Callable(evalCommand)
 
+# "noteOn", "noteOnNum", "noteOnTrig", "noteOnNumVelocity", "noteOnVelocity"
 func _on_midi_noteon(ch: int, num: int, velocity: int):
 	Log.verbose("MIDI Note On: %s %s %s" % [ch, num, velocity])
-	
-	#var NewValue = (((OldValue - OldMin) * (NewMax - NewMin)) / (OldMax - OldMin)) + NewMin
-	# var result = (num - 0) * (max - min) / (127 - 0) + min
-	pass
+	for cmd in midiCommands[ch]["noteOnNum"]:
+		var value = Midi.map(num, cmd[-2], cmd[-1])
+		cmd = cmd.slice(0,-2)
+		cmd.append(value)
+		evalCommand(cmd, "")
+	for cmd in midiCommands[ch]["noteOnVelocity"]:
+		var value = Midi.map(velocity, cmd[-2], cmd[-1])
+		cmd = cmd.slice(0,-2)
+		cmd.append(value)
+		evalCommand(cmd, "")
+	for cmd in midiCommands[ch]["noteOnNumVelocity"][num]:
+		var value = Midi.map(velocity, cmd[-2], cmd[-1])
+		cmd = cmd.slice(0,-2)
+		cmd.append(value)
+		evalCommand(cmd, "")
+	for cmd in midiCommands[ch]["noteOnTrig"][num]:
+		evalCommand(cmd, "")
+	for cmd in midiCommands[ch]["noteOn"]:
+		evalCommand(cmd, "")
 
+# "noteOff", "noteOffNum"
 func _on_midi_noteoff(ch: int, num: int, velocity: int):
 	Log.verbose("MIDI Note Off: %s %s %s" % [ch, num, velocity])
 
+# "cc"
 func _on_midi_cc(ch: int, num: int, velocity: int):
 	Log.verbose("MIDI CC: %s %s %s" % [ch, num, velocity])
 

@@ -42,6 +42,15 @@ size_flags_vertical = 3
 theme = ExtResource("3_fotw2")
 theme_override_colors/font_outline_color = Color(0, 0, 0, 1)
 theme_override_constants/outline_size = 10
+text = "/new ma mama
+/midi/noteon/num 0 /pos/x ma 0 1920
+/midi/noteon/velocity 0 /pos/y ma 300 427
+/midi/noteon/num/velocity 0 60 /color/r ma 0 1
+/midi/noteon/trig 0 59 /visible ma
+/midi/list noteon 0
+/midi/noteon/num/free 0
+/midi/noteon/num/velocity/free 0
+/midi/noteon/free 0"
 caret_type = 1
 syntax_highlighter = SubResource("CodeHighlighter_833ra")
 highlight_all_occurrences = true

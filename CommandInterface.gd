@@ -91,6 +91,14 @@ var coreCommands: Dictionary = {
 	"/midi/noteon": CommandDescription.new(midiNoteOn, "channel:i cmd:s", "Execute a CMD when a note-on MIDI event is triggered on any note.", Flags.asArray(true)),
 	"/midi/noteoff/num": CommandDescription.new(midiNoteOffNum, "channel:i cmd:s", "Map the released NOTE number to a CMD. The last 2 CMD arguments should be MIN and MAX, in that order. Example: /midi/noteon/num 0 /position/x target 0 1920. *WARNING: this only works with commands that accept 1 argument.*",Flags.asArray(true)),
 	"/midi/noteoff": CommandDescription.new(midiNoteOff, "channel:i cmd:s", "Execute a CMD when a note-off MIDI event is triggered on any note.", Flags.asArray(true)),
+	"/midi/list": CommandDescription.new(midiList, "event:s [args:v]", "List commands for the EVENT in CHANNEL and optional NUM. Events is one of: noteon, noteonnum, noteonvelocity, noteonnumvelocity (NUM), noteontrig (NUM), noteoff, noteoffnum, cc (NUM)", Flags.asArray(true)),
+	"/midi/noteon/free": CommandDescription.new(freeMidi, "channel:i [num:i]", "Remove a cmd from the event.", Flags.gdScript()),
+	"/midi/noteon/num/free": CommandDescription.new(freeMidi, "channel:i [num:i]", "Remove a cmd from the event.", Flags.gdScript()),
+	"/midi/noteon/num/velocity/free": CommandDescription.new(freeMidi, "channel:i [num:i]", "Remove a cmd from the event.", Flags.gdScript()),
+	"/midi/noteon/trig/free": CommandDescription.new(freeMidi, "channel:i [num:i]", "Remove a cmd from the event.", Flags.gdScript()),
+	"/midi/noteoff/free": CommandDescription.new(freeMidi, "channel:i [num:i]", "Remove a cmd from the event.", Flags.gdScript()),
+	"/midi/noteoff/num/free": CommandDescription.new(freeMidi, "channel:i [num:i]", "Remove a cmd from the event.", Flags.gdScript()),
+	"/midi/cc/free": CommandDescription.new(freeMidi, "channel:i [num:i]", "Remove a cmd from the event.", Flags.gdScript()),
 	# utils
 	"/relative": CommandDescription.new(setRelativeProperty, "", "TODO", Flags.asArray(false)),
 	"/rand": CommandDescription.new(randCmdValue, "cmd:s actor:s min:f max:f", "Send a CMD to an ACTOR with a random value between MIN and MAX. If a wildcard is used, e.g. `bl*`, all ACTORs with with a name that begins with `bl` will get a different value. *WARNING: This only works with single-value commands.*", Flags.asArray(true)),
@@ -310,32 +318,102 @@ func sendOscMsg(msg: Array) -> Status:
 	return Status.ok()
 
 func midiCC(args: Array) -> Status:
+	var chan = int(args[0])
+	var num = int(args[1])
+	# convert las 2 arguments (min and max)
+	args[-2] = float(args[-2])
+	args[-1] = float(args[-1])
+	midiCommands[chan]["cc"][num].append(args.slice(2))
 	return Status.ok()
 
 func midiNoteOnNum(args: Array) -> Status:
-	# TODO
-	
 	var chan = int(args[0])
 	var num = int(args[1])
-	midiCommands[chan]["noteOnNum"].append = args.slice(1)
+	# convert las 2 arguments (min and max)
+	args[-2] = float(args[-2])
+	args[-1] = float(args[-1])
+	midiCommands[chan]["noteOnNum"].append(args.slice(1))
 	return Status.ok()
 
 func midiNoteOnTrig(args: Array) -> Status:
+	var chan = int(args[0])
+	var num = int(args[1])
+	midiCommands[chan]["noteOnTrig"][num] = [args.slice(2)]
 	return Status.ok()
 
 func midiNoteOnNumVelocity(args: Array) -> Status:
+	var chan = int(args[0])
+	var num = int(args[1])
+	# convert las 2 arguments (min and max)
+	args[-2] = float(args[-2])
+	args[-1] = float(args[-1])
+	midiCommands[chan]["noteOnNumVelocity"][num].append(args.slice(2))
 	return Status.ok()
 
 func midiNoteOnVelocity(args: Array) -> Status:
+	var chan = int(args[0])
+	var num = int(args[1])
+	# convert las 2 arguments (min and max)
+	args[-2] = float(args[-2])
+	args[-1] = float(args[-1])
+	midiCommands[chan]["noteOnVelocity"].append(args.slice(1))
 	return Status.ok()
 
 func midiNoteOn(args: Array) -> Status:
+	var chan = int(args[0])
+	var num = int(args[1])
+	midiCommands[chan]["noteOn"].append(args.slice(2))
 	return Status.ok()
 
 func midiNoteOffNum(args: Array) -> Status:
+	var chan = int(args[0])
+	var num = int(args[1])
+	# convert las 2 arguments (min and max)
+	args[-2] = float(args[-2])
+	args[-1] = float(args[-1])
+	midiCommands[chan]["noteOffNum"].append(args.slice(1))
 	return Status.ok()
 
 func midiNoteOff(args: Array) -> Status:
+	var chan = int(args[0])
+	var num = int(args[1])
+	midiCommands[chan]["noteOff"].append(args.slice(2))
+	return Status.ok()
+
+func midiList(args: Array) -> Status:
+	var event = args[0]
+	var ch = int(args[1])
+	args = args.slice(2)
+	match event:
+		"noteon": return Status.ok(true, "%s" % [midiCommands[ch]["noteOn"]])
+		"noteonnum": return Status.ok(true, "%s" % [midiCommands[ch]["noteOnNum"]])
+		"noteonvelocity": return Status.ok(true, "%s" % [midiCommands[ch]["noteOnVelocity"]])
+		"noteonnumvelocity": 
+			if len(args) > 0:
+				return Status.ok(true, "%s" % [midiCommands[ch]["noteOnNumVelocity"][int(args[0])]])
+			return Status.ok(true, "%s" % [midiCommands[ch]["noteOnNumVelocity"]])
+		"noteontrig": 
+			if len(args) > 0:
+				return Status.ok(true, "%s" % [midiCommands[ch]["noteOnTrig"][int(args[0])]])
+			return Status.ok(true, "%s" % [midiCommands[ch]["noteOnTrig"]])
+		"noteoff": return Status.ok(true, "%s" % [midiCommands[ch]["noteOff"]])
+		"noteoffnum": return Status.ok(true, "%s" % [midiCommands[ch]["noteOffNum"]])
+		"cc": 
+			if len(args) > 0:
+				return Status.ok(true, "%s" % [midiCommands[ch]["cc"][int(args[0])]])
+			return Status.ok(true, "%s" % [midiCommands[ch]["cc"]])
+		_: return Status.error("event not found: %s.\n Try one of: noteon, noteonnum, noteonvelocity, noteonnumvelocity, noteontrig, noteoff, noteoffnum, cc")
+	return Status.ok()
+
+func freeMidi(cmd: String, args: Array) -> Status:
+	# remove the `/midi/` begining and trailing `/free`
+	var event = cmd.substr(5,len(cmd)-10).replace("/", "_").to_pascal_case()
+	event = event.substr(0,1).to_lower() + event.substr(1)
+	event = event.replace("noteo", "noteO")
+	var chan = int(args[0])
+	var num = args.slice(1)
+	midiCommands[chan][event].clear()	
+	Log.debug("event: %s args: %s" % [event, args])
 	return Status.ok()
 
 func getHelp(cmd: String) -> Status:
