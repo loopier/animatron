@@ -447,8 +447,8 @@ func getHelp(cmd: String) -> Status:
 			msg += "\t%s\n" % [" ".join(subcmd)]
 		postWindow.set_text(msg)
 		return Status.ok(cmdDesc, msg)
-	postWindow.set_text("[HELP] %s %s\n\n%s" % [cmd, cmdDesc.argsDescription, cmdDesc.description])
-	return Status.ok(cmdDesc, "[HELP] %s %s - %s" % [cmd, cmdDesc.argsDescription, cmdDesc.description])
+	#postWindow.set_text("[HELP] %s %s\n\n%s" % [cmd, cmdDesc.argsDescription, cmdDesc.description])
+	return Status.ok(cmdDesc, "[HELP] %s %s\n\n%s" % [cmd, cmdDesc.argsDescription, cmdDesc.description])
 
 ## Read a file with a [param filename] and return its OSC constent in a string
 func loadFile(filename: String) -> Status:
