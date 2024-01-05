@@ -220,3 +220,4 @@ func _on_midi_cc(ch: int, num: int, velocity: int):
 
 func post(msg: String):
 	$HSplitContainer/VBoxContainer/PostWindow.set_text("%s\n%s" % [$HSplitContainer/VBoxContainer/PostWindow.get_text(), msg])
+	$HSplitContainer/VBoxContainer/PostWindow.set_caret_line($HSplitContainer/VBoxContainer/PostWindow.get_line_count())

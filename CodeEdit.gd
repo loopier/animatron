@@ -80,3 +80,4 @@ func decreaseFont():
 
 func append(text: String):
 	set_text("%s\n%s" % [get_text(), text])
+	set_caret_line(get_line_count())

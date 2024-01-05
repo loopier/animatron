@@ -60,7 +60,6 @@ collapsed = true
 dragger_visibility = 2
 
 [node name="PostWindow" type="CodeEdit" parent="HSplitContainer/VBoxContainer"]
-visible = false
 z_index = 1
 layout_mode = 2
 theme = ExtResource("3_fotw2")
