@@ -42,13 +42,6 @@ size_flags_vertical = 3
 theme = ExtResource("3_fotw2")
 theme_override_colors/font_outline_color = Color(0, 0, 0, 1)
 theme_override_constants/outline_size = 10
-text = "/load mama
-/load cube
-/for i 4 /create ma$i mama
-/for i 4 /rand /pos/x ma$i 0 1920
-
-/animation ma* cube"
-placeholder_text = "code editor"
 caret_type = 1
 syntax_highlighter = SubResource("CodeHighlighter_833ra")
 highlight_all_occurrences = true
@@ -67,6 +60,7 @@ collapsed = true
 dragger_visibility = 2
 
 [node name="PostWindow" type="CodeEdit" parent="HSplitContainer/VBoxContainer"]
+visible = false
 z_index = 1
 layout_mode = 2
 theme = ExtResource("3_fotw2")
