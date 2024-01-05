@@ -99,6 +99,7 @@ var coreCommands: Dictionary = {
 	"/midi/noteoff/free": CommandDescription.new(freeMidi, "channel:i [num:i]", "Remove a cmd from the event.", Flags.gdScript()),
 	"/midi/noteoff/num/free": CommandDescription.new(freeMidi, "channel:i [num:i]", "Remove a cmd from the event.", Flags.gdScript()),
 	"/midi/cc/free": CommandDescription.new(freeMidi, "channel:i [num:i]", "Remove a cmd from the event.", Flags.gdScript()),
+	"/midi/free": CommandDescription.new(clearMidi, "", "Remove all commands from MIDI events."),
 	# utils
 	"/relative": CommandDescription.new(setRelativeProperty, "", "TODO", Flags.asArray(false)),
 	"/rand": CommandDescription.new(randCmdValue, "cmd:s actor:s min:f max:f", "Send a CMD to an ACTOR with a random value between MIN and MAX. If a wildcard is used, e.g. `bl*`, all ACTORs with with a name that begins with `bl` will get a different value. *WARNING: This only works with single-value commands.*", Flags.asArray(true)),
@@ -414,6 +415,18 @@ func freeMidi(cmd: String, args: Array) -> Status:
 	var num = args.slice(1)
 	midiCommands[chan][event].clear()	
 	Log.debug("event: %s args: %s" % [event, args])
+	return Status.ok()
+
+func clearMidi() -> Status:
+	for ch in len(midiCommands):
+		midiCommands[ch]["noteOn"].clear()
+		midiCommands[ch]["noteOnNum"].clear()
+		midiCommands[ch]["noteOnVelocity"].clear()
+		midiCommands[ch]["noteOnNumVelocity"].clear()
+		midiCommands[ch]["noteOnTrig"].clear()
+		midiCommands[ch]["noteOff"].clear()
+		midiCommands[ch]["noteOffNum"].clear()
+		midiCommands[ch]["cc"].clear()
 	return Status.ok()
 
 func getHelp(cmd: String) -> Status:
