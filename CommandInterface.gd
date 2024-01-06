@@ -146,6 +146,8 @@ var nodeCommands: Dictionary = {
 	"/offset": CommandDescription.new(setAnimationPropertyWithVector, "actor:s x:i y:i", "Set the ACTOR's animation drawing offset in pixels.", Flags.gdScript()),
 	"/offset/x": CommandDescription.new(setAnimationPropertyWithVectorN, "actor:s pixels:i", "Set the ACTOR's animation drawing offset on the X axis.", Flags.gdScript()),
 	"/offset/y": CommandDescription.new(setAnimationPropertyWithVectorN, "actor:s pixels:i", "Set the ACTOR's animation drawing offset on the Y axis.", Flags.gdScript()),
+	"/parent": CommandDescription.new(parentActor, "child:s parent:s", "Set an actor to be the CHILD of another PARENT actor."),
+	"/parent/free": CommandDescription.new(parentActorFree, "child:s", "Free the CHILD actor from it's parent."),
 	"/front": CommandDescription.new(setInFrontOfActor, "actor:s target:s", "Draw the ACTOR in front of the TARGET.", Flags.asArray(false)),
 	"/behind": CommandDescription.new(setBehindActor, "actor:s target:s", "Draw the ACTOR behind the TARGET.", Flags.asArray(false)),
 	"/top": CommandDescription.new(setTopActor, "actor:s", "Draw the ACTOR on top of everything else.", Flags.asArray(false)),
@@ -607,17 +609,17 @@ func loadImageSequence(path: String) -> Status:
 
 
 func getAllActors() -> Status:
-	return Status.ok(actorsNode.get_children())
+	return Status.ok(actorsNode.get_children(true))
 
 ## Returns an actor by exact name match (see [method getActors])
 func getActor(actorName: String) -> Status:
-	var actor = actorsNode.find_child(actorName)
+	var actor = actorsNode.find_child(actorName, true, false)
 	if actor == null: return Status.error("Actor not found: %s" % [actorName])
 	return Status.ok(actor)
 
 ## Returns an array of children matching the name pattern
 func getActors(namePattern: String) -> Status:
-	var actors = actorsNode.find_children(namePattern)
+	var actors = actorsNode.find_children(namePattern, "Node", true, false)
 	if actors == null or len(actors) == 0: return Status.error("No actors found: %s" % [namePattern])
 	return Status.ok(actors)
 
@@ -643,6 +645,7 @@ func createActor(actorName: String, anim: String) -> Status:
 	animationNode.play(anim)
 	animationNode.get_sprite_frames().set_animation_speed(anim, 12)
 	actorsNode.add_child(actor)
+	
 	# Need to set an owner so it appears in the SceneTree and can be found using
 	# Node.finde_child(pattern) -- see Node docs
 	actor.set_owner(actorsNode)
@@ -1020,6 +1023,33 @@ func scaleY(args: Array) -> Status:
 	if result.isError(): return result
 	for actor in result.value:
 		actor.scale.y *= float(args[1])
+	return Status.ok()
+
+func parentActor(childName: String, parentName: String) -> Status:
+	var result = getActor(parentName)
+	if result.isError(): return result
+	var parent = result.value
+	result = getActors(childName)
+	if result.isError(): return result
+	for child in result.value:
+		var oldParent = child.get_parent()
+		oldParent.remove_child(child)
+		parent.add_child(child)
+		# preserve children transforms
+		child.transform = parent.transform.affine_inverse() * child.transform
+		Log.verbose("%s emmancipated from %s" % [child.name, oldParent.name])
+		Log.verbose("%s is child of %s" % [child.name, parent.name])
+	return Status.ok()
+
+func parentActorFree(childName: String) -> Status:
+	var result = getActors(childName)
+	if result.isError(): return result
+	for child in result.value:
+		var parent = child.get_parent()
+		parent.remove_child(child)
+		actorsNode.add_child(child)
+		# preserve children transforms
+		child.transform = parent.transform * child.transform
 	return Status.ok()
 
 func setInFrontOfActor(args: Array) -> Status:

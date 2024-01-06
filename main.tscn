@@ -42,6 +42,13 @@ size_flags_vertical = 3
 theme = ExtResource("3_fotw2")
 theme_override_colors/font_outline_color = Color(0, 0, 0, 1)
 theme_override_constants/outline_size = 10
+text = "/new ma mama
+/move/x ma 100
+/create me mama
+/parent me ma
+/move/x ma 100
+
+/parent/free me"
 caret_type = 1
 syntax_highlighter = SubResource("CodeHighlighter_833ra")
 highlight_all_occurrences = true
