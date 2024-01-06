@@ -148,6 +148,7 @@ var nodeCommands: Dictionary = {
 	"/offset/y": CommandDescription.new(setAnimationPropertyWithVectorN, "actor:s pixels:i", "Set the ACTOR's animation drawing offset on the Y axis.", Flags.gdScript()),
 	"/parent": CommandDescription.new(parentActor, "child:s parent:s", "Set an actor to be the CHILD of another PARENT actor."),
 	"/parent/free": CommandDescription.new(parentActorFree, "child:s", "Free the CHILD actor from it's parent."),
+	"/children/list": CommandDescription.new(listChildren, "parent:s", "List all PARENT's children actors."),
 	"/front": CommandDescription.new(setInFrontOfActor, "actor:s target:s", "Draw the ACTOR in front of the TARGET.", Flags.asArray(false)),
 	"/behind": CommandDescription.new(setBehindActor, "actor:s target:s", "Draw the ACTOR behind the TARGET.", Flags.asArray(false)),
 	"/top": CommandDescription.new(setTopActor, "actor:s", "Draw the ACTOR on top of everything else.", Flags.asArray(false)),
@@ -1051,6 +1052,16 @@ func parentActorFree(childName: String) -> Status:
 		# preserve children transforms
 		child.transform = parent.transform * child.transform
 	return Status.ok()
+
+func listChildren(parentName: String) -> Status:
+	var result = getActor(parentName)
+	if result.isError(): return result
+	var parent = result.value
+	var children := []
+	for child in parent.get_children():
+		children.append(child.name)
+	children.sort()
+	return Status.ok(children, "%s" % [children])
 
 func setInFrontOfActor(args: Array) -> Status:
 	var result = getActor(args[0])
