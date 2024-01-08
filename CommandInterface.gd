@@ -69,10 +69,10 @@ var coreCommands: Dictionary = {
 	"/routine/free": CommandDescription.new(freeRoutine, "name:s", "Remove the routine named NAME"),
 	"/routine/finished": CommandDescription.new(finishedRoutine, "routine:s cmd:s", "Set the CMD to be sent when the ROUTINE (name) is finished.", Flags.asArray(true)),
 	# state machine
-	"/state/add": CommandDescription.new(addState, "actor:s new:s next:s", "Add a NEW state to the ACTOR's state machine. NEXT states is an arbitrary number of next possible states. Example: `/state/add mymachine state1 state1 state2` would create a new state1 in `mymachine` that would either repeat or move on to `state2.`", Flags.asArray(true)),
+	"/state/add": CommandDescription.new(addState, "machine:s state:s next:s", "Add a STATE with a name to the state MACHINE. NEXT states is an arbitrary number of next possible states. Example: `/state/add mymachine stateA state1 state2` would create a new stateA in `mymachine` that would either repeat or move on to `state2.`", Flags.asArray(true)),
 	"/states": CommandDescription.new(listStates, "", "Get a list of states for the given ACTOR."),
-	"/state/free": CommandDescription.new(freeState, "actor:s state:s", "Remove the STATE from the ACTOR's state machine."),
-	"/state/next": CommandDescription.new(nextState, "actor:s", "Change ACTOR to next STATE."),
+	"/state/free": CommandDescription.new(freeState, "machine:s state:s", "Remove the STATE from the state MACHINE."),
+	"/state/next": CommandDescription.new(nextState, "machine:s", "Change MACHINE to next STATE."),
 	# def
 	"/def": CommandDescription.new(defineCommand, "cmdName:s [args:v] subcommands:c", "Define a custom OSC command that is a list of other OSC commands. This may be recursive, so each SUBCOMMAND may reference one of the built-in commands, or another custom-defined command. Another way to define custom commands is via the file commands/init.osc. The CMDNAME string (first argument) may include argument names (ARG1 ... ARGN), which may be referenced as SUBCOMMAND arguments using $ARG1 ... $ARGN. Example: /def \"/addsel actor anim\" \"/create $actor $anim\" \"/select $actor\". ", Flags.asArray(true)),
 	# for (loop)
