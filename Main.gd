@@ -17,7 +17,7 @@ var OpenControlLanguage := preload("res://ocl.gd")
 var ocl: OpenControlLanguage
 var config := preload("res://Config.gd").new()
 @onready var editor := get_node("HSplitContainer/CodeEdit")
-@onready var helpWindow := get_node("HSplitContainer/VBoxContainer/HelpWindow")
+#@onready var helpWindow := get_node("HSplitContainer/VBoxContainer/HelpWindow")
 @onready var postWindow := get_node("HSplitContainer/VBoxContainer/PostWindow")
 var rnd := RandomNumberGenerator.new()
 

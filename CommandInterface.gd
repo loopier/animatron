@@ -80,6 +80,7 @@ var coreCommands: Dictionary = {
 	"/for": CommandDescription.new(forCommand, "varName:s iterations:i cmd:s", "Iterate `iterations` times over `varName`, substituting the current iteration value in each call to `cmd`.", Flags.asArray(true)),
 	# post
 	"/post": CommandDescription.new(post, "msg:s", "Print MSG in the post window.", Flags.asArray(false)),
+	"/post/toggle": CommandDescription.new(togglePost, "", "Toggle post window visibility.", Flags.asArray(false)),
 	# osc
 	"/osc/remote": CommandDescription.new(connectOscRemote, "ip:s port:i", "Set the IP address and PORT number of a remote OSC server.", Flags.asArray(true)),
 	"/osc/send": CommandDescription.new(sendOscMsg, "msg:s", "Send an OSC message to a remote server. See `/osc/remote`.", Flags.asArray(true)),
@@ -310,6 +311,10 @@ func post(args: Array) -> Status:
 	for arg in args:
 		Log.info(arg)
 	postWindow.set_text("%s\n%s" % [postWindow.get_text(), " ".join(PackedStringArray(args))])
+	return Status.ok()
+
+func togglePost() -> Status:
+	postWindow.set_visible(not(postWindow.is_visible()))
 	return Status.ok()
 
 func connectOscRemote(args: Array) -> Status:
