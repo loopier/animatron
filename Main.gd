@@ -43,7 +43,7 @@ func _ready():
 	self.add_child.call_deferred(osc)
 	osc.startServer()
 	osc.osc_msg_received.connect(_on_osc_msg_received)
-	cmdInterface.commandManger = self
+	cmdInterface.commandManager = self
 	cmdInterface.command_finished.connect(_on_command_finished)
 	cmdInterface.command_error.connect(_on_command_error)
 	cmdInterface.command_file_loaded.connect(_on_command_file_loaded)
@@ -58,6 +58,7 @@ func _ready():
 	cmdInterface.postWindow = get_node("HSplitContainer/VBoxContainer/PostWindow")
 	cmdInterface.routinesNode = get_node("Routines")
 	cmdInterface.stateMachines = Dictionary(stateMachines)
+	cmdInterface.stateChangedCallback = Callable(self, "_on_state_changed")
 	_init_midi()
 	cmdInterface.midiCommands = midiCommands
 	
@@ -79,7 +80,8 @@ func _input(event):
 		$HSplitContainer.set_visible(not($HSplitContainer.is_visible()))
 		_ignoreEvent()
 	if event.is_action_pressed("toggle_post", true):
-		$HSplitContainer/VBoxContainer.set_visible(not($HSplitContainer/VBoxContainer.is_visible()))
+		#$HSplitContainer/VBoxContainer.set_visible(not($HSplitContainer/VBoxContainer.is_visible()))
+		evalCommand(["/post/toggle"], "")
 		_ignoreEvent()
 	if event.is_action_pressed("clear_post", true):
 		$HSplitContainer/VBoxContainer/PostWindow.clear()
@@ -242,3 +244,7 @@ func _on_midi_cc(ch: int, num: int, velocity: int):
 func post(msg: String):
 	$HSplitContainer/VBoxContainer/PostWindow.set_text("%s\n%s" % [$HSplitContainer/VBoxContainer/PostWindow.get_text(), msg])
 	$HSplitContainer/VBoxContainer/PostWindow.set_caret_line($HSplitContainer/VBoxContainer/PostWindow.get_line_count())
+
+func _on_state_changed(cmd: Array):
+	Log.debug("Received signal -- State changed: %s" % [cmd])
+	evalCommand(cmd, "")

@@ -22,7 +22,8 @@ var assetHelpers := preload("res://asset_helpers.gd").new()
 @onready var actorsNode: Node
 @onready var routinesNode: Node
 @onready var stateMachines: Dictionary
-@onready var commandManger: Node
+@onready var stateChangedCallback: Callable
+@onready var commandManager: Node
 @onready var midiCommands: Array
 @onready var oscSender: OscReceiver
 var animationsLibrary: SpriteFrames ## The meta node containing these frames needs to be initialized in _ready
@@ -71,6 +72,7 @@ var coreCommands: Dictionary = {
 	"/routine/finished": CommandDescription.new(finishedRoutine, "routine:s cmd:s", "Set the CMD to be sent when the ROUTINE (name) is finished.", Flags.asArray(true)),
 	"/wait": CommandDescription.new(wait, "time:f cmd:...", "Wait some TIME to execute the CMD.", Flags.asArray(true)),
 	# state machine
+	"/state/def": CommandDescription.new(defineState, "state:s entry:s exit:s", "Define a STATE with an ENTRY `/def` to be executed when the state begins, and an EXIT `/def` to be executed when it ends. Both should be existing `/def`s without parameters."),
 	"/state/add": CommandDescription.new(addState, "machine:s state:s next:s", "Add a STATE with a name to the state MACHINE. NEXT states is an arbitrary number of next possible states. Example: `/state/add mymachine stateA state1 state2` would create a new stateA in `mymachine` that would either repeat or move on to `state2.`", Flags.asArray(true)),
 	"/states": CommandDescription.new(listStates, "", "Get a list of states for the given ACTOR."),
 	"/state/free": CommandDescription.new(freeState, "machine:s state:s", "Remove the STATE from the state MACHINE."),
@@ -184,7 +186,7 @@ func defineCommand(args: Array) -> Status:
 
 func forCommand(args: Array) -> Status:
 	var cmds: Array = ocl._for(args);
-	return commandManger.evalCommands(cmds, "CommandInterface")
+	return commandManager.evalCommands(cmds, "CommandInterface")
 	
 ## Load commands from a file and return an array
 func loadCommandFile(path: String) -> Status:
@@ -437,8 +439,11 @@ func getHelp(cmd: String) -> Status:
 			msg += "\t%s\n" % [" ".join(subcmd)]
 		postWindow.set_text(msg)
 		return Status.ok(cmdDesc, msg)
-	#postWindow.set_text("[HELP] %s %s\n\n%s" % [cmd, cmdDesc.argsDescription, cmdDesc.description])
-	return Status.ok(cmdDesc, "[HELP] %s %s\n\n%s" % [cmd, cmdDesc.argsDescription, cmdDesc.description])
+	
+	var msg = "[HELP] %s %s\n\n%s" % [cmd, cmdDesc.argsDescription, cmdDesc.description]
+	postWindow.set_text(msg)
+	postWindow.set_visible(true)
+	return Status.ok(cmdDesc, msg)
 
 ## Read a file with a [param filename] and return its OSC constent in a string
 func loadFile(filename: String) -> Status:
@@ -944,17 +949,24 @@ func wait(args: Array) -> Status:
 func listStates() -> Status:
 	var machines := stateMachines.keys()
 	machines.sort()
-	var msg := "State machines:"
+	var msg := "State machines:\n"
 	for machine in machines:
 		msg += "%s(%s): %s" % [machine, stateMachines[machine].status(), stateMachines[machine].list()]
 	return Status.ok(machines, msg)
 
+func addStateMachine(name: String):
+	var machine = StateMachine.new()
+	machine.state_changed.connect(stateChangedCallback)
+	machine.name = name
+	stateMachines[name] = machine
+
+func defineState(name: String, entry: String, exit: String) -> Status:
+	StateMachine.defineState(name, entry, exit)
+	return Status.ok()
+
 func addState(args: Array) -> Status:
 	var machineName = args[0]
-	if not(stateMachines.has(machineName)):
-		var machine = StateMachine.new()
-		machine.name = machineName
-		stateMachines[machineName] = machine
+	if not(stateMachines.has(machineName)): addStateMachine(machineName)
 	stateMachines[machineName].addState(args[1], args.slice(2))
 	return Status.ok(stateMachines[machineName])
 
@@ -1099,5 +1111,5 @@ func randCmdValue(args: Array) -> Status:
 	if result.isError(): return result
 	for actor in result.value:
 		var value = randf_range(float(args[2]), float(args[3]))
-		commandManger.evalCommand([command, actor.name, value], "CommandInterface")
+		commandManager.evalCommand([command, actor.name, value], "CommandInterface")
 	return Status.ok(true)

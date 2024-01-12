@@ -42,6 +42,26 @@ size_flags_vertical = 3
 theme = ExtResource("3_fotw2")
 theme_override_colors/font_outline_color = Color(0, 0, 0, 1)
 theme_override_constants/outline_size = 10
+text = "/def /a/entry
+    /post start state A
+
+/def /a/exit
+    /post end state A
+
+/def /b/entry
+    /post start state B
+
+/def /b/exit
+    /post end state B
+
+/state/def stA /a/entry /a/exit
+/state/def stB /b/entry /b/exit
+/state/add mchA stA stA stB
+/state/add mchA stB stA
+/state/next mchA
+
+/alo
+/bla"
 caret_type = 1
 syntax_highlighter = SubResource("CodeHighlighter_833ra")
 highlight_all_occurrences = true

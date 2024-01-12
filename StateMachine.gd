@@ -1,8 +1,14 @@
 class_name StateMachine
 
+signal state_changed(cmd: Array)
+
 var name := ""
 var current := ""
 var states := {}
+static var stateDefs := {}
+
+static func defineState(name: String, entry: String, exit: String):
+	StateMachine.stateDefs[name] = {"entry": entry, "exit": exit}
 
 func addState(state: String, next: Array):
 	if isEmpty(): current = state
@@ -23,7 +29,11 @@ func next():
 	if not states.has(nextState):
 		Log.error("%s(%s) -- State not found: %s" % [name, current, nextState])
 		return
-	Log.verbose("%s(%s) -- Next state: %s" % [name, current,  nextState])
+	Log.debug("%s(%s) -- Next state: %s" % [name, current,  nextState])
+	Log.debug("%s(%s) -- Exit def: %s" % [name, current,  stateDefs[current].exit])
+	Log.debug("%s(%s) -- Entry def: %s" % [name, nextState,  stateDefs[nextState].exit])
+	state_changed.emit([stateDefs[current].exit])
+	state_changed.emit([stateDefs[nextState].entry])
 	current = nextState
 
 func isEmpty() -> bool:
