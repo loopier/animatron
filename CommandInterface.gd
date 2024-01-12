@@ -61,6 +61,7 @@ var coreCommands: Dictionary = {
 	"/remove": CommandDescription.new(removeActor, "actor:s", "Delete the ACTOR by name (remove its instance). "),
 	"/free": "/remove",
 	"/color": CommandDescription.new(colorActor, "actor:s r:f g:f b:f", "Add an RGB colour to the ACTOR. R, G and B should be in the 0-1 range (can be negative to subtract colour). Set to black (0,0,0) to restore its original colour."),
+	"/opacity": CommandDescription.new(setActorOpacity, "actor:s opacity:f", "Set OPACITY of ACTOR and its children."),
 	# routines
 	"/routine": CommandDescription.new(addRoutine, "name:s repeats:i interval:f cmd:...", "Start a routine named NAME that sends CMD every INTERVAL of time (in seconds) for an arbitrary number of REPEATS.", Flags.asArray(true)),
 	"/routines": CommandDescription.new(listRoutines, "", "Get the list of routines."),
@@ -887,6 +888,21 @@ func colorActor(actorName: String, red, green, blue) -> Status:
 		setImageShaderUniform(animation, "uAddColor", rgb)
 	return Status.ok()
 
+func setActorOpacity(actorName: String, alpha: String) -> Status:
+	var result := getActors(actorName)
+	if result.isError(): return result
+	for actor in result.value:
+		#var color: Color = actor.get_modulate()
+		#color.a = float(alpha)
+		#actor.set_modulate(color)
+		##actor.set("modulate", color)
+		#Log.debug("%s" % actor.get_modulate())
+		#var anim = actor.get_node("Animation").get_animation()
+		#Log.debug("alpha mode: %s" % [actor.get_node("Animation").get_sprite_frames().get_frame_texture(anim, 0).get_image().detect_alpha()])
+		var animation := actor.get_node("Animation") as AnimatedSprite2D
+		#setImageShaderUniform(animation, "uAddColor", Color(1,1,1))
+		setImageShaderUniform(animation, "uAlpha", alpha as float)
+	return result
 
 static func setImageShaderUniform(image: AnimatedSprite2D, uName: StringName, uValue: Variant) -> void:
 	image.material.set_shader_parameter(uName, uValue)

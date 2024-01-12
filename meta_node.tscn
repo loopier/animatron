@@ -6,6 +6,7 @@
 resource_local_to_scene = true
 shader = ExtResource("1_srg6k")
 shader_parameter/uAddColor = Vector3(0, 0, 0)
+shader_parameter/uAlpha = 1.0
 shader_parameter/uSelected = false
 
 [sub_resource type="SpriteFrames" id="SpriteFrames_g6lqa"]
