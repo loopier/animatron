@@ -69,6 +69,7 @@ var coreCommands: Dictionary = {
 	"/routine/stop": CommandDescription.new(stopRoutine, "name:s", "Stop the routine named NAME."),
 	"/routine/free": CommandDescription.new(freeRoutine, "name:s", "Remove the routine named NAME"),
 	"/routine/finished": CommandDescription.new(finishedRoutine, "routine:s cmd:s", "Set the CMD to be sent when the ROUTINE (name) is finished.", Flags.asArray(true)),
+	"/wait": CommandDescription.new(wait, "time:f cmd:...", "Wait some TIME to execute the CMD.", Flags.asArray(true)),
 	# state machine
 	"/state/add": CommandDescription.new(addState, "machine:s state:s next:s", "Add a STATE with a name to the state MACHINE. NEXT states is an arbitrary number of next possible states. Example: `/state/add mymachine stateA state1 state2` would create a new stateA in `mymachine` that would either repeat or move on to `state2.`", Flags.asArray(true)),
 	"/states": CommandDescription.new(listStates, "", "Get a list of states for the given ACTOR."),
@@ -957,6 +958,10 @@ func finishedRoutine(args: Array) -> Status:
 		return Status.error("Routine not found: %s" % [args[0]])
 	routine.lastCommand = args.slice(1)
 	return Status.ok(routine.name, "Set last command for routine: %s" % [routine.name])
+
+func wait(args: Array) -> Status:
+	var time := args[0] as float
+	return addRoutine(["wait_%s" % [Time.get_ticks_msec()], 1, time] + args.slice(1))
 
 func listStates() -> Status:
 	var machines := stateMachines.keys()
