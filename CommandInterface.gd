@@ -106,31 +106,8 @@ var coreCommands: Dictionary = {
 	# utils
 	"/relative": CommandDescription.new(setRelativeProperty, "", "TODO", Flags.asArray(false)),
 	"/rand": CommandDescription.new(randCmdValue, "cmd:s actor:s min:f max:f", "Send a CMD to an ACTOR with a random value between MIN and MAX. If a wildcard is used, e.g. `bl*`, all ACTORs with with a name that begins with `bl` will get a different value. *WARNING: This only works with single-value commands.*", Flags.asArray(true)),
-}
-
-## Custom command definitions
-var defCommands := {}
-
-## Node commands map.
-## Node commands are parsed differently than [param coreCommands]. They use 
-## OSC address as method name (by removing the forward slash), and first argument is
-## usually the actor's name (the node's name).[br]
-## [br]
-## Using meta methods filtered by parameter types allows to automatically map a lot
-## of OSC messages to a few actual GDScript functions and methods.[br]
-## [br]
-## Keep in mind, though, that the command (OSC address) has to have the same signature as
-## the expected GDScript method. If a different command name is needed, use a [method def].[br]
-## [br]
-## To expose new methods or properties, just replace the snake_case underscore in the method for
-## a slash '/' in the osc command.
-##
-## [codeblock]
-##   /animation ...tbd...
-##   /play ...tbd...
-##   ...
-## [/codeblock]
-var nodeCommands: Dictionary = {
+	
+	# Node
 	"/animation": CommandDescription.new(setAnimationProperty, "actor:s animation:s", "Change the ACTOR's ANIMATION.", Flags.gdScript()),
 	"/play": CommandDescription.new(callAnimationMethod, "actor:s", "Start playing ACTOR's image sequence.", Flags.gdScript()),
 	"/play/backwards": CommandDescription.new(callAnimationMethod, "actor:s", "Play ACTOR's animation backwards.", Flags.gdScript()),
@@ -176,6 +153,9 @@ var nodeCommands: Dictionary = {
 	"/angle": "/rotation/degrees",
 	"/rotate": CommandDescription.new(rotate, "actor:s degrees:f", "Rotate ACTOR a number of DEGREES relative to the current rotation.", Flags.asArray(false)),
 }
+
+## Custom command definitions
+var defCommands := {}
 
 # Called when the node enters the scene tree for the first time.
 func _ready():
@@ -505,7 +485,6 @@ func setVar(varName: String, value: Variant) -> Status:
 ## If no description is found, it returns [code]null[/code].
 func getCommandDescription(command: String) -> Variant:
 	if coreCommands.has(command): return coreCommands[command]
-	elif nodeCommands.has(command): return nodeCommands[command]
 	elif defCommands.has(command): return defCommands[command]
 	else: return null
 
@@ -530,8 +509,6 @@ func _list(dict: Dictionary) -> Status:
 func listAllCommands() -> Status:
 	var list := "\nCore Commands:\n"
 	list += listCommands(coreCommands).value
-	list += "\nNode Commands:\n"
-	list += listCommands(nodeCommands).value
 	list += "\nDef Commands:\n"
 	list += listCommands(defCommands).value
 	return Status.ok(list, list)
