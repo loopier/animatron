@@ -796,6 +796,7 @@ func callActorMethod(method, args) -> Status:
 	var result = getActors(args[0])
 	if result.isError(): return result
 	method = method.replace("/", "_")
+	if method.begins_with("_"): method = method.substr(1)
 	args = args.slice(1)
 	for actor in result.value:
 		if method.begins_with("/"): method = method.substr(1)
