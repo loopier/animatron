@@ -892,15 +892,7 @@ func setActorOpacity(actorName: String, alpha: String) -> Status:
 	var result := getActors(actorName)
 	if result.isError(): return result
 	for actor in result.value:
-		#var color: Color = actor.get_modulate()
-		#color.a = float(alpha)
-		#actor.set_modulate(color)
-		##actor.set("modulate", color)
-		#Log.debug("%s" % actor.get_modulate())
-		#var anim = actor.get_node("Animation").get_animation()
-		#Log.debug("alpha mode: %s" % [actor.get_node("Animation").get_sprite_frames().get_frame_texture(anim, 0).get_image().detect_alpha()])
 		var animation := actor.get_node("Animation") as AnimatedSprite2D
-		#setImageShaderUniform(animation, "uAddColor", Color(1,1,1))
 		setImageShaderUniform(animation, "uAlpha", alpha as float)
 	return result
 
