@@ -88,6 +88,7 @@ var coreCommands: Dictionary = {
 	# post
 	"/post": CommandDescription.new(post, "msg:s", "Print MSG in the post window.", Flags.asArray(false)),
 	"/post/toggle": CommandDescription.new(togglePost, "", "Toggle post window visibility.", Flags.asArray(false)),
+	"/post/clear": CommandDescription.new(clearPost, "", "Clear post window contents."),
 	# osc
 	"/osc/remote": CommandDescription.new(connectOscRemote, "ip:s port:i", "Set the IP address and PORT number of a remote OSC server.", Flags.asArray(true)),
 	"/osc/send": CommandDescription.new(sendOscMsg, "msg:s", "Send an OSC message to a remote server. See `/osc/remote`.", Flags.asArray(true)),
@@ -304,6 +305,10 @@ func post(args: Array) -> Status:
 
 func togglePost() -> Status:
 	postWindow.set_visible(not(postWindow.is_visible()))
+	return Status.ok()
+
+func clearPost() -> Status:
+	postWindow.set_text("")
 	return Status.ok()
 
 func connectOscRemote(args: Array) -> Status:
