@@ -53,6 +53,7 @@ var coreCommands: Dictionary = {
 	"/commands": "/commands/list",
 	# assets
 	"/load": CommandDescription.new(loadAnimationAsset, "animation:s", "Load an ANIMATION asset from disk. It will create an animation with the same name as the asset. Wildcards are supported, so several animations can be loaded at once. See also: `/assets/list`."),
+	"/unload": CommandDescription.new(unloadAnimationAsset, "animation:s", "Removes the ANIMATION asset from disk. This allows to free memory, and to reload a fresh version of the animation."),
 	"/assets/list": CommandDescription.new(listAnimationAssets, "", "Get the list of available (unloaded) assets. Assets must be loaded as animations in order to create actor instances."), # available in disk
 #	"/assets/list": CommandDescription.new(main.bla, "", "a bla"),
 	"/assets": "/assets/list",
@@ -570,6 +571,12 @@ func setAssetsPath(path: String) -> Status:
 	if path == "null": return Status.ok(animationAssetsPath, animationAssetsPath)
 	animationAssetsPath = path;
 	return Status.ok()
+
+func unloadAnimationAsset(assetName: String) -> Status:
+	if not animationsLibrary.has_animation(assetName):
+		return Status.error("Animation not loaded: %s" % [assetName])
+	animationsLibrary.remove_animation(assetName)
+	return Status.ok(true, "Animation removed from memory: %s" % [assetName])
 
 func loadAnimationAsset(assetName: String) -> Status:
 	var result : Status
