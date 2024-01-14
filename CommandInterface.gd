@@ -13,6 +13,9 @@ signal command_error(msg, sender)
 signal command_file_loaded(cmds)
 signal routine_added(name)
 
+@onready var thread: Thread
+@onready var mutex: Mutex
+
 var ocl := preload("res://ocl.gd").new()
 var status := preload("res://Status.gd")
 var metanode := preload("res://meta_node.tscn")
@@ -162,6 +165,8 @@ var defCommands := {}
 # Called when the node enters the scene tree for the first time.
 func _ready():
 	oscSender = OscReceiver.new()
+	thread = Thread.new()
+	mutex = Mutex.new()
 
 # Called every frame. 'delta' is the elapsed time since the previous frame.
 func _process(_delta):
@@ -589,14 +594,16 @@ func loadImageSequence(path: String) -> Status:
 	if animName != "default" and animationsLibrary.has_animation(animName):
 		return Status.error("Animation already loaded: '%s'" % [animName])
 	animationsLibrary.add_animation(animName)
+	addImageFiles(path, animName, filenames)
+	return Status.ok(true, "Loaded %s frames: %s" % [animationsLibrary.get_frame_count(animName), animName])
+
+## Adds image files to Animations Library
+func addImageFiles(path: String, animName: String, filenames: PackedStringArray):
 	for file in filenames:
 		if file.ends_with(".png"):
 #			Log.debug("Loading img to '%s': %s" % [animName, path.path_join(file)])
 			var texture := assetHelpers.loadImage(path.path_join(file))
 			animationsLibrary.add_frame(animName, texture)
-	
-	return Status.ok(true, "Loaded %s frames: %s" % [animationsLibrary.get_frame_count(animName), animName])
-
 
 func getAllActors() -> Status:
 	return Status.ok(actorsNode.get_children(true))
