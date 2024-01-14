@@ -877,7 +877,7 @@ func colorActor(actorName: String, red, green, blue) -> Status:
 		setImageShaderUniform(animation, "uAddColor", rgb)
 	return Status.ok()
 
-func setActorOpacity(actorName: String, alpha: String) -> Status:
+func setActorOpacity(actorName: String, alpha: Variant) -> Status:
 	var result := getActors(actorName)
 	if result.isError(): return result
 	for actor in result.value:
