@@ -582,7 +582,7 @@ func loadAnimationAsset(assetName: String) -> Status:
 	if not assets.seqs.is_empty():
 		for seqPath in assets.seqs:
 			result = loadImageSequence(seqPath)
-			if result.isError(): return Status.error("Image sequence assets not loaded: %s" % [path])
+			if result.isError(): return result if result.msg else Status.error("Image sequence assets not loaded: %s" % [path])
 	if assets.sprites.is_empty() and assets.seqs.is_empty():
 		return Status.error("Asset not found: %s" % [path])
 	return result
