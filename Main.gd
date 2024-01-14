@@ -144,8 +144,9 @@ func executeCommand(command: CommandDescription, args: Array) -> Status:
 		for i in args.size():
 			var expr := ocl._getExpression(args[i])
 			if not expr.is_empty():
-				var expResult : float = ocl._evalExpr(expr, ["time", "rnd"], [Time.get_ticks_msec() * 1e-3, rnd])
-				args[i] = expResult
+				var expResult = ocl._evalExpr(expr, ["time", "rnd"], [Time.get_ticks_msec() * 1e-3, rnd])
+				if not expResult: return Status.error("Invalid expression")
+				args[i] = expResult as float
 	if args.size() == 0:
 		result = command.callable.call()
 	elif command.argsAsArray:
