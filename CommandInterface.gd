@@ -21,6 +21,9 @@ var status := preload("res://Status.gd")
 var metanode := preload("res://meta_node.tscn")
 @onready var Routine := preload("res://RoutineNode.tscn")
 var assetHelpers := preload("res://asset_helpers.gd").new()
+@onready var editor: CodeEdit
+@onready var loadDialog: FileDialog
+@onready var saveDialog: FileDialog
 @onready var postWindow: Node
 @onready var actorsNode: Node
 @onready var routinesNode: Node
@@ -85,6 +88,11 @@ var coreCommands: Dictionary = {
 	"/def": CommandDescription.new(defineCommand, "cmdName:s [args:v] subcommands:c", "Define a custom OSC command that is a list of other OSC commands. This may be recursive, so each SUBCOMMAND may reference one of the built-in commands, or another custom-defined command. Another way to define custom commands is via the file commands/init.osc. The CMDNAME string (first argument) may include argument names (ARG1 ... ARGN), which may be referenced as SUBCOMMAND arguments using $ARG1 ... $ARGN. Example: /def \"/addsel actor anim\" \"/create $actor $anim\" \"/select $actor\". ", Flags.asArray(true)),
 	# for (loop)
 	"/for": CommandDescription.new(forCommand, "varName:s iterations:i cmd:s", "Iterate `iterations` times over `varName`, substituting the current iteration value in each call to `cmd`.", Flags.asArray(true)),
+	# editor
+	"/editor/append": CommandDescription.new(appendTextToEditor, "text:s", "Append TEXT to the last line of the editor."),
+	"/editor/clear": CommandDescription.new(clearEditor, "", "Delete all text from the editor."),
+	"/editor/load": CommandDescription.new(loadCode, "", "Load code from PATH."),
+	"/editor/save": CommandDescription.new(saveCode, "", "Save code to PATH."),
 	# post
 	"/post": CommandDescription.new(post, "msg:s", "Print MSG in the post window.", Flags.asArray(false)),
 	"/post/toggle": CommandDescription.new(togglePost, "", "Toggle post window visibility.", Flags.asArray(false)),
@@ -295,6 +303,24 @@ func setLogLevel(level: String) -> Status:
 		"debug": Log.setLevel(Log.LOG_LEVEL_DEBUG)
 		"verbose": Log.setLevel(Log.LOG_LEVEL_VERBOSE)
 	return Status.ok(Log.getLevel(), "Log level: %s" % [Log.getLevel()])
+
+func appendTextToEditor(msg: String) -> Status:
+	editor.set_text("%s\n%s" % [editor.get_text(), msg])
+	return Status.ok()
+
+func clearEditor() -> Status:
+	editor.set_text("")
+	return Status.ok()
+
+func saveCode() -> Status:
+	saveDialog.set_current_path(ProjectSettings.globalize_path("user://animatron"))
+	saveDialog.popup()
+	return Status.ok()
+
+func loadCode() -> Status:
+	loadDialog.set_current_path(ProjectSettings.globalize_path("user://animatron"))
+	loadDialog.popup()
+	return Status.ok()
 
 func post(args: Array) -> Status:
 	args = " ".join(PackedStringArray(args)).split("\\n")

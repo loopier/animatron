@@ -55,14 +55,22 @@ func _ready():
 	add_child.call_deferred(animationsLibraryNode)
 	cmdInterface.animationsLibrary = animationsLibrary
 	cmdInterface.actorsNode = get_node("Actors")
+	cmdInterface.editor = $HSplitContainer/CodeEdit
 	cmdInterface.postWindow = get_node("HSplitContainer/PostWindow")
 	cmdInterface.routinesNode = get_node("Routines")
 	cmdInterface.stateMachines = Dictionary(stateMachines)
 	cmdInterface.stateChangedCallback = Callable(self, "_on_state_changed")
+	cmdInterface.saveDialog = $SaveDialog
+	cmdInterface.loadDialog = $LoadDialog
 	_init_midi()
 	cmdInterface.midiCommands = midiCommands
 	
 	ocl = OpenControlLanguage.new()
+	
+	#$SaveDialog.confirmed.connect(editor._on_save_dialog_confirmed)
+	#$LoadDialog.confirmed.connect(editor._on_load_dialog_confirmed)
+	editor.saveDialog = $SaveDialog
+	editor.loadDialog = $LoadDialog
 	editor.eval_code.connect(_on_eval_code)
 	
 	$Midi.midi_noteon.connect(_on_midi_noteon)

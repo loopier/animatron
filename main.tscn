@@ -66,5 +66,22 @@ virtual_keyboard_enabled = false
 middle_mouse_paste_enabled = false
 wrap_mode = 1
 
-[node name="FileDialog" type="FileDialog" parent="."]
-size = Vector2i(392, 162)
+[node name="SaveDialog" type="FileDialog" parent="."]
+initial_position = 1
+size = Vector2i(1280, 768)
+access = 1
+show_hidden_files = true
+use_native_dialog = true
+
+[node name="LoadDialog" type="FileDialog" parent="."]
+title = "Open a File"
+initial_position = 1
+size = Vector2i(1280, 768)
+ok_button_text = "Open"
+file_mode = 0
+access = 1
+show_hidden_files = true
+use_native_dialog = true
+
+[connection signal="confirmed" from="SaveDialog" to="HSplitContainer/CodeEdit" method="_on_save_dialog_confirmed"]
+[connection signal="confirmed" from="LoadDialog" to="HSplitContainer/CodeEdit" method="_on_load_dialog_confirmed"]

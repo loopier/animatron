@@ -3,6 +3,8 @@ extends CodeEdit
 signal eval_code(text: String)
 
 @onready var hl = get_syntax_highlighter() as CodeHighlighter
+@onready var saveDialog: FileDialog
+@onready var loadDialog: FileDialog
 
 # Called when the node enters the scene tree for the first time.
 func _ready():
@@ -81,3 +83,26 @@ func decreaseFont():
 func append(text: String):
 	set_text("%s\n%s" % [get_text(), text])
 	set_caret_line(get_line_count())
+
+func _on_save_dialog_confirmed():
+	Log.debug("save file confirmed: %s" % [saveDialog.current_path])
+	save(saveDialog.current_path)
+
+func _on_load_dialog_confirmed():
+	Log.debug("load file confirmed: %s" % [loadDialog.current_path])
+	load(loadDialog.current_path)
+	
+func save(path: String):
+	Log.debug("saving text: %s" % [path])
+	var file = FileAccess.open(path, FileAccess.WRITE)
+	var content = get_text()
+	file.store_string(content)
+	file.close()
+
+func load(path: String):
+	Log.debug("appending text: %s" % [path])
+	var file = FileAccess.open(path, FileAccess.READ)
+	var content = file.get_as_text()
+	file.close()
+	set_text("")
+	append(content)
