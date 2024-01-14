@@ -46,7 +46,6 @@ caret_type = 1
 syntax_highlighter = SubResource("CodeHighlighter_833ra")
 highlight_all_occurrences = true
 gutters_draw_line_numbers = true
-code_completion_enabled = true
 indent_use_spaces = true
 auto_brace_completion_enabled = true
 auto_brace_completion_highlight_matching = true
