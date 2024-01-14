@@ -55,7 +55,7 @@ func _ready():
 	add_child.call_deferred(animationsLibraryNode)
 	cmdInterface.animationsLibrary = animationsLibrary
 	cmdInterface.actorsNode = get_node("Actors")
-	cmdInterface.postWindow = get_node("HSplitContainer/VBoxContainer/PostWindow")
+	cmdInterface.postWindow = get_node("HSplitContainer/PostWindow")
 	cmdInterface.routinesNode = get_node("Routines")
 	cmdInterface.stateMachines = Dictionary(stateMachines)
 	cmdInterface.stateChangedCallback = Callable(self, "_on_state_changed")
