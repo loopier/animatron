@@ -75,11 +75,11 @@ var coreCommands: Dictionary = {
 	"/routine/finished": CommandDescription.new(finishedRoutine, "routine:s cmd:s", "Set the CMD to be sent when the ROUTINE (name) is finished.", Flags.asArray(true)),
 	"/wait": CommandDescription.new(wait, "time:f cmd:...", "Wait some TIME to execute the CMD.", Flags.asArray(true)),
 	# state machine
-	"/state/def": CommandDescription.new(defineState, "state:s entry:s exit:s", "Define a STATE with an ENTRY `/def` to be executed when the state begins, and an EXIT `/def` to be executed when it ends. Both should be existing `/def`s without parameters."),
-	"/state/add": CommandDescription.new(addState, "machine:s state:s next:s", "Add a STATE with a name to the state MACHINE. NEXT states is an arbitrary number of next possible states. Example: `/state/add mymachine stateA state1 state2` would create a new stateA in `mymachine` that would either repeat or move on to `state2.`", Flags.asArray(true)),
+	"/state/def": CommandDescription.new(defineState, "state:s entry:s exit:s", "Define a STATE with an ENTRY `/def` to be executed when the state begins, and an EXIT `/def` to be executed when it ends. Both should be existing `/def`s without parameters.\n\nSee `/state/add` and `/state/next`"),
+	"/state/add": CommandDescription.new(addState, "machine:s state:s next:s", "Add a STATE with a name to the state MACHINE. NEXT states is an arbitrary number of next possible states. Example: `/state/add mymachine stateA state1 state2` would create a new stateA in `mymachine` that would either repeat or move on to `state2.\n\nSee `/state/def`", Flags.asArray(true)),
 	"/states": CommandDescription.new(listStates, "", "Get a list of states for the given ACTOR."),
 	"/state/free": CommandDescription.new(freeState, "machine:s state:s", "Remove the STATE from the state MACHINE."),
-	"/state/next": CommandDescription.new(nextState, "machine:s", "Change MACHINE to next STATE."),
+	"/state/next": CommandDescription.new(nextState, "machine:s", "Change MACHINE to next state.  This will send the 'exit' command of the current state, and the 'entry' command of the next state.\n\nSee `/state/def`"),
 	# def
 	"/def": CommandDescription.new(defineCommand, "cmdName:s [args:v] subcommands:c", "Define a custom OSC command that is a list of other OSC commands. This may be recursive, so each SUBCOMMAND may reference one of the built-in commands, or another custom-defined command. Another way to define custom commands is via the file commands/init.osc. The CMDNAME string (first argument) may include argument names (ARG1 ... ARGN), which may be referenced as SUBCOMMAND arguments using $ARG1 ... $ARGN. Example: /def \"/addsel actor anim\" \"/create $actor $anim\" \"/select $actor\". ", Flags.asArray(true)),
 	# for (loop)
