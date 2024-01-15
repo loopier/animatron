@@ -67,6 +67,8 @@ func _ready():
 	
 	ocl = OpenControlLanguage.new()
 	
+	$SaveFileDialog.set_current_path(OS.get_user_data_dir() + "/animatron")
+	$OpenFileDialog.set_current_path(OS.get_user_data_dir() + "/animatron")
 	$SaveFileDialog.confirmed.connect(editor._on_save_dialog_confirmed)
 	$SaveFileDialog.file_selected.connect(editor.saveFile)
 	$OpenFileDialog.confirmed.connect(editor._on_load_dialog_confirmed)

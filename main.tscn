@@ -71,7 +71,6 @@ initial_position = 1
 size = Vector2i(1280, 768)
 access = 2
 show_hidden_files = true
-use_native_dialog = true
 
 [node name="OpenFileDialog" type="FileDialog" parent="."]
 title = "Open a File"
@@ -79,8 +78,7 @@ initial_position = 1
 size = Vector2i(1280, 768)
 ok_button_text = "Open"
 file_mode = 0
-access = 1
+access = 2
 show_hidden_files = true
-use_native_dialog = true
 
 [connection signal="confirmed" from="OpenFileDialog" to="HSplitContainer/CodeEdit" method="_on_load_dialog_confirmed"]

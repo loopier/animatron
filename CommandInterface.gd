@@ -315,7 +315,6 @@ func clearEditor() -> Status:
 	return Status.ok()
 
 func saveTextFile() -> Status:
-	saveFileDialog.set_current_path(ProjectSettings.globalize_path("user://animatron"))
 	saveFileDialog.popup()
 	return Status.ok()
 
@@ -324,7 +323,6 @@ func saveTextFileTo(path: String) -> Status:
 	return Status.ok()
 
 func openTextFile() -> Status:
-	openFileDialog.set_current_path(ProjectSettings.globalize_path("user://animatron"))
 	openFileDialog.popup()
 	return Status.ok()
 
