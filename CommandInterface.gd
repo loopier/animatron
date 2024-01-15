@@ -52,22 +52,17 @@ var coreCommands: Dictionary = {
 	"/log/level": CommandDescription.new(setLogLevel, "level:s", "Set the log level to either 'fatal', 'error', 'warn', 'debug' or 'verbose'"),
 	# general commands
 	"/commands/list": CommandDescription.new(listAllCommands, "", "Get list of available commands."),
-	"/commands": "/commands/list",
 	"/commands/load": CommandDescription.new(loadCommandFile, "path:s", "Load a custom command definitions file, which should have the format described below."),
 	# assets
 	"/load": CommandDescription.new(loadAnimationAsset, "animation:s", "Load an ANIMATION asset from disk. It will create an animation with the same name as the asset. Wildcards are supported, so several animations can be loaded at once. See also: `/assets/list`."),
 	"/unload": CommandDescription.new(unloadAnimationAsset, "animation:s", "Removes the ANIMATION asset from disk. This allows to free memory, and to reload a fresh version of the animation."),
 	"/assets/list": CommandDescription.new(listAnimationAssets, "", "Get the list of available (unloaded) assets. Assets must be loaded as animations in order to create actor instances."), # available in disk
-#	"/assets/list": CommandDescription.new(main.bla, "", "a bla"),
-	"/assets": "/assets/list",
 	"/assets/path": CommandDescription.new(setAssetsPath, "path:s", "Set the path for the parent directory of the assets."), # available in disk
 	"/animations/list": CommandDescription.new(listAnimations, "", "Get the list of available (loaded) animations."), # loaded
-	"/animations": "/animations/list",
 	# actors
 	"/actors/list": CommandDescription.new(listActors, "", "Get list of current actor instances. Returns /list/actors/reply OSC message."),
 	"/create": CommandDescription.new(createActor, "actor:s animation:s", "Create an ACTOR that plays ANIMATION."),
 	"/remove": CommandDescription.new(removeActor, "actor:s", "Delete the ACTOR by name (remove its instance). "),
-	"/free": "/remove",
 	"/color": CommandDescription.new(colorActor, "actor:s r:f g:f b:f", "Add an RGB colour to the ACTOR. R, G and B should be in the 0-1 range (can be negative to subtract colour). Set to black (0,0,0) to restore its original colour."),
 	"/opacity": CommandDescription.new(setActorOpacity, "actor:s opacity:f", "Set OPACITY of ACTOR and its children."),
 	# routines
@@ -128,13 +123,11 @@ var coreCommands: Dictionary = {
 	"/animation": CommandDescription.new(setAnimationProperty, "actor:s animation:s", "Change the ACTOR's ANIMATION.", Flags.gdScript()),
 	"/play": CommandDescription.new(callAnimationMethod, "actor:s", "Start playing ACTOR's image sequence.", Flags.gdScript()),
 	"/play/backwards": CommandDescription.new(callAnimationMethod, "actor:s", "Play ACTOR's animation backwards.", Flags.gdScript()),
-	"/reverse": "/play/backwards",
 	"/animation/loop": CommandDescription.new(setAnimationFramesProperty, "actor:s loop:b", "Set the ACTOR's animation to either LOOP or not.", Flags.gdScript()),
 	"/stop": CommandDescription.new(callAnimationMethod, "actor:s", "Stop playing the ACTOR's animation.", Flags.gdScript()),
 	"/frame": CommandDescription.new(setAnimationProperty, "actor:s frame:i", "Set the ACTOR's current FRAME.", Flags.gdScript()),
-	"/frame/progress": CommandDescription.new(setAnimationProperty, "", "", Flags.gdScript()),
+	#"/frame/progress": CommandDescription.new(setAnimationProperty, "", "", Flags.gdScript()),
 	"/speed/scale": CommandDescription.new(setAnimationProperty, "actor:s speed:f", "Set the ACTOR's animation SPEED (1 = normal speed, 2 = 2 x speed).", Flags.gdScript()),
-	"/speed": "/speed/scale",
 	"/flip/v": CommandDescription.new(toggleAnimationProperty, "actor:s", "Flip/ ACTOR vertically.", Flags.gdScript()),
 	"/flip/h": CommandDescription.new(toggleAnimationProperty, "actor:s", "Flip ACTOR horizontally.", Flags.gdScript()),
 	"/visible": CommandDescription.new(toggleActorProperty, "actor:s visibility:b", "Set ACTOR's VISIBILITY to either true or false.", Flags.gdScript()),
@@ -161,13 +154,10 @@ var coreCommands: Dictionary = {
 	"/position": CommandDescription.new(setActorPropertyWithVector, "actor:s x:i y:i", "Set the ACTOR's absolute position in pixels.", Flags.gdScript()),
 	"/position/x": CommandDescription.new(setActorPropertyWithVectorN, "actor:s pixels:i", "Set the ACTOR's absolute position in PIXELS on the X axis.", Flags.gdScript()),
 	"/position/y": CommandDescription.new(setActorPropertyWithVectorN, "actor:s pixels:i", "Set the ACTOR's absolute position in PIXELS on the Y axis.", Flags.gdScript()),
-	"/pos/x": "/position/x",
-	"/pos/y": "/position/y",
 	"/move": CommandDescription.new(move, "actor:s xcoord:f ycoord:f", "Move ACTOR to XCOORD - YCOORD relative to the current position.", Flags.asArray(false)),
 	"/move/x": CommandDescription.new(moveX, "actor:s xcoord:f", "Move ACTOR to XCOORD relative to the current position.", Flags.asArray(false)),
 	"/move/y": CommandDescription.new(moveY, "actor:s ycoord:f", "Move ACTOR to YCOORD relative to the current position.", Flags.asArray(false)),
 	"/rotation/degrees": CommandDescription.new(setActorProperty, "actor:s degrees:f", "Set the angle of the ACTOR in DEGREES.", Flags.gdScript()),
-	"/angle": "/rotation/degrees",
 	"/rotate": CommandDescription.new(rotate, "actor:s degrees:f", "Rotate ACTOR a number of DEGREES relative to the current rotation.", Flags.asArray(false)),
 }
 
@@ -474,6 +464,8 @@ func getHelp(cmd: String) -> Status:
 	if cmdDesc == null:
 		return Status.error("Help not found: %s" % [cmd])
 	
+	postWindow.set_visible(true)
+	postWindow.set_text("")
 	# this might change in the future if we convert /defs into CommandDescriptions.
 	# as for now it dumps the def's subcommands
 	if typeof(cmdDesc) == TYPE_DICTIONARY: 
@@ -483,12 +475,9 @@ func getHelp(cmd: String) -> Status:
 		msg += "\n"
 		for subcmd in cmdDesc.subcommands:
 			msg += "\t%s\n" % [" ".join(subcmd)]
-		postWindow.set_text(msg)
 		return Status.ok(cmdDesc, msg)
 	
 	var msg = "[HELP] %s %s\n\n%s" % [cmd, cmdDesc.argsDescription, cmdDesc.description]
-	postWindow.set_text(msg)
-	postWindow.set_visible(true)
 	return Status.ok(cmdDesc, msg)
 
 ### Read a file with a [param filename] and return its OSC constent in a string
@@ -575,14 +564,17 @@ func listCommands(commands: Dictionary) -> Status:
 func listActors() -> Status:
 	var actorsList := []
 	var actors: Array[Node] = getAllActors().value
-	Log.info("List of actors (%s)" % [len(actors)])
+	#Log.info("List of actors (%s)" % [len(actors)])
 	for actor in actors:
 		var actorName := actor.get_name()
 		var anim: String = actor.get_node("Animation").get_animation()
 		actorsList.append("%s (%s)" % [actorName, anim])
-		Log.info(actorsList.back())
+		#Log.info(actorsList.back())
 	actorsList.sort()
-	return Status.ok(actorsList)
+	var msg := "List of actors (%s)\n" % [len(actors)]
+	for name in actorsList:
+		msg += "%s\n" % [name]
+	return Status.ok(actorsList, msg)
 
 func listAnimations() -> Status:
 	var animationNames = animationsLibrary.get_animation_names()

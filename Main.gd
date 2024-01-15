@@ -3,6 +3,7 @@ class_name Main
 
 var osc: OscReceiver
 var oscSender: OscReceiver # FIX: this is misleading.
+static var defaultConfigPath := "res://config/default.ocl"
 static var configPath := "user://config/config.ocl"
 var metanode := preload("res://meta_node.tscn")
 @onready var actors := $Actors
@@ -80,6 +81,7 @@ func _ready():
 	$Midi.midi_noteoff.connect(_on_midi_noteoff)
 	$Midi.midi_cc.connect(_on_midi_cc)
 	
+	loadConfig(defaultConfigPath)
 	loadConfig(configPath)
 
 # Called every frame. 'delta' is the elapsed time since the previous frame./
@@ -121,8 +123,8 @@ func evalCommands(cmds: Array, sender: String) -> Status:
 	for cmd in cmds:
 		if len(cmd) <= 0: continue
 		result = evalCommand(cmd, sender)
-		if result.isError(): break
-	return result
+		if result.isError(): return result
+	return Status.ok()
 
 func evalCommand(cmdArray: Array, sender: String) -> Status:
 	var cmd : String = cmdArray[0]
@@ -131,7 +133,7 @@ func evalCommand(cmdArray: Array, sender: String) -> Status:
 	var result := Status.new()
 	var cmdDescription : Variant = cmdInterface.getCommandDescription(cmd)
 	if cmdDescription is String: 
-		result = evalCommand([cmdDescription] + args, sender)
+		return evalCommand([cmdDescription] + args, sender)
 	elif cmdDescription is Dictionary:
 		# put variable values from the OSC command into the 
 		# CommandDescritpion.variables dictionary
@@ -205,10 +207,7 @@ func convertArguments(argsDescription: String, args: Array) -> Array:
 	return typedArgs
 
 func loadConfig(filename: String):
-	var configCmds = cmdInterface.loadCommandFile(filename).value
-	evalCommands(configCmds, "config")
-#	for cmd in configCmds:
-#		cmdInterface.parseCommand(cmd[0], cmd.slice(1), "")
+	cmdInterface.loadCommandFile(filename)
 
 func _on_eval_code(text: String):
 	var cmds := []

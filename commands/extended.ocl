@@ -1,0 +1,61 @@
+/def /reload anim
+     /unload $anim
+     /load $anim
+
+/def /new actor anim
+     /load $anim
+     /create $actor $anim
+
+/def /color/r actor value
+     /color $actor $value 0 0
+
+/def /color/g actor value
+     /color $actor 0 $value 0
+
+/def /color/b actor value
+     /color $actor 0 0 $value
+
+/def /loop actor
+     /play $actor
+     /animation/loop $actor 1
+
+/def /noloop actor
+     /animation/loop $actor 0
+
+/def /commands
+     /commands/list
+
+/def /assets
+     /assets/list
+
+/def /actors
+     /actors/list
+
+/def /animations
+     /animations/list
+
+/def /free actor
+     /remove $actor
+
+
+/def /reverse actor
+     /play/backwards $actor
+
+
+/def /speed actor speed
+     /speed/scale $actor $speed
+
+/def /pos/x actor value
+     /position/x $actor $value
+
+/def /pos/y actor value
+     /position/y $actor $value
+
+/def /x actor value
+     /position/x $actor $value
+
+/def /y actor value
+     /position/y $actor $value
+
+/def /angle actor degrees
+     /rotation/degrees $actor $degrees
