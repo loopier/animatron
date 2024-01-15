@@ -130,7 +130,6 @@ var coreCommands: Dictionary = {
 	"/play/backwards": CommandDescription.new(callAnimationMethod, "actor:s", "Play ACTOR's animation backwards.", Flags.gdScript()),
 	"/reverse": "/play/backwards",
 	"/animation/loop": CommandDescription.new(setAnimationFramesProperty, "actor:s loop:b", "Set the ACTOR's animation to either LOOP or not.", Flags.gdScript()),
-	"/loop": CommandDescription.new(loopAnimation, "actor:s", ""),
 	"/stop": CommandDescription.new(callAnimationMethod, "actor:s", "Stop playing the ACTOR's animation.", Flags.gdScript()),
 	"/frame": CommandDescription.new(setAnimationProperty, "actor:s frame:i", "Set the ACTOR's current FRAME.", Flags.gdScript()),
 	"/frame/progress": CommandDescription.new(setAnimationProperty, "", "", Flags.gdScript()),
