@@ -68,7 +68,9 @@ func _ready():
 	ocl = OpenControlLanguage.new()
 	
 	$SaveFileDialog.confirmed.connect(editor._on_save_dialog_confirmed)
+	$SaveFileDialog.file_selected.connect(editor.saveFile)
 	$OpenFileDialog.confirmed.connect(editor._on_load_dialog_confirmed)
+	$OpenFileDialog.file_selected.connect(editor.openFile)
 	editor.saveDialog = $SaveFileDialog
 	editor.loadDialog = $OpenFileDialog
 	editor.eval_code.connect(_on_eval_code)

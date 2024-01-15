@@ -69,7 +69,7 @@ wrap_mode = 1
 [node name="SaveFileDialog" type="FileDialog" parent="."]
 initial_position = 1
 size = Vector2i(1280, 768)
-access = 1
+access = 2
 show_hidden_files = true
 use_native_dialog = true
 
