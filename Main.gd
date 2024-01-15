@@ -17,7 +17,6 @@ var OpenControlLanguage := preload("res://ocl.gd")
 var ocl: OpenControlLanguage
 var config := preload("res://Config.gd").new()
 @onready var editor := get_node("HSplitContainer/CodeEdit")
-#@onready var helpWindow := get_node("HSplitContainer/VBoxContainer/HelpWindow")
 @onready var postWindow := get_node("HSplitContainer/VBoxContainer/PostWindow")
 var rnd := RandomNumberGenerator.new()
 
@@ -148,7 +147,7 @@ func evalCommand(cmdArray: Array, sender: String) -> Status:
 	
 	# post and reply result
 	_on_command_finished(result, sender)
-	if len(result.msg) < 0: post(result.msg)
+	if result.msg.length() > 0: post(result.msg)
 	return result
 
 ## Executes a [param command] described in a [CommandDescription], with the given [param args].
@@ -261,8 +260,9 @@ func _on_midi_cc(ch: int, num: int, velocity: int):
 	Log.verbose("MIDI CC: %s %s %s" % [ch, num, velocity])
 
 func post(msg: String):
-	$HSplitContainer/VBoxContainer/PostWindow.set_text("%s\n%s" % [$HSplitContainer/VBoxContainer/PostWindow.get_text(), msg])
-	$HSplitContainer/VBoxContainer/PostWindow.set_caret_line($HSplitContainer/VBoxContainer/PostWindow.get_line_count())
+	if postWindow == null: postWindow = $HSplitContainer/PostWindow
+	postWindow.set_text("%s\n%s\n" % [postWindow.get_text(), msg])
+	postWindow.set_caret_line(postWindow.get_line_count() + 1)
 
 func _on_state_changed(cmd: Array):
 	Log.debug("Received signal -- State changed: %s" % [cmd])

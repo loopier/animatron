@@ -81,7 +81,7 @@ func decreaseFont():
 	add_theme_font_size_override("font_size", fontSize)
 
 func append(text: String):
-	set_text("%s\n%s" % [get_text(), text])
+	set_text("%s%s" % [get_text(), text])
 	set_caret_line(get_line_count())
 
 func _on_save_dialog_confirmed():
