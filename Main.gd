@@ -263,7 +263,7 @@ func _on_midi_cc(ch: int, num: int, velocity: int):
 func post(msg: String):
 	if postWindow == null: postWindow = $HSplitContainer/PostWindow
 	postWindow.set_text("%s\n%s\n" % [postWindow.get_text(), msg])
-	postWindow.set_caret_line(postWindow.get_line_count() + 1)
+	postWindow.set_caret_line(postWindow.get_line_count())
 
 func _on_state_changed(cmd: Array):
 	Log.debug("Received signal -- State changed: %s" % [cmd])

@@ -335,6 +335,7 @@ func post(args: Array) -> Status:
 	for arg in args:
 		Log.info(arg)
 	postWindow.set_text("%s\n%s" % [postWindow.get_text(), " ".join(PackedStringArray(args))])
+	postWindow.set_caret_line(postWindow.get_line_count())
 	return Status.ok()
 
 func togglePost() -> Status:
