@@ -86,23 +86,22 @@ func append(text: String):
 
 func _on_save_dialog_confirmed():
 	Log.debug("save file confirmed: %s" % [saveDialog.current_path])
-	save(saveDialog.current_path)
+	saveFile(saveDialog.current_path)
 
 func _on_load_dialog_confirmed():
 	Log.debug("load file confirmed: %s" % [loadDialog.current_path])
-	load(loadDialog.current_path)
+	openFile(loadDialog.current_path)
 	
-func save(path: String):
+func saveFile(path: String):
 	Log.debug("saving text: %s" % [path])
 	var file = FileAccess.open(path, FileAccess.WRITE)
 	var content = get_text()
 	file.store_string(content)
 	file.close()
 
-func load(path: String):
+func openFile(path: String):
 	Log.debug("appending text: %s" % [path])
 	var file = FileAccess.open(path, FileAccess.READ)
 	var content = file.get_as_text()
 	file.close()
-	set_text("")
 	append(content)

@@ -22,8 +22,8 @@ var metanode := preload("res://meta_node.tscn")
 @onready var Routine := preload("res://RoutineNode.tscn")
 var assetHelpers := preload("res://asset_helpers.gd").new()
 @onready var editor: CodeEdit
-@onready var loadDialog: FileDialog
-@onready var saveDialog: FileDialog
+@onready var openFileDialog: FileDialog
+@onready var saveFileDialog: FileDialog
 @onready var postWindow: Node
 @onready var actorsNode: Node
 @onready var routinesNode: Node
@@ -45,7 +45,6 @@ var variables: Dictionary:
 ## Core commands map.[br]
 var coreCommands: Dictionary = {
 	"/help": CommandDescription.new(getHelp, "cmd:s", "Get documentation about CMD."),
-	"/load/file": CommandDescription.new(loadCommandFile, "path:s", "Load a custom command definitions file, which should have the format described below."),
 #	"/test": CommandDescription.new(getActor, "", "This is just a test"), ## used to test random stuff
 	"/set": CommandDescription.new(setVar, "", "TODO"),
 	"/get": CommandDescription.new(getVar, "", "TODO"),
@@ -54,6 +53,7 @@ var coreCommands: Dictionary = {
 	# general commands
 	"/commands/list": CommandDescription.new(listAllCommands, "", "Get list of available commands."),
 	"/commands": "/commands/list",
+	"/commands/load": CommandDescription.new(loadCommandFile, "path:s", "Load a custom command definitions file, which should have the format described below."),
 	# assets
 	"/load": CommandDescription.new(loadAnimationAsset, "animation:s", "Load an ANIMATION asset from disk. It will create an animation with the same name as the asset. Wildcards are supported, so several animations can be loaded at once. See also: `/assets/list`."),
 	"/unload": CommandDescription.new(unloadAnimationAsset, "animation:s", "Removes the ANIMATION asset from disk. This allows to free memory, and to reload a fresh version of the animation."),
@@ -91,8 +91,10 @@ var coreCommands: Dictionary = {
 	# editor
 	"/editor/append": CommandDescription.new(appendTextToEditor, "text:s", "Append TEXT to the last line of the editor."),
 	"/editor/clear": CommandDescription.new(clearEditor, "", "Delete all text from the editor."),
-	"/editor/load": CommandDescription.new(loadCode, "", "Load code from PATH."),
-	"/editor/save": CommandDescription.new(saveCode, "", "Save code to PATH."),
+	"/editor/open": CommandDescription.new(openTextFile, "", "Open a file dialog and append the selected file contents at the end."),
+	"/editor/save": CommandDescription.new(saveTextFile, "", "Save the code using a file dialog."),
+	"/editor/open/from": CommandDescription.new(openTextFileFrom, "path:s", "Load code from PATH and append it to the end."),
+	"/editor/save/to": CommandDescription.new(saveTextFileTo, "path:s", "Save the code to PATH."),
 	# post
 	"/post": CommandDescription.new(post, "msg:s", "Print MSG in the post window.", Flags.asArray(false)),
 	"/post/toggle": CommandDescription.new(togglePost, "", "Toggle post window visibility.", Flags.asArray(false)),
@@ -312,14 +314,22 @@ func clearEditor() -> Status:
 	editor.set_text("")
 	return Status.ok()
 
-func saveCode() -> Status:
-	saveDialog.set_current_path(ProjectSettings.globalize_path("user://animatron"))
-	saveDialog.popup()
+func saveTextFile() -> Status:
+	saveFileDialog.set_current_path(ProjectSettings.globalize_path("user://animatron"))
+	saveFileDialog.popup()
 	return Status.ok()
 
-func loadCode() -> Status:
-	loadDialog.set_current_path(ProjectSettings.globalize_path("user://animatron"))
-	loadDialog.popup()
+func saveTextFileTo(path: String) -> Status:
+	editor.saveFile(path)
+	return Status.ok()
+
+func openTextFile() -> Status:
+	openFileDialog.set_current_path(ProjectSettings.globalize_path("user://animatron"))
+	openFileDialog.popup()
+	return Status.ok()
+
+func openTextFileFrom(path: String) -> Status:
+	editor.openFile(path)
 	return Status.ok()
 
 func post(args: Array) -> Status:
@@ -482,13 +492,13 @@ func getHelp(cmd: String) -> Status:
 	postWindow.set_visible(true)
 	return Status.ok(cmdDesc, msg)
 
-## Read a file with a [param filename] and return its OSC constent in a string
-func loadFile(filename: String) -> Status:
-	Log.verbose("Reading: %s" % [filename])
-	var file = FileAccess.open(filename, FileAccess.READ)
-	var content = file.get_as_text()
-	if content == null: return Status.error()
-	return Status.ok("Read file successful: %s" % filename, content)
+### Read a file with a [param filename] and return its OSC constent in a string
+#func loadFile(filename: String) -> Status:
+	#Log.verbose("Reading: %s" % [filename])
+	#var file = FileAccess.open(filename, FileAccess.READ)
+	#var content = file.get_as_text()
+	#if content == null: return Status.error()
+	#return Status.ok("Read file successful: %s" % filename, content)
 
 ## Return a dictionary based on the string [param oscStr] of OSC messages.[br]
 ## The address is the key of the dictionary (or the first element), and the 

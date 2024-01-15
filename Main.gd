@@ -60,17 +60,17 @@ func _ready():
 	cmdInterface.routinesNode = get_node("Routines")
 	cmdInterface.stateMachines = Dictionary(stateMachines)
 	cmdInterface.stateChangedCallback = Callable(self, "_on_state_changed")
-	cmdInterface.saveDialog = $SaveDialog
-	cmdInterface.loadDialog = $LoadDialog
+	cmdInterface.saveFileDialog = $SaveFileDialog
+	cmdInterface.openFileDialog = $OpenFileDialog
 	_init_midi()
 	cmdInterface.midiCommands = midiCommands
 	
 	ocl = OpenControlLanguage.new()
 	
-	#$SaveDialog.confirmed.connect(editor._on_save_dialog_confirmed)
-	#$LoadDialog.confirmed.connect(editor._on_load_dialog_confirmed)
-	editor.saveDialog = $SaveDialog
-	editor.loadDialog = $LoadDialog
+	$SaveFileDialog.confirmed.connect(editor._on_save_dialog_confirmed)
+	$OpenFileDialog.confirmed.connect(editor._on_load_dialog_confirmed)
+	editor.saveDialog = $SaveFileDialog
+	editor.loadDialog = $OpenFileDialog
 	editor.eval_code.connect(_on_eval_code)
 	
 	$Midi.midi_noteon.connect(_on_midi_noteon)
@@ -93,6 +93,12 @@ func _input(event):
 		_ignoreEvent()
 	if event.is_action_pressed("clear_post", true):
 		$HSplitContainer/VBoxContainer/PostWindow.clear()
+		_ignoreEvent()
+	if event.is_action_pressed("open_text_file", true):
+		$OpenFileDialog.popup()
+		_ignoreEvent()
+	if event.is_action_pressed("save_text_file", true):
+		$SaveFileDialog.popup()
 		_ignoreEvent()
 		
 func _ignoreEvent():
@@ -257,3 +263,9 @@ func post(msg: String):
 func _on_state_changed(cmd: Array):
 	Log.debug("Received signal -- State changed: %s" % [cmd])
 	evalCommand(cmd, "")
+
+func _on_load_dialog_confirmed():
+	Log.debug("Main load confirmed: %s" % [$LoadDialog.current_path])
+
+func _on_save_dialog_confirmed():
+	Log.debug("Main save confirmed: %s" % [$SaveDialog.current_path])
