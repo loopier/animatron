@@ -129,7 +129,8 @@ var coreCommands: Dictionary = {
 	"/play": CommandDescription.new(callAnimationMethod, "actor:s", "Start playing ACTOR's image sequence.", Flags.gdScript()),
 	"/play/backwards": CommandDescription.new(callAnimationMethod, "actor:s", "Play ACTOR's animation backwards.", Flags.gdScript()),
 	"/reverse": "/play/backwards",
-	"/animation/loop": CommandDescription.new(setAnimationFramesProperty, "", "", Flags.gdScript()),
+	"/animation/loop": CommandDescription.new(setAnimationFramesProperty, "actor:s loop:b", "Set the ACTOR's animation to either LOOP or not.", Flags.gdScript()),
+	"/loop": CommandDescription.new(loopAnimation, "actor:s", ""),
 	"/stop": CommandDescription.new(callAnimationMethod, "actor:s", "Stop playing the ACTOR's animation.", Flags.gdScript()),
 	"/frame": CommandDescription.new(setAnimationProperty, "actor:s frame:i", "Set the ACTOR's current FRAME.", Flags.gdScript()),
 	"/frame/progress": CommandDescription.new(setAnimationProperty, "", "", Flags.gdScript()),
@@ -711,6 +712,15 @@ func setActorAnimation(actorName, animation) -> Status:
 	# return Status.ok(true, "Set animation for '%s': %s" % [actorName, animation])
 	return Status.ok()
 
+func loopAnimation(actorName: String) -> Status:
+	var result = getActors(actorName)
+	if result.isError(): return result
+	for actor in result.value:
+		var animationNode = actor.get_node("Animation")
+		animationNode.get_sprite_frames().set_animation_loop(animationNode.get_animation(), false)
+	
+	return Status.ok()
+
 ## Sets any Vector [param property] of any node. 
 ## [param args[1..]] are the vector values (between 2 and 4). If only 1 value is passed, it will set the same value on all axes.
 func setNodePropertyWithVector(node, property, args) -> Status:
@@ -891,6 +901,7 @@ func callAnimationFramesMethod(method, args) -> Status:
 		# replace first argument with animation name
 		# most of the SpriteFrames methods need the animation name as first argument
 		args[0] = animation.get_animation()
+		var x = typeof(args[1])
 		result = frames.callv(method, args)
 	return Status.ok()
 

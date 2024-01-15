@@ -170,7 +170,8 @@ func executeCommand(command: CommandDescription, args: Array) -> Status:
 	elif command.argsAsArray:
 		result = command.callable.call(args)
 	elif command.toGdScript:
-		result = command.callable.call(args[0], args.slice(1))
+		var subargs = convertArguments(command.argsDescription, args.slice(1))
+		result = command.callable.call(args[0], subargs)
 	else:
 		# Reduce the number of args to the expected size, else callv will fail
 		result = command.callable.callv(args.slice(0, result.value))
@@ -187,6 +188,21 @@ func checkNumberOfArguments(argsDescription: String, args: Array) -> Status:
 	if actualNumberOfArgs > expectedNumberOfArgs:
 		return Status.ok(expectedNumberOfArgs, "Received more arguments (%s) than needed (%s). Using: %s" % [actualNumberOfArgs,  expectedNumberOfArgs, args.slice(0,expectedNumberOfArgs)])
 	return Status.ok(expectedNumberOfArgs, "")
+
+## Converts the given [param args] to the type described in [param argsDescription]
+func convertArguments(argsDescription: String, args: Array) -> Array:
+	var typedArgs := []
+	var splitDescriptions := argsDescription.split(" ")
+	for i in splitDescriptions.size():
+		match splitDescriptions[i].split(":")[1]:
+			"i": typedArgs.append(int(args[i]))
+			"f": typedArgs.append(float(args[i]))
+			"b": 
+				if args[i] == "t" or args[i] == "true": args[i] = "1"
+				elif args[i] == "f" or args[i] == "false": args[i] = "0"
+				typedArgs.append(bool(int(args[i])))
+			_: typedArgs.append(args[i])
+	return typedArgs
 
 func loadConfig(filename: String):
 	var configCmds = cmdInterface.loadCommandFile(filename).value

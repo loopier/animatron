@@ -3,7 +3,6 @@ extends GutTest
 var main : Main
 var cmdInterface : CommandInterface
 
-
 func before_each():
 	gut.p("ran setup logger", 2)
 	main = preload("res://main.tscn").instantiate()
@@ -114,3 +113,22 @@ func test_checkNumberNumberOfArguments():
 	assert_eq(checkResult.type, Status.OK)
 	assert_eq(checkResult.value, 3)
 	assert_eq(checkResult.msg, "")
+
+func test_convertArguments():
+	# less arguments than expected
+	var argsDescription = CommandDescription.new(func x(): pass, "str:s int:i float:f bool:b", "").argsDescription
+	var cmdArgs =  ["bla", "1", "2.3", "0"]
+	var checkResult = main.convertArguments(argsDescription, cmdArgs)
+	assert_eq(checkResult, ["bla", 1, 2.3, false])
+	cmdArgs = ["bla", "1.3", "2.3", "1"]
+	checkResult = main.convertArguments(argsDescription, cmdArgs)
+	assert_eq(checkResult, ["bla", 1, 2.3, true])
+	argsDescription = CommandDescription.new(func x(): pass, "bool:b", "").argsDescription
+	checkResult = main.convertArguments(argsDescription, ["true"])
+	assert_eq(checkResult, [true])
+	checkResult = main.convertArguments(argsDescription, ["t"])
+	assert_eq(checkResult, [true])
+	checkResult = main.convertArguments(argsDescription, ["false"])
+	assert_eq(checkResult, [false])
+	checkResult = main.convertArguments(argsDescription, ["f"])
+	assert_eq(checkResult, [false])
