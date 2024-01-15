@@ -54,10 +54,10 @@ func _ready():
 	animationsLibrary = animationsLibraryNode.get_sprite_frames()
 	add_child.call_deferred(animationsLibraryNode)
 	cmdInterface.animationsLibrary = animationsLibrary
-	cmdInterface.actorsNode = get_node("Actors")
+	cmdInterface.actorsNode = $Actors
 	cmdInterface.editor = $HSplitContainer/CodeEdit
-	cmdInterface.postWindow = get_node("HSplitContainer/PostWindow")
-	cmdInterface.routinesNode = get_node("Routines")
+	cmdInterface.postWindow = $HSplitContainer/PostWindow
+	cmdInterface.routinesNode = $Routines
 	cmdInterface.stateMachines = Dictionary(stateMachines)
 	cmdInterface.stateChangedCallback = Callable(self, "_on_state_changed")
 	cmdInterface.saveFileDialog = $SaveFileDialog
