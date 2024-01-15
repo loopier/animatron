@@ -5,19 +5,19 @@ var osc: OscReceiver
 var oscSender: OscReceiver # FIX: this is misleading.
 static var configPath := "user://config/config.ocl"
 var metanode := preload("res://meta_node.tscn")
-@onready var actors := get_node("Actors")
-@onready var cmdInterface : CommandInterface = get_node("CommandInterface")
+@onready var actors := $Actors
+@onready var cmdInterface : CommandInterface = $CommandInterface
 @onready var lastSender : String = "localhost"
 @onready var Routine := preload("res://RoutineNode.tscn")
-@onready var routines := get_node("Routines")
+@onready var routines := $Routines
 @onready var StateMachine := preload("res://StateMachine.gd")
 @onready var stateMachines := {}
 @onready var midiCommands := []
 var OpenControlLanguage := preload("res://ocl.gd")
 var ocl: OpenControlLanguage
 var config := preload("res://Config.gd").new()
-@onready var editor := get_node("HSplitContainer/CodeEdit")
-@onready var postWindow := get_node("HSplitContainer/VBoxContainer/PostWindow")
+@onready var editor := $HSplitContainer/CodeEdit
+@onready var postWindow := $HSplitContainer/VBoxContainer/PostWindow
 var rnd := RandomNumberGenerator.new()
 
 @onready var animationsLibrary : SpriteFrames
@@ -90,12 +90,13 @@ func _input(event):
 	if event.is_action_pressed("toggle_editor", true):
 		$HSplitContainer.set_visible(not($HSplitContainer.is_visible()))
 		_ignoreEvent()
+	if event.is_action_pressed("clear_post", true):
+		postWindow.clear()
+		evalCommand(["/post/toggle"], "")
+		_ignoreEvent()
 	if event.is_action_pressed("toggle_post", true):
 		#$HSplitContainer/VBoxContainer.set_visible(not($HSplitContainer/VBoxContainer.is_visible()))
 		evalCommand(["/post/toggle"], "")
-		_ignoreEvent()
-	if event.is_action_pressed("clear_post", true):
-		$HSplitContainer/VBoxContainer/PostWindow.clear()
 		_ignoreEvent()
 	if event.is_action_pressed("open_text_file", true):
 		$OpenFileDialog.popup()
