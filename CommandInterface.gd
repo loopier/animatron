@@ -715,8 +715,9 @@ func loopAnimation(actorName: String) -> Status:
 ## Sets any Vector [param property] of any node. 
 ## [param args[1..]] are the vector values (between 2 and 4). If only 1 value is passed, it will set the same value on all axes.
 func setNodePropertyWithVector(node, property, args) -> Status:
-	var setProperty = "set_%s" % [property.get_slice("/",1)]
-	var vec = node.call("get_%s" % [property.get_slice("/",1)])
+	property = property.substr(1).replace("/", "_")
+	var setProperty = "set_%s" % [property]
+	var vec = node.call("get_%s" % [property])
 	if len(args) < 2:
 		match typeof(vec):
 			TYPE_VECTOR2: args = [args[0], args[0]]
