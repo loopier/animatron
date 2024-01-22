@@ -162,7 +162,7 @@ var coreCommands: Dictionary = {
 	"/rotate": CommandDescription.new(rotate, "actor:s degrees:f", "Rotate ACTOR a number of DEGREES relative to the current rotation.", Flags.asArray(false)),
 	# text
 	"/type": CommandDescription.new(setActorText, "actor:s text:s", "Add TEXT to an ACTOR.", Flags.asArray(true)),
-	"/type/visible/ratio": CommandDescription.new(setTextProperty, "actor:s ratio:s", "Set how much text is visible.", Flags.gdScript()),
+	"/text/visible/ratio": CommandDescription.new(setTextProperty, "actor:s ratio:s", "Set how much text is visible.", Flags.gdScript()),
 }
 
 ## Custom command definitions
@@ -1198,15 +1198,25 @@ func setActorText(nameAndMsg: Array) -> Status:
 	var msg = " ".join(nameAndMsg.slice(1))
 	var result = getActors(actorName)
 	if result.isError(): return result
-	var text = "[center]%s[/center]" % [msg]
 	for actor in result.value:
-		actor.get_node("RichTextLabel").set_text(text)
+		actor.get_node("RichTextLabel").set_text(msg)
 	return Status.ok()
 
 func setTextProperty(textProperty: String, args: Array) -> Status:
 	var result = getActors(args[0])
 	if result.isError(): return result
-	var property = textProperty.replace("/type/", "set_").replace("/", "_")
+	var property = textProperty.replace("/text/", "set/")
+	return callTextMethod(property, args)
+
+func callTextMethod(textProperty: String, args: Array) -> Status:
+	var result = getActors(args[0])
+	if result.isError(): return result
+	var method = textProperty.replace("/text/", "").replace("/", "_")
+	var gdArgs: Variant
+	match args.slice(1).size():
+		1: gdArgs = args[0] as float
+		2: gdArgs = Vector2(args[1] as float, args[2] as float)
+		3: gdArgs = Color(args[1] as float, args[2] as float, args[3] as float)
 	for actor in result.value:
-		actor.get_node("RichTextLabel").call(property, float(args[1]))
+		actor.get_node("RichTextLabel").call(method, gdArgs)
 	return Status.ok()
