@@ -186,7 +186,7 @@ func checkNumberOfArguments(argsDescription: String, args: Array) -> Status:
 		expectedNumberOfArgs = max(expectedNumberOfArgs, args.size())
 	var actualNumberOfArgs := args.size()
 	if actualNumberOfArgs < expectedNumberOfArgs:
-		return Status.error("Not enough arguments - expected: %s - received: %s" % [expectedNumberOfArgs, actualNumberOfArgs])
+		return Status.error("Not enough arguments:\nexpected (%s) -> %s\nreceived (%s) -> %s" % [expectedNumberOfArgs, argsDescription, actualNumberOfArgs, args])
 	if actualNumberOfArgs > expectedNumberOfArgs:
 		return Status.ok(expectedNumberOfArgs, "Received more arguments (%s) than needed (%s). Using: %s" % [actualNumberOfArgs,  expectedNumberOfArgs, args.slice(0,expectedNumberOfArgs)])
 	return Status.ok(expectedNumberOfArgs, "")
