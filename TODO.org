@@ -6,7 +6,9 @@
 * TODO loop range
 * TODO sequencer
 * TODO trackpad or phone
-* TODO text : /type
+* IN_PROGRESS text : /type
+- [ ] add command to change font
+- [ ] add command to change size
 * TODO grid
 * IN_PROGRESS Tween
 - [ ] currently only supports actor properties
