@@ -1218,7 +1218,7 @@ func getAsPropertyArgs(actor: Node, propertyName: String, args: Array) -> Varian
 		TYPE_VECTOR2: value = Vector2(args[0] as float, args[1] as float)
 		TYPE_VECTOR3: value = Vector3(args[0] as float, args[1] as float, args[2] as float)
 		TYPE_VECTOR4: value = Vector4(args[0] as float, args[1] as float, args[2] as float, args[3] as float)
-		TYPE_COLOR: value = Color(args[0] as float, args[1] as float, args[2] as float, args[3] as float)
+		TYPE_COLOR: value = Color(args[0] as float, args[1] as float, args[2] as float)
 		TYPE_STRING: value = " ".join(args)
 		TYPE_FLOAT: value = args[0] as float
 		TYPE_INT: value = args[0] as float
