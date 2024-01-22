@@ -24,13 +24,16 @@ class Flags:
 	var argsAsArray := false
 	var toGdScript := false
 	var deferEvalExpressions := false
+	var actorAndRest := false
 
+	# args are converted to an array
 	static func asArray(deferEvalExpr : bool):
 		var f := Flags.new()
 		f.argsAsArray = true
 		f.deferEvalExpressions = deferEvalExpr
 		return f
 	
+	# use OSC address as GDScript equivalent
 	static func gdScript():
 		var f := Flags.new()
 		f.toGdScript = true

@@ -20,7 +20,6 @@ var ocl := preload("res://ocl.gd").new()
 var status := preload("res://Status.gd")
 var metanode := preload("res://meta_node.tscn")
 @onready var Routine := preload("res://RoutineNode.tscn")
-@onready var Type := preload("res://type.tscn")
 var assetHelpers := preload("res://asset_helpers.gd").new()
 @onready var editor: CodeEdit
 @onready var openFileDialog: FileDialog
@@ -155,13 +154,14 @@ var coreCommands: Dictionary = {
 	"/position": CommandDescription.new(setActorPropertyWithVector, "actor:s x:i y:i", "Set the ACTOR's absolute position in pixels.", Flags.gdScript()),
 	"/position/x": CommandDescription.new(setActorPropertyWithVectorN, "actor:s pixels:i", "Set the ACTOR's absolute position in PIXELS on the X axis.", Flags.gdScript()),
 	"/position/y": CommandDescription.new(setActorPropertyWithVectorN, "actor:s pixels:i", "Set the ACTOR's absolute position in PIXELS on the Y axis.", Flags.gdScript()),
+	"/center": CommandDescription.new(center, "actor:s", "Set the ACTOR to the center of the screen."),
 	"/move": CommandDescription.new(move, "actor:s xcoord:f ycoord:f", "Move ACTOR to XCOORD - YCOORD relative to the current position.", Flags.asArray(false)),
 	"/move/x": CommandDescription.new(moveX, "actor:s xcoord:f", "Move ACTOR to XCOORD relative to the current position.", Flags.asArray(false)),
 	"/move/y": CommandDescription.new(moveY, "actor:s ycoord:f", "Move ACTOR to YCOORD relative to the current position.", Flags.asArray(false)),
 	"/rotation/degrees": CommandDescription.new(setActorProperty, "actor:s degrees:f", "Set the angle of the ACTOR in DEGREES.", Flags.gdScript()),
 	"/rotate": CommandDescription.new(rotate, "actor:s degrees:f", "Rotate ACTOR a number of DEGREES relative to the current rotation.", Flags.asArray(false)),
 	# text
-	"/type": CommandDescription.new(typeActor, "actor:s text:s", "Write TEXT to an ACTOR - creating it if it doesn't exist.\n\n[WARNING] This will replace the actor with text!", Flags.asArray(true)),
+	"/type": CommandDescription.new(setActorText, "actor:s text:s", "Write TEXT to an ACTOR - creating it if it doesn't exist.\n\n[WARNING] This will replace the actor with text!", Flags.asArray(true)),
 }
 
 ## Custom command definitions
@@ -663,8 +663,6 @@ func getActors(namePattern: String) -> Status:
 	return Status.ok(actors)
 
 func createActor(actorName: String, anim: String) -> Status:
-	if not animationsLibrary.has_animation(anim):
-		return Status.error("Animation not found: %s" % [anim])
 	var actor: Variant
 	var msg: String
 	var result = getActor(actorName)
@@ -678,17 +676,28 @@ func createActor(actorName: String, anim: String) -> Status:
 		msg = "Created new actor '%s': %s" % [actorName, anim]
 #	Log.debug(msg)
 	actor.set_name(actorName)
-	actor.set_position(Vector2(0.5,0.5) * get_parent().get_viewport_rect().size)
-	var animationNode = actor.get_node("Animation")
-	animationNode.set_sprite_frames(animationsLibrary)
-	animationNode.play(anim)
-	animationNode.get_sprite_frames().set_animation_speed(anim, 12)
+	result = createAnimationActor(actor, anim)
 	actorsNode.add_child(actor)
+	center(actorName)
 	
 	# Need to set an owner so it appears in the SceneTree and can be found using
 	# Node.finde_child(pattern) -- see Node docs
 	actor.set_owner(actorsNode)
+	
+	if result.isError():
+		result = setActorText([actorName, actorName])
+		return result
 	return Status.ok(actor, msg)
+
+func createAnimationActor(actor: Node, anim: String) -> Status:
+	# FIX: this may not be necessary. Maybe we can call setAnimationProperty("animation", "anim")
+	if not animationsLibrary.has_animation(anim):
+		return Status.error("Animation not found: %s" % [anim])
+	var animationNode = actor.get_node("Animation")
+	animationNode.set_sprite_frames(animationsLibrary)
+	animationNode.play(anim)
+	animationNode.get_sprite_frames().set_animation_speed(anim, 12)
+	return Status.ok()
 
 func removeActor(actorName: String) -> Status:
 	var result = getActors(actorName)
@@ -1045,6 +1054,15 @@ func nextState(machine: String) -> Status:
 func rotate(args: Array) -> Status:
 	return setRelativeProperty(["/rotation/degrees"] + args)
 
+func center(actorName: String) -> Status:
+	var result = getActors(actorName)
+	if result.isError(): return result
+	for actor in result.value:
+		actor.set_position(Vector2(0.5,0.5) * get_parent().get_viewport_rect().size)
+	return Status.ok()
+
+
+
 func move(args: Array) -> Status:
 	return setRelativeProperty(["/position"] + args)
 
@@ -1174,22 +1192,12 @@ func randCmdValue(args: Array) -> Status:
 		commandManager.evalCommand([command, actor.name, value], "CommandInterface")
 	return Status.ok(true)
 
-func typeActor(args: Array) -> Status:
-	var actorName = args[0]
+func setActorText(nameAndMsg: Array) -> Status:
+	var actorName = nameAndMsg[0]
+	var msg = " ".join(nameAndMsg.slice(1))
 	var result = getActors(actorName)
-	var text = " ".join(args.slice(1))
-	if result.isError(): 
-		createTextActor(actorName)
-		var actor = getActor(actorName).value
-		actor.set_text(text)
-		return Status.ok()
-	
+	if result.isError(): return result
+	var text = "[center]%s[/center]" % [msg]
 	for actor in result.value:
-		actor.set_text(text)
-	return Status.ok()
-
-func createTextActor(name: String) -> Status:
-	var typeActor = Type.instantiate()
-	typeActor.set_name(name)
-	actorsNode.add_child(typeActor)
+		actor.get_node("TextLabel").set_text(text)
 	return Status.ok()
