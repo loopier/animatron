@@ -24,7 +24,7 @@ sprite_frames = SubResource("SpriteFrames_g6lqa")
 
 [node name="CollisionShape2D" type="CollisionShape2D" parent="."]
 
-[node name="Label" type="RichTextLabel" parent="."]
+[node name="RichTextLabel" type="RichTextLabel" parent="."]
 offset_right = 40.0
 offset_bottom = 40.0
 theme = SubResource("Theme_2spbi")

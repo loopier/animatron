@@ -162,6 +162,7 @@ var coreCommands: Dictionary = {
 	"/rotate": CommandDescription.new(rotate, "actor:s degrees:f", "Rotate ACTOR a number of DEGREES relative to the current rotation.", Flags.asArray(false)),
 	# text
 	"/type": CommandDescription.new(setActorText, "actor:s text:s", "Add TEXT to an ACTOR.", Flags.asArray(true)),
+	"/type/visible/ratio": CommandDescription.new(setTextProperty, "actor:s ratio:s", "Set how much text is visible.", Flags.gdScript()),
 }
 
 ## Custom command definitions
@@ -1199,5 +1200,13 @@ func setActorText(nameAndMsg: Array) -> Status:
 	if result.isError(): return result
 	var text = "[center]%s[/center]" % [msg]
 	for actor in result.value:
-		actor.get_node("Label").set_text(text)
+		actor.get_node("RichTextLabel").set_text(text)
+	return Status.ok()
+
+func setTextProperty(textProperty: String, args: Array) -> Status:
+	var result = getActors(args[0])
+	if result.isError(): return result
+	var property = textProperty.replace("/type/", "set_").replace("/", "_")
+	for actor in result.value:
+		actor.get_node("RichTextLabel").call(property, float(args[1]))
 	return Status.ok()
