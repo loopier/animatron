@@ -1,0 +1,11 @@
+[gd_scene load_steps=3 format=3 uid="uid://yi63a5gn2k1u"]
+
+[ext_resource type="FontFile" uid="uid://citw5lds10cgy" path="res://fonts/fs-blok-regular.ttf" id="1_0diig"]
+
+[sub_resource type="Theme" id="Theme_kj2fx"]
+default_font = ExtResource("1_0diig")
+
+[node name="Type" type="RichTextLabel"]
+offset_right = 40.0
+offset_bottom = 40.0
+theme = SubResource("Theme_kj2fx")

@@ -20,6 +20,7 @@ var ocl := preload("res://ocl.gd").new()
 var status := preload("res://Status.gd")
 var metanode := preload("res://meta_node.tscn")
 @onready var Routine := preload("res://RoutineNode.tscn")
+@onready var Type := preload("res://type.tscn")
 var assetHelpers := preload("res://asset_helpers.gd").new()
 @onready var editor: CodeEdit
 @onready var openFileDialog: FileDialog
@@ -159,6 +160,8 @@ var coreCommands: Dictionary = {
 	"/move/y": CommandDescription.new(moveY, "actor:s ycoord:f", "Move ACTOR to YCOORD relative to the current position.", Flags.asArray(false)),
 	"/rotation/degrees": CommandDescription.new(setActorProperty, "actor:s degrees:f", "Set the angle of the ACTOR in DEGREES.", Flags.gdScript()),
 	"/rotate": CommandDescription.new(rotate, "actor:s degrees:f", "Rotate ACTOR a number of DEGREES relative to the current rotation.", Flags.asArray(false)),
+	# text
+	"/type": CommandDescription.new(typeActor, "actor:s text:s", "Write TEXT to an ACTOR - creating it if it doesn't exist.\n\n[WARNING] This will replace the actor with text!", Flags.asArray(true)),
 }
 
 ## Custom command definitions
@@ -1170,3 +1173,23 @@ func randCmdValue(args: Array) -> Status:
 		var value = randf_range(float(args[2]), float(args[3]))
 		commandManager.evalCommand([command, actor.name, value], "CommandInterface")
 	return Status.ok(true)
+
+func typeActor(args: Array) -> Status:
+	var actorName = args[0]
+	var result = getActors(actorName)
+	var text = " ".join(args.slice(1))
+	if result.isError(): 
+		createTextActor(actorName)
+		var actor = getActor(actorName).value
+		actor.set_text(text)
+		return Status.ok()
+	
+	for actor in result.value:
+		actor.set_text(text)
+	return Status.ok()
+
+func createTextActor(name: String) -> Status:
+	var typeActor = Type.instantiate()
+	typeActor.set_name(name)
+	actorsNode.add_child(typeActor)
+	return Status.ok()
