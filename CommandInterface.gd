@@ -1199,5 +1199,5 @@ func setActorText(nameAndMsg: Array) -> Status:
 	if result.isError(): return result
 	var text = "[center]%s[/center]" % [msg]
 	for actor in result.value:
-		actor.get_node("TextLabel").set_text(text)
+		actor.get_node("Label").set_text(text)
 	return Status.ok()
