@@ -118,7 +118,7 @@ var coreCommands: Dictionary = {
 	# utils
 	"/relative": CommandDescription.new(setRelativeProperty, "", "TODO", Flags.asArray(false)),
 	"/rand": CommandDescription.new(randCmdValue, "cmd:s actor:s min:f max:f", "Send a CMD to an ACTOR with a random value between MIN and MAX. If a wildcard is used, e.g. `bl*`, all ACTORs with with a name that begins with `bl` will get a different value. *WARNING: This only works with single-value commands.*", Flags.asArray(true)),
-	
+	"/tween": CommandDescription.new(tweenActorProperty, "dur:f transition:s property:s actor:s value:f", "Tweens a PROPERTY of an ACTOR between the current value and final VALUE in a span of time equal to DURation, in seconds. The TRANSITION must be one of: linear, sine, quint, quart, quad, expo, elastic, cubic, circ, bounce, back and spring.", Flags.asArray(true)),
 	# Node
 	"/animation": CommandDescription.new(setAnimationProperty, "actor:s animation:s", "Change the ACTOR's ANIMATION.", Flags.gdScript()),
 	"/play": CommandDescription.new(callAnimationMethod, "actor:s", "Start playing ACTOR's image sequence.", Flags.gdScript()),
@@ -1195,6 +1195,35 @@ func randCmdValue(args: Array) -> Status:
 		var value = randf_range(float(args[2]), float(args[3]))
 		commandManager.evalCommand([command, actor.name, value], "CommandInterface")
 	return Status.ok(true)
+
+func tweenActorProperty(args: Array) -> Status:
+	var result = getActors(args[3])
+	if result.isError(): return result
+	var dur = args[0] as float
+	var transitionType = args[1] as float
+	var property = args[2]
+	var propertyArgs = args.slice(4)
+	for actor in result.value:
+		var tween = create_tween()
+		var value = getAsPropertyArgs(actor, property, propertyArgs)
+		tween.tween_property(actor, property, value, dur)
+	return Status.ok()
+
+## converts the array of arguments given by the command to the appropriate type depending on
+## the property
+func getAsPropertyArgs(actor: Node, propertyName: String, args: Array) -> Variant:
+	var currentValue = actor.get(propertyName)
+	var value: Variant
+	match typeof(currentValue):
+		TYPE_VECTOR2: value = Vector2(args[0] as float, args[1] as float)
+		TYPE_VECTOR3: value = Vector3(args[0] as float, args[1] as float, args[2] as float)
+		TYPE_VECTOR4: value = Vector4(args[0] as float, args[1] as float, args[2] as float, args[3] as float)
+		TYPE_COLOR: value = Color(args[0] as float, args[1] as float, args[2] as float, args[3] as float)
+		TYPE_STRING: value = " ".join(args)
+		TYPE_FLOAT: value = args[0] as float
+		TYPE_INT: value = args[0] as float
+		_: value = args
+	return value
 
 func setActorText(nameAndMsg: Array) -> Status:
 	var actorName = nameAndMsg[0]
