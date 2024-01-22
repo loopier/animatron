@@ -161,7 +161,7 @@ var coreCommands: Dictionary = {
 	"/rotation/degrees": CommandDescription.new(setActorProperty, "actor:s degrees:f", "Set the angle of the ACTOR in DEGREES.", Flags.gdScript()),
 	"/rotate": CommandDescription.new(rotate, "actor:s degrees:f", "Rotate ACTOR a number of DEGREES relative to the current rotation.", Flags.asArray(false)),
 	# text
-	"/type": CommandDescription.new(setActorText, "actor:s text:s", "Write TEXT to an ACTOR - creating it if it doesn't exist.\n\n[WARNING] This will replace the actor with text!", Flags.asArray(true)),
+	"/type": CommandDescription.new(setActorText, "actor:s text:s", "Add TEXT to an ACTOR.\n\n[WARNING] This will replace the actor with text!", Flags.asArray(true)),
 }
 
 ## Custom command definitions
