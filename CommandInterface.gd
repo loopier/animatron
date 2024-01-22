@@ -163,6 +163,7 @@ var coreCommands: Dictionary = {
 	# text
 	"/type": CommandDescription.new(setActorText, "actor:s text:s", "Add TEXT to an ACTOR.", Flags.asArray(true)),
 	"/text/visible/ratio": CommandDescription.new(setTextProperty, "actor:s ratio:s", "Set how much text is visible.", Flags.gdScript()),
+	"/text/color": CommandDescription.new(setTextColor, "actor:s r:f g:f b:f", "Add TEXT to an ACTOR."),
 }
 
 ## Custom command definitions
@@ -728,7 +729,8 @@ func loopAnimation(actorName: String) -> Status:
 ## Sets any Vector [param property] of any node. 
 ## [param args[1..]] are the vector values (between 2 and 4). If only 1 value is passed, it will set the same value on all axes.
 func setNodePropertyWithVector(node, property, args) -> Status:
-	property = property.substr(1).replace("/", "_")
+	property = property.substr(1) if property.begins_with("/") else property
+	property = property.replace("/", "_")
 	var setProperty = "set_%s" % [property]
 	var vec = node.call("get_%s" % [property])
 	if len(args) < 2:
@@ -945,6 +947,7 @@ func colorActor(actorName: String, red, green, blue) -> Status:
 		var animation := actor.get_node("Animation") as AnimatedSprite2D
 		var rgb := Vector3(red as float, green as float, blue as float)
 		setImageShaderUniform(animation, "uAddColor", rgb)
+		setTextColor(actorName, red, green, blue)
 	return Status.ok()
 
 func setActorOpacity(actorName: String, alpha: Variant) -> Status:
@@ -1199,7 +1202,8 @@ func setActorText(nameAndMsg: Array) -> Status:
 	var result = getActors(actorName)
 	if result.isError(): return result
 	for actor in result.value:
-		actor.get_node("RichTextLabel").set_text(msg)
+		var label = actor.get_node("RichTextLabel")
+		label.set_text(msg)
 	return Status.ok()
 
 func setTextProperty(textProperty: String, args: Array) -> Status:
@@ -1214,9 +1218,19 @@ func callTextMethod(textProperty: String, args: Array) -> Status:
 	var method = textProperty.replace("/text/", "").replace("/", "_")
 	var gdArgs: Variant
 	match args.slice(1).size():
-		1: gdArgs = args[0] as float
+		1: gdArgs = args[1] as float
 		2: gdArgs = Vector2(args[1] as float, args[2] as float)
 		3: gdArgs = Color(args[1] as float, args[2] as float, args[3] as float)
 	for actor in result.value:
 		actor.get_node("RichTextLabel").call(method, gdArgs)
+	return Status.ok()
+
+## see colorActor comments about non-typing the arguments
+func setTextColor(actorName: String, red, green, blue) -> Status:
+	var result = getActors(actorName)
+	if result.isError(): return result
+	var color = Color(red as float, green as float, blue as float)
+	for actor in result.value:
+		var label = actor.get_node("RichTextLabel")
+		label.set_modulate(color)
 	return Status.ok()
