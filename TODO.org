@@ -1,0 +1,14 @@
+#+title: Animatron
+#+todo: TODO IN_PROGRESS | DONE
+
+* TODO state machines
+* TODO pivot (anchor?)
+* TODO loop range
+* TODO sequencer
+* TODO trackpad or phone
+* TODO text : /type
+* TODO grid
+* IN_PROGRESS Tween
+- [ ] currently only supports actor properties
+- [ ] add support for animation properties
+- [ ] find a nice syntax so users don't need to know GDScript nomenclatures
