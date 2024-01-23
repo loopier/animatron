@@ -12,6 +12,6 @@
 - [ ] add command to change text position
 * TODO grid
 * IN_PROGRESS Tween
-- [ ] currently only supports actor properties
-- [ ] add support for animation properties
+- [X] currently only supports actor properties
+- [X] add support for animation properties
 - [ ] find a nice syntax so users don't need to know GDScript nomenclatures
