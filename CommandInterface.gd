@@ -1201,18 +1201,32 @@ func tweenActorProperty(args: Array) -> Status:
 	if result.isError(): return result
 	var dur = args[0] as float
 	var transitionType = args[1] as float
-	var property = args[2]
+	var property = args[2].replace("/", "_")
+	if property.begins_with("_"): property = property.substr(1)
 	var propertyArgs = args.slice(4)
 	for actor in result.value:
 		var tween = create_tween()
-		var value = getAsPropertyArgs(actor, property, propertyArgs)
-		tween.tween_property(actor, property, value, dur)
+		result = getAsPropertyArgs(actor, property, propertyArgs)
+		if result.isError(): return result
+		var node = result.value.node
+		var value = result.value.propertyValue
+		tween.tween_property(node, property, value, dur)
 	return Status.ok()
 
 ## converts the array of arguments given by the command to the appropriate type depending on
 ## the property
-func getAsPropertyArgs(actor: Node, propertyName: String, args: Array) -> Variant:
+func getAsPropertyArgs(actor: Node, propertyName: String, args: Array) -> Status:
 	var currentValue = actor.get(propertyName)
+	var node: Node = actor
+	if currentValue == null:
+		var animNode = actor.get_node("Animation")
+		currentValue = animNode.get(propertyName)
+		node = animNode if currentValue != null else actor
+	if currentValue == null: 
+		var textNode = actor.get_node("RichTextLabel")
+		currentValue = textNode.get(propertyName)
+		node = textNode if currentValue != null else actor
+	if currentValue == null: return Status.error("Property not found: %s" % [propertyName])
 	var value: Variant
 	match typeof(currentValue):
 		TYPE_VECTOR2: value = Vector2(args[0] as float, args[1] as float)
@@ -1223,7 +1237,7 @@ func getAsPropertyArgs(actor: Node, propertyName: String, args: Array) -> Varian
 		TYPE_FLOAT: value = args[0] as float
 		TYPE_INT: value = args[0] as float
 		_: value = args
-	return value
+	return Status.ok({"node": node, "propertyValue": value})
 
 func setActorText(nameAndMsg: Array) -> Status:
 	var actorName = nameAndMsg[0]

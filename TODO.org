@@ -9,6 +9,7 @@
 * IN_PROGRESS text : /type
 - [ ] add command to change font
 - [ ] add command to change size
+- [ ] add command to change text position
 * TODO grid
 * IN_PROGRESS Tween
 - [ ] currently only supports actor properties
