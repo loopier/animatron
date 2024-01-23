@@ -1,0 +1,4 @@
+/commands/load res://commands/extended.ocl
+/commands/load res://tutorial/tutorial.ocl
+/editor/clear
+/post/toggle
