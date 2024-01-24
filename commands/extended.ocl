@@ -1,14 +1,21 @@
+# create a new ACTOR with an ANIMATION
+/def /new actor animation
+     /load $animation
+     /create $actor $animation
+
+# reload ANIMATION frames from disk
+/def /reload animation
+     /unload $animation
+     /load $animation
+
+# play the animation from START to END frames
 /def /play/range actor start end
      /start/frame $actor $start
      /end/frame $actor $end
 
-/def /reload anim
-     /unload $anim
-     /load $anim
-
-/def /new actor anim
-     /load $anim
-     /create $actor $anim
+# set the X and Y coordinates of the ACTOR
+/def /position actor x y
+     /property /position $actor $x $y
 
 /def /color/r actor value
      /color $actor $value 0 0

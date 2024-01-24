@@ -810,7 +810,7 @@ func _cmd_to_set_property(property: String) -> String:
 ## For example: [code]/visible/ratio[/code] is converted to [code]visible_ratio[/code]
 func _cmd_to_property(property: String) -> String:
 	property = property.substr(1) if property.begins_with("/") or property.begins_with("_") else property
-	return property.replace("/", "_")
+	return property.replace("/", "")
 
 # FIX: change array arguments to separate arguments: property, actor, value(s)
 func setActorProperty(args: Array) -> Status:
