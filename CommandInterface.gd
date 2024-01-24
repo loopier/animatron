@@ -60,6 +60,7 @@ var coreCommands: Dictionary = {
 	"/assets/path": CommandDescription.new(setAssetsPath, "path:s", "Set the path for the parent directory of the assets."), # available in disk
 	"/animations/list": CommandDescription.new(listAnimations, "", "Get the list of available (loaded) animations."), # loaded
 	# actors
+	"/property": CommandDescription.new(setActorProperty, "property:s actor:s value:...", "Generic command to set the VALUE to any PROPERTY of an ACTOR.", Flags.asArray(true)),
 	"/actors/list": CommandDescription.new(listActors, "", "Get list of current actor instances. Returns /list/actors/reply OSC message."),
 	"/create": CommandDescription.new(createActor, "actor:s animation:s", "Create an ACTOR that plays ANIMATION."),
 	"/remove": CommandDescription.new(removeActor, "actor:s", "Delete the ACTOR by name (remove its instance). "),
@@ -153,14 +154,14 @@ var coreCommands: Dictionary = {
 	"/scale/y": CommandDescription.new(scaleY, "actor:s multiply:f", "MULTIPLY the ACTOR's size on the Y axis (use values < 1.0 to devide).", Flags.asArray(false)),
 	"/apply/scale": CommandDescription.new(callActorMethodWithVector, "", "", Flags.gdScript()),
 	"/set/position": CommandDescription.new(callActorMethodWithVector, "", "", Flags.gdScript()),
-	"/position": CommandDescription.new(setActorPropertyWithVector, "actor:s x:i y:i", "Set the ACTOR's absolute position in pixels.", Flags.gdScript()),
-	"/position/x": CommandDescription.new(setActorPropertyWithVectorN, "actor:s pixels:i", "Set the ACTOR's absolute position in PIXELS on the X axis.", Flags.gdScript()),
-	"/position/y": CommandDescription.new(setActorPropertyWithVectorN, "actor:s pixels:i", "Set the ACTOR's absolute position in PIXELS on the Y axis.", Flags.gdScript()),
+	#"/position": CommandDescription.new(setActorPropertyWithVector, "actor:s x:i y:i", "Set the ACTOR's absolute position in pixels.", Flags.gdScript()),
+	#"/position/x": CommandDescription.new(setActorPropertyWithVectorN, "actor:s pixels:i", "Set the ACTOR's absolute position in PIXELS on the X axis.", Flags.gdScript()),
+	#"/position/y": CommandDescription.new(setActorPropertyWithVectorN, "actor:s pixels:i", "Set the ACTOR's absolute position in PIXELS on the Y axis.", Flags.gdScript()),
 	"/center": CommandDescription.new(center, "actor:s", "Set the ACTOR to the center of the screen."),
 	"/move": CommandDescription.new(move, "actor:s xcoord:f ycoord:f", "Move ACTOR to XCOORD - YCOORD relative to the current position.", Flags.asArray(false)),
 	"/move/x": CommandDescription.new(moveX, "actor:s xcoord:f", "Move ACTOR to XCOORD relative to the current position.", Flags.asArray(false)),
 	"/move/y": CommandDescription.new(moveY, "actor:s ycoord:f", "Move ACTOR to YCOORD relative to the current position.", Flags.asArray(false)),
-	"/rotation/degrees": CommandDescription.new(setActorProperty, "actor:s degrees:f", "Set the angle of the ACTOR in DEGREES.", Flags.gdScript()),
+	#"/rotation/degrees": CommandDescription.new(setActorProperty, "actor:s degrees:f", "Set the angle of the ACTOR in DEGREES.", Flags.gdScript()),
 	"/rotate": CommandDescription.new(rotate, "actor:s degrees:f", "Rotate ACTOR a number of DEGREES relative to the current rotation.", Flags.asArray(false)),
 	# text
 	"/type": CommandDescription.new(setActorText, "actor:s text:s", "Add TEXT to an ACTOR.", Flags.asArray(true)),
@@ -782,11 +783,13 @@ func setNodePropertyWithVectorN(node, property, value) -> Status:
 #	Log.debug("Set %s %s -- %s: %s" % [property, actor.get_position(), vec, value])
 	return Status.ok("Set %s.%s: %s" % [vec, axis, value])
 
-func setActorPropertyWithVectorN(property, args) -> Status:
-	var result = getActors(args[0])
-	if result.isError(): return result
-	for actor in result.value:
-		setNodePropertyWithVectorN(actor, property, args[1])
+func setActorPropertyWithVectorN(actor, args: Array) -> Status:
+	#var result = getActors(args[1])
+	#if result.isError(): return result
+	#var property = args[0]
+	#for actor in result.value:
+		#var value = getArgsAsPropertyType(actor, property, args.slice(2))
+		#setNodePropertyWithVectorN(actor, property, args[1])
 	return Status.ok()
 
 func setAnimationPropertyWithVectorN(property, args) -> Status:
@@ -797,8 +800,29 @@ func setAnimationPropertyWithVectorN(property, args) -> Status:
 		setNodePropertyWithVectorN(animation, property, args[1])
 	return Status.ok()
 
-func setActorProperty(property, args) -> Status:
-	return callActorMethod("/set" + property, args if len(args) > 0 else [])
+## Converts a command to GDScript property setter syntax.
+## For example: [code]/visible/ratio[/code] is converted to [code]set_visible_ratio[/code]
+func _cmd_to_set_property(property: String) -> String:
+	property = property.substr(1) if property.begins_with("/") or property.begins_with("_") else property
+	return "set_%s" % [property.replace("/", "_")]
+
+## Converts a command to GDScript property syntax.
+## For example: [code]/visible/ratio[/code] is converted to [code]visible_ratio[/code]
+func _cmd_to_property(property: String) -> String:
+	property = property.substr(1) if property.begins_with("/") or property.begins_with("_") else property
+	return property.replace("/", "_")
+
+# FIX: change array arguments to separate arguments: property, actor, value(s)
+func setActorProperty(args: Array) -> Status:
+	var result = getActors(args[1])
+	if result.isError(): return result
+	var property = _cmd_to_property(args[0])	
+	for actor in result.value:
+		result = getArgsAsPropertyType(actor, property, args.slice(2))
+		if result.isError(): return result
+		var value = result.value.propertyValue
+		actor.call(_cmd_to_set_property(property), value)
+	return Status.ok()
 
 func setAnimationProperty(property, args) -> Status:
 	return callAnimationMethod("/set" + property, args)
@@ -1213,7 +1237,7 @@ func tweenActorProperty(args: Array) -> Status:
 	var propertyArgs = args.slice(4)
 	for actor in result.value:
 		var tween = create_tween()
-		result = getAsPropertyArgs(actor, property, propertyArgs)
+		result = getArgsAsPropertyType(actor, property, propertyArgs)
 		if result.isError(): return result
 		var node = result.value.node
 		var value = result.value.propertyValue
@@ -1222,18 +1246,11 @@ func tweenActorProperty(args: Array) -> Status:
 
 ## converts the array of arguments given by the command to the appropriate type depending on
 ## the property
-func getAsPropertyArgs(actor: Node, propertyName: String, args: Array) -> Status:
-	var currentValue = actor.get(propertyName)
-	var node: Node = actor
-	if currentValue == null:
-		var animNode = actor.get_node("Animation")
-		currentValue = animNode.get(propertyName)
-		node = animNode if currentValue != null else actor
-	if currentValue == null: 
-		var textNode = actor.get_node("RichTextLabel")
-		currentValue = textNode.get(propertyName)
-		node = textNode if currentValue != null else actor
-	if currentValue == null: return Status.error("Property not found: %s" % [propertyName])
+func getArgsAsPropertyType(node: Node, propertyName: String, args: Array) -> Status:
+	#propertyName = propertyName.substr(1) if propertyName.begins_with("/") else propertyName
+	#propertyName = propertyName.replace("/", "_")
+	var currentValue = node.get(propertyName)
+	if currentValue == null: return Status.error("Property not found: %s.%s" % [node, propertyName])
 	var value: Variant
 	match typeof(currentValue):
 		TYPE_VECTOR2: value = Vector2(args[0] as float, args[1] as float)
