@@ -19,7 +19,8 @@ func _on_frame_changed():
 		set_frame(end_frame if get_speed_scale() < 0 else start_frame)
 		animation_finished.emit()
 
-## Sets the lower value to [param start_frame] and the highest value to [param end_frame]
+## Sets the lower value to [param start_frame] and the highest value to [param end_frame].
+## This is done to be consistent in the playing speed.
 func adjust_start_and_end_frames():
 		var tmp = end_frame
 		set_end_frame(start_frame)
