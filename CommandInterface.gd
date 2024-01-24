@@ -61,6 +61,7 @@ var coreCommands: Dictionary = {
 	"/animations/list": CommandDescription.new(listAnimations, "", "Get the list of available (loaded) animations."), # loaded
 	# actors
 	"/property": CommandDescription.new(setActorProperty, "property:s actor:s value:...", "Generic command to set the VALUE to any PROPERTY of an ACTOR.", Flags.asArray(true)),
+	
 	"/actors/list": CommandDescription.new(listActors, "", "Get list of current actor instances. Returns /list/actors/reply OSC message."),
 	"/create": CommandDescription.new(createActor, "actor:s animation:s", "Create an ACTOR that plays ANIMATION."),
 	"/remove": CommandDescription.new(removeActor, "actor:s", "Delete the ACTOR by name (remove its instance). "),
@@ -85,7 +86,7 @@ var coreCommands: Dictionary = {
 	# for (loop)
 	"/for": CommandDescription.new(forCommand, "varName:s iterations:i cmd:s", "Iterate `iterations` times over `varName`, substituting the current iteration value in each call to `cmd`.", Flags.asArray(true)),
 	# editor
-	"/editor/append": CommandDescription.new(appendTextToEditor, "text:s", "Append TEXT to the last line of the editor."),
+	"/editor/append": CommandDescription.new(appendTextToEditor, "text:s", "Append TEXT to the last line of the editor.", Flags.asArray(true)),
 	"/editor/clear": CommandDescription.new(clearEditor, "", "Delete all text from the editor."),
 	"/editor/open": CommandDescription.new(openTextFile, "", "Open a file dialog and append the selected file contents at the end."),
 	"/editor/save": CommandDescription.new(saveTextFile, "", "Save the code using a file dialog."),
@@ -155,8 +156,8 @@ var coreCommands: Dictionary = {
 	"/apply/scale": CommandDescription.new(callActorMethodWithVector, "", "", Flags.gdScript()),
 	"/set/position": CommandDescription.new(callActorMethodWithVector, "", "", Flags.gdScript()),
 	#"/position": CommandDescription.new(setActorPropertyWithVector, "actor:s x:i y:i", "Set the ACTOR's absolute position in pixels.", Flags.gdScript()),
-	"/position/x": CommandDescription.new(setActorPropertyWithVectorN, "actor:s pixels:i", "Set the ACTOR's absolute position in PIXELS on the X axis.", Flags.gdScript()),
-	"/position/y": CommandDescription.new(setActorPropertyWithVectorN, "actor:s pixels:i", "Set the ACTOR's absolute position in PIXELS on the Y axis.", Flags.gdScript()),
+	#"/position/x": CommandDescription.new(setActorPropertyWithVectorN, "actor:s pixels:i", "Set the ACTOR's absolute position in PIXELS on the X axis.", Flags.gdScript()),
+	#"/position/y": CommandDescription.new(setActorPropertyWithVectorN, "actor:s pixels:i", "Set the ACTOR's absolute position in PIXELS on the Y axis.", Flags.gdScript()),
 	"/center": CommandDescription.new(center, "actor:s", "Set the ACTOR to the center of the screen."),
 	"/move": CommandDescription.new(move, "actor:s xcoord:f ycoord:f", "Move ACTOR to XCOORD - YCOORD relative to the current position.", Flags.asArray(false)),
 	"/move/x": CommandDescription.new(moveX, "actor:s xcoord:f", "Move ACTOR to XCOORD relative to the current position.", Flags.asArray(false)),
@@ -301,7 +302,8 @@ func setLogLevel(level: String) -> Status:
 		"verbose": Log.setLevel(Log.LOG_LEVEL_VERBOSE)
 	return Status.ok(Log.getLevel(), "Log level: %s" % [Log.getLevel()])
 
-func appendTextToEditor(msg: String) -> Status:
+func appendTextToEditor(args: Array) -> Status:
+	var msg = " ".join(args)
 	editor.set_text("%s\n%s" % [editor.get_text(), msg])
 	return Status.ok()
 
@@ -818,6 +820,7 @@ func setActorProperty(args: Array) -> Status:
 	for actor in result.value:
 		result = getArgsAsPropertyType(actor, property, args.slice(2))
 		if result.isError(): return result
+		property = result.value.propertyName
 		var value = result.value.propertyValue
 		actor.call(_cmd_to_set_property(property), value)
 	return Status.ok()
@@ -1094,8 +1097,6 @@ func center(actorName: String) -> Status:
 		actor.set_position(Vector2(0.5,0.5) * get_parent().get_viewport_rect().size)
 	return Status.ok()
 
-
-
 func move(args: Array) -> Status:
 	return setRelativeProperty(["/position"] + args)
 
@@ -1238,6 +1239,7 @@ func tweenActorProperty(args: Array) -> Status:
 		result = getArgsAsPropertyType(actor, property, propertyArgs)
 		if result.isError(): return result
 		var node = result.value.node
+		property = result.value.propertyName
 		var value = result.value.propertyValue
 		tween.tween_property(node, property, value, dur)
 	return Status.ok()
@@ -1245,12 +1247,10 @@ func tweenActorProperty(args: Array) -> Status:
 ## converts the array of arguments given by the command to the appropriate type depending on
 ## the property
 func getArgsAsPropertyType(node: Node, propertyName: String, args: Array) -> Status:
-	#propertyName = propertyName.substr(1) if propertyName.begins_with("/") else propertyName
-	#propertyName = propertyName.replace("/", "_")
-	var currentValue = node.get(propertyName)
-	if currentValue == null: return Status.error("Property not found: %s.%s" % [node, propertyName])
+	var property = node.get(propertyName)
+	var isNone := false
 	var value: Variant
-	match typeof(currentValue):
+	match typeof(property):
 		TYPE_VECTOR2: value = Vector2(args[0] as float, args[1] as float)
 		TYPE_VECTOR3: value = Vector3(args[0] as float, args[1] as float, args[2] as float)
 		TYPE_VECTOR4: value = Vector4(args[0] as float, args[1] as float, args[2] as float, args[3] as float)
@@ -1258,8 +1258,26 @@ func getArgsAsPropertyType(node: Node, propertyName: String, args: Array) -> Sta
 		TYPE_STRING: value = " ".join(args)
 		TYPE_FLOAT: value = args[0] as float
 		TYPE_INT: value = args[0] as float
-		_: value = args
-	return Status.ok({"node": node, "propertyValue": value})
+		_: 
+			# if it's none of the above, probably is an axis of a vector or a color 
+			# we take the whole vector and assign the command value to the according axis keeping
+			# the rest intact
+			var axisName = propertyName.split("_")[1]
+			propertyName = propertyName.split("_")[0]
+			property = node.get(propertyName)
+			if propertyName == null: return Status.error("Property not found: %s.%s" % [node, propertyName])
+			var axisValue = args[0] as float
+			match axisName:
+				"x": property.x = args[0] as float
+				"y": property.y = args[0] as float
+				"z": property.z = args[0] as float
+				"r": property.r = args[0] as float
+				"g": property.g = args[0] as float
+				"b": property.b = args[0] as float
+				"a": property.a = args[0] as float
+			value = property
+			propertyName = propertyName.replace("_", ".")
+	return Status.ok({"node": node, "propertyName": propertyName, "propertyValue": value})
 
 func setActorText(nameAndMsg: Array) -> Status:
 	var actorName = nameAndMsg[0]

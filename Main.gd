@@ -138,6 +138,7 @@ func evalCommand(cmdArray: Array, sender: String) -> Status:
 		# put variable values from the OSC command into the 
 		# CommandDescritpion.variables dictionary
 		var subcommands = ocl._def(cmdDescription, args)
+		
 		result = evalCommands(subcommands, sender)
 	elif cmdDescription is CommandDescription:
 		if cmdDescription.toGdScript: args = cmdArray
@@ -172,9 +173,29 @@ func executeCommand(command: CommandDescription, args: Array) -> Status:
 		var subargs = convertArguments(command.argsDescription, args.slice(1))
 		result = command.callable.call(args[0], subargs)
 	else:
-		# Reduce the number of args to the expected size, else callv will fail
-		result = command.callable.callv(args.slice(0, result.value))
+		# Reduce the number of args to the expected size, else callv will fail.
+		# Exceeding arguments will be grouped into an array and passed as the last argument.
+		var cmdNumArgs = args.size()
+		var callableNumArgs = getNumArgsForMethod(command.callable, command.callable.get_method())
+		#var callableArgs = getMethodSignature(command.callable, command.callable.get_method())
+		var excessArgs = args.slice(callableNumArgs - 1)
+		var finalArgs = args.slice(0, callableNumArgs - 1) + excessArgs
+		for arg in finalArgs:
+			print("%s(%s)" % [arg, typeof(arg)])
+		result = command.callable.callv(finalArgs)
 	return result
+
+func getMethodSignature(callable: Callable, methodName: String) -> Variant:
+	var args := []
+	for method in callable.get_object().get_method_list():
+		if methodName == method.name: 
+			for arg in method.args:
+				args.append(arg.name)
+			return args
+	return []
+
+func getNumArgsForMethod(callable: Callable, methodName: String) -> int:
+	return getMethodSignature(callable, methodName).size()
 
 func checkNumberOfArguments(argsDescription: String, args: Array) -> Status:
 	var expectedNumberOfArgs := argsDescription.split(" ").size() if len(argsDescription) > 0 else 0
