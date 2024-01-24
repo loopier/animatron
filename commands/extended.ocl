@@ -1,36 +1,36 @@
-# create a new ACTOR with an ANIMATION
-/def /new actor animation
+# Create a new ACTOR with an ANIMATION.
+/def /new actor:s animation:s
      /load $animation
      /create $actor $animation
 
-# reload ANIMATION frames from disk
-/def /reload animation
+# Reload ANIMATION frames from disk.
+/def /reload animation:s
      /unload $animation
      /load $animation
 
-# play the animation from START to END frames
-/def /play/range actor start end
+# Play the animation from START to END frames.
+/def /play/range actor:s start:i end:i
      /start/frame $actor $start
      /end/frame $actor $end
 
-# set the X and Y coordinates of the ACTOR
-/def /position actor x y
+# Set the X and Y coordinates (in pixels) of the ACTOR.
+/def /position actor:s x:f y:f
      /property /position $actor $x $y
 
-/def /color/r actor value
+/def /color/r actor:s value:f
      /color $actor $value 0 0
 
-/def /color/g actor value
+/def /color/g actor:s value:f
      /color $actor 0 $value 0
 
-/def /color/b actor value
+/def /color/b actor:s value:f
      /color $actor 0 0 $value
 
-/def /loop actor
+/def /loop actor:s
      /play $actor
      /animation/loop $actor 1
 
-/def /noloop actor
+/def /noloop actor:s
      /animation/loop $actor 0
 
 /def /commands
@@ -45,28 +45,29 @@
 /def /animations
      /animations/list
 
-/def /free actor
+/def /free actor:s
      /remove $actor
 
 
-/def /reverse actor
+/def /reverse actor:s
      /play/backwards $actor
 
 
-/def /speed actor speed
+/def /speed actor:s speed:f
      /speed/scale $actor $speed
 
-/def /pos/x actor value
+/def /pos/x actor:s value:f
      /position/x $actor $value
 
-/def /pos/y actor value
+/def /pos/y actor:s value:f
      /position/y $actor $value
 
-/def /x actor value
+/def /x actor:s value:f
      /position/x $actor $value
 
-/def /y actor value
+/def /y actor:s value:f
      /position/y $actor $value
 
-/def /angle actor degrees
-     /rotation/degrees $actor $degrees
+# Set the rotation of the ACTOR in DEGREES.
+/def /angle actor:s degrees:f
+     /property /rotation/degrees $actor $degrees

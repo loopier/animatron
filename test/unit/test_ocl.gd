@@ -124,3 +124,40 @@ func test_removeExprSpaces():
 func test_removeSpaces():
 	assert_eq(ocl._removeSpaces("this is a test"), "thisisatest")
 	assert_eq(ocl._removeSpaces("\n\tthis \tis t  o\no "), "thisistoo")
+
+func test_replaceVariablesWithValues():
+	var cmd = ["/position", "$actor", "$x", "$y"]
+	var variables = ["actor:s", "x:f", "y:f"]
+	var values = ["bla", "100", "200"]
+	assert_eq(ocl._replaceVariablesWithValues(cmd, variables, values), ["/position", "bla", "100", "200"])
+	cmd = ["/position", "bla", "$x", "$y"]
+	variables = ["actor:s", "x:f", "y:f"]
+	values = ["bla", "100", "200"]
+	assert_eq(ocl._replaceVariablesWithValues(cmd, variables, values), ["/position", "bla", "100", "200"])
+	cmd = ["/position", "bla_$actor", "$x", "$y"]
+	variables = ["actor:s", "x:f", "y:f"]
+	values = ["1", "100", "200"]
+	assert_eq(ocl._replaceVariablesWithValues(cmd, variables, values), ["/position", "bla_1", "100", "200"])
+	cmd = ["/position", "$actor_bla", "$x", "$y"]
+	variables = ["actor:s", "x:f", "y:f"]
+	values = ["1", "100", "200"]
+	assert_eq(ocl._replaceVariablesWithValues(cmd, variables, values), ["/position", "1_bla", "100", "200"])
+	cmd = ["/position", "$actor_bla_$actor", "$x", "$y"]
+	variables = ["actor:s", "x:f", "y:f"]
+	values = ["1", "100", "200"]
+	assert_eq(ocl._replaceVariablesWithValues(cmd, variables, values), ["/position", "1_bla_1", "100", "200"])
+	
+
+func test_getVariableType():
+	assert_eq(ocl._getVariableType("actor:s"), "s")
+	assert_eq(ocl._getVariableType("actor:i"), "i")
+	assert_eq(ocl._getVariableType("actor:f"), "f")
+	assert_eq(ocl._getVariableType("actor:b"), "b")
+	assert_eq(ocl._getVariableType("actor:?"), "s")
+
+func test_getVariableName():
+	assert_eq(ocl._getVariableName("actor:s"), "$actor")
+	assert_eq(ocl._getVariableName("actor:i"), "$actor")
+	assert_eq(ocl._getVariableName("actor:f"), "$actor")
+	assert_eq(ocl._getVariableName("actor:b"), "$actor")
+	assert_eq(ocl._getVariableName("actor:?"), "$actor")

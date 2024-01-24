@@ -97,41 +97,75 @@ func _processReservedWord(word: String, args: Array) -> Variant:
 ## Example: [code]/for i 4 /post $i[/code]
 func _for(args: Array) -> Array:
 	var result = []
-	var variableName = "$%s" % [args[0]]
+	var variableName = args[0]
 	var range = int(args[1])
 	var items = args.slice(2)
 	
 	for i in range:
-		result.append(_replaceVariable(variableName, i, items))
+		#result.append(_replaceVariable(variableName, i, items))
+		result .append(_replaceVariablesWithValues(items, [variableName], ["%s" % i]))
 	return result
 
 ## Replaces all instances of the [param variable] in the [param args] by the [param value]. 
-func _replaceVariable(variable: String, value: Variant, args: Array) -> Array:
-	var newArgs = args.duplicate()
-	for i in len(newArgs):
-		if typeof(newArgs[i]) == TYPE_STRING and variable in newArgs[i]:
-			# just replace by the value if it's not part of a longer string
-			if len(newArgs[i]) == len(variable):
-				newArgs[i] = value
-			else:
-				newArgs[i] = newArgs[i].replace(variable, "%s" % [value])
-	return newArgs
+func _replaceVariablesWithValues(cmd: Array, variables: Array, values:Array) -> Array:
+	var newCmd := []
+	for token in cmd:
+		for i in variables.size():
+			var variable = variables[i]
+			var variableName = _getVariableName(variable)
+			var type = _getVariableType(variable)
+			#var typedValue = _getVariableTypedValue(type, values[i])
+			token = token.replace(variableName, "%s" % values[i])
+		newCmd.append(token)
+	return newCmd
 
+## Returns the single character representing a type of the [param variableDescription].
+## Example: [code]_get_variable_type("actor:s")[/code] returns [code]"s"[/code]
+func _getVariableType(variableDescription: String) -> String:
+	if not variableDescription.contains(":"): return variableDescription
+	var type = variableDescription.split(":")[1]
+	match type:
+		"i", "f", "b": return type
+		_: return "s"
+
+## Returns the name of the variable [param variableDescription].
+## Example: [code]_get_variable_type("actor:s")[/code] returns [code]"actor"[/code]
+func _getVariableName(variableDescription: String) -> String:
+	return variableDescription.split(":")[0].insert(0, "$")
+
+func _getVariableTypedValue(type: String, value: String) -> Variant:
+	match type:
+		"i": return value as int
+		"f": return value as float
+		"b": return value as bool
+		_: return value
+
+## Returns the array of commands with all the variables replaced by their values.
+## [param def] is a [class Dictionary] containing the [param def] variables description and 
+## an [class Array] of subcommands.
+## [param values] will be put anywhere where the [param def.variables] are present in the subcommands. 
+func _def(def: Dictionary, values: Array) -> Array:
+	var result = []
+	for cmd in def.subcommands:
+		var cmdWithValues = _replaceVariablesWithValues(cmd, def.variables, values)
+		result.append(cmdWithValues)
+#	Log.debug("processed def: %s" % [result])
+	return result
 ## Returns the array of commands with all the variables replaced
 ## [param variables] is a [class Dictionary] where the key is the variable name.
 ## [param commands] is an [class Array] of commands with variables
-func _def(variables: Dictionary, commands: Array) -> Array:
-	var result = []
-	for cmd in commands:
-		for i in len(cmd):
-			var item = cmd[i]
-			if typeof(item) == TYPE_STRING and item.contains("$"):
-				var varName = item.substr(item.find("$"))
-				var value = variables[varName.substr(1)] if variables.has(varName.substr(1)) else item
-				cmd = _replaceVariable(varName, value, cmd)
-		result.append(cmd)
-#	Log.debug("processed def: %s" % [result])
-	return result
+#func _def(variables: Dictionary, commands: Array) -> Array:
+	#var result = []
+	#for cmd in commands:
+		#for i in len(cmd):
+			#var item = cmd[i]
+			#if typeof(item) == TYPE_STRING and item.contains("$"):
+				#var varName = item.substr(item.find("$"))
+				#var value = variables[varName.substr(1)] if variables.has(varName.substr(1)) else item
+				#cmd = _replaceVariable(varName, value, cmd)
+		#result.append(cmd)
+##	Log.debug("processed def: %s" % [result])
+	#return result
 
 
 ## Evaluate a string expression (possibly with variables)

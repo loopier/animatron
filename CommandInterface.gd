@@ -155,8 +155,8 @@ var coreCommands: Dictionary = {
 	"/apply/scale": CommandDescription.new(callActorMethodWithVector, "", "", Flags.gdScript()),
 	"/set/position": CommandDescription.new(callActorMethodWithVector, "", "", Flags.gdScript()),
 	#"/position": CommandDescription.new(setActorPropertyWithVector, "actor:s x:i y:i", "Set the ACTOR's absolute position in pixels.", Flags.gdScript()),
-	#"/position/x": CommandDescription.new(setActorPropertyWithVectorN, "actor:s pixels:i", "Set the ACTOR's absolute position in PIXELS on the X axis.", Flags.gdScript()),
-	#"/position/y": CommandDescription.new(setActorPropertyWithVectorN, "actor:s pixels:i", "Set the ACTOR's absolute position in PIXELS on the Y axis.", Flags.gdScript()),
+	"/position/x": CommandDescription.new(setActorPropertyWithVectorN, "actor:s pixels:i", "Set the ACTOR's absolute position in PIXELS on the X axis.", Flags.gdScript()),
+	"/position/y": CommandDescription.new(setActorPropertyWithVectorN, "actor:s pixels:i", "Set the ACTOR's absolute position in PIXELS on the Y axis.", Flags.gdScript()),
 	"/center": CommandDescription.new(center, "actor:s", "Set the ACTOR to the center of the screen."),
 	"/move": CommandDescription.new(move, "actor:s xcoord:f ycoord:f", "Move ACTOR to XCOORD - YCOORD relative to the current position.", Flags.asArray(false)),
 	"/move/x": CommandDescription.new(moveX, "actor:s xcoord:f", "Move ACTOR to XCOORD relative to the current position.", Flags.asArray(false)),
@@ -193,10 +193,7 @@ func defineCommand(args: Array) -> Status:
 	var commandName = commandDef[0]
 	var commandVariables = commandDef.slice(1)
 	var subCommands = splits.slice(1)
-	defCommands[commandName] = {"variables": {}, "subcommands": subCommands}
-	# we need to initialize the variables placeholder 
-	for variable in commandVariables:
-		defCommands[commandName].variables[variable] = null
+	defCommands[commandName] = {"variables": commandVariables, "subcommands": subCommands}
 	return Status.ok([commandName, commandVariables, subCommands], "Added command def: %s %s" % [commandName, commandVariables, subCommands])
 
 func forCommand(args: Array) -> Status:
@@ -790,6 +787,7 @@ func setActorPropertyWithVectorN(actor, args: Array) -> Status:
 	#for actor in result.value:
 		#var value = getArgsAsPropertyType(actor, property, args.slice(2))
 		#setNodePropertyWithVectorN(actor, property, args[1])
+	return Status.error("Broken when imlementing new setActorProperty")
 	return Status.ok()
 
 func setAnimationPropertyWithVectorN(property, args) -> Status:
@@ -810,7 +808,7 @@ func _cmd_to_set_property(property: String) -> String:
 ## For example: [code]/visible/ratio[/code] is converted to [code]visible_ratio[/code]
 func _cmd_to_property(property: String) -> String:
 	property = property.substr(1) if property.begins_with("/") or property.begins_with("_") else property
-	return property.replace("/", "")
+	return property.replace("/", "_")
 
 # FIX: change array arguments to separate arguments: property, actor, value(s)
 func setActorProperty(args: Array) -> Status:
