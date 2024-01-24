@@ -1,3 +1,7 @@
+/def /play/range actor start end
+     /start/frame $actor $start
+     /end/frame $actor $end
+
 /def /reload anim
      /unload $anim
      /load $anim
