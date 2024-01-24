@@ -1,7 +1,8 @@
-[gd_scene load_steps=6 format=3 uid="uid://bv4h4a2us0yne"]
+[gd_scene load_steps=7 format=3 uid="uid://bv4h4a2us0yne"]
 
 [ext_resource type="Shader" path="res://meta_node.gdshader" id="1_srg6k"]
 [ext_resource type="FontFile" uid="uid://citw5lds10cgy" path="res://fonts/fs-blok-regular.ttf" id="2_8vq87"]
+[ext_resource type="Script" path="res://Animation.gd" id="2_wfrnp"]
 
 [sub_resource type="ShaderMaterial" id="ShaderMaterial_lhcii"]
 resource_local_to_scene = true
@@ -22,6 +23,7 @@ Label/colors/font_color = Color(0, 0, 0, 1)
 [node name="Animation" type="AnimatedSprite2D" parent="."]
 material = SubResource("ShaderMaterial_lhcii")
 sprite_frames = SubResource("SpriteFrames_g6lqa")
+script = ExtResource("2_wfrnp")
 
 [node name="CollisionShape2D" type="CollisionShape2D" parent="."]
 
@@ -41,3 +43,5 @@ fit_content = true
 scroll_active = false
 autowrap_mode = 0
 shortcut_keys_enabled = false
+
+[connection signal="frame_changed" from="Animation" to="Animation" method="_on_frame_changed"]

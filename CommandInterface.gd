@@ -128,6 +128,8 @@ var coreCommands: Dictionary = {
 	"/frame": CommandDescription.new(setAnimationProperty, "actor:s frame:i", "Set the ACTOR's current FRAME.", Flags.gdScript()),
 	#"/frame/progress": CommandDescription.new(setAnimationProperty, "", "", Flags.gdScript()),
 	"/speed/scale": CommandDescription.new(setAnimationProperty, "actor:s speed:f", "Set the ACTOR's animation SPEED (1 = normal speed, 2 = 2 x speed).", Flags.gdScript()),
+	"/start/frame": CommandDescription.new(setAnimationProperty, "actor:s frame:i", "Set the first FRAME of the loop in ACTOR's animation. Defaults to 0.", Flags.gdScript()),
+	"/end/frame": CommandDescription.new(setAnimationProperty, "actor:s frame:i", "Set the last FRAME of the loop in ACTOR's animation. Defaults to number of frames of the animation.", Flags.gdScript()),
 	"/flip/v": CommandDescription.new(toggleAnimationProperty, "actor:s", "Flip/ ACTOR vertically.", Flags.gdScript()),
 	"/flip/h": CommandDescription.new(toggleAnimationProperty, "actor:s", "Flip ACTOR horizontally.", Flags.gdScript()),
 	"/visible": CommandDescription.new(toggleActorProperty, "actor:s visibility:b", "Set ACTOR's VISIBILITY to either true or false.", Flags.gdScript()),
@@ -689,7 +691,12 @@ func createActor(actorName: String, anim: String) -> Status:
 	if result.isError():
 		result = setActorText([actorName, actorName])
 		return result
+	
+	actor.get_node("Animation").animation_finished.connect(_on_animation_finished)
 	return Status.ok(actor, msg)
+
+func _on_animation_finished():
+	print("animation finished")
 
 func createAnimationActor(actor: Node, anim: String) -> Status:
 	# FIX: this may not be necessary. Maybe we can call setAnimationProperty("animation", "anim")
