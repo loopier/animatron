@@ -1,9 +1,8 @@
 #+title: Animatron
-#+todo: TODO IN_PROGRESS | DONE
+#+todo: TODO NEXT IN_PROGRESS | DONE
 
 * TODO state machines
-* TODO pivot (anchor?)
-* TODO loop range
+* NEXT pivot (anchor?)
 * TODO sequencer
 * TODO trackpad or phone
 * IN_PROGRESS text : /type
@@ -11,7 +10,9 @@
 - [ ] add command to change size
 - [ ] add command to change text position
 * TODO grid
-* IN_PROGRESS Tween
+* TODO find better syntax for tweens
+
+* DONE Tween
 - [X] currently only supports actor properties
 - [X] add support for animation properties
-- [ ] find a nice syntax so users don't need to know GDScript nomenclatures
+* DONE loop range

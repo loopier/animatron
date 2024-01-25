@@ -17,6 +17,36 @@
 /def /position actor:s x:f y:f
      /property /position $actor $x $y
 
+# Set the X coordinate (in pixels) of the ACTOR.
+/def /position/x actor:s x:f
+     /property /position/x $actor $x
+
+# Set the Y coordinate (in pixels) of the ACTOR.
+/def /position/y actor:s y:f
+     /property /position/y $actor $y
+
+# See /position
+/def /pos actor:s x:f y:f
+     /position $actor $x $y
+
+# See /position/x
+/def /pos/x actor:s value:f
+     /position/x $actor $value
+
+# See /position/y
+/def /pos/y actor:s value:f
+     /position/y $actor $value
+
+# See /position/x
+/def /x actor:s value:f
+     /position/x $actor $value
+
+# See /position/y
+/def /y actor:s value:f
+     /position/y $actor $value
+
+
+
 /def /color/r actor:s value:f
      /color $actor $value 0 0
 
@@ -55,18 +85,6 @@
 
 /def /speed actor:s speed:f
      /speed/scale $actor $speed
-
-/def /pos/x actor:s value:f
-     /position/x $actor $value
-
-/def /pos/y actor:s value:f
-     /position/y $actor $value
-
-/def /x actor:s value:f
-     /position/x $actor $value
-
-/def /y actor:s value:f
-     /position/y $actor $value
 
 # Set the rotation of the ACTOR in DEGREES.
 /def /angle actor:s degrees:f
