@@ -4,5 +4,5 @@
 /editor/clear
 /post/toggle
 
-/editor/append /new ma mama
-/editor/append /property /position/x ma 900
+#/editor/append /new ma mama
+#/editor/append /property /position/x ma 900

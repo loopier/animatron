@@ -696,7 +696,8 @@ func createActor(actorName: String, anim: String) -> Status:
 	return Status.ok(actor, msg)
 
 func _on_animation_finished():
-	print("animation finished")
+	#Log.debug("animation finished")
+	pass
 
 func createAnimationActor(actor: Node, anim: String) -> Status:
 	# FIX: this may not be necessary. Maybe we can call setAnimationProperty("animation", "anim")
