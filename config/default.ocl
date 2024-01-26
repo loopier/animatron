@@ -5,6 +5,4 @@
 /post/toggle
 
 /editor/append /create bla bla
-/editor/append /text/property /text bla alo
-/editor/append /text/property /text bla alooo xxx
-/editor/append /type bla alooo xxx
+/editor/append /type bla {2 + 3}
