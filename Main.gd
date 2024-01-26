@@ -137,6 +137,7 @@ func evalCommand(cmdArray: Array, sender: String) -> Status:
 	var callable : Variant
 	var result := Status.new()
 	var cmdDescription : Variant = cmdInterface.getCommandDescription(cmd)
+	var parsedCmd = ocl._parseVariables(cmd.split(" "), VariablesManager.getAll().keys(), VariablesManager.getAll().values())
 	if cmdDescription is String: 
 		return evalCommand([cmdDescription] + args, sender)
 	elif cmdDescription is Dictionary: # it's a /def
@@ -168,7 +169,7 @@ func executeCommand(command: CommandDescription, args: Array) -> Status:
 			var expr := ocl._getExpression(args[i])
 			if not expr.is_empty():
 				var expResult := ocl._evalExpr(expr, variables.keys(), variables.values())
-				if expResult.isError(): return expResult
+				if expResult.isError() or expResult.value == null: return Status.error("Invalid expression: %s" % [expr])
 				#if not expResult: return Status.error("Invalid expression")
 				args[i] = expResult.value as float
 	if args.size() == 0 and not command.argsAsArray:

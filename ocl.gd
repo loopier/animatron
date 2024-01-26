@@ -83,6 +83,7 @@ func _getVariableWithCorrectType(type: String, value: String) -> Variant:
 		"f": return value as float
 		"b": return value as bool
 		_: return value
+
 ## Evaluate a string expression (possibly with variables)
 ## Example of use:
 ##	var exprStr := "5*i + 8"
@@ -96,7 +97,7 @@ func _evalExpr(exprStr: String, vars: PackedStringArray, varValues: Array) -> St
 		return
 	var result = expr.execute(varValues)
 	if not expr.has_execute_failed():
-		Log.info("expression '%s' result: %f" % [exprStr, result])
+		#Log.info("expression '%s' result: %f" % [exprStr, result])
 		pass
 	return Status.ok(result)
 

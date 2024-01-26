@@ -41,8 +41,8 @@ var Flags := CommandDescription.Flags
 var coreCommands: Dictionary = {
 	"/help": CommandDescription.new(getHelp, "cmd:s", "Get documentation about CMD."),
 #	"/test": CommandDescription.new(getActor, "", "This is just a test"), ## used to test random stuff
-	"/set": CommandDescription.new(setVar, "", "TODO", Flags.asArray(true)),
-	"/get": CommandDescription.new(getVar, "", "TODO"),
+	"/set": CommandDescription.new(setVar, "variable:type value:ifbs...", "Set a user VARIABLE with a VALUE, specifying the TYPE (:i = int, :f = float, :b = bool, :s string, :... = arbitrary number of arguments passed as array).\n\nUsage: /set x:f 3.14", Flags.asArray(true)),
+	"/get": CommandDescription.new(getVar, "variable:s", "Get the value of a VARIABLE."),
 	# log
 	"/log/level": CommandDescription.new(setLogLevel, "level:s", "Set the log level to either 'fatal', 'error', 'warn', 'debug' or 'verbose'"),
 	# general commands
@@ -507,17 +507,6 @@ func oscStrToDict(oscStr: String) -> Dictionary:
 func isActor(actorName: String) -> bool:
 	return false if actorsNode.find_child(actorName) == null else true
 
-## Get a variable value by [param varName].
-##
-## This method returns a single value. If by any reason the value holds
-## more than one, it will return only the first one.
-func getVar(varName: String) -> Status:
-	var value = VariablesManager.getValue(varName)
-	# error managment cannot be done from a static method (in this case in VariablesManager.getValue())
-	if value == null: return Status.error("Variable '%s' not found return: %s" % [varName, value])
-	if typeof(value) == TYPE_CALLABLE: value = value.call()
-	return Status.ok(value, "Variable '%s': %s" % [varName, value])
-
 ## Set and store new [param value] in a variable with a [param varName]
 ## Returns the value stored in the variable
 func setVar(args: Array) -> Status:
@@ -530,7 +519,18 @@ func setVar(args: Array) -> Status:
 		"b": VariablesManager.setValue(varName, args[0] as bool)
 		"s": VariablesManager.setValue(varName, " ".join(args[0]))
 		"...": VariablesManager.setValue(varName, args)
-	return Status.ok()
+	return getVar(varName)
+
+## Get a variable value by [param varName].
+##
+## This method returns a single value. If by any reason the value holds
+## more than one, it will return only the first one.
+func getVar(varName: String) -> Status:
+	var value = VariablesManager.getValue(varName)
+	# error managment cannot be done from a static method (in this case in VariablesManager.getValue())
+	if value == null: return Status.error("Variable '%s' not found return: %s" % [varName, value])
+	if typeof(value) == TYPE_CALLABLE: value = value.call()
+	return Status.ok(value, "Variable '%s': %s" % [varName, value])
 
 ## Returns the value of a command to be executed.
 ## If no description is found, it returns [code]null[/code].
