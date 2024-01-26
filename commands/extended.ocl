@@ -13,6 +13,9 @@
      /start/frame $actor $start
      /end/frame $actor $end
 
+#################################################################################
+# transform                                                                     #
+#################################################################################
 # Set the X and Y coordinates (in pixels) of the ACTOR.
 /def /position actor:s x:f y:f
      /property /position $actor $x $y
@@ -45,8 +48,13 @@
 /def /y actor:s value:f
      /position/y $actor $value
 
+# Set the rotation of the ACTOR in DEGREES.
+/def /angle actor:s degrees:f
+     /property /rotation/degrees $actor $degrees
 
-
+#################################################################################
+# color                                                                         #
+#################################################################################
 /def /color/r actor:s value:f
      /color $actor $value 0 0
 
@@ -59,6 +67,38 @@
 /def /loop actor:s
      /play $actor
      /animation/loop $actor 1
+
+#################################################################################
+# animation                                                                     #
+#################################################################################
+# Set the ACTOR's ANIMATION.
+/def /animation actor:s animation:s
+     /animation/property /animation $actor $animation
+
+# See /animation
+/def /anim actor:s animation:s
+     /animation $actor $animation
+
+# Set the ACTOR's animation SPEED (1 = normal speed, 2 = 2 x speed).
+/def /speed actor:s speed:f
+     /animation/property /speed/scale $actor $speed
+
+# Set the ACTOR's current FRAME.
+/def /frame actor:s frame:f
+     /animation/property /frame $actor $frame
+
+# Set the ACTOR's current FRAME.
+/def /frame actor:s frame:f
+     /animation/property /frame $actor $frame
+
+# Set the first FRAME of the loop in ACTOR's animation. Defaults to 0.
+/def /start/frame actor:s frame:f
+     /animation/property /start/frame $actor $frame
+
+# Set the last FRAME of the loop in ACTOR's animation.
+# Defaults to number of frames of the animation.
+/def /end/frame actor:s frame:f
+     /animation/property /end/frame $actor $frame
 
 /def /noloop actor:s
      /animation/loop $actor 0
@@ -78,14 +118,11 @@
 /def /free actor:s
      /remove $actor
 
-
 /def /reverse actor:s
      /play/backwards $actor
 
-
-/def /speed actor:s speed:f
-     /speed/scale $actor $speed
-
-# Set the rotation of the ACTOR in DEGREES.
-/def /angle actor:s degrees:f
-     /property /rotation/degrees $actor $degrees
+#################################################################################
+# text                                                                          #
+#################################################################################
+/def /type actor:s text:...
+     /text/property /text $actor $text

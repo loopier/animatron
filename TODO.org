@@ -11,6 +11,12 @@
 - [ ] add command to change text position
 * TODO grid
 * TODO find better syntax for tweens
+* DONE `/animation/property`
+* TODO Abstraction of `set*Property` - join all 3 methods
+* IN_PROGRESS `/text/property`
+* TODO rethink cmd evaluation
+- parse command for variables
+- parse command for expressions, passing variables
 
 * DONE Tween
 - [X] currently only supports actor properties

@@ -7,7 +7,7 @@ func _for(args: Array) -> Array:
 	var range = int(args[1])
 	var items = args.slice(2)
 	for i in range:
-		result .append(_replaceVariablesWithValues(items, [variableName], ["%s" % i]))
+		result .append(_parseVariables(items, [variableName], ["%s" % i]))
 	return result
 
 ## Returns the array of commands with all the variables replaced by their values.
@@ -17,21 +17,27 @@ func _for(args: Array) -> Array:
 func _def(def: Dictionary, values: Array) -> Array:
 	var result = []
 	for cmd in def.subcommands:
-		var cmdWithValues = _replaceVariablesWithValues(cmd, def.variables, values)
+		var cmdWithValues = _parseVariables(cmd, def.variables, values)
 		result.append(cmdWithValues)
 #	Log.debug("processed def: %s" % [result])
 	return result
 
 ## Replaces all instances of the [param variable] in the [param args] by the [param value]. 
-func _replaceVariablesWithValues(cmd: Array, variables: Array, values:Array) -> Array:
+func _parseVariables(cmd: Array, variables: Array, values:Array) -> Array:
 	var newCmd := []
 	for token in cmd:
 		for i in variables.size():
 			var variable = variables[i]
 			var variableName = _getVariableName(variable)
 			var type = _getVariableType(variable)
-			#var typedValue = _getVariableTypedValue(type, values[i])
-			token = token.replace(variableName, "%s" % values[i])
+			var value = values[i]
+			#var typedValue = _getVariableWithCorrectType(type, values[i])
+			
+			# '...' describes an arbitrary number of arguments
+			# this can only happen in the last argument, so we get the rest of 
+			# possible arguments as string
+			if type == "...": value = " ".join(values.slice(i))
+			token = token.replace(variableName, "%s" % value)
 		newCmd.append(token)
 	return newCmd
 
@@ -41,7 +47,7 @@ func _getVariableType(variableDescription: String) -> String:
 	if not variableDescription.contains(":"): return variableDescription
 	var type = variableDescription.split(":")[1]
 	match type:
-		"i", "f", "b": return type
+		"i", "f", "b", "...": return type
 		_: return "s"
 
 ## Returns the name of the variable [param variableDescription].
@@ -49,7 +55,7 @@ func _getVariableType(variableDescription: String) -> String:
 func _getVariableName(variableDescription: String) -> String:
 	return variableDescription.split(":")[0].insert(0, "$")
 
-func _getVariableTypedValue(type: String, value: String) -> Variant:
+func _getVariableWithCorrectType(type: String, value: String) -> Variant:
 	match type:
 		"i": return value as int
 		"f": return value as float

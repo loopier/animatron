@@ -37,11 +37,11 @@ var assetsPath := "user://assets"
 var animationAssetsPath := assetsPath + "/animations"
 var Flags := CommandDescription.Flags
 
-## A dictionary used to store variables accessible from OSC messages.
-## They are stored in a file, and loaded into this dictionary.
+## A [class Dictionary] used to store variables accessible from OSC messages.
 var variables: Dictionary:
 	set(value): variables = value
 	get: return variables
+
 ## Core commands map.[br]
 var coreCommands: Dictionary = {
 	"/help": CommandDescription.new(getHelp, "cmd:s", "Get documentation about CMD."),
@@ -61,6 +61,8 @@ var coreCommands: Dictionary = {
 	"/animations/list": CommandDescription.new(listAnimations, "", "Get the list of available (loaded) animations."), # loaded
 	# actors
 	"/property": CommandDescription.new(setActorProperty, "property:s actor:s value:...", "Generic command to set the VALUE to any PROPERTY of an ACTOR.", Flags.asArray(true)),
+	"/animation/property": CommandDescription.new(setAnimationProperty, "property:s actor:s value:...", "Change the ACTOR's ANIMATION GDScript PROPERTY. Slashes ('/') will be replaced for underscores '_'. Leading slash is optional.\n\nUsage: `/animation/property /rotation/degrees target 75`", Flags.asArray(true)),
+	"/text/property": CommandDescription.new(_setTextProperty, "property:s actor:s value:...", "Change the ACTOR's TEXT GDScript PROPERTY. Slashes ('/') will be replaced for underscores '_'. Leading slash is optional.\n\nUsage: `/text/property /text target alo bla`", Flags.asArray(true)),
 	
 	"/actors/list": CommandDescription.new(listActors, "", "Get list of current actor instances. Returns /list/actors/reply OSC message."),
 	"/create": CommandDescription.new(createActor, "actor:s animation:s", "Create an ACTOR that plays ANIMATION."),
@@ -122,16 +124,16 @@ var coreCommands: Dictionary = {
 	"/rand": CommandDescription.new(randCmdValue, "cmd:s actor:s min:f max:f", "Send a CMD to an ACTOR with a random value between MIN and MAX. If a wildcard is used, e.g. `bl*`, all ACTORs with with a name that begins with `bl` will get a different value. *WARNING: This only works with single-value commands.*", Flags.asArray(true)),
 	"/tween": CommandDescription.new(tweenActorProperty, "dur:f transition:s property:s actor:s value:f", "Tweens a PROPERTY of an ACTOR between the current value and final VALUE in a span of time equal to DURation, in seconds. The TRANSITION must be one of: linear, sine, quint, quart, quad, expo, elastic, cubic, circ, bounce, back and spring.", Flags.asArray(true)),
 	# Node
-	"/animation": CommandDescription.new(setAnimationProperty, "actor:s animation:s", "Change the ACTOR's ANIMATION.", Flags.gdScript()),
+	#"/animation": CommandDescription.new(setAnimationProperty, "actor:s animation:s", "Change the ACTOR's ANIMATION.", Flags.gdScript()),
 	"/play": CommandDescription.new(callAnimationMethod, "actor:s", "Start playing ACTOR's image sequence.", Flags.gdScript()),
 	"/play/backwards": CommandDescription.new(callAnimationMethod, "actor:s", "Play ACTOR's animation backwards.", Flags.gdScript()),
 	"/animation/loop": CommandDescription.new(setAnimationFramesProperty, "actor:s loop:b", "Set the ACTOR's animation to either LOOP or not.", Flags.gdScript()),
 	"/stop": CommandDescription.new(callAnimationMethod, "actor:s", "Stop playing the ACTOR's animation.", Flags.gdScript()),
-	"/frame": CommandDescription.new(setAnimationProperty, "actor:s frame:i", "Set the ACTOR's current FRAME.", Flags.gdScript()),
+	#"/frame": CommandDescription.new(setAnimationProperty, "actor:s frame:i", "Set the ACTOR's current FRAME.", Flags.gdScript()),
 	#"/frame/progress": CommandDescription.new(setAnimationProperty, "", "", Flags.gdScript()),
-	"/speed/scale": CommandDescription.new(setAnimationProperty, "actor:s speed:f", "Set the ACTOR's animation SPEED (1 = normal speed, 2 = 2 x speed).", Flags.gdScript()),
-	"/start/frame": CommandDescription.new(setAnimationProperty, "actor:s frame:i", "Set the first FRAME of the loop in ACTOR's animation. Defaults to 0.", Flags.gdScript()),
-	"/end/frame": CommandDescription.new(setAnimationProperty, "actor:s frame:i", "Set the last FRAME of the loop in ACTOR's animation. Defaults to number of frames of the animation.", Flags.gdScript()),
+	#"/speed/scale": CommandDescription.new(setAnimationProperty, "actor:s speed:f", "Set the ACTOR's animation SPEED (1 = normal speed, 2 = 2 x speed).", Flags.gdScript()),
+	#"/start/frame": CommandDescription.new(setAnimationProperty, "actor:s frame:i", "Set the first FRAME of the loop in ACTOR's animation. Defaults to 0.", Flags.gdScript()),
+	#"/end/frame": CommandDescription.new(setAnimationProperty, "actor:s frame:i", "Set the last FRAME of the loop in ACTOR's animation. Defaults to number of frames of the animation.", Flags.gdScript()),
 	"/flip/v": CommandDescription.new(toggleAnimationProperty, "actor:s", "Flip/ ACTOR vertically.", Flags.gdScript()),
 	"/flip/h": CommandDescription.new(toggleAnimationProperty, "actor:s", "Flip ACTOR horizontally.", Flags.gdScript()),
 	"/visible": CommandDescription.new(toggleActorProperty, "actor:s visibility:b", "Set ACTOR's VISIBILITY to either true or false.", Flags.gdScript()),
@@ -165,9 +167,9 @@ var coreCommands: Dictionary = {
 	#"/rotation/degrees": CommandDescription.new(setActorProperty, "actor:s degrees:f", "Set the angle of the ACTOR in DEGREES.", Flags.gdScript()),
 	"/rotate": CommandDescription.new(rotate, "actor:s degrees:f", "Rotate ACTOR a number of DEGREES relative to the current rotation.", Flags.asArray(false)),
 	# text
-	"/type": CommandDescription.new(setActorText, "actor:s text:s", "Add TEXT to an ACTOR.", Flags.asArray(true)),
-	"/text/visible/ratio": CommandDescription.new(setTextProperty, "actor:s ratio:s", "Set how much text is visible.", Flags.gdScript()),
-	"/text/color": CommandDescription.new(setTextColor, "actor:s r:f g:f b:f", "Add TEXT to an ACTOR."),
+	#"/type": CommandDescription.new(setActorText, "actor:s text:s", "Add TEXT to an ACTOR.", Flags.asArray(true)),
+	#"/text/visible/ratio": CommandDescription.new(setTextProperty, "actor:s ratio:s", "Set how much text is visible.", Flags.gdScript()),
+	#"/text/color": CommandDescription.new(setTextColor, "actor:s r:f g:f b:f", "Add TEXT to an ACTOR."),
 }
 
 ## Custom command definitions
@@ -813,7 +815,6 @@ func _cmd_to_property(property: String) -> String:
 	property = property.substr(1) if property.begins_with("/") or property.begins_with("_") else property
 	return property.replace("/", "_")
 
-# FIX: change array arguments to separate arguments: property, actor, value(s)
 func setActorProperty(args: Array) -> Status:
 	var result = getActors(args[1])
 	if result.isError(): return result
@@ -826,8 +827,36 @@ func setActorProperty(args: Array) -> Status:
 		actor.call(_cmd_to_set_property(property), value)
 	return Status.ok()
 
-func setAnimationProperty(property, args) -> Status:
-	return callAnimationMethod("/set" + property, args)
+func setAnimationProperty(args: Array) -> Status:
+	var result = getActors(args[1])
+	if result.isError(): return result
+	var property = _cmd_to_property(args[0])	
+	for actor in result.value:
+		var animation = actor.get_node("Animation")
+		var propertyArgs = args.slice(2)
+		result = getArgsAsPropertyType(animation, property, propertyArgs)
+		if result.isError(): return result
+		property = result.value.propertyName
+		var value = result.value.propertyValue
+		var calledProperty = _cmd_to_set_property(property)
+		animation.call(calledProperty, value)
+	return Status.ok()
+
+func _setTextProperty(args: Array) -> Status:
+	var result = getActors(args[1])
+	if result.isError(): return result
+	var property = _cmd_to_property(args[0])	
+	for actor in result.value:
+		var actorLabel = actor.get_node("RichTextLabel") 
+		#.get_theme().get_default_font()
+		var propertyArgs = args.slice(2)
+		result = getArgsAsPropertyType(actorLabel, property, propertyArgs)
+		if result.isError(): return result
+		property = result.value.propertyName
+		var value = result.value.propertyValue
+		var calledProperty = _cmd_to_set_property(property)
+		actorLabel.call(calledProperty, value)
+	return Status.ok()
 
 func setAnimationFramesProperty(property, args) -> Status:
 	return callAnimationFramesMethod("/set" + property, args)
@@ -1247,27 +1276,27 @@ func tweenActorProperty(args: Array) -> Status:
 
 ## converts the array of arguments given by the command to the appropriate type depending on
 ## the property
-func getArgsAsPropertyType(node: Node, propertyName: String, args: Array) -> Status:
+func getArgsAsPropertyType(node: Object, propertyName: String, args: Array) -> Status:
 	var property = node.get(propertyName)
-	var isNone := false
+	var propertyType = typeof(property)
 	var value: Variant
-	match typeof(property):
+	match propertyType:
 		TYPE_VECTOR2: value = Vector2(args[0] as float, args[1] as float)
 		TYPE_VECTOR3: value = Vector3(args[0] as float, args[1] as float, args[2] as float)
 		TYPE_VECTOR4: value = Vector4(args[0] as float, args[1] as float, args[2] as float, args[3] as float)
 		TYPE_COLOR: value = Color(args[0] as float, args[1] as float, args[2] as float)
-		TYPE_STRING: value = " ".join(args)
+		TYPE_STRING, TYPE_STRING_NAME: value = " ".join(args)
 		TYPE_FLOAT: value = args[0] as float
 		TYPE_INT: value = args[0] as float
 		_: 
 			# if it's none of the above, probably is an axis of a vector or a color 
 			# we take the whole vector and assign the command value to the according axis keeping
 			# the rest intact
-			var axisName = propertyName.split("_")[1]
+			var axisName := propertyName.split("_")[1] if propertyName.contains("_") else ""
 			propertyName = propertyName.split("_")[0]
 			property = node.get(propertyName)
-			if propertyName == null: return Status.error("Property not found: %s.%s" % [node, propertyName])
-			var axisValue = args[0] as float
+			if property == null: return Status.error("Property not found: %s.%s" % [node, propertyName])
+			var axisValue := args[0] as float
 			match axisName:
 				"x": property.x = args[0] as float
 				"y": property.y = args[0] as float

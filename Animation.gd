@@ -6,6 +6,7 @@ extends AnimatedSprite2D
 # Called when the node enters the scene tree for the first time.
 func _ready():
 	set_end_frame(sprite_frames.get_frame_count(get_animation()))
+	Log.verbose("%s:frame progress: %s" % [get_parent().name, frame_progress])
 
 # Called every frame. 'delta' is the elapsed time since the previous frame.
 func _process(delta):
@@ -18,6 +19,13 @@ func _on_frame_changed():
 	elif is_playing() and get_frame() < start_frame: 
 		set_frame(end_frame if get_speed_scale() < 0 else start_frame)
 		animation_finished.emit()
+
+func _on_animation_changed():
+	#set_frame_progress(0)
+	Log.verbose("%s:%s:frame progress: %s" % [get_parent().name, animation, frame_progress])
+	Log.verbose("%s:%s:speed: %s" % [get_parent().name, animation, speed_scale])
+	Log.verbose("%s:%s:animation speed: %s" % [get_parent().name, animation, sprite_frames.get_animation_speed(animation)])
+	Log.verbose("%s:%s:frames: %s" % [get_parent().name, animation, sprite_frames.get_frame_count(animation)])
 
 ## Sets the lower value to [param start_frame] and the highest value to [param end_frame].
 ## This is done to be consistent in the playing speed.
@@ -40,3 +48,4 @@ func set_start_frame(frame: int):
 func set_end_frame(frame: int):
 	end_frame = clamp(frame, 0, sprite_frames.get_frame_count(get_animation()))
 	adjust_speed_scale()
+

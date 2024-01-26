@@ -21,6 +21,11 @@ var config := preload("res://Config.gd").new()
 @onready var postWindow := $HSplitContainer/VBoxContainer/PostWindow
 var rnd := RandomNumberGenerator.new()
 
+## A [class Dictionary] used to store variables accessible from OSC messages.
+@onready var variables : Dictionary:
+	set(value): variables = value
+	get: return variables
+
 @onready var animationsLibrary : SpriteFrames
 func _init_midi():
 	# separate commands by channel
@@ -62,6 +67,7 @@ func _ready():
 	cmdInterface.stateChangedCallback = Callable(self, "_on_state_changed")
 	cmdInterface.saveFileDialog = $SaveFileDialog
 	cmdInterface.openFileDialog = $OpenFileDialog
+	cmdInterface.variables = variables
 	_init_midi()
 	cmdInterface.midiCommands = midiCommands
 	
