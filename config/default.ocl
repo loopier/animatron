@@ -4,4 +4,8 @@
 /editor/clear
 /post/toggle
 
-/editor/append /post {2 + 3}
+/editor/append /set a:i 90
+/editor/append /get a
+/editor/append
+/editor/append /post {a + 3}
+/post/toggle

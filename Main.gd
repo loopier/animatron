@@ -19,13 +19,8 @@ var ocl: OpenControlLanguage
 var config := preload("res://Config.gd").new()
 @onready var editor := $HSplitContainer/CodeEdit
 @onready var postWindow := $HSplitContainer/VBoxContainer/PostWindow
-var rnd := RandomNumberGenerator.new()
 
-## A [class Dictionary] used to store variables accessible from OSC messages.
-@onready var variables := {
-	"time": func(): Time.get_ticks_msec() * 1e-3,
-	"rnd": RandomNumberGenerator.new(),
-}
+#@onready var variablesManager: VariablesManager
 
 @onready var animationsLibrary : SpriteFrames
 func _init_midi():
@@ -68,12 +63,14 @@ func _ready():
 	cmdInterface.stateChangedCallback = Callable(self, "_on_state_changed")
 	cmdInterface.saveFileDialog = $SaveFileDialog
 	cmdInterface.openFileDialog = $OpenFileDialog
-	cmdInterface.variables = variables
 	_init_midi()
 	cmdInterface.midiCommands = midiCommands
 	
 	ocl = OpenControlLanguage.new()
-	ocl.variables = variables
+	
+	# using a lambda allows to get the latest version of the dictionary on each call
+	#cmdInterface.variablesManager = variablesManager
+	#ocl.variablesManager = variablesManager
 	
 	$SaveFileDialog.set_current_path(OS.get_user_data_dir() + "/animatron")
 	$OpenFileDialog.set_current_path(OS.get_user_data_dir() + "/animatron")
@@ -162,6 +159,7 @@ func evalCommand(cmdArray: Array, sender: String) -> Status:
 func executeCommand(command: CommandDescription, args: Array) -> Status:
 	var result := checkNumberOfArguments(command.argsDescription, args)
 	if result.isError(): return result
+	var variables = VariablesManager.getAll()
 	if not command.deferEvalExpressions:
 		# Don't modify the incoming arguments (so expression strings stay as exprsesions)
 		args = args.duplicate()
@@ -169,10 +167,11 @@ func executeCommand(command: CommandDescription, args: Array) -> Status:
 		for i in args.size():
 			var expr := ocl._getExpression(args[i])
 			if not expr.is_empty():
-				var expResult: float = ocl._evalExpr(expr, variables.keys(), variables.values())
+				var expResult := ocl._evalExpr(expr, variables.keys(), variables.values())
+				if expResult.isError(): return expResult
 				#if not expResult: return Status.error("Invalid expression")
-				args[i] = expResult
-	if args.size() == 0:
+				args[i] = expResult.value as float
+	if args.size() == 0 and not command.argsAsArray:
 		result = command.callable.call()
 	elif command.argsAsArray:
 		result = command.callable.call(args)
@@ -207,9 +206,9 @@ func getNumArgsForMethod(callable: Callable, methodName: String) -> int:
 func checkNumberOfArguments(argsDescription: String, args: Array) -> Status:
 	var expectedNumberOfArgs := argsDescription.split(" ").size() if len(argsDescription) > 0 else 0
 	# For now, allow arbitrary upper bound when the argsDescription includes repeats
-	if argsDescription.contains("..."):
-		expectedNumberOfArgs = max(expectedNumberOfArgs, args.size())
 	var actualNumberOfArgs := args.size()
+	if argsDescription.contains("..."):
+		expectedNumberOfArgs = actualNumberOfArgs
 	if actualNumberOfArgs < expectedNumberOfArgs:
 		return Status.error("Not enough arguments:\nexpected (%s) -> %s\nreceived (%s) -> %s" % [expectedNumberOfArgs, argsDescription, actualNumberOfArgs, args])
 	if actualNumberOfArgs > expectedNumberOfArgs:

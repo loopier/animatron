@@ -1,7 +1,6 @@
 class_name OpenControlLanguage
 
 var rnd := RandomNumberGenerator.new()
-var variables := {}
 
 ## Example: [code]/for i 4 /post bla_$i or $i[/code]
 func _for(args: Array) -> Array:
@@ -26,11 +25,19 @@ func _def(def: Dictionary, values: Array) -> Array:
 	return result
 
 ## Replaces all instances of the [param variable] in the [param args] by the [param value]. 
-func _parseVariables(cmd: Array, cmddVariables: Array, cmdValues:Array) -> Array:
+func _parseVariables(cmd: Array, cmdVariables: Array, cmdValues:Array) -> Array:
 	var newCmd := []
+	var appVariables = VariablesManager.getAll()
 	for token in cmd:
-		for i in cmddVariables.size():
-			var variable = cmddVariables[i]
+		for k in appVariables.keys():
+			var variableName = "$%s" % k
+			var value = appVariables[k]
+			if typeof(value) == TYPE_CALLABLE: value = value.call()
+			value = "%s" % value
+			token = token.replace(variableName, value)
+		
+		for i in cmdVariables.size():
+			var variable = cmdVariables[i]
 			var variableName = _getVariableName(variable)
 			var type = _getVariableType(variable)
 			var value = cmdValues[i] if i < cmdValues.size() else []
@@ -43,9 +50,12 @@ func _parseVariables(cmd: Array, cmddVariables: Array, cmdValues:Array) -> Array
 			
 			var expr := _getExpression(value)
 			if not expr.is_empty():
-				value = _evalExpr(expr, variables.keys(), variables.values())
+				value = _evalExpr(expr, appVariables.keys(), appVariables.values())
+				
+			if appVariables.has(variableName): 
+				Log.warn("Overriding global variable: %s(%s) -> %s" % [appVariables, VariablesManager.getValue(variableName), value])
+				
 			token = token.replace(variableName, "%s" % value)
-			
 		newCmd.append(token)
 	return newCmd
 
@@ -78,7 +88,7 @@ func _getVariableWithCorrectType(type: String, value: String) -> Variant:
 ##	var exprStr := "5*i + 8"
 ##	var result = evalExpr(exprStr, ["i"], [3])
 ##	print("expression '%s' result: %f" % [exprStr, result])
-func _evalExpr(exprStr: String, vars: PackedStringArray, varValues: Array) -> Variant:
+func _evalExpr(exprStr: String, vars: PackedStringArray, varValues: Array) -> Status:
 	var expr := Expression.new()
 	var error := expr.parse(exprStr, vars)
 	if error != OK:
@@ -86,9 +96,9 @@ func _evalExpr(exprStr: String, vars: PackedStringArray, varValues: Array) -> Va
 		return
 	var result = expr.execute(varValues)
 	if not expr.has_execute_failed():
-		#Log.info("expression '%s' result: %f" % [exprStr, result])
+		Log.info("expression '%s' result: %f" % [exprStr, result])
 		pass
-	return result
+	return Status.ok(result)
 
 ## Parse a string to see if it contains an expression
 ## clause, and if so, return that clause.

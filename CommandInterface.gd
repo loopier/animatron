@@ -37,16 +37,11 @@ var assetsPath := "user://assets"
 var animationAssetsPath := assetsPath + "/animations"
 var Flags := CommandDescription.Flags
 
-## A [class Dictionary] used to store variables accessible from OSC messages.
-var variables: Dictionary:
-	set(value): variables = value
-	get: return variables
-
 ## Core commands map.[br]
 var coreCommands: Dictionary = {
 	"/help": CommandDescription.new(getHelp, "cmd:s", "Get documentation about CMD."),
 #	"/test": CommandDescription.new(getActor, "", "This is just a test"), ## used to test random stuff
-	"/set": CommandDescription.new(setVar, "", "TODO"),
+	"/set": CommandDescription.new(setVar, "", "TODO", Flags.asArray(true)),
 	"/get": CommandDescription.new(getVar, "", "TODO"),
 	# log
 	"/log/level": CommandDescription.new(setLogLevel, "level:s", "Set the log level to either 'fatal', 'error', 'warn', 'debug' or 'verbose'"),
@@ -88,7 +83,7 @@ var coreCommands: Dictionary = {
 	# for (loop)
 	"/for": CommandDescription.new(forCommand, "varName:s iterations:i cmd:s", "Iterate `iterations` times over `varName`, substituting the current iteration value in each call to `cmd`.", Flags.asArray(true)),
 	# editor
-	"/editor/append": CommandDescription.new(appendTextToEditor, "text:s", "Append TEXT to the last line of the editor.", Flags.asArray(true)),
+	"/editor/append": CommandDescription.new(appendTextToEditor, "text:...", "Append TEXT to the last line of the editor.", Flags.asArray(true)),
 	"/editor/clear": CommandDescription.new(clearEditor, "", "Delete all text from the editor."),
 	"/editor/open": CommandDescription.new(openTextFile, "", "Open a file dialog and append the selected file contents at the end."),
 	"/editor/save": CommandDescription.new(saveTextFile, "", "Save the code using a file dialog."),
@@ -96,7 +91,7 @@ var coreCommands: Dictionary = {
 	"/editor/save/to": CommandDescription.new(saveTextFileTo, "path:s", "Save the code to PATH."),
 	# post
 	"/post": CommandDescription.new(post, "msg:s", "Print MSG in the post window.", Flags.asArray(false)),
-	"/post/toggle": CommandDescription.new(togglePost, "", "Toggle post window visibility.", Flags.asArray(false)),
+	"/post/toggle": CommandDescription.new(togglePost, "", "Toggle post window visibility."),
 	"/post/clear": CommandDescription.new(clearPost, "", "Clear post window contents."),
 	# osc
 	"/osc/remote": CommandDescription.new(connectOscRemote, "ip:s port:i", "Set the IP address and PORT number of a remote OSC server.", Flags.asArray(true)),
@@ -305,8 +300,8 @@ func setLogLevel(level: String) -> Status:
 	return Status.ok(Log.getLevel(), "Log level: %s" % [Log.getLevel()])
 
 func appendTextToEditor(args: Array) -> Status:
-	var msg = " ".join(args)
-	editor.set_text("%s\n%s" % [editor.get_text(), msg])
+	var msg = " ".join(args) if args.size() > 0 else ""
+	editor.set_line(editor.get_line_count()-1, editor.get_line(editor.get_line_count()-1) + "\n" + msg)
 	return Status.ok()
 
 func clearEditor() -> Status:
@@ -333,7 +328,7 @@ func post(args: Array) -> Status:
 	args = " ".join(PackedStringArray(args)).split("\\n")
 	for arg in args:
 		Log.info(arg)
-	postWindow.set_text("%s\n%s" % [postWindow.get_text(), " ".join(PackedStringArray(args))])
+	postWindow.set_line(postWindow.get_line_count()-1, postWindow.get_line(postWindow.get_line_count()-1) + " ".join(args) + "\n")
 	postWindow.set_caret_line(postWindow.get_line_count())
 	return Status.ok()
 
@@ -517,18 +512,25 @@ func isActor(actorName: String) -> bool:
 ## This method returns a single value. If by any reason the value holds
 ## more than one, it will return only the first one.
 func getVar(varName: String) -> Status:
-	var value = variables[varName][0] if variables.has(varName) else null
-#	Log.debug("Looking for var '%s': %s" % [varName, value])
+	var value = VariablesManager.getValue(varName)
+	# error managment cannot be done from a static method (in this case in VariablesManager.getValue())
 	if value == null: return Status.error("Variable '%s' not found return: %s" % [varName, value])
+	if typeof(value) == TYPE_CALLABLE: value = value.call()
 	return Status.ok(value, "Variable '%s': %s" % [varName, value])
 
 ## Set and store new [param value] in a variable with a [param varName]
 ## Returns the value stored in the variable
-func setVar(varName: String, value: Variant) -> Status:
-	variables[varName] = [value]
-	if Log.getLevel() == Log.LOG_LEVEL_VERBOSE:
-		_list(variables)
-	return Status.ok(variables[varName][0])
+func setVar(args: Array) -> Status:
+	var varName = args[0].split(":")[0]
+	var type = args[0].split(":")[1]
+	args = args.slice(1)
+	match type:
+		"i": VariablesManager.setValue(varName, args[0] as int)
+		"f": VariablesManager.setValue(varName, args[0] as float)
+		"b": VariablesManager.setValue(varName, args[0] as bool)
+		"s": VariablesManager.setValue(varName, " ".join(args[0]))
+		"...": VariablesManager.setValue(varName, args)
+	return Status.ok()
 
 ## Returns the value of a command to be executed.
 ## If no description is found, it returns [code]null[/code].
@@ -538,12 +540,12 @@ func getCommandDescription(command: String) -> Variant:
 	else: return null
 
 ## Remove the [param key] and its value from [param dict]
-func remove(key, dict) -> Status:
-	if variables.has(key): 
-		variables.erase(key)
-		return Status.ok(null, "Removed '%s' from %s" % [key, dict])
-	else:
-		return Status.error("Key not found in %s: '%s'" % [dict, key])
+#func remove(key, dict) -> Status:
+	#if variables.has(key): 
+		#variables.erase(key)
+		#return Status.ok(null, "Removed '%s' from %s" % [key, dict])
+	#else:
+		#return Status.error("Key not found in %s: '%s'" % [dict, key])
 
 ## List contents of [param dict]
 func _list(dict: Dictionary) -> Status:

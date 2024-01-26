@@ -42,12 +42,6 @@ size_flags_vertical = 3
 theme = ExtResource("3_fotw2")
 theme_override_colors/font_outline_color = Color(0, 0, 0, 1)
 theme_override_constants/outline_size = 10
-text = "/load tape*
-/def /tape name
-    /create $name tape-var
-    /rand /angle $name 0 360
-
-/for i 4 /tape t_$i"
 caret_type = 1
 syntax_highlighter = SubResource("CodeHighlighter_833ra")
 highlight_all_occurrences = true
