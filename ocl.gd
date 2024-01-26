@@ -1,5 +1,7 @@
 class_name OpenControlLanguage
 
+var rnd := RandomNumberGenerator.new()
+
 ## Example: [code]/for i 4 /post bla_$i or $i[/code]
 func _for(args: Array) -> Array:
 	var result = []
@@ -37,9 +39,18 @@ func _parseVariables(cmd: Array, variables: Array, values:Array) -> Array:
 			# this can only happen in the last argument, so we get the rest of 
 			# possible arguments as string
 			if type == "...": value = " ".join(values.slice(i))
+			
+			var expr := _getExpression(value)
+			if not expr.is_empty():
+				value = _evalExpr(expr, ["time", "rnd"], [Time.get_ticks_msec() * 1e-3, rnd])
 			token = token.replace(variableName, "%s" % value)
+			
 		newCmd.append(token)
 	return newCmd
+
+func _getValue(variable: Variant) -> Variant:
+	var value: Variant
+	return value
 
 ## Returns the single character representing a type of the [param variableDescription].
 ## Example: [code]_get_variable_type("actor:s")[/code] returns [code]"s"[/code]
