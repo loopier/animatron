@@ -30,7 +30,7 @@ func _parseVariables(cmd: Array, variables: Array, values:Array) -> Array:
 			var variable = variables[i]
 			var variableName = _getVariableName(variable)
 			var type = _getVariableType(variable)
-			var value = values[i]
+			var value = values[i] if i < values.size() else []
 			#var typedValue = _getVariableWithCorrectType(type, values[i])
 			
 			# '...' describes an arbitrary number of arguments
