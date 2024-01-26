@@ -4,5 +4,4 @@
 /editor/clear
 /post/toggle
 
-/editor/append /create bla bla
-/editor/append /type bla {2 + 3}
+/editor/append /post {2 + 3}

@@ -22,9 +22,10 @@ var config := preload("res://Config.gd").new()
 var rnd := RandomNumberGenerator.new()
 
 ## A [class Dictionary] used to store variables accessible from OSC messages.
-@onready var variables : Dictionary:
-	set(value): variables = value
-	get: return variables
+@onready var variables := {
+	"time": func(): Time.get_ticks_msec() * 1e-3,
+	"rnd": RandomNumberGenerator.new(),
+}
 
 @onready var animationsLibrary : SpriteFrames
 func _init_midi():
@@ -72,6 +73,7 @@ func _ready():
 	cmdInterface.midiCommands = midiCommands
 	
 	ocl = OpenControlLanguage.new()
+	ocl.variables = variables
 	
 	$SaveFileDialog.set_current_path(OS.get_user_data_dir() + "/animatron")
 	$OpenFileDialog.set_current_path(OS.get_user_data_dir() + "/animatron")
@@ -167,7 +169,7 @@ func executeCommand(command: CommandDescription, args: Array) -> Status:
 		for i in args.size():
 			var expr := ocl._getExpression(args[i])
 			if not expr.is_empty():
-				var expResult: float = ocl._evalExpr(expr, ["time", "rnd"], [Time.get_ticks_msec() * 1e-3, rnd])
+				var expResult: float = ocl._evalExpr(expr, variables.keys(), variables.values())
 				#if not expResult: return Status.error("Invalid expression")
 				args[i] = expResult
 	if args.size() == 0:

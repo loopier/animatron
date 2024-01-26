@@ -1,6 +1,7 @@
 class_name OpenControlLanguage
 
 var rnd := RandomNumberGenerator.new()
+var variables := {}
 
 ## Example: [code]/for i 4 /post bla_$i or $i[/code]
 func _for(args: Array) -> Array:
@@ -25,24 +26,24 @@ func _def(def: Dictionary, values: Array) -> Array:
 	return result
 
 ## Replaces all instances of the [param variable] in the [param args] by the [param value]. 
-func _parseVariables(cmd: Array, variables: Array, values:Array) -> Array:
+func _parseVariables(cmd: Array, cmddVariables: Array, cmdValues:Array) -> Array:
 	var newCmd := []
 	for token in cmd:
-		for i in variables.size():
-			var variable = variables[i]
+		for i in cmddVariables.size():
+			var variable = cmddVariables[i]
 			var variableName = _getVariableName(variable)
 			var type = _getVariableType(variable)
-			var value = values[i] if i < values.size() else []
+			var value = cmdValues[i] if i < cmdValues.size() else []
 			#var typedValue = _getVariableWithCorrectType(type, values[i])
 			
 			# '...' describes an arbitrary number of arguments
 			# this can only happen in the last argument, so we get the rest of 
 			# possible arguments as string
-			if type == "...": value = " ".join(values.slice(i))
+			if type == "...": value = " ".join(cmdValues.slice(i))
 			
 			var expr := _getExpression(value)
 			if not expr.is_empty():
-				value = _evalExpr(expr, ["time", "rnd"], [Time.get_ticks_msec() * 1e-3, rnd])
+				value = _evalExpr(expr, variables.keys(), variables.values())
 			token = token.replace(variableName, "%s" % value)
 			
 		newCmd.append(token)
