@@ -29,13 +29,8 @@ func _parseVariables(cmd: Array, cmdVariables: Array, cmdValues:Array) -> Array:
 	var newCmd := []
 	var appVariables = VariablesManager.getAll()
 	for token in cmd:
-		for k in appVariables.keys():
-			var variableName = "$%s" % k
-			var value = appVariables[k]
-			if typeof(value) == TYPE_CALLABLE: value = value.call()
-			value = "%s" % value
-			token = token.replace(variableName, value)
-		
+		# it's better to parse def variables first to avoid partial-match with global variables
+		# this must be fixed at some point
 		for i in cmdVariables.size():
 			var variable = cmdVariables[i]
 			var variableName = _getVariableName(variable)
@@ -50,12 +45,20 @@ func _parseVariables(cmd: Array, cmdVariables: Array, cmdValues:Array) -> Array:
 			
 			var expr := _getExpression(value)
 			if not expr.is_empty():
-				value = _evalExpr(expr, appVariables.keys(), appVariables.values())
+				value = _evalExpr(expr, cmdVariables, cmdVariables)
 				
-			if appVariables.has(variableName): 
-				Log.warn("Overriding global variable: %s(%s) -> %s" % [appVariables, VariablesManager.getValue(variableName), value])
+			#if appVariables.has(variableName): 
+				#Log.warn("Overriding global variable: %s(%s) -> %s" % [appVariables, VariablesManager.getValue(variableName), value])
 				
 			token = token.replace(variableName, "%s" % value)
+		
+		for k in appVariables.keys():
+			var variableName = "$%s" % k
+			var value = appVariables[k]
+			if typeof(value) == TYPE_CALLABLE: value = value.call()
+			value = "%s" % value
+			token = token.replace(variableName, value)
+		
 		newCmd.append(token)
 	return newCmd
 

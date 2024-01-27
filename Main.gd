@@ -133,14 +133,13 @@ func evalCommands(cmds: Array, sender: String) -> Status:
 
 func evalCommand(cmdArray: Array, sender: String) -> Status:
 	# we only parse the cmd address because if it's a /def it woul override the def's variables
-	var cmd : String = ocl._parseVariables([cmdArray[0]], VariablesManager.getAll().keys(), VariablesManager.getAll().values())[0]
+	var cmd : String = cmdArray[0]
 	var args : Array = cmdArray.slice(1)
 	var callable : Variant
 	var result := Status.new()
 	var cmdDescription : Variant = cmdInterface.getCommandDescription(cmd)
 	if cmdDescription is String: 
-		var parsedCmd = ocl._parseVariables([cmdDescription] + args, VariablesManager.getAll().keys(), VariablesManager.getAll().values())
-		return evalCommand(parsedCmd, sender)
+		return evalCommand(cmdArray, sender)
 	elif cmdDescription is Dictionary: # it's a /def
 		# put variable values from the OSC command into the 
 		# CommandDescritpion.variables dictionary
@@ -148,7 +147,6 @@ func evalCommand(cmdArray: Array, sender: String) -> Status:
 		result = evalCommands(subcommands, sender)
 	elif cmdDescription is CommandDescription:
 		if cmdDescription.toGdScript: args = cmdArray
-		args = ocl._parseVariables(args, VariablesManager.getAll().keys(), VariablesManager.getAll().values())
 		result = executeCommand(cmdDescription, args)
 	else:
 		result = Status.error("Command not found: %s" % [cmd])
