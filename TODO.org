@@ -1,23 +1,34 @@
 #+title: Animatron
-#+todo: TODO NEXT IN_PROGRESS | DONE
+#+todo: TODO FIX NEXT IN_PROGRESS | DONE
 #+startup: overview
 
+* FIX variable parsing partial match
+variables with shorter names that match with a part of a longer variable name make things wonky
+#+begin_src
+  /set a 40
+  /def /bla animation
+    /create x $animation ## $anim results in -- 40nimation
+#+end_src
+
+* FIX `/editor/append` to accept variables
+it has unexpected behaviour when using variables `/edior/append /post $bla`
+
 * TODO state machines
-* NEXT pivot (anchor?)
+* TODO pivot (anchor?)
 * TODO sequencer
 * TODO trackpad or phone
-* IN_PROGRESS text : /type
+* TODO text
 - [ ] add command to change font
 - [ ] add command to change size
 - [ ] add command to change text position
 * TODO grid
 * TODO find better syntax for tweens
-* DONE `/animation/property`
 * TODO Abstraction of `set*Property` - join all 3 methods
 * TODO rethink cmd evaluation
 - parse command for variables
 - parse command for expressions, passing variables
 
+* DONE `/animation/property`
 * DONE `/text/property`
 * DONE Tween
 - [X] currently only supports actor properties
