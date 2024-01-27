@@ -510,6 +510,7 @@ func isActor(actorName: String) -> bool:
 ## Set and store new [param value] in a variable with a [param varName]
 ## Returns the value stored in the variable
 func setVar(args: Array) -> Status:
+	if not args[0].contains(":"): return Status.error("Missing type. %s:?" % [args[0]])
 	var varName = args[0].split(":")[0]
 	var type = args[0].split(":")[1]
 	args = args.slice(1)
@@ -517,7 +518,7 @@ func setVar(args: Array) -> Status:
 		"i": VariablesManager.setValue(varName, args[0] as int)
 		"f": VariablesManager.setValue(varName, args[0] as float)
 		"b": VariablesManager.setValue(varName, args[0] as bool)
-		"s": VariablesManager.setValue(varName, " ".join(args[0]))
+		"s": VariablesManager.setValue(varName, " ".join(args))
 		"...": VariablesManager.setValue(varName, args)
 	return getVar(varName)
 
