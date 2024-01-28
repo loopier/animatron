@@ -4,3 +4,7 @@
 /editor/clear
 /post/toggle
 
+<<<<<<< HEAD
+=======
+/commands/load sets/axel.ocl
+>>>>>>> develop

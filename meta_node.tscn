@@ -44,5 +44,4 @@ scroll_active = false
 autowrap_mode = 0
 shortcut_keys_enabled = false
 
-[connection signal="animation_changed" from="Animation" to="Animation" method="_on_animation_changed"]
 [connection signal="frame_changed" from="Animation" to="Animation" method="_on_frame_changed"]
