@@ -998,7 +998,9 @@ func addRoutine(args: Array) -> Status:
 	routine.set_wait_time(interval)
 	routine.command = command
 	routine.start()
-	return Status.ok(true, "New routine '%s' (%s times every %s): %s" % [name, repeats, interval, command])
+	if Log.getLevel() == Log.LOG_LEVEL_VERBOSE:
+		return Status.ok(true, "New routine '%s' (%s times every %s): %s" % [name, repeats, interval, command])
+	return Status.ok()
 
 func freeRoutine(name: String) -> Status:
 	for routine in routinesNode.find_children(name, "", true, false):
