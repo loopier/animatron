@@ -50,7 +50,7 @@ func _parseVariables(cmd: Array, cmdVariables: Array, cmdValues:Array) -> Array:
 			#if appVariables.has(variableName): 
 				#Log.warn("Overriding global variable: %s(%s) -> %s" % [appVariables, VariablesManager.getValue(variableName), value])
 				
-			token = token.replace(variableName, "%s" % value)
+			token = token.replace(variableName, "%s" % [value])
 		
 		for k in appVariables.keys():
 			var variableName = "$%s" % k
