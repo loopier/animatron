@@ -2,3 +2,5 @@
 /commands/load res://tutorial/tutorial.ocl
 /editor/clear
 /post/toggle
+
+/commands/load sets/axel.ocl
