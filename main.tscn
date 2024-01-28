@@ -56,6 +56,7 @@ z_index = 1
 layout_mode = 2
 size_flags_horizontal = 3
 theme = ExtResource("3_fotw2")
+theme_override_font_sizes/font_size = 16
 theme_override_styles/normal = ExtResource("5_efpnp")
 theme_override_styles/read_only = ExtResource("5_efpnp")
 placeholder_text = "..."
