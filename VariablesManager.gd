@@ -4,7 +4,6 @@ class_name VariablesManager
 static var animatronVariables = {
 	"time": func(): return Time.get_ticks_msec() * 1e-3,
 	"rnd": RandomNumberGenerator.new(),
-	"x": 100,
 }
 static var userVariables := {}
 

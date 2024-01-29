@@ -171,7 +171,9 @@ func executeCommand(command: CommandDescription, args: Array) -> Status:
 				var expResult := ocl._evalExpr(expr, variables.keys(), variables.values())
 				if expResult.isError() or expResult.value == null: return Status.error("Invalid expression: %s" % [expr])
 				#if not expResult: return Status.error("Invalid expression")
-				args[i] = expResult.value as float
+				match typeof(expResult.value):
+					TYPE_CALLABLE: args[i] = expResult.value.call()
+					_: args[i] = expResult.value as float
 	if args.size() == 0 and not command.argsAsArray:
 		result = command.callable.call()
 	elif command.argsAsArray:
