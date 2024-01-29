@@ -158,7 +158,7 @@ func evalCommand(cmdArray: Array, sender: String) -> Status:
 
 ## Executes a [param command] described in a [CommandDescription], with the given [param args].
 func executeCommand(command: CommandDescription, args: Array) -> Status:
-	var result := checkNumberOfArguments(command.argsDescription, args)
+	var result := checkNumberOfArguments(command.argsDescription, args if not command.toGdScript else args.slice(1))
 	if result.isError(): return result
 	var variables = VariablesManager.getAll()
 	if not command.deferEvalExpressions:
@@ -187,8 +187,8 @@ func executeCommand(command: CommandDescription, args: Array) -> Status:
 		var cmdNumArgs = args.size()
 		var callableNumArgs = getNumArgsForMethod(command.callable, command.callable.get_method())
 		#var callableArgs = getMethodSignature(command.callable, command.callable.get_method())
-		var excessArgs = args.slice(callableNumArgs - 1)
-		var finalArgs = args.slice(0, callableNumArgs - 1) + excessArgs
+		var excessArgs = args.slice(callableNumArgs)
+		var finalArgs = args.slice(0, callableNumArgs)
 		for arg in finalArgs:
 			print("%s(%s)" % [arg, typeof(arg)])
 		result = command.callable.callv(finalArgs)
