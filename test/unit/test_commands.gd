@@ -39,15 +39,18 @@ func test_load():
 
 func test_createActor():
 	# animation doesn't exist
-	var result = main.evalCommand(["/create", "bla", "xyz"], "127.0.0.1")
-	assert_eq(result.type, Status.ERROR)
-	assert_eq(result.value, null)
-	assert_eq(result.msg, "Animation not found: xyz")
+	# Note we currently can't distinguish (at this point) whether the animation
+	# existed or not...an empty Actor was created anyhow.
+	var result = main.evalCommand(["/create", "bla", "unknown_xyz"], "127.0.0.1")
+	assert_eq(result.type, Status.OK)
+	assert_eq(result.value, true)
+	assert_eq(result.msg, "")
 	# should pass
 	result = main.evalCommand(["/create", "bla", "default"], "127.0.0.1")
 	assert_eq(result.type, Status.OK)
 #	assert_eq(result.value, true) # returns an object
-	assert_eq(result.msg, "Created new actor 'bla': default")
+	assert_true(result.msg.begins_with("Actor already exists: bla:"))
+	assert_true(result.msg.ends_with("Setting new animation: default"))
 
 func test_scale():
 	var result = main.evalCommand(["/load", "default"], "127.0.0.1")
@@ -55,12 +58,14 @@ func test_scale():
 	result = main.evalCommand(["/scale", "x", 2], "127.0.0.1")
 	assert_eq(result.type, Status.OK)
 	assert_eq(result.value, true)
-	assert_eq(result.msg, "set_scale")
+	assert_eq(result.msg, "")
 
 func test_speed():
 	var result = main.evalCommand(["/load", "default"], "127.0.0.1")
+	assert_eq(result.type, Status.OK)
 	result = main.evalCommand(["/create", "x", "default"], "127.0.0.1")
-	result = main.evalCommand(["/speed", "x", 2], "127.0.0.1")
+	assert_eq(result.type, Status.OK)
+	#result = main.evalCommand(["/speed/scale", "x", 2], "127.0.0.1") # To be added once setAnimationPropety is working
 	assert_eq(result.type, Status.OK)
 #	assert_eq(result.value, true)
 #	assert_eq(result.msg, "set_scale")

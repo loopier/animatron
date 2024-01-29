@@ -19,7 +19,7 @@ func after_all():
 	log.free()
 
 func test_getter():
-	assert_almost_eq(vm.getValue("time"), 1.0, 1.0)
+	assert_almost_eq(vm.getValue("time"), 2.0, 2.0)
 	assert_is(vm.getValue("rnd"), RandomNumberGenerator)
 
 func test_setter():

@@ -1,6 +1,7 @@
 extends GutTest
 
 func before_each():
+	Log.setLevelInfo()
 	gut.p("ran setup logger", 2)
 
 func after_each():
@@ -20,6 +21,6 @@ func after_all():
 
 func test_assert_eq_getLevel():
 #	log.setLevel("LOG_LEVEL_DEBUG")
-	var levelValue = Log.getLevel()
-	var level = Log.getLevelName()
+	var levelValue := Log.getLevel()
+	var level := Log.getLevelName()
 	assert_eq(level, "INFO", "Should be INFO")

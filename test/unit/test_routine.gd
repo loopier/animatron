@@ -2,13 +2,13 @@ extends GutTest
 
 var log : Log
 var main : Main
-var cmd
+var cmd : CommandInterface
 
 func before_each():
 	gut.p("ran setup logger", 2)
 
 func after_each():
-	cmd.remove("x", cmd.variables)
+	#cmd.remove("x", cmd.variables)
 	gut.p("ran teardown logger", 2)
 
 func before_all():
@@ -25,8 +25,14 @@ func after_all():
 
 func test_addRoutine():
 	var routine = ["bla",4,0.5,"/post alo"]
-	assert_typeof(cmd.addRoutine(routine).value, TYPE_DICTIONARY)
-	assert_eq(cmd.addRoutine(routine).value, cmd.routines["bla"])
-	assert_eq(cmd.addRoutine(routine).value, {"repeats":4, "interval": 0.5, "subcommands": ["/post alo"]})
+	var result : = cmd.addRoutine(routine)
+	assert_eq(result.value, true)
+	assert_eq(result.msg, "New routine 'bla' (4 times every 0.5): [\"/post alo\"]")
+	var bla := cmd.routinesNode.get_node("bla")
+	assert_eq(bla.command, [ "/post alo"] )
+	assert_eq(bla.repeats, 4)
+	assert_eq(bla.wait_time, 0.5)
 	routine = ["bla",4,0.5,"/post alo", "/post bye"]
-	assert_eq(cmd.addRoutine(routine).value, {"repeats":4, "interval": 0.5, "subcommands": ["/post alo", "/post bye"]})
+	result = cmd.addRoutine(routine)
+	assert_eq(result.msg, "New routine 'bla' (4 times every 0.5): [\"/post alo\", \"/post bye\"]")
+	assert_eq(bla.command, ["/post alo", "/post bye"])
