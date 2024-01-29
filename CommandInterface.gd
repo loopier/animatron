@@ -57,7 +57,8 @@ var coreCommands: Dictionary = {
 	# actors
 	"/property": CommandDescription.new(setActorProperty, "property:s actor:s value:...", "Generic command to set the VALUE to any PROPERTY of an ACTOR.", Flags.asArray(true)),
 	"/animation/property": CommandDescription.new(setAnimationProperty, "property:s actor:s value:...", "Change the ACTOR's ANIMATION GDScript PROPERTY. Slashes ('/') will be replaced for underscores '_'. Leading slash is optional.\n\nUsage: `/animation/property /rotation/degrees target 75`", Flags.asArray(true)),
-	"/text/property": CommandDescription.new(_setTextProperty, "property:s actor:s value:...", "Change the ACTOR's TEXT GDScript PROPERTY. Slashes ('/') will be replaced for underscores '_'. Leading slash is optional.\n\nUsage: `/text/property /text target alo bla`", Flags.asArray(true)),
+	"/text/property": CommandDescription.new(_setTextProperty, "property:s actor:s value:...", "Change the ACTOR's text GDScript PROPERTY. Slashes ('/') will be replaced for underscores '_'. Leading slash is optional.\n\nUsage: `/text/property /text target alo bla`", Flags.asArray(true)),
+	"/editor/property": CommandDescription.new(_setEditorProperty, "property:s value:...", "Change the editor's font GDScript PROPERTY. Slashes ('/') will be replaced for underscores '_'. Leading slash is optional.\n\nUsage: `/editor/property /font/size 32`", Flags.asArray(true)),
 	
 	"/actors/list": CommandDescription.new(listActors, "", "Get list of current actor instances. Returns /list/actors/reply OSC message."),
 	"/create": CommandDescription.new(createActor, "actor:s animation:s", "Create an ACTOR that plays ANIMATION."),
@@ -845,10 +846,11 @@ func setAnimationProperty(args: Array) -> Status:
 		animation.call(calledProperty, value)
 	return Status.ok()
 
+
 func _setTextProperty(args: Array) -> Status:
 	var result = getActors(args[1])
 	if result.isError(): return result
-	var property = _cmd_to_property(args[0])	
+	var property = _cmd_to_property(args[0])
 	for actor in result.value:
 		var actorLabel = actor.get_node("RichTextLabel") 
 		#.get_theme().get_default_font()
@@ -859,6 +861,23 @@ func _setTextProperty(args: Array) -> Status:
 		var value = result.value.propertyValue
 		var calledProperty = _cmd_to_set_property(property)
 		actorLabel.call(calledProperty, value)
+	return Status.ok()
+
+func _setEditorProperty(args: Array) -> Status:
+	var property = _cmd_to_property(args[0])
+	if property.begins_with("_"): property = property.substr(1)
+	var method = "add_theme_%s_override" % [property]
+	var valueType := typeof(editor.call("get_theme_%s" % [property], property))
+	var value: Variant
+	match valueType:
+		TYPE_INT: value = args[1] as int
+		TYPE_FLOAT: value = args[1] as float
+		TYPE_COLOR: value = Color(args[1] as float, args[2] as float, args[3] as float)
+		TYPE_STRING: value = args[1] as String
+		_: # try TYPE_OBJECT
+			Log.warn("I don't know what to do with this: %s" % [args[1]])
+			return
+	editor.call(method, property, value)
 	return Status.ok()
 
 func setAnimationFramesProperty(property, args) -> Status:

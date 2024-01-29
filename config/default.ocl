@@ -5,3 +5,4 @@
 /post/toggle
 
 #/commands/load sets/axel.ocl
+/editor/append /editor/property /font/size 32
