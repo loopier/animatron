@@ -4,4 +4,4 @@
 /editor/clear
 /post/toggle
 
-/commands/load sets/axel.ocl
+#/commands/load sets/axel.ocl
