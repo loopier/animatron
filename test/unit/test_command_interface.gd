@@ -1,27 +1,22 @@
 extends GutTest
 
-var log : Log
 var main : Main
 var cmd : CommandInterface
 
 func before_each():
 	gut.p("ran setup logger", 2)
+	main = preload("res://main.tscn").instantiate()
+	add_child_autoqfree(main)
+	cmd = main.get_node("CommandInterface")
 
 func after_each():
-	#cmd.remove("x", cmd.variables)
 	gut.p("ran teardown logger", 2)
 
 func before_all():
 	gut.p("ran run setup logger", 2)
-	log = Log.new() # preload("res://Log.gd")
-	main = preload("res://main.tscn").instantiate()
-	add_child(main)
-	cmd = main.get_node("CommandInterface")
 
 func after_all():
 	gut.p("ran run teardown logger", 2)
-	main.queue_free()
-	log.free()
 
 func test_getCommand():
 	var aCommand = cmd.getCommandDescription("/load")
@@ -172,6 +167,9 @@ func test_newRoutine():
 	assert_eq(result.type, Status.OK)
 	assert_eq(result.value, true)
 	assert_eq(result.msg, "New routine 'routineA' (0 times every 1): [\"/cmdA\", \"argA\", 2]")
+	assert_eq(main.routines.get_child_count(), 1)
+	result = cmd.freeRoutine("routineA")
+	assert_eq(main.routines.get_child_count(), 0)
 
 func test_getTextBlocks():
 	assert_eq(cmd.getTextBlocks("bla bla\nalo\n\nzirlit"), ["bla bla\nalo", "zirlit"])

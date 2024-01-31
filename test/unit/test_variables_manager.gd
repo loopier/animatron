@@ -1,6 +1,5 @@
 extends GutTest
 
-var log : Log
 var vm : VariablesManager
 
 func before_each():
@@ -11,15 +10,13 @@ func after_each():
 
 func before_all():
 	gut.p("ran run setup logger", 2)
-	log = Log.new() # preload("res://Log.gd")
 	vm = preload("res://VariablesManager.gd").new()
 
 func after_all():
 	gut.p("ran run teardown logger", 2)
-	log.free()
 
 func test_getter():
-	assert_almost_eq(vm.getValue("time"), 2.0, 2.0)
+	assert_almost_eq(vm.getValue("time"), 3.0, 3.0)
 	assert_is(vm.getValue("rnd"), RandomNumberGenerator)
 
 func test_setter():

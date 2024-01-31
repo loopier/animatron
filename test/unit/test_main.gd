@@ -6,12 +6,11 @@ var cmdInterface : CommandInterface
 func before_each():
 	gut.p("ran setup logger", 2)
 	main = preload("res://main.tscn").instantiate()
-	add_child(main)
+	add_child_autoqfree(main)
 	cmdInterface = main.get_node("CommandInterface")
 
 func after_each():
 	gut.p("ran teardown logger", 2)
-	main.queue_free()
 
 func before_all():
 	gut.p("ran run setup logger", 2)
@@ -71,11 +70,11 @@ func test_evalCommand():
 	assert_eq(checkResult.value, null)
 	assert_eq(checkResult.msg, "Not enough arguments:\nexpected (1) -> actor:s\nreceived (0) -> []")
 	# command not a callable
-	cmd = ["/commands"]
+	cmd = ["/commandNotFound"]
 	checkResult = main.evalCommand(cmd, "localhost")
 	assert_eq(checkResult.type, Status.ERROR)
 	assert_eq(checkResult.value, null)
-	assert_eq(checkResult.msg, "Command not found: /commands")
+	assert_eq(checkResult.msg, "Command not found: /commandNotFound")
 	
 
 static func testFunc(s: String) -> Status:
