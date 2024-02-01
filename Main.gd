@@ -11,10 +11,8 @@ var metanode := preload("res://meta_node.tscn")
 @onready var lastSender : String = "localhost"
 @onready var Routine := preload("res://RoutineNode.tscn")
 @onready var routines := $Routines
-@onready var StateMachine := preload("res://StateMachine.gd")
 @onready var stateMachines := {}
 @onready var midiCommands := []
-var OpenControlLanguage := preload("res://ocl.gd")
 var ocl: OpenControlLanguage
 var config := preload("res://Config.gd").new()
 @onready var editor := $HSplitContainer/CodeEdit
@@ -135,7 +133,6 @@ func evalCommand(cmdArray: Array, sender: String) -> Status:
 	# we only parse the cmd address because if it's a /def it woul override the def's variables
 	var cmd : String = cmdArray[0]
 	var args : Array = cmdArray.slice(1)
-	var callable : Variant
 	var result := Status.new()
 	var cmdDescription : Variant = cmdInterface.getCommandDescription(cmd)
 	if cmdDescription is String: 
@@ -184,7 +181,6 @@ func executeCommand(command: CommandDescription, args: Array) -> Status:
 	else:
 		# Reduce the number of args to the expected size, else callv will fail.
 		# Exceeding arguments will be grouped into an array and passed as the last argument.
-		var cmdNumArgs = args.size()
 		var callableNumArgs = getNumArgsForMethod(command.callable, command.callable.get_method())
 		#var callableArgs = getMethodSignature(command.callable, command.callable.get_method())
 		var excessArgs = args.slice(callableNumArgs)
