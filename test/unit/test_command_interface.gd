@@ -126,7 +126,7 @@ func test_listCommands():
 /unload
 /visible
 /wait
-")
+".replace("\r", ""))
 
 func test_listAssets():
 	assert_true(not cmd.listAnimationAssets().value.is_empty())
