@@ -187,5 +187,10 @@ func test_arrayToVector():
 	assert_eq(cmd.arrayToVector(["0", "0", "0"]), Vector3(0.0,0.0,0.0))
 	assert_eq(cmd.arrayToVector(["0", "0", "0", "0"]), Vector4(0.0,0.0,0.0,0.0))
 
-func test_cmd_to_property():
-	assert_eq(cmd._cmd_to_property("bla"), "bla")
+func test_cmdToGdScript():
+	assert_eq(cmd._cmdToGdScript("bla"), "bla")
+	assert_eq(cmd._cmdToGdScript("/bla"), "bla")
+	assert_eq(cmd._cmdToGdScript("/bla/bla"), "bla_bla")
+	assert_eq(cmd._cmdToGdScript("bla/bla"), "bla_bla")
+	assert_eq(cmd._cmdToGdScript("_bla/bla"), "bla_bla")
+	assert_eq(cmd._cmdToGdScript("_bla_bla"), "bla_bla")

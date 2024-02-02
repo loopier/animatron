@@ -792,14 +792,17 @@ func _cmd_to_set_property(property: String) -> String:
 
 ## Converts a command to GDScript property syntax.
 ## For example: [code]/visible/ratio[/code] is converted to [code]visible_ratio[/code]
-func _cmd_to_property(property: String) -> String:
-	property = property.substr(1) if property.begins_with("/") or property.begins_with("_") else property
+func _cmdToGdScript(property: String) -> String:
+	if property.begins_with("/") or property.begins_with("_"):
+		property = property.substr(1)
+	else:
+		property
 	return property.replace("/", "_")
 
 func setActorProperty(args: Array) -> Status:
 	var result = getActors(args[1])
 	if result.isError(): return result
-	var property = _cmd_to_property(args[0])	
+	var property = _cmdToGdScript(args[0])	
 	for actor in result.value:
 		result = getArgsAsPropertyType(actor, property, args.slice(2))
 		if result.isError(): return result
@@ -848,7 +851,7 @@ func getObjectMethod(obj: Object, methodName: String) -> Status:
 func setAnimationProperty(args: Array) -> Status:
 	var result = getActors(args[1])
 	if result.isError(): return result
-	var property = _cmd_to_property(args[0])	
+	var property = _cmdToGdScript(args[0])	
 	for actor in result.value:
 		var animation = actor.get_node("Animation")
 		var propertyArgs = args.slice(2)
@@ -864,7 +867,7 @@ func setAnimationProperty(args: Array) -> Status:
 func _setTextProperty(args: Array) -> Status:
 	var result = getActors(args[1])
 	if result.isError(): return result
-	var property = _cmd_to_property(args[0])
+	var property = _cmdToGdScript(args[0])
 	for actor in result.value:
 		var actorLabel = actor.get_node("RichTextLabel") 
 		#.get_theme().get_default_font()
@@ -878,7 +881,7 @@ func _setTextProperty(args: Array) -> Status:
 	return Status.ok()
 
 func _setEditorProperty(args: Array) -> Status:
-	var property = _cmd_to_property(args[0])
+	var property = _cmdToGdScript(args[0])
 	if property.begins_with("_"): property = property.substr(1)
 	var method = "add_theme_%s_override" % [property]
 	var valueType := typeof(editor.call("get_theme_%s" % [property], property))
@@ -1297,8 +1300,8 @@ func tweenActorProperty(args: Array) -> Status:
 		tween.tween_property(node, property, value, dur)
 	return Status.ok()
 
-## converts the array of arguments given by the command to the appropriate type depending on
-## the property
+## converts the array of arguments given by the command to the appropriate 
+## type depending on the property
 func getArgsAsPropertyType(node: Object, propertyName: String, args: Array) -> Status:
 	var property = node.get(propertyName)
 	var propertyType = typeof(property)
@@ -1313,8 +1316,8 @@ func getArgsAsPropertyType(node: Object, propertyName: String, args: Array) -> S
 		TYPE_INT: value = args[0] as float
 		_: 
 			# if it's none of the above, probably is an axis of a vector or a color 
-			# we take the whole vector and assign the command value to the according axis keeping
-			# the rest intact
+			# we take the whole vector and assign the command value to the 
+			# according axis keeping the rest intact
 			var axisName := propertyName.split("_")[1] if propertyName.contains("_") else ""
 			propertyName = propertyName.split("_")[0]
 			property = node.get(propertyName)
