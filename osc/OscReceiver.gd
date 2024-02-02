@@ -1,5 +1,4 @@
 class_name OscReceiver
-extends Node2D
 
 class OscMessage:
 	var addr: String

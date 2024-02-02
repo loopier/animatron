@@ -181,7 +181,7 @@ func loadCommandFile(path: String) -> Status:
 	var file = FileAccess.open(path, FileAccess.READ)
 	if file == null: file = FileAccess.open("user://" + path, FileAccess.READ)
 	if file == null: return Status.ok([], "No command file '%s' found to load" % [path])
-	var contents = file.get_as_text()
+	var contents = file.get_as_text(true)
 	var cmds: Array = convertTextToCommands(contents).value
 	command_file_loaded.emit(cmds)
 	return Status.ok(cmds, "Loaded commands from: %s" % [path])
@@ -462,11 +462,11 @@ func getHelp(cmd: String) -> Status:
 	var msg = "[HELP] %s %s\n\n%s" % [cmd, cmdDesc.argsDescription, cmdDesc.description]
 	return Status.ok(cmdDesc, msg)
 
-### Read a file with a [param filename] and return its OSC constent in a string
+### Read a file with a [param filename] and return its OSC content in a string
 #func loadFile(filename: String) -> Status:
 	#Log.verbose("Reading: %s" % [filename])
 	#var file = FileAccess.open(filename, FileAccess.READ)
-	#var content = file.get_as_text()
+	#var content = file.get_as_text(true)
 	#if content == null: return Status.error()
 	#return Status.ok("Read file successful: %s" % filename, content)
 
