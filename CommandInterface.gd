@@ -128,8 +128,8 @@ var coreCommands: Dictionary = {
 	"/flip/v": CommandDescription.new(toggleAnimationProperty, "actor:s", "Flip/ ACTOR vertically.", Flags.gdScript()),
 	"/flip/h": CommandDescription.new(toggleAnimationProperty, "actor:s", "Flip ACTOR horizontally.", Flags.gdScript()),
 	"/visible": CommandDescription.new(toggleActorProperty, "actor:s visibility:b", "Set ACTOR's VISIBILITY to either true or false.", Flags.gdScript()),
-	"/hide": CommandDescription.new(callActorMethod, "actor:s", "Show ACTOR (set visibility to true).", Flags.gdScript()),
-	"/show": CommandDescription.new(callActorMethod, "actor:s", "Hide ACTOR (set visibility to false).", Flags.gdScript()),
+	#"/hide": CommandDescription.new(callActorMethod, "actor:s", "Show ACTOR (set visibility to true).", Flags.gdScript()),
+	#"/show": CommandDescription.new(callActorMethod, "actor:s", "Hide ACTOR (set visibility to false).", Flags.gdScript()),
 	"/offset": CommandDescription.new(setAnimationPropertyWithVector, "actor:s x:i y:i", "Set the ACTOR's animation drawing offset in pixels.", Flags.gdScript()),
 	"/offset/x": CommandDescription.new(setAnimationPropertyWithVectorN, "actor:s pixels:i", "Set the ACTOR's animation drawing offset on the X axis.", Flags.gdScript()),
 	"/offset/y": CommandDescription.new(setAnimationPropertyWithVectorN, "actor:s pixels:i", "Set the ACTOR's animation drawing offset on the Y axis.", Flags.gdScript()),
@@ -824,12 +824,16 @@ func _callActorMethod(args: Array) -> Status:
 	for actor in result.value:
 		result = getObjectMethod(actor, method)
 		if result.isError(): return result
+		
+		var methodArgs = result.value.args
+		if methodArgs.size() < 1: 
+			actor.call(method)
+			return Status.ok()
+		
 		# FIX: implement methods with mulpile arguments
 		# currently it only accepts 1 argument
 		# should probably move it to a dedicated method or function
-		var argsType = result.value.args[0].type
-		var methodArgs: Variant
-		match argsType:
+		match methodArgs[0].type:
 			TYPE_INT: methodArgs = args[0] as int
 			TYPE_FLOAT: methodArgs = args[0] as float
 			TYPE_BOOL: methodArgs = args[0] as bool
@@ -969,21 +973,6 @@ func arrayToVector(input: Array) -> Variant:
 		4: return Vector4(input[0], input[1], input[2], input[3])
 		_: return null
 
-func callActorMethod(method, args) -> Status:
-	var result = getActors(args[0])
-	if result.isError(): return result
-	method = method.replace("/", "_")
-	if method.begins_with("_"): method = method.substr(1)
-	args = args.slice(1)
-	for actor in result.value:
-		if method.begins_with("/"): method = method.substr(1)
-		if len(args) == 0:
-			result = actor.call(method)
-		else:
-			result = actor.callv(method, args)
-	#return Status.ok(result, "Called %s.%s(%s): %s" % [actor.get_name(), method, args, result])
-	return Status.ok()
-	
 func callAnimationMethod(method, args) -> Status:
 	var result = getActors(args[0])
 	if result.isError(): return result

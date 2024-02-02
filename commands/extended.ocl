@@ -65,6 +65,17 @@
      /property /rotation/degrees $actor $degrees
 
 #################################################################################
+# visibility                                                                    #
+#################################################################################
+# Make the ACTOR visible
+/def /show actor:s
+     /method /show $actor
+
+# Make the ACTOR invisible
+/def /hide actor:s
+     /method /hide $actor
+
+#################################################################################
 # color                                                                         #
 #################################################################################
 /def /color/r actor:s value:f
