@@ -12,19 +12,20 @@ func _init():
 
 static func getAll() -> Dictionary:
 	# avoid overriding default variables
-	var all = animatronVariables.duplicate()
+	var all := {}
+	for key in animatronVariables:
+		var value = animatronVariables[key]
+		if typeof(value) == TYPE_CALLABLE: value = value.call()
+		all[key] = value
 	# 'animatronVariables' won't be overriden by 'userVariables'
 	all.merge(userVariables)
 	return all
 
 static func getValue(variableName: String) -> Variant:
-	var all = getAll()
+	var all := getAll()
 	var value: Variant
 	if not all.has(variableName): return null
-	match typeof(all[variableName]):
-		TYPE_CALLABLE: value = all[variableName].call()
-		_: value = all[variableName]
-	return value
+	return all[variableName]
 
 static func setValue(variableName: String, value: Variant):
 	userVariables[variableName] = value

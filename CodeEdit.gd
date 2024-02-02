@@ -102,6 +102,6 @@ func saveFile(path: String):
 func openFile(path: String):
 	Log.debug("appending text: %s" % [path])
 	var file = FileAccess.open(path, FileAccess.READ)
-	var content = file.get_as_text()
+	var content = file.get_as_text(true)
 	file.close()
 	append(content)

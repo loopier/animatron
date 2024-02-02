@@ -16,14 +16,14 @@ static var level: int = LOG_LEVEL_INFO: set = setLevel, get = getLevel
 
 static var target: TextEdit: set = setTarget
 
-static func setTarget( inTarget ):
+static func setTarget( inTarget : TextEdit ):
 	target = inTarget
 
-static func setLevel( inLevel ):
+static func setLevel( inLevel: int ):
 	level = inLevel
 	logMsg("Log level set to: %s" % [levelNames[level]])
 
-static func getLevel():
+static func getLevel() -> int:
 	return level
 
 static func getLevelName() -> String:
@@ -75,11 +75,11 @@ static func verbose( msg ):
 		return
 	logMsg("[VERBOSE]: %s" % [msg])
 
-static func logMsg( msg, post=false ):
+static func logMsg( msg, post: bool = false ):
 	print(msg)
 	if target != null and post:
 		target.append(msg)
 
-static func logDict( dict, post=false ):
+static func logDict( dict: Dictionary, post: bool = false ):
 	for key in dict:
 		logMsg("%s:%s" % [key, dict[key]], post)

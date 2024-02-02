@@ -21,6 +21,7 @@ func test_init():
 	assert_eq(cmd.description, "A very useful bla.")
 
 func test_callable():
+	assert_true(true)
 	print("called callable")
 
 func test_execute():

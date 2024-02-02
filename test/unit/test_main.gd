@@ -6,12 +6,11 @@ var cmdInterface : CommandInterface
 func before_each():
 	gut.p("ran setup logger", 2)
 	main = preload("res://main.tscn").instantiate()
-	add_child(main)
+	add_child_autoqfree(main)
 	cmdInterface = main.get_node("CommandInterface")
 
 func after_each():
 	gut.p("ran teardown logger", 2)
-	main.queue_free()
 
 func before_all():
 	gut.p("ran run setup logger", 2)
@@ -30,7 +29,7 @@ func test_evalCommands():
 	cmds = [["/load", "default"], ["/create", "x", "default"]]
 	checkResult = main.evalCommands(cmds, "localhost")
 	assert_eq(checkResult.type, Status.OK)
-	assert_is(checkResult.value, CharacterBody2D)
+	assert_eq(checkResult.value, true)
 	assert_typeof(checkResult.msg, TYPE_STRING)
 
 func test_evalCommand():
@@ -45,7 +44,7 @@ func test_evalCommand():
 	checkResult = main.evalCommand(cmd, "localhost")
 	assert_eq(checkResult.type, Status.ERROR)
 	assert_eq(checkResult.value, null)
-	assert_eq(checkResult.msg, "Not enough arguments - expected: 2 - received: 1")
+	assert_eq(checkResult.msg, "Not enough arguments:\nexpected (2) -> actor:s animation:s\nreceived (1) -> [\"bla\"]")
 	# more arguments than needed
 	cmd = ["/load", "default", 1, 2.3]
 	checkResult = main.evalCommand(cmd, "localhost")
@@ -63,23 +62,32 @@ func test_evalCommand():
 	checkResult = main.evalCommand(cmd, "localhost")
 	assert_eq(checkResult.type, Status.OK)
 	assert_typeof(checkResult.value, TYPE_ARRAY)
-	assert_eq(checkResult.msg, "")
-	# command not a callable
-	cmd = ["/commands"]
+	assert_eq(checkResult.msg, "List of actors (1)\nx (default)\n")
+	# GdScript command has too few arguments
+	cmd = ["/show"]
 	checkResult = main.evalCommand(cmd, "localhost")
-	assert_eq(checkResult.type, Status.OK)
-	assert_true(checkResult.value.begins_with("\nCore Commands:\n"))
-	assert_true(checkResult.msg.begins_with("\nCore Commands:\n"))
+	assert_eq(checkResult.type, Status.ERROR)
+	assert_eq(checkResult.value, null)
+	assert_eq(checkResult.msg, "Not enough arguments:\nexpected (1) -> actor:s\nreceived (0) -> []")
+	# command not a callable
+	cmd = ["/commandNotFound"]
+	checkResult = main.evalCommand(cmd, "localhost")
+	assert_eq(checkResult.type, Status.ERROR)
+	assert_eq(checkResult.value, null)
+	assert_eq(checkResult.msg, "Command not found: /commandNotFound")
 	
+
+static func testFunc(s: String) -> Status:
+		return Status.ok(5, "all fine")
 
 func test_executeCommand():
 	# less arguments than expected
-	var cmdDescription = CommandDescription.new(func x(s: String) -> Status: return Status.ok(5, "all fine"), "str:s", "")
+	var cmdDescription = CommandDescription.new(testFunc, "str:s", "")
 	var cmdArgs = []
 	var checkResult = main.executeCommand(cmdDescription, cmdArgs)
 	assert_eq(checkResult.type, Status.ERROR)
 	assert_eq(checkResult.value, null)
-	assert_eq(checkResult.msg, "Not enough arguments - expected: 1 - received: 0")
+	assert_eq(checkResult.msg, "Not enough arguments:\nexpected (1) -> str:s\nreceived (0) -> []")
 	# more arguments than expected
 	cmdArgs = ["bla", 1, 2.1, "more"]
 	checkResult = main.executeCommand(cmdDescription, cmdArgs)
@@ -100,7 +108,7 @@ func test_checkNumberNumberOfArguments():
 	var checkResult = main.checkNumberOfArguments(argsDescription, cmdArgs)
 	assert_eq(checkResult.type, Status.ERROR)
 	assert_eq(checkResult.value, null)
-	assert_eq(checkResult.msg, "Not enough arguments - expected: 3 - received: 0")
+	assert_eq(checkResult.msg, "Not enough arguments:\nexpected (3) -> str:s int:i float:f\nreceived (0) -> []")
 	# more arguments than expected
 	cmdArgs = ["bla", 1, 2.1, "more"]
 	checkResult = main.checkNumberOfArguments(argsDescription, cmdArgs)
