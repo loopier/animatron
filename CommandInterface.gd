@@ -56,7 +56,7 @@ var coreCommands: Dictionary = {
 	"/animations/list": CommandDescription.new(listAnimations, "", "Get the list of available (loaded) animations."), # loaded
 	# actors
 	"/property": CommandDescription.new(setActorProperty, "property:s actor:s value:...", "Generic command to set the VALUE to any PROPERTY of an ACTOR.", Flags.asArray(true)),
-	"/method": CommandDescription.new(_callActorMethod, "method:s actor:s args:...", "Generic command to call an ACTOR's METHOD with some ARGS.", Flags.asArray(true)),
+	"/method": CommandDescription.new(callActorMethod, "method:s actor:s args:...", "Generic command to call an ACTOR's METHOD with some ARGS.", Flags.asArray(true)),
 	"/animation/property": CommandDescription.new(setAnimationProperty, "property:s actor:s value:...", "Change the ACTOR's ANIMATION GDScript PROPERTY. Slashes ('/') will be replaced for underscores '_'. Leading slash is optional.\n\nUsage: `/animation/property /rotation/degrees target 75`", Flags.asArray(true)),
 	"/text/property": CommandDescription.new(_setTextProperty, "property:s actor:s value:...", "Change the ACTOR's text GDScript PROPERTY. Slashes ('/') will be replaced for underscores '_'. Leading slash is optional.\n\nUsage: `/text/property /text target alo bla`", Flags.asArray(true)),
 	"/editor/property": CommandDescription.new(_setEditorProperty, "property:s value:...", "Change the editor's font GDScript PROPERTY. Slashes ('/') will be replaced for underscores '_'. Leading slash is optional.\n\nUsage: `/editor/property /font/size 32`", Flags.asArray(true)),
@@ -128,8 +128,6 @@ var coreCommands: Dictionary = {
 	"/flip/v": CommandDescription.new(toggleAnimationProperty, "actor:s", "Flip/ ACTOR vertically.", Flags.gdScript()),
 	"/flip/h": CommandDescription.new(toggleAnimationProperty, "actor:s", "Flip ACTOR horizontally.", Flags.gdScript()),
 	"/visible": CommandDescription.new(toggleActorProperty, "actor:s visibility:b", "Set ACTOR's VISIBILITY to either true or false.", Flags.gdScript()),
-	#"/hide": CommandDescription.new(callActorMethod, "actor:s", "Show ACTOR (set visibility to true).", Flags.gdScript()),
-	#"/show": CommandDescription.new(callActorMethod, "actor:s", "Hide ACTOR (set visibility to false).", Flags.gdScript()),
 	"/offset": CommandDescription.new(setAnimationPropertyWithVector, "actor:s x:i y:i", "Set the ACTOR's animation drawing offset in pixels.", Flags.gdScript()),
 	"/offset/x": CommandDescription.new(setAnimationPropertyWithVectorN, "actor:s pixels:i", "Set the ACTOR's animation drawing offset on the X axis.", Flags.gdScript()),
 	"/offset/y": CommandDescription.new(setAnimationPropertyWithVectorN, "actor:s pixels:i", "Set the ACTOR's animation drawing offset on the Y axis.", Flags.gdScript()),
@@ -143,11 +141,6 @@ var coreCommands: Dictionary = {
 	"/size": CommandDescription.new(size, "actor:s size:f", "Set the ACTOR SIZE on both axes (same value for with and height).", Flags.asArray(false)),
 	"/size/x": CommandDescription.new(sizeX, "actor:s size:f", "Set the ACTOR SIZE on the X axis.", Flags.asArray(false)),
 	"/size/y": CommandDescription.new(sizeY, "actor:s size:f", "Set the ACTOR SIZE on the Y axis.", Flags.asArray(false)),
-	"/scale": CommandDescription.new(scale, "actor:s multiply:f", "MULTIPLY the ACTOR's size (use values < 1.0 to devide).", Flags.asArray(false)),
-	"/scale/x": CommandDescription.new(scaleX, "actor:s multiply:f", "MULTIPLY the ACTOR's size on the X axis (use values < 1.0 to devide).", Flags.asArray(false)),
-	"/scale/y": CommandDescription.new(scaleY, "actor:s multiply:f", "MULTIPLY the ACTOR's size on the Y axis (use values < 1.0 to devide).", Flags.asArray(false)),
-	"/apply/scale": CommandDescription.new(callActorMethodWithVector, "", "", Flags.gdScript()),
-	"/set/position": CommandDescription.new(callActorMethodWithVector, "", "", Flags.gdScript()),
 	"/center": CommandDescription.new(center, "actor:s", "Set the ACTOR to the center of the screen."),
 	"/rotate": CommandDescription.new(rotate, "actor:s degrees:f", "Rotate ACTOR a number of DEGREES relative to the current rotation.", Flags.asArray(false)),
 }
@@ -815,7 +808,7 @@ func setActorProperty(args: Array) -> Status:
 		actor.call(_cmd_to_set_property(property), value)
 	return Status.ok()
 
-func _callActorMethod(args: Array) -> Status:
+func callActorMethod(args: Array) -> Status:
 	var result = getActors(args[1])
 	if result.isError(): return result
 	var method = args[0].replace("/", "_")

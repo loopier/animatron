@@ -64,6 +64,18 @@
 /def /angle actor:s degrees:f
      /property /rotation/degrees $actor $degrees
 
+/def /scale actor:s scale:f
+     /method /apply/scale $actor $scale $scale
+
+/def /scale/xy actor:s x:f y:f
+     /method /apply/scale $actor $x $y
+
+/def /scale/x actor:s x:f
+     /method /apply/scale $actor $x 1
+
+/def /scale/y actor:s y:f
+     /method /apply/scale $actor 1 $y
+
 #################################################################################
 # visibility                                                                    #
 #################################################################################
