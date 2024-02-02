@@ -56,6 +56,7 @@ var coreCommands: Dictionary = {
 	"/animations/list": CommandDescription.new(listAnimations, "", "Get the list of available (loaded) animations."), # loaded
 	# actors
 	"/property": CommandDescription.new(setActorProperty, "property:s actor:s value:...", "Generic command to set the VALUE to any PROPERTY of an ACTOR.", Flags.asArray(true)),
+	"/method": CommandDescription.new(_callActorMethod, "method:s actor:s args:...", "Generic command to call an ACTOR's METHOD with some ARGS.", Flags.asArray(true)),
 	"/animation/property": CommandDescription.new(setAnimationProperty, "property:s actor:s value:...", "Change the ACTOR's ANIMATION GDScript PROPERTY. Slashes ('/') will be replaced for underscores '_'. Leading slash is optional.\n\nUsage: `/animation/property /rotation/degrees target 75`", Flags.asArray(true)),
 	"/text/property": CommandDescription.new(_setTextProperty, "property:s actor:s value:...", "Change the ACTOR's text GDScript PROPERTY. Slashes ('/') will be replaced for underscores '_'. Leading slash is optional.\n\nUsage: `/text/property /text target alo bla`", Flags.asArray(true)),
 	"/editor/property": CommandDescription.new(_setEditorProperty, "property:s value:...", "Change the editor's font GDScript PROPERTY. Slashes ('/') will be replaced for underscores '_'. Leading slash is optional.\n\nUsage: `/editor/property /font/size 32`", Flags.asArray(true)),
@@ -120,16 +121,10 @@ var coreCommands: Dictionary = {
 	"/rand": CommandDescription.new(randCmdValue, "cmd:s actor:s min:f max:f", "Send a CMD to an ACTOR with a random value between MIN and MAX. If a wildcard is used, e.g. `bl*`, all ACTORs with with a name that begins with `bl` will get a different value. *WARNING: This only works with single-value commands.*", Flags.asArray(true)),
 	"/tween": CommandDescription.new(tweenActorProperty, "dur:f transition:s property:s actor:s value:f", "Tweens a PROPERTY of an ACTOR between the current value and final VALUE in a span of time equal to DURation, in seconds. The TRANSITION must be one of: linear, sine, quint, quart, quad, expo, elastic, cubic, circ, bounce, back and spring.", Flags.asArray(true)),
 	# Node
-	#"/animation": CommandDescription.new(setAnimationProperty, "actor:s animation:s", "Change the ACTOR's ANIMATION.", Flags.gdScript()),
 	"/play": CommandDescription.new(callAnimationMethod, "actor:s", "Start playing ACTOR's image sequence.", Flags.gdScript()),
 	"/play/backwards": CommandDescription.new(callAnimationMethod, "actor:s", "Play ACTOR's animation backwards.", Flags.gdScript()),
 	"/animation/loop": CommandDescription.new(setAnimationFramesProperty, "actor:s loop:b", "Set the ACTOR's animation to either LOOP or not.", Flags.gdScript()),
 	"/stop": CommandDescription.new(callAnimationMethod, "actor:s", "Stop playing the ACTOR's animation.", Flags.gdScript()),
-	#"/frame": CommandDescription.new(setAnimationProperty, "actor:s frame:i", "Set the ACTOR's current FRAME.", Flags.gdScript()),
-	#"/frame/progress": CommandDescription.new(setAnimationProperty, "", "", Flags.gdScript()),
-	#"/speed/scale": CommandDescription.new(setAnimationProperty, "actor:s speed:f", "Set the ACTOR's animation SPEED (1 = normal speed, 2 = 2 x speed).", Flags.gdScript()),
-	#"/start/frame": CommandDescription.new(setAnimationProperty, "actor:s frame:i", "Set the first FRAME of the loop in ACTOR's animation. Defaults to 0.", Flags.gdScript()),
-	#"/end/frame": CommandDescription.new(setAnimationProperty, "actor:s frame:i", "Set the last FRAME of the loop in ACTOR's animation. Defaults to number of frames of the animation.", Flags.gdScript()),
 	"/flip/v": CommandDescription.new(toggleAnimationProperty, "actor:s", "Flip/ ACTOR vertically.", Flags.gdScript()),
 	"/flip/h": CommandDescription.new(toggleAnimationProperty, "actor:s", "Flip ACTOR horizontally.", Flags.gdScript()),
 	"/visible": CommandDescription.new(toggleActorProperty, "actor:s visibility:b", "Set ACTOR's VISIBILITY to either true or false.", Flags.gdScript()),
@@ -153,19 +148,8 @@ var coreCommands: Dictionary = {
 	"/scale/y": CommandDescription.new(scaleY, "actor:s multiply:f", "MULTIPLY the ACTOR's size on the Y axis (use values < 1.0 to devide).", Flags.asArray(false)),
 	"/apply/scale": CommandDescription.new(callActorMethodWithVector, "", "", Flags.gdScript()),
 	"/set/position": CommandDescription.new(callActorMethodWithVector, "", "", Flags.gdScript()),
-	#"/position": CommandDescription.new(setActorPropertyWithVector, "actor:s x:i y:i", "Set the ACTOR's absolute position in pixels.", Flags.gdScript()),
-	#"/position/x": CommandDescription.new(setActorPropertyWithVectorN, "actor:s pixels:i", "Set the ACTOR's absolute position in PIXELS on the X axis.", Flags.gdScript()),
-	#"/position/y": CommandDescription.new(setActorPropertyWithVectorN, "actor:s pixels:i", "Set the ACTOR's absolute position in PIXELS on the Y axis.", Flags.gdScript()),
 	"/center": CommandDescription.new(center, "actor:s", "Set the ACTOR to the center of the screen."),
-	"/move": CommandDescription.new(move, "actor:s xcoord:f ycoord:f", "Move ACTOR to XCOORD - YCOORD relative to the current position.", Flags.asArray(false)),
-	"/move/x": CommandDescription.new(moveX, "actor:s xcoord:f", "Move ACTOR to XCOORD relative to the current position.", Flags.asArray(false)),
-	"/move/y": CommandDescription.new(moveY, "actor:s ycoord:f", "Move ACTOR to YCOORD relative to the current position.", Flags.asArray(false)),
-	#"/rotation/degrees": CommandDescription.new(setActorProperty, "actor:s degrees:f", "Set the angle of the ACTOR in DEGREES.", Flags.gdScript()),
 	"/rotate": CommandDescription.new(rotate, "actor:s degrees:f", "Rotate ACTOR a number of DEGREES relative to the current rotation.", Flags.asArray(false)),
-	# text
-	#"/type": CommandDescription.new(setActorText, "actor:s text:s", "Add TEXT to an ACTOR.", Flags.asArray(true)),
-	#"/text/visible/ratio": CommandDescription.new(setTextProperty, "actor:s ratio:s", "Set how much text is visible.", Flags.gdScript()),
-	#"/text/color": CommandDescription.new(setTextColor, "actor:s r:f g:f b:f", "Add TEXT to an ACTOR."),
 }
 
 ## Custom command definitions
@@ -830,6 +814,39 @@ func setActorProperty(args: Array) -> Status:
 		var value = result.value.propertyValue
 		actor.call(_cmd_to_set_property(property), value)
 	return Status.ok()
+
+func _callActorMethod(args: Array) -> Status:
+	var result = getActors(args[1])
+	if result.isError(): return result
+	var method = args[0].replace("/", "_")
+	if method.begins_with("_"): method = method.substr(1)
+	args = args.slice(2)
+	for actor in result.value:
+		result = getObjectMethod(actor, method)
+		if result.isError(): return result
+		# FIX: implement methods with mulpile arguments
+		# currently it only accepts 1 argument
+		# should probably move it to a dedicated method or function
+		var argsType = result.value.args[0].type
+		var methodArgs: Variant
+		match argsType:
+			TYPE_INT: methodArgs = args[0] as int
+			TYPE_FLOAT: methodArgs = args[0] as float
+			TYPE_BOOL: methodArgs = args[0] as bool
+			TYPE_VECTOR2: methodArgs = Vector2(args[0] as float, args[1] as float)
+			TYPE_VECTOR3: methodArgs = Vector3(args[0] as float, args[1] as float, args[2] as float)
+			TYPE_VECTOR4: methodArgs = Vector4(args[0] as float, args[1] as float, args[2] as float, args[3] as float)
+			TYPE_COLOR: methodArgs = Color(args[0] as float, args[1] as float, args[2] as float)
+			_: methodArgs = " ".join(args)
+		actor.call(method, methodArgs)
+	return Status.ok()
+
+func getObjectMethod(obj: Object, methodName: String) -> Status:
+	var methods = obj.get_method_list()
+	for method in obj.get_method_list():
+		if method.name == methodName: 
+			return Status.ok(method)
+	return Status.error("Method not found: %s(%s):%s" % [obj.name, obj.get_class(), methodName])
 
 func setAnimationProperty(args: Array) -> Status:
 	var result = getActors(args[1])
