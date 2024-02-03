@@ -56,6 +56,7 @@ var coreCommands: Dictionary = {
 	"/animations/list": CommandDescription.new(listAnimations, "", "Get the list of available (loaded) animations."), # loaded
 	# actors
 	"/property": CommandDescription.new(setActorProperty, "property:s actor:s value:...", "Generic command to set the VALUE to any PROPERTY of an ACTOR.", Flags.asArray(true)),
+	"/property/relative": CommandDescription.new(setActorRelativeProperty, "property:s actor:s value:...", "Generic command to set the VALUE to any PROPERTY of an ACTOR.", Flags.asArray(true)),
 	"/method": CommandDescription.new(callActorMethod, "method:s actor:s args:...", "Generic command to call an ACTOR's METHOD with some ARGS.", Flags.asArray(true)),
 	"/animation/property": CommandDescription.new(setAnimationProperty, "property:s actor:s value:...", "Change the ACTOR's ANIMATION GDScript PROPERTY. Slashes ('/') will be replaced for underscores '_'. Leading slash is optional.\n\nUsage: `/animation/property /rotation/degrees target 75`", Flags.asArray(true)),
 	"/text/property": CommandDescription.new(_setTextProperty, "property:s actor:s value:...", "Change the ACTOR's text GDScript PROPERTY. Slashes ('/') will be replaced for underscores '_'. Leading slash is optional.\n\nUsage: `/text/property /text target alo bla`", Flags.asArray(true)),
@@ -811,6 +812,19 @@ func setActorProperty(args: Array) -> Status:
 		actor.call(_cmd_to_set_property(property), value)
 	return Status.ok()
 
+func setActorRelativeProperty(args: Array) -> Status:
+	var result = getActors(args[1])
+	if result.isError(): return result
+	var property = _cmdToGdScript(args[0])
+	args = args.slice(2) 
+	for actor in result.value:
+		result = getArgsAsPropertyType(actor, property, args)
+		if result.isError(): return result
+		var propertyValue = getProperty(actor, property).value
+		var newValue = propertyValue + result.value.propertyValue
+		actor.set(property, newValue)
+	return Status.ok()
+
 func callActorMethod(args: Array) -> Status:
 	var result = getActors(args[1])
 	if result.isError(): return result
@@ -1334,6 +1348,13 @@ func getArgsAsPropertyType(node: Object, propertyName: String, args: Array) -> S
 			value = property
 			propertyName = propertyName.replace("_", ".")
 	return Status.ok({"node": node, "propertyName": propertyName, "propertyValue": value})
+
+func getProperty(obj: Object, propertyName: String) -> Status:
+	propertyName = _cmdToGdScript(propertyName)
+	var value = obj.get(propertyName)
+	if value == null: 
+		return Status.error("Property not found: %s(%s):%s" % [obj.name, obj.get_class(), propertyName])
+	return Status.ok(value)
 
 func setActorText(nameAndMsg: Array) -> Status:
 	var actorName = nameAndMsg[0]
