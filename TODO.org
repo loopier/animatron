@@ -5,6 +5,8 @@
 * FIX `/editor/append` to accept variables
 it has unexpected behaviour when using variables `/edior/append /post $bla`
 
+* TODO Add `/help` for defs
+
 * TODO state machines
 * TODO pivot (anchor?)
 * TODO sequencer
