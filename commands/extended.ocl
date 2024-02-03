@@ -36,7 +36,7 @@
 #################################################################################
 # Set the X and Y coordinates (in pixels) of the ACTOR.
 /def /position actor:s x:f y:f
-     /property /position $actor $x $y
+     /method /position $actor $x $y
 
 # Set the X coordinate (in pixels) of the ACTOR.
 /def /position/x actor:s x:f
@@ -163,7 +163,7 @@
 
 # Set the ACTOR's ANIMATION.
 /def /animation actor:s animation:s
-     /animation/property /animation $actor $animation
+     /animation/method /set/animation $actor $animation
 
 # See /animation
 /def /anim actor:s animation:s
@@ -171,7 +171,7 @@
 
 # Set the ACTOR's animation SPEED (1 = normal speed, 2 = 2 x speed).
 /def /speed actor:s speed:f
-     /animation/property /speed/scale $actor $speed
+     /animation/method /set/speed/scale $actor $speed
 
 # Set the ACTOR's current FRAME.
 /def /frame actor:s frame:f
