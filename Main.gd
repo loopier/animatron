@@ -226,7 +226,8 @@ func convertArguments(argsDescription: String, args: Array) -> Array:
 				if args[i] == "t" or args[i] == "true": args[i] = "1"
 				elif args[i] == "f" or args[i] == "false": args[i] = "0"
 				typedArgs.append(bool(int(args[i])))
-			_: typedArgs.append(args[i])
+			_: 
+				if i < args.size(): typedArgs.append(args[i])
 	return typedArgs
 
 func loadConfig(filename: String):

@@ -60,6 +60,8 @@ var coreCommands: Dictionary = {
 	"/method": CommandDescription.new(callActorMethod, "method:s actor:s args:...", "Generic command to call an ACTOR's METHOD with some ARGS.", Flags.asArray(true)),
 	# animation
 	"/animation/property": CommandDescription.new(setAnimationProperty, "property:s actor:s value:...", "Change the ACTOR's ANIMATION GDScript PROPERTY. Slashes ('/') will be replaced for underscores '_'. Leading slash is optional.\n\nUsage: `/animation/property /rotation/degrees target 75`", Flags.asArray(true)),
+	"/animation/method": CommandDescription.new(callAnimationMethod, "method:s actor:s args:...", "Call a METHOD on the ACTOR's animation with some ARGS.", Flags.asArray(true)),
+	"/animation/frames/method": CommandDescription.new(callAnimationFramesMethod, "method:s actor:s args:...", "Call a METHOD on the ACTOR's animation with some ARGS.", Flags.asArray(true)),
 	
 	# label
 	"/text/property": CommandDescription.new(_setTextProperty, "property:s actor:s value:...", "Change the ACTOR's text GDScript PROPERTY. Slashes ('/') will be replaced for underscores '_'. Leading slash is optional.\n\nUsage: `/text/property /text target alo bla`", Flags.asArray(true)),
@@ -124,16 +126,9 @@ var coreCommands: Dictionary = {
 	"/rand": CommandDescription.new(randCmdValue, "cmd:s actor:s min:f max:f", "Send a CMD to an ACTOR with a random value between MIN and MAX. If a wildcard is used, e.g. `bl*`, all ACTORs with with a name that begins with `bl` will get a different value. *WARNING: This only works with single-value commands.*", Flags.asArray(true)),
 	"/tween": CommandDescription.new(tweenActorProperty, "dur:f transition:s property:s actor:s value:f", "Tweens a PROPERTY of an ACTOR between the current value and final VALUE in a span of time equal to DURation, in seconds. The TRANSITION must be one of: linear, sine, quint, quart, quad, expo, elastic, cubic, circ, bounce, back and spring.", Flags.asArray(true)),
 	# Node
-	"/play": CommandDescription.new(callAnimationMethod, "actor:s", "Start playing ACTOR's image sequence.", Flags.gdScript()),
-	"/play/backwards": CommandDescription.new(callAnimationMethod, "actor:s", "Play ACTOR's animation backwards.", Flags.gdScript()),
-	#"/animation/loop": CommandDescription.new(setAnimationFramesProperty, "actor:s loop:b", "Set the ACTOR's animation to either LOOP or not.", Flags.gdScript()),
-	"/stop": CommandDescription.new(callAnimationMethod, "actor:s", "Stop playing the ACTOR's animation.", Flags.gdScript()),
 	"/flip/v": CommandDescription.new(toggleAnimationProperty, "actor:s", "Flip/ ACTOR vertically.", Flags.gdScript()),
 	"/flip/h": CommandDescription.new(toggleAnimationProperty, "actor:s", "Flip ACTOR horizontally.", Flags.gdScript()),
 	"/visible": CommandDescription.new(toggleActorProperty, "actor:s visibility:b", "Set ACTOR's VISIBILITY to either true or false.", Flags.gdScript()),
-	#"/offset": CommandDescription.new(setAnimationPropertyWithVector, "actor:s x:i y:i", "Set the ACTOR's animation drawing offset in pixels.", Flags.gdScript()),
-	#"/offset/x": CommandDescription.new(setAnimationPropertyWithVectorN, "actor:s pixels:i", "Set the ACTOR's animation drawing offset on the X axis.", Flags.gdScript()),
-	#"/offset/y": CommandDescription.new(setAnimationPropertyWithVectorN, "actor:s pixels:i", "Set the ACTOR's animation drawing offset on the Y axis.", Flags.gdScript()),
 	"/parent": CommandDescription.new(parentActor, "child:s parent:s", "Set an actor to be the CHILD of another PARENT actor."),
 	"/parent/free": CommandDescription.new(parentActorFree, "child:s", "Free the CHILD actor from it's parent."),
 	"/children/list": CommandDescription.new(listChildren, "parent:s", "List all PARENT's children actors."),
@@ -724,12 +719,12 @@ func _cmdToGdScriptSetter(property: String) -> String:
 
 ## Converts a command to GDScript property syntax.
 ## For example: [code]/visible/ratio[/code] is converted to [code]visible_ratio[/code]
-func _cmdToGdScript(property: String) -> String:
-	if property.begins_with("/") or property.begins_with("_"):
-		property = property.substr(1)
+func _cmdToGdScript(cmd: String) -> String:
+	if cmd.begins_with("/") or cmd.begins_with("_"):
+		cmd = cmd.substr(1)
 	else:
-		property
-	return property.replace("/", "_")
+		cmd
+	return cmd.replace("/", "_")
 
 func setActorProperty(args: Array) -> Status:
 	var result = getActors(args[1])
@@ -759,8 +754,7 @@ func setActorRelativeProperty(args: Array) -> Status:
 func callActorMethod(args: Array) -> Status:
 	var result = getActors(args[1])
 	if result.isError(): return result
-	var method = args[0].replace("/", "_")
-	if method.begins_with("_"): method = method.substr(1)
+	var method = _cmdToGdScript(args[0])
 	args = args.slice(2)
 	for actor in result.value:
 		result = getObjectMethod(actor, method)
@@ -792,6 +786,18 @@ func getObjectMethod(obj: Object, methodName: String) -> Status:
 		if method.name == methodName: 
 			return Status.ok(method)
 	return Status.error("Method not found: %s(%s):%s" % [obj.name, obj.get_class(), methodName])
+
+## Converts and returns an array of anything into the correct types for the given method
+func argsToMethodTypes(object: Object, methodName: String, args: Array) -> Array:
+	var method = getObjectMethod(object, methodName).value
+	var types = []
+	for i in method.args.size():
+		match method.args[i].type:
+			TYPE_INT: types.append(args[i] as int)
+			TYPE_FLOAT: types.append(args[i] as float)
+			TYPE_BOOL: types.append(args[i] as int as bool)
+			_: types.append(args[i])
+	return types
 
 func setAnimationProperty(args: Array) -> Status:
 	var result = getActors(args[1])
@@ -843,7 +849,7 @@ func _setEditorProperty(args: Array) -> Status:
 	return Status.ok()
 
 func setAnimationFramesProperty(property, args) -> Status:
-	return callAnimationFramesMethod("/set" + property, args)
+	return callAnimationFramesMethod(["/set" + property] + [args])
 
 func toggleProperty(property, object) -> Status:
 	if property.begins_with("/"): property = property.substr(1)
@@ -877,11 +883,11 @@ func arrayToVector(input: Array) -> Variant:
 		4: return Vector4(input[0], input[1], input[2], input[3])
 		_: return null
 
-func callAnimationMethod(method, args) -> Status:
-	var result = getActors(args[0])
+func callAnimationMethod(args: Array) -> Status:
+	var result = getActors(args[1])
 	if result.isError(): return result
-	method = method.substr(1).replace("/", "_").to_lower()
-	args = args.slice(1)
+	var method = _cmdToGdScript(args[0].substr(1))
+	args = args.slice(2)
 	for actor in result.value:
 		var animation = actor.get_node("Animation")
 		if len(args) == 0:
@@ -891,18 +897,18 @@ func callAnimationMethod(method, args) -> Status:
 	#return Status.ok(result, "Called %s.%s.%s(%s): %s" % [actor.get_name(), animation.get_animation(), method, args, result])
 	return Status.ok()
 
-func callAnimationFramesMethod(method, args) -> Status:
-	var result = getActors(args[0])
+func callAnimationFramesMethod(args) -> Status:
+	var result = getActors(args[1])
 	if result.isError(): return result
-	method = method.substr(1) if method.begins_with("/") else method
-	method = method.replace("/", "_").to_lower()
+	var method = _cmdToGdScript(args[0].substr(1))
+	args = args.slice(2)
 	for actor in result.value:
 		var animation = actor.get_node("Animation")
 		var frames = animation.get_sprite_frames()
 		# replace first argument with animation name
 		# most of the SpriteFrames methods need the animation name as first argument
-		args[0] = animation.get_animation()
-		var x = typeof(args[1])
+		args.insert(0, animation.get_animation())
+		args = argsToMethodTypes(frames, method, args)
 		result = frames.callv(method, args)
 	return Status.ok()
 

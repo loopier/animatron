@@ -30,7 +30,8 @@ func test_listCommands():
 	assert_eq(cmd.listCommands(cmd.coreCommands).value, "
 --
 /actors/list
-/animation/loop
+/animation/frames/method
+/animation/method
 /animation/property
 /animations/list
 /assets/list
@@ -82,8 +83,6 @@ func test_listCommands():
 /osc/send
 /parent
 /parent/free
-/play
-/play/backwards
 /post
 /post/clear
 /post/toggle
@@ -103,7 +102,6 @@ func test_listCommands():
 /state/free
 /state/next
 /states
-/stop
 /text/property
 /top
 /tween

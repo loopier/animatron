@@ -12,15 +12,6 @@
      /unload $animation
      /load $animation
 
-# Play the animation from START to END frames.
-/def /play/range actor:s start:i end:i
-     /start/frame $actor $start
-     /end/frame $actor $end
-
-# Play the ACTOR's animation backwards
-/def /reverse actor:s
-     /method /play/backwards $actor
-
 # List all commands
 /def /commands
      /commands/list
@@ -153,6 +144,23 @@
 #################################################################################
 # animation                                                                     #
 #################################################################################
+# Play the ACTOR's animation
+/def /play actor:s
+     /animation/method /play $actor
+
+# Play the ACTOR's animation backwards
+/def /backwards actor:s
+     /animation/method /play/backwards $actor
+
+# Stop the ACTOR's animation
+/def /stop actor:s
+     /animation/method /stop $actor
+
+# Play the animation from START to END frames.
+/def /play/range actor:s start:i end:i
+     /start/frame $actor $start
+     /end/frame $actor $end
+
 # Set the ACTOR's ANIMATION.
 /def /animation actor:s animation:s
      /animation/property /animation $actor $animation
@@ -185,11 +193,11 @@
 # Loop the ACTOR's animation
 /def /loop actor:s
      /play $actor
-     /animation/loop $actor 1
+     /animation/frames/method /set/animation/loop $actor 1
 
 # Don't loop the ACTOR's animation
 /def /noloop actor:s
-     /animation/loop $actor 0
+     /animation/frames/method /set/animation/loop $actor 0
 
 # Set the ACTOR's animation drawing offset in pixels.
 /def /offset actor:s x:i y:i
