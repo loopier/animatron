@@ -15,11 +15,11 @@ it has unexpected behaviour when using variables `/edior/append /post $bla`
 - [ ] add command to change text position
 * TODO grid
 * TODO find better syntax for tweens
-* TODO Abstraction of `set*Property` - join all 3 methods
 * TODO rethink cmd evaluation
 - parse command for variables
 - parse command for expressions, passing variables
 
+* DONE Abstraction of `set*Property` - join all 3 methods
 * DONE variable parsing partial match
 variables with shorter names that match with a part of a longer variable name make things wonky
 #+begin_src
