@@ -6,7 +6,6 @@
 it has unexpected behaviour when using variables `/edior/append /post $bla`
 
 * TODO Add `/help` for defs
-* TODO find better syntax for tweens
 * TODO state machines
 * TODO pivot (anchor?)
 * TODO sequencer
