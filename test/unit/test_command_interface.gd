@@ -77,9 +77,6 @@ func test_listCommands():
 /midi/noteon/trig
 /midi/noteon/trig/free
 /midi/noteon/velocity
-/offset
-/offset/x
-/offset/y
 /opacity
 /osc/remote
 /osc/send
@@ -93,9 +90,7 @@ func test_listCommands():
 /property
 /property/relative
 /rand
-/relative
 /remove
-/rotate
 /routine
 /routine/finished
 /routine/free

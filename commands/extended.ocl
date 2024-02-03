@@ -3,6 +3,10 @@
      /load $animation
      /create $actor $animation
 
+# Delete the ACTOR.
+/def /free actor:s
+     /remove $actor
+
 # Reload ANIMATION frames from disk.
 /def /reload animation:s
      /unload $animation
@@ -12,6 +16,29 @@
 /def /play/range actor:s start:i end:i
      /start/frame $actor $start
      /end/frame $actor $end
+
+# Play the ACTOR's animation backwards
+/def /reverse actor:s
+     /method /play/backwards $actor
+
+# List all commands
+/def /commands
+     /commands/list
+
+# List assets available on disk.
+# They might not be loaded.
+#
+# See also: /animations
+/def /assets
+     /assets/list
+
+# List all animations that are loaded to memory.
+/def /animations
+     /animations/list
+
+# List all actors that have been created.
+/def /actors
+     /actors/list
 
 #################################################################################
 # transform                                                                     #
@@ -123,10 +150,6 @@
 /def /color/b actor:s value:f
      /color $actor 0 0 $value
 
-/def /loop actor:s
-     /play $actor
-     /animation/loop $actor 1
-
 #################################################################################
 # animation                                                                     #
 #################################################################################
@@ -159,26 +182,27 @@
 /def /end/frame actor:s frame:f
      /animation/property /end/frame $actor $frame
 
+# Loop the ACTOR's animation
+/def /loop actor:s
+     /play $actor
+     /animation/loop $actor 1
+
+# Don't loop the ACTOR's animation
 /def /noloop actor:s
      /animation/loop $actor 0
 
-/def /commands
-     /commands/list
+# Set the ACTOR's animation drawing offset in pixels.
+/def /offset actor:s x:i y:i
+	/animation/property /offset $actor $x $y
 
-/def /assets
-     /assets/list
+# Set the ACTOR's animation drawing offset on the X axis.
+/def /offset/x actor:s pixels:i
+	/animation/property /offset/x $actor $x
 
-/def /actors
-     /actors/list
+# Set the ACTOR's animation drawing offset on the Y axis.
+/def /offset/y actor:s pixels:i
+	/animation/property /offset/y $actor $y
 
-/def /animations
-     /animations/list
-
-/def /free actor:s
-     /remove $actor
-
-/def /reverse actor:s
-     /play/backwards $actor
 
 #################################################################################
 # text label                                                                    #

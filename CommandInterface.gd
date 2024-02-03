@@ -58,7 +58,10 @@ var coreCommands: Dictionary = {
 	"/property": CommandDescription.new(setActorProperty, "property:s actor:s value:...", "Generic command to set the VALUE to any PROPERTY of an ACTOR.", Flags.asArray(true)),
 	"/property/relative": CommandDescription.new(setActorRelativeProperty, "property:s actor:s value:...", "Generic command to set the VALUE to any PROPERTY of an ACTOR.", Flags.asArray(true)),
 	"/method": CommandDescription.new(callActorMethod, "method:s actor:s args:...", "Generic command to call an ACTOR's METHOD with some ARGS.", Flags.asArray(true)),
+	# animation
 	"/animation/property": CommandDescription.new(setAnimationProperty, "property:s actor:s value:...", "Change the ACTOR's ANIMATION GDScript PROPERTY. Slashes ('/') will be replaced for underscores '_'. Leading slash is optional.\n\nUsage: `/animation/property /rotation/degrees target 75`", Flags.asArray(true)),
+	
+	# label
 	"/text/property": CommandDescription.new(_setTextProperty, "property:s actor:s value:...", "Change the ACTOR's text GDScript PROPERTY. Slashes ('/') will be replaced for underscores '_'. Leading slash is optional.\n\nUsage: `/text/property /text target alo bla`", Flags.asArray(true)),
 	"/editor/property": CommandDescription.new(_setEditorProperty, "property:s value:...", "Change the editor's font GDScript PROPERTY. Slashes ('/') will be replaced for underscores '_'. Leading slash is optional.\n\nUsage: `/editor/property /font/size 32`", Flags.asArray(true)),
 	
@@ -118,20 +121,19 @@ var coreCommands: Dictionary = {
 	"/midi/cc/free": CommandDescription.new(freeMidi, "channel:i [num:i]", "Remove a cmd from the event.", Flags.gdScript()),
 	"/midi/free": CommandDescription.new(clearMidi, "", "Remove all commands from MIDI events."),
 	# utils
-	"/relative": CommandDescription.new(setRelativeProperty, "", "TODO", Flags.asArray(false)),
 	"/rand": CommandDescription.new(randCmdValue, "cmd:s actor:s min:f max:f", "Send a CMD to an ACTOR with a random value between MIN and MAX. If a wildcard is used, e.g. `bl*`, all ACTORs with with a name that begins with `bl` will get a different value. *WARNING: This only works with single-value commands.*", Flags.asArray(true)),
 	"/tween": CommandDescription.new(tweenActorProperty, "dur:f transition:s property:s actor:s value:f", "Tweens a PROPERTY of an ACTOR between the current value and final VALUE in a span of time equal to DURation, in seconds. The TRANSITION must be one of: linear, sine, quint, quart, quad, expo, elastic, cubic, circ, bounce, back and spring.", Flags.asArray(true)),
 	# Node
 	"/play": CommandDescription.new(callAnimationMethod, "actor:s", "Start playing ACTOR's image sequence.", Flags.gdScript()),
 	"/play/backwards": CommandDescription.new(callAnimationMethod, "actor:s", "Play ACTOR's animation backwards.", Flags.gdScript()),
-	"/animation/loop": CommandDescription.new(setAnimationFramesProperty, "actor:s loop:b", "Set the ACTOR's animation to either LOOP or not.", Flags.gdScript()),
+	#"/animation/loop": CommandDescription.new(setAnimationFramesProperty, "actor:s loop:b", "Set the ACTOR's animation to either LOOP or not.", Flags.gdScript()),
 	"/stop": CommandDescription.new(callAnimationMethod, "actor:s", "Stop playing the ACTOR's animation.", Flags.gdScript()),
 	"/flip/v": CommandDescription.new(toggleAnimationProperty, "actor:s", "Flip/ ACTOR vertically.", Flags.gdScript()),
 	"/flip/h": CommandDescription.new(toggleAnimationProperty, "actor:s", "Flip ACTOR horizontally.", Flags.gdScript()),
 	"/visible": CommandDescription.new(toggleActorProperty, "actor:s visibility:b", "Set ACTOR's VISIBILITY to either true or false.", Flags.gdScript()),
-	"/offset": CommandDescription.new(setAnimationPropertyWithVector, "actor:s x:i y:i", "Set the ACTOR's animation drawing offset in pixels.", Flags.gdScript()),
-	"/offset/x": CommandDescription.new(setAnimationPropertyWithVectorN, "actor:s pixels:i", "Set the ACTOR's animation drawing offset on the X axis.", Flags.gdScript()),
-	"/offset/y": CommandDescription.new(setAnimationPropertyWithVectorN, "actor:s pixels:i", "Set the ACTOR's animation drawing offset on the Y axis.", Flags.gdScript()),
+	#"/offset": CommandDescription.new(setAnimationPropertyWithVector, "actor:s x:i y:i", "Set the ACTOR's animation drawing offset in pixels.", Flags.gdScript()),
+	#"/offset/x": CommandDescription.new(setAnimationPropertyWithVectorN, "actor:s pixels:i", "Set the ACTOR's animation drawing offset on the X axis.", Flags.gdScript()),
+	#"/offset/y": CommandDescription.new(setAnimationPropertyWithVectorN, "actor:s pixels:i", "Set the ACTOR's animation drawing offset on the Y axis.", Flags.gdScript()),
 	"/parent": CommandDescription.new(parentActor, "child:s parent:s", "Set an actor to be the CHILD of another PARENT actor."),
 	"/parent/free": CommandDescription.new(parentActorFree, "child:s", "Free the CHILD actor from it's parent."),
 	"/children/list": CommandDescription.new(listChildren, "parent:s", "List all PARENT's children actors."),
@@ -714,76 +716,9 @@ func loopAnimation(actorName: String) -> Status:
 	
 	return Status.ok()
 
-## Sets any Vector [param property] of any node. 
-## [param args[1..]] are the vector values (between 2 and 4). If only 1 value is passed, it will set the same value on all axes.
-func setNodePropertyWithVector(node, property, args) -> Status:
-	property = property.substr(1) if property.begins_with("/") else property
-	property = property.replace("/", "_")
-	var setProperty = "set_%s" % [property]
-	var vec = node.call("get_%s" % [property])
-	if len(args) < 2:
-		match typeof(vec):
-			TYPE_VECTOR2: args = [args[0], args[0]]
-			TYPE_VECTOR3: args = [args[0], args[0], args[0]]
-			TYPE_VECTOR4: args = [args[0], args[0], args[0], args[0]]
-	return callMethodWithVector(node, setProperty, args)
-
-func setActorPropertyWithVector(property, args) -> Status:
-	var result = getActors(args[0])
-	if result.isError(): return result
-	for actor in result.value:
-		setNodePropertyWithVector(actor, property, args.slice(1))
-	return Status.ok()
-
-func setAnimationPropertyWithVector(property, args) -> Status:
-	var result = getActors(args[0])
-	if result.isError(): return result
-	for actor in result.value:
-		var animation = actor.get_node("Animation")
-		setNodePropertyWithVector(animation, property, args.slice(1))
-	return Status.ok()
-
-## Sets the value for the N axis of any Vector [param property] (position, scale, ...) of any actor.
-## For example: /position/x would set the [method actor.get_position().x] value.
-## [param args\[0\]] is the actor name.
-## [param args[1]] is the value.
-func setNodePropertyWithVectorN(node, property, value) -> Status:
-	var vec = node.call("get_" + property.get_slice("/", 1).to_snake_case())
-	var axis = property.get_slice("/", 2)
-	value = float(value)
-	match axis:
-		"x": vec.x = value
-		"y": vec.y = value
-		"z": vec.z = value
-		"r": vec.r = value
-		"g": vec.g = value
-		"b": vec.b = value
-		"a": vec.a = value
-	node.call("set_" + property.get_slice("/", 1).to_snake_case(), vec)
-#	Log.debug("Set %s %s -- %s: %s" % [property, actor.get_position(), vec, value])
-	return Status.ok("Set %s.%s: %s" % [vec, axis, value])
-
-func setActorPropertyWithVectorN(actor, args: Array) -> Status:
-	#var result = getActors(args[1])
-	#if result.isError(): return result
-	#var property = args[0]
-	#for actor in result.value:
-		#var value = getArgsAsPropertyType(actor, property, args.slice(2))
-		#setNodePropertyWithVectorN(actor, property, args[1])
-	return Status.error("Broken when imlementing new setActorProperty")
-	return Status.ok()
-
-func setAnimationPropertyWithVectorN(property, args) -> Status:
-	var result = getActors(args[0])
-	if result.isError(): return result
-	for actor in result.value:
-		var animation = actor.get_node("Animation")
-		setNodePropertyWithVectorN(animation, property, args[1])
-	return Status.ok()
-
 ## Converts a command to GDScript property setter syntax.
 ## For example: [code]/visible/ratio[/code] is converted to [code]set_visible_ratio[/code]
-func _cmd_to_set_property(property: String) -> String:
+func _cmdToGdScriptSetter(property: String) -> String:
 	property = property.substr(1) if property.begins_with("/") or property.begins_with("_") else property
 	return "set_%s" % [property.replace("/", "_")]
 
@@ -869,7 +804,7 @@ func setAnimationProperty(args: Array) -> Status:
 		if result.isError(): return result
 		property = result.value.propertyName
 		var value = result.value.propertyValue
-		var calledProperty = _cmd_to_set_property(property)
+		var calledProperty = _cmdToGdScriptSetter(property)
 		animation.call(calledProperty, value)
 	return Status.ok()
 
@@ -886,7 +821,7 @@ func _setTextProperty(args: Array) -> Status:
 		if result.isError(): return result
 		property = result.value.propertyName
 		var value = result.value.propertyValue
-		var calledProperty = _cmd_to_set_property(property)
+		var calledProperty = _cmdToGdScriptSetter(property)
 		actorLabel.call(calledProperty, value)
 	return Status.ok()
 
@@ -933,43 +868,6 @@ func toggleAnimationProperty(property, args) -> Status:
 		toggleProperty(property, animation)
 	return Status.ok()
 
-func setRelativeProperty(args: Array) -> Status:
-	var result = getActors(args[1])
-	if result.isError(): return result
-	for actor in result.value:
-		var property = args[0]
-		var values = args.slice(2)
-		if property.begins_with("/"): property = property.substr(1)
-		property = property.replace("/", "_")
-		var object = actor if actor.has_method("get_"+property) else actor.get_node("Animation")
-		var currentValue = object.get(property)
-		var modifier: Variant
-	#	Log.debug("property: %s.%s" % [object.name, property])
-	#	Log.debug("values: %s -> %s" % [currentValue, values])
-		if currentValue == null: return Status.error("Property not found: %s.%s" % [object.name, property])
-		match typeof(currentValue):
-			TYPE_VECTOR2, TYPE_VECTOR3, TYPE_VECTOR4: 
-				# need to convert values to vector to do the math, then convert them
-				# back to array for setNodePropertyWithVector, which only accepts array arguments
-				# because it's a callabe in a CommandDescription which can't pass vector carguments. 
-				modifier = arrayToVector(values)
-				var modifiedVec = currentValue + modifier
-				var modifiedValues : Array
-				match typeof(currentValue):
-					TYPE_VECTOR2: modifiedValues = [modifiedVec.x, modifiedVec.y]
-					TYPE_VECTOR3: modifiedValues = [modifiedVec.x, modifiedVec.y, modifiedVec.y]
-					TYPE_VECTOR4: modifiedValues = [modifiedVec.x, modifiedVec.y, modifiedVec.y, modifiedVec.z]
-				setNodePropertyWithVector(object, property, modifiedValues)
-				return Status.ok(object.get(property))
-			TYPE_ARRAY: modifier = values
-			TYPE_FLOAT: modifier = float(values[0])
-			TYPE_INT: modifier = int(values[0])
-			_:
-				modifier = values[0]
-		object.set(property, currentValue + modifier)
-	#return Status.ok(object.get(property))
-	return Status.ok()
-
 func arrayToVector(input: Array) -> Variant:
 	for i in len(input):
 		input[i] = float(input[i])
@@ -1007,30 +905,6 @@ func callAnimationFramesMethod(method, args) -> Status:
 		var x = typeof(args[1])
 		result = frames.callv(method, args)
 	return Status.ok()
-
-func callActorMethodWithVector(method, args) -> Status:
-	var result = getActors(args[1])
-	if result.isError(): return result
-	for actor in result.value:
-		callMethodWithVector(actor, method, args.slice(1))
-	return Status.ok()
-
-func callMethodWithVector(object: Variant, method: String, args: Array) -> Status:
-	method = method.substr(1) if method.begins_with("/") else method
-	method = method.replace("/", "_").to_lower()
-	for i in len(args):
-		args[i] = float(args[i])
-	
-	match len(args):
-		2:
-			object.call(method, Vector2(args[0], args[1]))
-		3:
-			object.call(method, Vector3(args[0], args[1], args[2]))
-		4:
-			object.call(method, Vector4(args[0], args[1], args[2], args[3]))
-		_:
-			return Status.error("callActorMethodWithVector xpected between 1 and 4 arguments, received: %s" % [len(args.slice(1))])
-	return Status.ok(true, "Called %s.%s(Vector%d(%s))" % [object.get_name(), method, args.slice(1)])
 
 # Note that the red/green/blue arguments can't have static typing,
 # because the Callable.callv() call will fail (Array members can't
@@ -1153,63 +1027,11 @@ func nextState(machine: String) -> Status:
 		return Status.ok(true, "%s -> Next state: %s" % [machine, stateMachines[machine].status()])
 	return Status.error("Machine not found: %s" % [machine])
 
-func rotate(args: Array) -> Status:
-	return setRelativeProperty(["/rotation/degrees"] + args)
-
 func center(actorName: String) -> Status:
 	var result = getActors(actorName)
 	if result.isError(): return result
 	for actor in result.value:
 		actor.set_position(Vector2(0.5,0.5) * get_parent().get_viewport_rect().size)
-	return Status.ok()
-
-func move(args: Array) -> Status:
-	return setRelativeProperty(["/position"] + args)
-
-func moveX(args: Array) -> Status:
-	args.append(0)
-	return move(args)
-
-func moveY(args: Array) -> Status:
-	args.insert(1,0)
-	return move(args)
-
-func size(args: Array) -> Status:
-	return setActorPropertyWithVector("/scale", args)
-
-func sizeX(args: Array) -> Status:
-	var result = getActors(args[0])
-	if result.isError(): return result
-	for actor in result.value:
-		actor.scale.x = float(args[1])
-	return Status.ok()
-
-func sizeY(args: Array) -> Status:
-	var result = getActors(args[0])
-	if result.isError(): return result
-	for actor in result.value:
-		actor.scale.y = float(args[1])
-	return Status.ok()
-
-func scale(args: Array) -> Status:
-	var result = getActors(args[0])
-	if result.isError(): return result
-	for actor in result.value:
-		actor.scale *= Vector2(float(args[1]), float(args[1]))
-	return Status.ok()
-
-func scaleX(args: Array) -> Status:
-	var result = getActors(args[0])
-	if result.isError(): return result
-	for actor in result.value:
-		actor.scale.x *= float(args[1])
-	return Status.ok()
-
-func scaleY(args: Array) -> Status:
-	var result = getActors(args[0])
-	if result.isError(): return result
-	for actor in result.value:
-		actor.scale.y *= float(args[1])
 	return Status.ok()
 
 func parentActor(childName: String, parentName: String) -> Status:
