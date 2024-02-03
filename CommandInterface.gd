@@ -443,27 +443,19 @@ func getHelp(cmd: String) -> Status:
 	
 	postWindow.set_visible(true)
 	postWindow.set_text("")
-	# this might change in the future if we convert /defs into CommandDescriptions.
-	# as for now it dumps the def's subcommands
+	# if it's a /def dump the def's code
 	if typeof(cmdDesc) == TYPE_DICTIONARY: 
-		var msg := "[HELP] custom definition\n/def %s" % [cmd]
-		for key in cmdDesc.variables.keys():
+		var msg := "[HELP] custom definition\n\n/def %s" % [cmd]
+		for key in cmdDesc.variables:
 			msg += " %s" % [key]
 		msg += "\n"
 		for subcmd in cmdDesc.subcommands:
 			msg += "\t%s\n" % [" ".join(subcmd)]
 		return Status.ok(cmdDesc, msg)
 	
+	# it's a core command
 	var msg = "[HELP] %s %s\n\n%s" % [cmd, cmdDesc.argsDescription, cmdDesc.description]
 	return Status.ok(cmdDesc, msg)
-
-### Read a file with a [param filename] and return its OSC content in a string
-#func loadFile(filename: String) -> Status:
-	#Log.verbose("Reading: %s" % [filename])
-	#var file = FileAccess.open(filename, FileAccess.READ)
-	#var content = file.get_as_text(true)
-	#if content == null: return Status.error()
-	#return Status.ok("Read file successful: %s" % filename, content)
 
 ## Return a dictionary based on the string [param oscStr] of OSC messages.[br]
 ## The address is the key of the dictionary (or the first element), and the 
