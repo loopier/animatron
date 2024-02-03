@@ -1125,7 +1125,7 @@ func tweenActorProperty(args: Array) -> Status:
 	var result = getActors(args[3])
 	if result.isError(): return result
 	var dur = args[0] as float
-	var transitionType = args[1] as float
+	var transitionType = getTransitionType(args[1])
 	var property = args[2].replace("/", "_")
 	if property.begins_with("_"): property = property.substr(1)
 	var propertyArgs = args.slice(4)
@@ -1136,8 +1136,25 @@ func tweenActorProperty(args: Array) -> Status:
 		var node = result.value.node
 		property = result.value.propertyName
 		var value = result.value.propertyValue
+		tween.set_trans(transitionType)
 		tween.tween_property(node, property, value, dur)
 	return Status.ok()
+
+func getTransitionType(transition: String) -> int:
+	match transition:
+		"linear": return Tween.TRANS_LINEAR
+		"sine": return Tween.TRANS_SINE
+		"quint": return Tween.TRANS_QUINT
+		"quart": return Tween.TRANS_QUART
+		"quad": return Tween.TRANS_QUAD
+		"expo": return Tween.TRANS_EXPO
+		"elastic": return Tween.TRANS_ELASTIC
+		"cubic": return Tween.TRANS_CUBIC
+		"circ": return Tween.TRANS_CIRC
+		"bounce": return Tween.TRANS_BOUNCE
+		"back": return Tween.TRANS_BACK
+		"spring": return Tween.TRANS_SPRING
+	return -1
 
 ## converts the array of arguments given by the command to the appropriate 
 ## type depending on the property

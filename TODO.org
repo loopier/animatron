@@ -6,7 +6,7 @@
 it has unexpected behaviour when using variables `/edior/append /post $bla`
 
 * TODO Add `/help` for defs
-
+* TODO find better syntax for tweens
 * TODO state machines
 * TODO pivot (anchor?)
 * TODO sequencer
@@ -16,7 +16,6 @@ it has unexpected behaviour when using variables `/edior/append /post $bla`
 - [ ] add command to change size
 - [ ] add command to change text position
 * TODO grid
-* TODO find better syntax for tweens
 * TODO rethink cmd evaluation
 - parse command for variables
 - parse command for expressions, passing variables
