@@ -303,7 +303,7 @@ func post(args: Array) -> Status:
 		Log.info(arg)
 	postWindow.set_line(postWindow.get_line_count()-1, postWindow.get_line(postWindow.get_line_count()-1) + " ".join(args) + "\n")
 	postWindow.set_caret_line(postWindow.get_line_count())
-	return Status.ok()
+	return Status.ok(args)
 
 func togglePost() -> Status:
 	postWindow.set_visible(not(postWindow.is_visible()))

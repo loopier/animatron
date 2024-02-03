@@ -141,3 +141,17 @@ func test_convertArguments():
 	assert_eq(checkResult, [false])
 	checkResult = main.convertArguments(argsDescription, ["f"])
 	assert_eq(checkResult, [false])
+
+func test_referenceVariables():
+	var cmd := ["/set", "a:i", 40]
+	var checkResult := main.evalCommand(cmd, "localhost")
+	assert_eq(checkResult.type, Status.OK)
+	cmd = ["/post", "hello$a-there"]
+	checkResult = main.evalCommand(cmd, "localhost")
+	assert_eq(checkResult.type, Status.OK)
+	assert_eq(checkResult.value, ["hello40-there"])
+
+	cmd = ["/post", "hello$athere"]
+	checkResult = main.evalCommand(cmd, "localhost")
+	assert_eq(checkResult.type, Status.ERROR)
+	assert_eq(checkResult.msg, "Variable 'athere' referenced but not set")
