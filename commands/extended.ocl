@@ -64,6 +64,26 @@
 /def /angle actor:s degrees:f
      /property /rotation/degrees $actor $degrees
 
+# Rotate the ACTOR some DEGREES relative to the current angle
+/def /rotate actor:s degrees:f
+     /property/relative /rotation/degrees $actor $degrees
+
+# Set the ACTOR's SIZE - [0..1]
+/def /size actor:s size:f
+     /property /scale $actor $size $size
+
+# Set the ACTOR's SIZE on both X and Y axis
+/def /size/xy actor:s x:f y:f
+     /property /scale $actor $x $y
+
+# Set the ACTOR's SIZE on the X axis
+/def /size/x actor:s x:f
+     /property /scale/x $actor $x
+
+# Set the ACTOR's SIZE on the Y axis
+/def /size/y actor:s y:f
+     /property /scale/y $actor $y
+
 # SCALE the ACTOR relative to the current size
 /def /scale actor:s scale:f
      /method /apply/scale $actor $scale $scale

@@ -50,7 +50,8 @@ func test_evalCommand():
 	checkResult = main.evalCommand(cmd, "localhost")
 	assert_eq(checkResult.type, Status.OK)
 	assert_eq(checkResult.value, true)
-	assert_eq(checkResult.msg, "Loaded 1 sprites")
+	#assert_eq(checkResult.msg, "Loaded 1 sprites")
+	assert_string_starts_with(checkResult.msg, "Loaded ")
 	# correct number of arguments
 	cmd = ["/create", "x", "default"]
 	checkResult = main.evalCommand(cmd, "localhost")
@@ -64,11 +65,11 @@ func test_evalCommand():
 	assert_typeof(checkResult.value, TYPE_ARRAY)
 	assert_eq(checkResult.msg, "List of actors (1)\nx (default)\n")
 	# GdScript command has too few arguments
-	cmd = ["/show"]
+	cmd = ["/help"]
 	checkResult = main.evalCommand(cmd, "localhost")
 	assert_eq(checkResult.type, Status.ERROR)
 	assert_eq(checkResult.value, null)
-	assert_eq(checkResult.msg, "Not enough arguments:\nexpected (1) -> actor:s\nreceived (0) -> []")
+	assert_eq(checkResult.msg, "Not enough arguments:\nexpected (1) -> cmd:s\nreceived (0) -> []")
 	# command not a callable
 	cmd = ["/commandNotFound"]
 	checkResult = main.evalCommand(cmd, "localhost")

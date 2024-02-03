@@ -139,11 +139,7 @@ var coreCommands: Dictionary = {
 	"/behind": CommandDescription.new(setBehindActor, "actor:s target:s", "Draw the ACTOR behind the TARGET.", Flags.asArray(false)),
 	"/top": CommandDescription.new(setTopActor, "actor:s", "Draw the ACTOR on top of everything else.", Flags.asArray(false)),
 	"/bottom": CommandDescription.new(setBottomActor, "actor:s", "Draw the ACTOR behind everything else.", Flags.asArray(false)),
-	"/size": CommandDescription.new(size, "actor:s size:f", "Set the ACTOR SIZE on both axes (same value for with and height).", Flags.asArray(false)),
-	"/size/x": CommandDescription.new(sizeX, "actor:s size:f", "Set the ACTOR SIZE on the X axis.", Flags.asArray(false)),
-	"/size/y": CommandDescription.new(sizeY, "actor:s size:f", "Set the ACTOR SIZE on the Y axis.", Flags.asArray(false)),
 	"/center": CommandDescription.new(center, "actor:s", "Set the ACTOR to the center of the screen."),
-	"/rotate": CommandDescription.new(rotate, "actor:s degrees:f", "Rotate ACTOR a number of DEGREES relative to the current rotation.", Flags.asArray(false)),
 }
 
 ## Custom command definitions
@@ -809,7 +805,7 @@ func setActorProperty(args: Array) -> Status:
 		if result.isError(): return result
 		property = result.value.propertyName
 		var value = result.value.propertyValue
-		actor.call(_cmd_to_set_property(property), value)
+		actor.set(property, value)
 	return Status.ok()
 
 func setActorRelativeProperty(args: Array) -> Status:
@@ -1320,6 +1316,13 @@ func getArgsAsPropertyType(node: Object, propertyName: String, args: Array) -> S
 	var property = node.get(propertyName)
 	var propertyType = typeof(property)
 	var value: Variant
+	var axisName = getAxis(propertyName)
+	if axisName: 
+		axisName = axisName.value
+		propertyType = TYPE_NIL
+		propertyName = propertyName.split("_")[0]
+		property = node.get(propertyName)
+	if property == null: return Status.error("Property not found: %s.%s" % [node, propertyName])
 	match propertyType:
 		TYPE_VECTOR2: value = Vector2(args[0] as float, args[1] as float)
 		TYPE_VECTOR3: value = Vector3(args[0] as float, args[1] as float, args[2] as float)
@@ -1332,11 +1335,6 @@ func getArgsAsPropertyType(node: Object, propertyName: String, args: Array) -> S
 			# if it's none of the above, probably is an axis of a vector or a color 
 			# we take the whole vector and assign the command value to the 
 			# according axis keeping the rest intact
-			var axisName := propertyName.split("_")[1] if propertyName.contains("_") else ""
-			propertyName = propertyName.split("_")[0]
-			property = node.get(propertyName)
-			if property == null: return Status.error("Property not found: %s.%s" % [node, propertyName])
-			var axisValue := args[0] as float
 			match axisName:
 				"x": property.x = args[0] as float
 				"y": property.y = args[0] as float
@@ -1345,9 +1343,17 @@ func getArgsAsPropertyType(node: Object, propertyName: String, args: Array) -> S
 				"g": property.g = args[0] as float
 				"b": property.b = args[0] as float
 				"a": property.a = args[0] as float
+			# convert back to vector with the new value
 			value = property
-			propertyName = propertyName.replace("_", ".")
 	return Status.ok({"node": node, "propertyName": propertyName, "propertyValue": value})
+
+func getAxis(propertyName: String) -> Status:
+	var regex = RegEx.new()
+	regex.compile("[_\\/]{1}\\w$")
+	var result = regex.search(propertyName)
+	if result == null: return result
+	return Status.ok(result.get_string().substr(1))
+	
 
 func getProperty(obj: Object, propertyName: String) -> Status:
 	propertyName = _cmdToGdScript(propertyName)

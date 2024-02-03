@@ -33,7 +33,6 @@ func test_listCommands():
 /animation/loop
 /animation/property
 /animations/list
-/apply/scale
 /assets/list
 /assets/path
 /behind
@@ -58,9 +57,9 @@ func test_listCommands():
 /front
 /get
 /help
-/hide
 /load
 /log/level
+/method
 /midi/cc
 /midi/cc/free
 /midi/free
@@ -78,9 +77,6 @@ func test_listCommands():
 /midi/noteon/trig
 /midi/noteon/trig/free
 /midi/noteon/velocity
-/move
-/move/x
-/move/y
 /offset
 /offset/x
 /offset/y
@@ -95,6 +91,7 @@ func test_listCommands():
 /post/clear
 /post/toggle
 /property
+/property/relative
 /rand
 /relative
 /remove
@@ -105,15 +102,7 @@ func test_listCommands():
 /routine/start
 /routine/stop
 /routines
-/scale
-/scale/x
-/scale/y
 /set
-/set/position
-/show
-/size
-/size/x
-/size/y
 /state/add
 /state/def
 /state/free
@@ -194,3 +183,9 @@ func test_cmdToGdScript():
 	assert_eq(cmd._cmdToGdScript("bla/bla"), "bla_bla")
 	assert_eq(cmd._cmdToGdScript("_bla/bla"), "bla_bla")
 	assert_eq(cmd._cmdToGdScript("_bla_bla"), "bla_bla")
+
+func test_getAxis():
+	assert_eq(cmd.getAxis("/size/x").value, "x")
+	assert_eq(cmd.getAxis("size_x").value, "x")
+	assert_eq(cmd.getAxis("/color/r").value, "r")
+	assert_null(cmd.getAxis("/blax"))
