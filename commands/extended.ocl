@@ -60,19 +60,23 @@
 /def /move/y actor:s y:f
      /method /translate $actor 0 $y
 
-# Set the rotation of the ACTOR in DEGREES.
+# Set the rotation of the ACTOR in DEGREES
 /def /angle actor:s degrees:f
      /property /rotation/degrees $actor $degrees
 
+# SCALE the ACTOR relative to the current size
 /def /scale actor:s scale:f
      /method /apply/scale $actor $scale $scale
 
+# SCALE the ACTOR relative to the current size on both axis X and Y
 /def /scale/xy actor:s x:f y:f
      /method /apply/scale $actor $x $y
 
+# SCALE the ACTOR relative to the current size on the X axis
 /def /scale/x actor:s x:f
      /method /apply/scale $actor $x 1
 
+# SCALE the ACTOR relative to the current size on the Y axis
 /def /scale/y actor:s y:f
      /method /apply/scale $actor 1 $y
 
