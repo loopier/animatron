@@ -16,7 +16,7 @@ func after_all():
 	gut.p("ran run teardown logger", 2)
 
 func test_getter():
-	#assert_almost_eq(vm.getValue("time"), 3.0, 3.0)
+	assert_gt(vm.getValue("time"), 0.0)
 	assert_is(vm.getValue("rnd"), RandomNumberGenerator)
 
 func test_setter():

@@ -24,6 +24,24 @@ func _def(def: Dictionary, values: Array) -> Array:
 #	Log.debug("processed def: %s" % [result])
 	return result
 
+func _resolveVariables(arg, appVariables: Dictionary) -> Status:
+	var regex := RegEx.new()
+	regex.compile("\\$(\\w+)")
+	while typeof(arg) == TYPE_STRING:
+		var str : String = arg
+		var match := regex.search(str)
+		if not match: break
+		var varName := match.get_string(1)
+		if appVariables.has(varName):
+			var value = appVariables[varName]
+			if typeof(value) == TYPE_CALLABLE: value = value.call()
+			str = str.substr(0, match.get_start(0)) + ("%s" % [value]) + str.substr(match.get_end(1))
+			print("Replaced var '%s', as '%s'" % [varName, str])
+			arg = str
+		else:
+			return Status.error("Variable '%s' referenced but not set" % [varName])
+	return Status.ok(arg)
+
 ## Replaces all instances of the [param variable] in the [param args] by the [param value]. 
 func _parseVariables(cmd: Array, cmdVariables: Array, cmdValues:Array) -> Array:
 	var newCmd := []

@@ -171,6 +171,10 @@ func executeCommand(command: CommandDescription, args: Array) -> Status:
 				match typeof(expResult.value):
 					TYPE_CALLABLE: args[i] = expResult.value.call()
 					_: args[i] = expResult.value as float
+			else:
+				result = ocl._resolveVariables(args[i], variables)
+				if result.isError(): return result
+				args[i] = result.value
 	if args.size() == 0 and not command.argsAsArray:
 		result = command.callable.call()
 	elif command.argsAsArray:
