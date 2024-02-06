@@ -91,6 +91,8 @@ var coreCommands: Dictionary = {
 	"/editor/save/to": CommandDescription.new(saveTextFileTo, "path:s", "Save the code to PATH."),
 	# post
 	"/post": CommandDescription.new(post, "msg:s", "Print MSG in the post window.", Flags.asArray(false)),
+	"/post/show": CommandDescription.new(showPost, "", "Show post window."),
+	"/post/hide": CommandDescription.new(hidePost, "", "Hide post window."),
 	"/post/toggle": CommandDescription.new(togglePost, "", "Toggle post window visibility."),
 	"/post/clear": CommandDescription.new(clearPost, "", "Clear post window contents."),
 	# osc
@@ -304,6 +306,14 @@ func post(args: Array) -> Status:
 	postWindow.set_line(postWindow.get_line_count()-1, postWindow.get_line(postWindow.get_line_count()-1) + " ".join(args) + "\n")
 	postWindow.set_caret_line(postWindow.get_line_count())
 	return Status.ok(args)
+
+func showPost() -> Status:
+	postWindow.set_visible(true)
+	return Status.ok()
+
+func hidePost() -> Status:
+	postWindow.set_visible(false)
+	return Status.ok()
 
 func togglePost() -> Status:
 	postWindow.set_visible(not(postWindow.is_visible()))
