@@ -131,13 +131,13 @@ var coreCommands: Dictionary = {
 	"/center": CommandDescription.new(center, "actor:s", "Set the ACTOR to the center of the screen."),
 	
 	# actors
-	"/property": CommandDescription.new(setActorProperty, "property:s actor:s value:...", "Generic command to set the VALUE to any PROPERTY of an ACTOR.", Flags.asArray(true)),
-	"/property/relative": CommandDescription.new(setActorRelativeProperty, "property:s actor:s value:...", "Generic command to set the VALUE to any PROPERTY of an ACTOR.", Flags.asArray(true)),
-	"/method": CommandDescription.new(callActorMethod, "method:s actor:s args:...", "Generic command to call an ACTOR's METHOD with some ARGS.", Flags.asArray(true)),
+	"/property": CommandDescription.new(setActorProperty, "property:s actor:s value:...", "Generic command to set the VALUE to any PROPERTY of an ACTOR.", Flags.asArray(false)),
+	"/property/relative": CommandDescription.new(setActorRelativeProperty, "property:s actor:s value:...", "Generic command to set the VALUE to any PROPERTY of an ACTOR.", Flags.asArray(false)),
+	"/method": CommandDescription.new(callActorMethod, "method:s actor:s args:...", "Generic command to call an ACTOR's METHOD with some ARGS.", Flags.asArray(false)),
 	# animation
-	"/animation/property": CommandDescription.new(setAnimationProperty, "property:s actor:s value:...", "Change the ACTOR's ANIMATION GDScript PROPERTY. Slashes ('/') will be replaced for underscores '_'. Leading slash is optional.\n\nUsage: `/animation/property /rotation/degrees target 75`", Flags.asArray(true)),
-	"/animation/method": CommandDescription.new(callAnimationMethod, "method:s actor:s args:...", "Call a METHOD on the ACTOR's animation with some ARGS.", Flags.asArray(true)),
-	"/animation/frames/method": CommandDescription.new(callAnimationFramesMethod, "method:s actor:s args:...", "Call a METHOD on the ACTOR's animation with some ARGS.", Flags.asArray(true)),
+	"/animation/property": CommandDescription.new(setAnimationProperty, "property:s actor:s value:...", "Change the ACTOR's ANIMATION GDScript PROPERTY. Slashes ('/') will be replaced for underscores '_'. Leading slash is optional.\n\nUsage: `/animation/property /rotation/degrees target 75`", Flags.asArray(false)),
+	"/animation/method": CommandDescription.new(callAnimationMethod, "method:s actor:s args:...", "Call a METHOD on the ACTOR's animation with some ARGS.", Flags.asArray(false)),
+	"/animation/frames/method": CommandDescription.new(callAnimationFramesMethod, "method:s actor:s args:...", "Call a METHOD on the ACTOR's animation with some ARGS.", Flags.asArray(false)),
 }
 
 ## Custom command definitions
