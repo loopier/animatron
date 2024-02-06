@@ -1,7 +1,7 @@
-/def /tutorial/intro
-    /editor/clear
-    /editor/open/from user://tutorial/tutorial-intro.ocl
+# ANIMATRON TUTORIAL
+# ------------------
+# Welcome to the Animatron Tutorial.
 
-/def /tutorial/actor/create
-    /editor/clear
-    /editor/open/from user://tutorial/tutorial-actor-create.ocl
+# Put the cursor on the next line and press SHIFT + ENTER
+
+/tutorial/controls

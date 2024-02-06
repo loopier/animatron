@@ -1,8 +1,5 @@
 /commands/load res://test/test-init-code.ocl
 /commands/load res://commands/extended.ocl
-/commands/load res://tutorial/tutorial.ocl
+/commands/load res://tutorial/tutorial-def.ocl
 /editor/clear
 /post/toggle
-
-#/commands/load sets/axel.ocl
-
