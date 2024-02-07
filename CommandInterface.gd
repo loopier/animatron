@@ -41,7 +41,7 @@ var Flags := CommandDescription.Flags
 var coreCommands: Dictionary = {
 	"/help": CommandDescription.new(getHelp, "cmd:s", "Get documentation about CMD."),
 #	"/test": CommandDescription.new(getActor, "", "This is just a test"), ## used to test random stuff
-	"/set": CommandDescription.new(setVar, "variable:type value:ifbs...", "Set a user VARIABLE with a VALUE, specifying the TYPE (:i = int, :f = float, :b = bool, :s string, :... = arbitrary number of arguments passed as array).\n\nUsage: /set x:f 3.14", Flags.asArray(true)),
+	"/set": CommandDescription.new(setVar, "variable:type value:ifbs...", "Set a user VARIABLE with a VALUE, specifying the TYPE (:i = int, :f = float, :b = bool, :s string, :... = arbitrary number of arguments passed as array).\n\nUsage: /set x:f 3.14", Flags.asArray(false)),
 	"/get": CommandDescription.new(getVar, "variable:s", "Get the value of a VARIABLE."),
 	# log
 	"/log/level": CommandDescription.new(setLogLevel, "level:s", "Set the log level to either 'fatal', 'error', 'warn', 'debug' or 'verbose'"),

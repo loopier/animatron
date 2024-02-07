@@ -17,7 +17,7 @@ func after_all():
 	gut.p("ran run teardown logger", 2)
 
 func test_listAssets():
-	var result = main.evalCommand(["/assets/list"], "127.0.0.1")
+	var result := main.evalCommand(["/assets/list"], "127.0.0.1")
 	assert_eq(result.type, Status.OK)
 	# commented the following because we may have different assets list
 #	assert_eq(result.value, true)
@@ -25,7 +25,7 @@ func test_listAssets():
 
 func test_load():
 	# asset doesn't exist
-	var result = main.evalCommand(["/load", "xyz"], "127.0.0.1")
+	var result := main.evalCommand(["/load", "xyz"], "127.0.0.1")
 	assert_eq(result.type, Status.ERROR)
 	assert_eq(result.value, null)
 	assert_eq(result.msg, "Asset not found: user://assets/animations/xyz")
@@ -40,7 +40,7 @@ func test_createActor():
 	# animation doesn't exist
 	# Note we currently can't distinguish (at this point) whether the animation
 	# existed or not...an empty Actor was created anyhow.
-	var result = main.evalCommand(["/create", "bla", "unknown_xyz"], "127.0.0.1")
+	var result := main.evalCommand(["/create", "bla", "unknown_xyz"], "127.0.0.1")
 	assert_eq(result.type, Status.OK)
 	assert_eq(result.value, true)
 	assert_eq(result.msg, "")
@@ -52,7 +52,7 @@ func test_createActor():
 	assert_true(result.msg.ends_with("Setting new animation: default"))
 
 func test_scale():
-	var result = main.evalCommand(["/load", "default"], "127.0.0.1")
+	var result := main.evalCommand(["/load", "default"], "127.0.0.1")
 	result = main.evalCommand(["/create", "x", "default"], "127.0.0.1")
 	result = main.evalCommand(["/scale", "x", 2], "127.0.0.1")
 	assert_eq(result.type, Status.OK)
@@ -60,7 +60,7 @@ func test_scale():
 	assert_eq(result.msg, "")
 
 func test_speed():
-	var result = main.evalCommand(["/load", "default"], "127.0.0.1")
+	var result := main.evalCommand(["/load", "default"], "127.0.0.1")
 	assert_eq(result.type, Status.OK)
 	result = main.evalCommand(["/create", "x", "default"], "127.0.0.1")
 	assert_eq(result.type, Status.OK)
@@ -70,7 +70,7 @@ func test_speed():
 #	assert_eq(result.msg, "set_scale")
 
 func test_help():
-	var result = main.evalCommand(["/help", "/create"], "")
+	var result := main.evalCommand(["/help", "/create"], "")
 	assert_eq(result.type, Status.OK)
 	assert_is(result.value, CommandDescription)
 	assert_typeof(result.msg, TYPE_STRING)
@@ -82,3 +82,51 @@ func test_help():
 	# command does not exist
 	result = main.evalCommand(["/help", "bla"], "")
 	assert_eq(result.type, Status.ERROR)
+
+func test_arrayCommandsDeferred():
+	#----- Not deferred: -----
+	"/set"
+	var result := main.evalCommand(["/set", "myvar:f", "{3 + 0.14}"], "")
+	assert_eq(result.type, Status.OK)
+	assert_eq(VariablesManager.getValue("myvar"), 3.14, "/set using expression")
+	result = main.evalCommand(["/set", "another:f", "{3 * $myvar}"], "")
+	assert_eq(result.type, Status.OK)
+	assert_eq(VariablesManager.getValue("another"), 3.14 * 3, "/set using expression and another variable")
+	
+	# Tests to be added:
+	"/text/property"
+	"/editor/property"
+	"/post"
+	"/front"
+	"/behind"
+	"/top"
+	"/bottom"
+	"/property"
+	"/property/relative"
+	"/method"
+	"/animation/property"
+	"/animation/method"
+	"/animation/frames/method"
+
+	#----- Deferred: -----
+	# Tests to be added:
+	"/routine"
+	"/routine/finished"
+	"/wait"
+	"/state/add"
+	"/def"
+	"/for"
+	"/editor/append"
+	"/osc/remote"
+	"/osc/send"
+	"/midi/cc"
+	"/midi/noteon/num"
+	"/midi/noteon/trig"
+	"/midi/noteon/num/velocity"
+	"/midi/noteon/velocity"
+	"/midi/noteon"
+	"/midi/noteoff/num"
+	"/midi/noteoff"
+	"/midi/list"
+	"/rand"
+	"/tween"
