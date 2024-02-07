@@ -15,78 +15,6 @@ func before_all():
 func after_all():
 	gut.p("ran run teardown logger", 2)
 
-func test_processArgs():
-	assert_true(true)
-	if false:
-		var args := ["bla", 0.2]
-		assert_eq(ocl.processArgs(args), args)
-		args = ["bla", "/+", 1, 2]
-		assert_eq(ocl.processArgs(args), ["bla", 3.0])
-		args = ["bla", "/-", 1, 2]
-		assert_eq(ocl.processArgs(args), ["bla", -1.0])
-		args = ["bla", "/*", 1.5, 2]
-		assert_eq(ocl.processArgs(args), ["bla", 3.0])
-		args = ["bla", "//", 1.0, 2]
-		assert_eq(ocl.processArgs(args), ["bla", 0.5])
-		args = ["bla", "/%", 4, 3]
-		assert_eq(ocl.processArgs(args), ["bla", 1.0])
-		args = ["bla", "/*", 4, "/+", 1, 3]
-		#assert_eq(ocl.processArgs(args), ["bla", 16])
-	
-
-func test_calc():
-	assert_true(true)
-	if false:
-		print("---")
-		var args = ["/+", 1, 2]
-		assert_eq(ocl._calc(args[0], args.slice(1)), 3.0)
-		print("---")
-		args = ["/+", 1, "/*", 2, 3]
-		assert_eq(ocl._calc(args[0], args.slice(1)), 7.0)
-		print("---")
-		args = ["/+", "/*", 1, 2, 3]
-		assert_eq(ocl._calc(args[0], args.slice(1)), 5.0)
-		print("---")
-		args = ["/+", "/*", 1, "/-", 2, 3, 4]
-		assert_eq(ocl._calc(args[0], args.slice(1)), 3.0)
-		print("---")
-		args = ["/+", "/*", 1, 2, "/-", 3, 4]
-		assert_eq(ocl._calc(args[0], args.slice(1)), 1.0)
-
-func test_binaryGroups():
-	assert_true(true)
-	if false:
-		print("---")
-		var args := []
-		args = ["/+", 1, "/*", 2, 3]
-		assert_eq(ocl._binaryGroups(args[0], args.slice(1)), ["/+", 1, ["/*", 2, 3]])
-		print("---")
-		args = ["/+", "/*", 1, 2, 3]
-		assert_eq(ocl._binaryGroups(args[0], args.slice(1)), ["/+", ["/*", 1, 2], 3])
-		print("---")
-		args = ["/+", "/*", 1, 2.0, "/-", 3, 4]
-		assert_eq(ocl._binaryGroups(args[0], args.slice(1)), ["/+", ["/*", 1, 2.0], ["/-", 3, 4]])
-		print("---")
-		args = ["/+", "/*", 1, "/-", 2, 3, 4]
-		assert_eq(ocl._binaryGroups(args[0], args.slice(1)), ["/+", ["/*", 1, ["/-", 2, 3]], 4])
-
-func test_binaryOp():
-	assert_true(true)
-	if false:
-		assert_eq(ocl._binaryOp("/+", 1, 2), 3.0)
-		assert_eq(ocl._binaryOp("/-", 1, 2), -1.0)
-		assert_eq(ocl._binaryOp("/*", 1, 2), 2.0)
-		assert_eq(ocl._binaryOp("//", 1, 2), 0.5)
-		assert_eq(ocl._binaryOp("/%", 1, 2), 1.0)
-		assert_eq(ocl._binaryOp("/%", 3, 2), 1.0)
-		assert_eq(ocl._binaryOp("/%", 4, 2), 0.0)
-
-func test_processReserveWord():
-	assert_true(true)
-	if false:
-		assert_eq(ocl._processReservedWord("/for", ["i", 4, "/post", "$i"]), [["/post", 0], ["/post", 1], ["/post", 2], ["/post", 3]])
-		assert_eq(ocl._processReservedWord("/*", [3, 4]), 12.0)
-
 func test_for():
 	assert_eq(ocl._for(["i", 2, "/post", "$i"]), [["/post", "0"], ["/post", "1"]]) 
 	assert_eq(ocl._for(["i", 4, "/post", "$i"]), [["/post", "0"], ["/post", "1"], ["/post", "2"], ["/post", "3"]]) 
@@ -102,15 +30,17 @@ func test_def():
 		assert_eq(ocl._def({"arg1": 1}, [["/cmdA", "$arg1", "paramB$arg1"]]), [["/cmdA", 1, "paramB1"]])
 		assert_eq(ocl._def({"arg1": 1.1}, [["/cmdA", "$arg1", "paramB$arg1"]]), [["/cmdA", 1.1, "paramB1.1"]])
 
-func test_replaceVariable():
-	assert_true(true)
-	if false:
-		assert_eq(ocl._replaceVariable("$i", 0, ["/post", "$i"]), ["/post", 0])
-		assert_eq(ocl._replaceVariable("$i", 2, ["/scale", "bla", "$i", 0.5]), ["/scale", "bla", 2, 0.5])
-		assert_eq(ocl._replaceVariable("$i", 2, ["/scale", "bla$i", 0.5, 0.5]), ["/scale", "bla2", 0.5, 0.5])
-		
-		assert_eq(ocl._replaceVariable("$i", 0, ["/scale", "bla$i", 0.5, 0.5]), ["/scale", "bla0", 0.5, 0.5])
-		assert_eq(ocl._replaceVariable("$i", 1, ["/scale", "bla$i", 0.5, 0.5]), ["/scale", "bla1", 0.5, 0.5])
+func test_resolveVariables():
+	var variables := { "i": 17, "hello": "allo", "other": 3.1416 }
+	var result := ocl._resolveVariables("$i bla$i $hello-there you-5-$other ", variables, false)
+	assert_eq(result.type, Status.OK)
+	assert_eq(result.value, "17 bla17 allo-there you-5-3.1416 ")
+	result = ocl._resolveVariables("$i bla$index $hello-there you-5-$other ", variables, false)
+	assert_eq(result.type, Status.ERROR)
+	assert_eq(result.msg, "Variable 'index' referenced but not set")
+	result = ocl._resolveVariables("$i bla$index $hello-there you-5-$other ", variables, true)
+	assert_eq(result.type, Status.OK)
+	assert_eq(result.value, "17 bla$index allo-there you-5-3.1416 ")
 
 func test_evalExpr():
 	var result := ocl._evalExpr("5 + i", ["i"], [1])

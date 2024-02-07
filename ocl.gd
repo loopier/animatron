@@ -8,8 +8,14 @@ func _for(args: Array) -> Array:
 	var variableName = args[0]
 	var range = int(args[1])
 	var items = args.slice(2)
+	var forVars := {}
 	for i in range:
-		result .append(_parseVariables(items, [variableName], ["%s" % i]))
+		forVars[variableName] = i
+		var newCmd := []
+		for arg in items:
+			var status := _resolveVariables(arg, forVars, true)
+			newCmd.append(arg if status.isError() else status.value)
+		result.append(newCmd)
 	return result
 
 ## Returns the array of commands with all the variables replaced by their values.
@@ -17,27 +23,39 @@ func _for(args: Array) -> Array:
 ## an [class Array] of subcommands.
 ## [param values] will be put anywhere where the [param def.variables] are present in the subcommands. 
 func _def(def: Dictionary, values: Array) -> Array:
-	var result = []
+	var cmdArray := []
+	var variables := VariablesManager.getAll()
+	for i in def.variables.size():
+		var keyName = def.variables[i].split(':')[0]
+		# def arguments take precedence over "app" vars
+		variables[keyName] = values[i]
 	for cmd in def.subcommands:
-		var cmdWithValues = _parseVariables(cmd, def.variables, values)
-		result.append(cmdWithValues)
-#	Log.debug("processed def: %s" % [result])
-	return result
+		var newCmd := []
+		for arg in cmd:
+			var status := _resolveVariables(arg, variables, false)
+			newCmd.append(arg if status.isError() else status.value)
+		cmdArray.append(newCmd)
+#	Log.debug("processed def: %s" % [cmdArray])
+	return cmdArray
 
-func _resolveVariables(arg, appVariables: Dictionary) -> Status:
+func _resolveVariables(arg, variables: Dictionary, skipUnknown: bool) -> Status:
 	var regex := RegEx.new()
 	regex.compile("\\$(\\w+)")
+	var offset := 0
 	while typeof(arg) == TYPE_STRING:
 		var str : String = arg
-		var match := regex.search(str)
+		var match := regex.search(str, offset)
 		if not match: break
 		var varName := match.get_string(1)
-		if appVariables.has(varName):
-			var value = appVariables[varName]
+		if variables.has(varName):
+			var value = variables[varName]
 			if typeof(value) == TYPE_CALLABLE: value = value.call()
 			str = str.substr(0, match.get_start(0)) + ("%s" % [value]) + str.substr(match.get_end(1))
-			print("Replaced var '%s', as '%s'" % [varName, str])
+			offset = match.get_start(0)
+#			print("Replaced var '%s', as '%s'" % [varName, str])
 			arg = str
+		elif skipUnknown:
+			offset = match.get_end(1)
 		else:
 			return Status.error("Variable '%s' referenced but not set" % [varName])
 	return Status.ok(arg)
