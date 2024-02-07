@@ -1,0 +1,29 @@
+# CUSTOM COMMANDS (DEFS)
+# -----------
+# We can define custom commands with '/def'.
+# This is useful to combine simple commands into complex instructions.
+
+# The syntax for '/def' is
+
+/def /NEWCMD VARS...
+     /CMD TARGET ARGS | $VARS ...
+     /CMD TARGET ARGS | $VARS ...
+     ...
+
+# NEWCMD: is the new command name - must include a leading slash '/'
+# VARS: (optional) are any number of strings that we can use in the embedded commands
+# CMD, TARGET and ARGS: any valid commands, including previously defined DEFs
+#                       they need to be tabluated (press tab on every new line)
+#                       VARS can be used in the commands with a leading $
+
+# for exmaple, we can create an actor at a random position with a random
+# size and a random color
+
+/def /randactor actor anim
+     /new $actor anim
+     /rand /position/x $actor 0.1 0.9
+     /rand /position/y $actor 0.1 0.9
+     /rand /scale $actor 0.3 0.7
+     /rand /color/r $actor 0 1
+     /rand /color/g $actor 0 1
+     /rand /color/b $actor 0 1

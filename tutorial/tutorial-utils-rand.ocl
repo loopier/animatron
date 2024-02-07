@@ -1,0 +1,22 @@
+# RANDOM
+# ------
+# single-value commands (commands with only one value as
+# agrument besides the TARGET), can be randomized with
+# the '/rand' command, which takes has a somewhat confusing
+# syntax, but which is consistent with the actor command syntax:
+# /rand /CMD TARGET MIN MAX
+
+# firts let's create something
+
+/free *
+/new box box
+
+# to randomize it's size we would use
+
+/rand /scale box 0.1 2
+
+# randomizing rotation would be done with
+
+/rand /rotate box 0 360
+
+/tutorial/index

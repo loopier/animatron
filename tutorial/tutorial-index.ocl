@@ -1,0 +1,18 @@
+# INDEX
+# /----
+# put the cursor on a line and press SHIFT + ENTER
+
+/tutorial/welcome
+/tutorial/controls
+/tutorial/commands
+ 
+# actors
+
+/tutorial/actors
+/tutorial/actor/attributes
+/tutorial/actor/animation
+/tutorial/actor/multi
+ 
+# utils
+
+/tutorial/utils/rand

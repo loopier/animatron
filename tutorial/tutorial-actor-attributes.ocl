@@ -1,0 +1,81 @@
+# CHANGING ACTOR ATTRIBUTES
+# ---------------------------
+# Actors can be manipulated to change their appearance an behaviour.
+# For a list of commands to change them, see the 'ACTOR' section in
+
+/list/commands 
+
+# we'll show just a few of them and let you explore the rest
+
+# first, create a couple of actors
+
+/create box box-spitneat
+
+# POSITION
+# --------
+# We can change the position of any actor with
+
+/position/x box 0.2
+
+# or
+/position/y box 0.8
+
+#or
+/position box 0.5 0.2
+
+# the center of the screen is at x:0.5 y:0.5, 0 being left and top, and
+# 1 being bottom and right
+
+/position box 0.5 0.5
+
+# SCALE
+# ----
+# let's shrink it to half its size (1 is normal)
+
+/scale box 0.5
+
+# or make it bigger
+
+/scale box 1.5
+
+# ROTATION
+# --------
+# we rotate the actor along it's pivot point by degrees
+
+/rotate box 90
+
+/rotate box -90
+
+# COLOR
+# -----
+# the color is changed by specifying 3 color values (RED, GREEN and BLUE)
+
+/color/r box 1
+
+/color/g box 0.5
+
+/color/b box 0.7
+
+/color box 0.1 0.7 0.3
+
+/color box 0.3 0.2 0.6
+
+# back to the original color
+
+/color box 0 0 0
+
+# in the next section we'll cover animation manipulation
+
+
+
+# next
+
+/tutorial/actor-animation
+
+# previous
+
+/tutorial/actors
+
+# up
+
+/tutorial/index

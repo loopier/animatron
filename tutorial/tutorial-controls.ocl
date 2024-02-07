@@ -1,0 +1,26 @@
+# CONTROLS
+# --------
+# Congrats! You already know how to use Animatron!
+
+# What you just did by pressing SHIFT + ENTER is EVALUATE A LINE
+
+# You can also EVALUATE A BLOCK by pressing CTRL + ENTER
+# A BLOCK is a group of lines that are not separated by empty lines. For example:
+
+/editor/append Line1 added to the end of this file
+/editor/append Line2 added to the end of this file
+
+# Try putting the cursor on either of the previous lines and evaluating the block
+
+# Now do it again but only evaluating one line (SHIFT + ENTER)
+
+# To go to the next section, evaluate the next line. If you prefer to see the
+# the index, evaluate the last one.
+
+# next
+
+/tutorial/commands
+
+# up
+
+/tutorial/index
