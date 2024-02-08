@@ -132,7 +132,7 @@ func _evalExpr(exprStr: String, vars: PackedStringArray, varValues: Array) -> St
 	var expr := Expression.new()
 	var error := expr.parse(exprStr, vars)
 	if error != OK:
-		print(expr.get_error_text())
+		Log.error(expr.get_error_text())
 		return
 	var result = expr.execute(varValues)
 	if not expr.has_execute_failed():
@@ -158,7 +158,7 @@ func _removeExpressionSpaces(str: String) -> String:
 	var removedStr := ""
 	var lastIndex := 0
 	for result in regex.search_all(str):
-		print("result %d to %d: '%s'" % [result.get_start(), result.get_end(), result.get_string()])
+		Log.debug("result %d to %d: '%s'" % [result.get_start(), result.get_end(), result.get_string()])
 		removedStr += str.substr(lastIndex, result.get_start() - lastIndex)
 		removedStr += _removeSpaces(result.get_string())
 		lastIndex = result.get_end()

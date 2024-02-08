@@ -189,7 +189,7 @@ func executeCommand(command: CommandDescription, args: Array) -> Status:
 		var excessArgs = args.slice(callableNumArgs)
 		var finalArgs = args.slice(0, callableNumArgs)
 		for arg in finalArgs:
-			print("%s(%s)" % [arg, typeof(arg)])
+			Log.debug("%s(%s)" % [arg, typeof(arg)])
 		result = command.callable.callv(finalArgs)
 	return result
 
