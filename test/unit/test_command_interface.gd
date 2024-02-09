@@ -85,6 +85,8 @@ func test_listCommands():
 /parent/free
 /post
 /post/clear
+/post/hide
+/post/show
 /post/toggle
 /property
 /property/relative
