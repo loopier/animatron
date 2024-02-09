@@ -97,6 +97,10 @@ func test_arrayCommandsDeferred():
 	"/text/property"
 	"/editor/property"
 	"/post"
+	result = main.evalCommand(["/post", "myvar=$myvar, doubled is", "{$myvar*2}"], "")
+	assert_eq(result.type, Status.OK)
+	assert_eq(result.value, ["myvar=3.14, doubled is 6.28"])
+	
 	"/front"
 	"/behind"
 	"/top"
@@ -111,7 +115,20 @@ func test_arrayCommandsDeferred():
 	#----- Deferred: -----
 	# Tests to be added:
 	"/routine"
+	result = main.evalCommand(["/routine", "test", 1, 0.1, "/post", "$myvar", "{$myvar / 2}"], "")
+	assert_eq(result.type, Status.OK)
+	assert_eq(result.msg, "New routine 'test' (1 times every 0.1): [\"/post\", \"$myvar\", \"{$myvar / 2}\"]")
+	var test := main.routines.get_node("test")
+	assert_is(test, Routine)
+	assert_eq((test as Routine).command, ["/post", "$myvar", "{$myvar / 2}"])
+	assert_eq((test as Routine).lastCommand, [])
+	
 	"/routine/finished"
+	result = main.evalCommand(["/routine/finished", "test", "/post", "{$myvar-2}"], "")
+	assert_eq(result.type, Status.OK)
+	assert_eq(result.msg, "Set last command for routine: test")
+	assert_eq((test as Routine).lastCommand, ["/post", "{$myvar-2}"])
+
 	"/wait"
 	"/state/add"
 	"/def"
