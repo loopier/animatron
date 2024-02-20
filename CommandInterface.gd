@@ -506,7 +506,8 @@ func getVar(varName: String) -> Status:
 	# error managment cannot be done from a static method (in this case in VariablesManager.getValue())
 	if value == null: return Status.error("Variable '%s' not found return: %s" % [varName, value])
 	if typeof(value) == TYPE_CALLABLE: value = value.call()
-	return Status.ok(value, "Variable '%s': %s" % [varName, value])
+	#return Status.ok(value, "Variable '%s': %s" % [varName, value])
+	return Status.ok(value)
 
 ## Returns the value of a command to be executed.
 ## If no description is found, it returns [code]null[/code].

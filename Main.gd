@@ -35,8 +35,9 @@ func _init_midi():
 		chan["noteOnNumVelocity"].fill([])
 
 func _ready():
-	Log.setLevel(Log.LOG_LEVEL_VERBOSE)
+	#Log.setLevel(Log.LOG_LEVEL_VERBOSE)
 #	Log.setLevel(Log.LOG_LEVEL_DEBUG)
+	Log.setLevel(Log.LOG_LEVEL_INFO)
 	
 	osc = OscReceiver.new()
 	self.add_child.call_deferred(osc)
