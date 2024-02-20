@@ -1,15 +1,13 @@
 # Animatron
 
 **Animatron** is an experimental environment (very much "work in
-progress") that enables creation of "visual poetry," in the form of
-animations and images, created in real-time through live coding.  It
+progress") that enables creation of "visual poetry" in the form of
+animations and images, created in real-time through live coding. It's
 implemented using the open-source [Godot
 engine](https://godotengine.org/), and communicates with any "client"
 application or live coding language &mdash; such as
 [SuperCollider](https://supercollider.github.io/) &mdash; via the
-network, using the Open Sound Control (OSC) protocol.
-
-Trying to build a pseudo live coding language using OSC (OCL - Open Control Language?).
+network, using the Open Sound Control (OSC) protocol on port `56101`.
 
 # Installation
 
@@ -37,13 +35,13 @@ For example, on Linux, having a collection of `.png` images in this directory `~
 
 This works with symlinks as well (shortcuts), so you don't need to have the actual folders in that path.
 
-If you want to use images that are in other directories, you'll can change the assets path:
+If you want to use images that are in other directories, you can change the assets path with:
 
 ``` animatron
 /assets/path path/to/your/custom/directory
 ```
 
-We stronglyl recommend using your own animations, but if you need something to start you can find some in [this link](https://my.hidrive.com/share/jzod7tz1uq).
+We strongly recommend using your own animations, but you can find some of ours in [this link](https://my.hidrive.com/share/jzod7tz1uq).
 
 # Versions
 
