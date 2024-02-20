@@ -1,64 +1,36 @@
 # ACTORS
 # ------
-# An ACTOR plays an image sequence (ANIM).
-
-# First we need to load the ANIM into memory with the '/load' command.
-# The argument is the ASSET (file) name.
-
-/load box-spitneat
-
+# An ACTOR plays an image sequence (ANIMATION).
+# Sequences, animations, are stored in disk and we call them ASSETS.
 # to see a list of all the assets use
 
-/list/assets 
+/assets
 
-# now we can create an actor that plays the animation we just loaded.
-# 'box' is the actor NAME, and 'box-spitneat' the name of the ASSET that
+# To load the ANIMATION into memory use the '/load' command.
+# The argument is the ASSET (file) name.
+
+/load tutorial-animation
+
+# Apparently nothing happened, but in the post window we can read that
+# some frames were loaded.
+
+# Now we can create an actor that plays the animation we just loaded.
+# 'tut' is the actor NAME, and 'tutorial-animation' the name of the ASSET that
 # we want it to play
 
-/create box box-spitneat
+/create tut tutorial-animation
 
-# we can do both steps (load an create) at once with
-
-/new box box-spitneat
-
-# or by evaluating a block
-
-/load box-spitneat
-/create box box-spitneat
-
-# WARINING: long image sequences take a while to load, and the application
-# will freeze while loading, so it's better to pre-load the assets first, then
-# they'll be available without having to reload them, even if no actors
-# are using them.
+# you created your first animation!
 
 # to remove an actor from the stage
 
-/free box
-
-# more than one actor can use the same animation
-
-/create box-1 box-spitneat
-
-/create box-2 box-spitneat
-
-# You probably won't see it very well because they are one on top of the other.
-# We would need to move the one on top to see both of them.
-# In the next section we cover how to do this -- and other things.
-
-# but first, let's clear the stage using a wildcard '*', which is a way to
-# quickly access all actors on stage
-
-/free *
-
+/free tut
 
 # next
-
-/tutorial/actor-attributes
+/tutorial/actor/attributes
 
 # previous
-
 /tutorial/commands
 
 # up
-
 /tutorial/index

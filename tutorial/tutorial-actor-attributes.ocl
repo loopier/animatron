@@ -1,81 +1,44 @@
 # CHANGING ACTOR ATTRIBUTES
 # ---------------------------
-# Actors can be manipulated to change their appearance an behaviour.
-# For a list of commands to change them, see the 'ACTOR' section in
-
-/list/commands 
-
-# we'll show just a few of them and let you explore the rest
-
-# first, create a couple of actors
-
-/create box box-spitneat
-
-# POSITION
-# --------
 # We can change the position of any actor with
+/create tut tutorial-animation
+/position tut 400 300
 
-/position/x box 0.2
+# or only on one axis with
+/x tut 1300
+/y tut 800
 
-# or
-/position/y box 0.8
+# to center the actor use
+/center tut
 
-#or
-/position box 0.5 0.2
+# other commands to change actors properties include:
+# - /angle
+# - /size
+# - /opacity
+# - /color
 
-# the center of the screen is at x:0.5 y:0.5, 0 being left and top, and
-# 1 being bottom and right
+# these commands set a property in absolute values.
+# Compare them to their relative counterparts.
 
-/position box 0.5 0.5
+/scale tut 0.9
+/size tut 2
 
-# SCALE
-# ----
-# let's shrink it to half its size (1 is normal)
+/move/x tut 100
+/position/x tut 1500
 
-/scale box 0.5
+/move/y tut -100
+/position/y tut 800
 
-# or make it bigger
+/rotate tut 15
+/angle tut 15
 
-/scale box 1.5
-
-# ROTATION
-# --------
-# we rotate the actor along it's pivot point by degrees
-
-/rotate box 90
-
-/rotate box -90
-
-# COLOR
-# -----
-# the color is changed by specifying 3 color values (RED, GREEN and BLUE)
-
-/color/r box 1
-
-/color/g box 0.5
-
-/color/b box 0.7
-
-/color box 0.1 0.7 0.3
-
-/color box 0.3 0.2 0.6
-
-# back to the original color
-
-/color box 0 0 0
-
-# in the next section we'll cover animation manipulation
-
-
+# note that relative commands are VERBS while
+# property setters NAMES.
 
 # next
-
-/tutorial/actor-animation
+/tutorial/actor/animation
 
 # previous
-
 /tutorial/actors
-
 # up
-
 /tutorial/index

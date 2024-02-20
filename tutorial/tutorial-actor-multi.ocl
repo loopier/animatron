@@ -1,56 +1,26 @@
 # ACTOR MULTI
 # -----------
-# Let's create a few squares
+# Multiple actors can use the same animation
 
 /free *
-/new sq-red square
-/create sq-green square
-/create sq-white square
 
-# now let's randomize their scale, color and position (evaluate
-# the block as many times as needed until you see the 3 squares
-# overlapping each-other)
+/create tuta tutorial-animation
+/create tute tutorial-animation
+/create tuti tutorial-animation
+/angle tute 30
+/angle tuti 60
+/color tute 1 0 0
+/color tuti 1 1 1
 
-/rand /scale sq* 0.3 0.7
-/rand /position/x sq* 0.3 0.7
-/rand /position/y sq* 0.3 0.7
-/rand /color/r sq-red 0.4 0.7
-/rand /color/g sq-green 0.4 0.7
-/color sq-white 1 1 1
-
-# using a WILDCARD '*' we can tell Animatron to send any
-# command to all actors who's name begin with 'sq'.
-
-# we can rearrange the order in which the actors are stacked
-# by choosing which one we want on top or below any other one
-
-# for example, let's put 'sqe' in front of 'sqi'
-
-/front sq-red sq-green
-
-# and back behind it
-
-/behind sq-red sq-green
-
-# or put 'sqe' on top of all
-
-/front sq-red *
-
-# or at the background
-
-/behind sq-red *
-
-
-
+# whildcards can be sent to multiple actors sharing a
+# common part of their name
+/color tut* 1 1 0
 
 # related
-
-/tutorial/utils-rand
+/tutorial/utils/rand
 
 # previous
-
-/tutorial/actor-attributes
+/tutorial/actor/attributes
 
 # up
-
 /tutorial/index

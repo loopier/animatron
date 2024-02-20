@@ -1,3 +1,9 @@
+# Load a preset from `user://presets/`
+# The NAME is the base name of the file, without extension
+/def /preset name:s
+     /commands/load presets/$name.ocl
+     /$name
+
 # Create a new ACTOR with an ANIMATION.
 /def /new actor:s animation:s
      /load $animation
@@ -36,7 +42,7 @@
 #################################################################################
 # Set the X and Y coordinates (in pixels) of the ACTOR.
 /def /position actor:s x:f y:f
-     /method /position $actor $x $y
+     /method /set/position $actor $x $y
 
 # Set the X coordinate (in pixels) of the ACTOR.
 /def /position/x actor:s x:f

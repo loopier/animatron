@@ -1,0 +1,36 @@
+# USING HELP
+# ----------
+
+# If you want to know what a command does, use
+
+/help <COMMAND>
+
+# for example, in the next chapter we'll be looking at /create
+
+/help /create
+
+# see the POST WINDOW
+# There you can see the command syntax:
+
+/create actor:s animation:s
+
+# This is telling us that /create needs an ACTOR name that is a string (:s) and
+# an ANIMATION name that is also a string (:s)
+# Possible types of arguments are:
+# - :s string
+# - :i int, e.g.: 1234
+# - :f float, e.g.: 0.413
+# - :b boolean, e.g.: t, f, true, false, 0, 1
+# - :... arbitrary number and type of arguments
+
+# next
+
+/tutorial/actors
+
+# previous
+
+/tutorial/commands
+
+# index
+
+/tutorial/index

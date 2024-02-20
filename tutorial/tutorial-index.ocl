@@ -1,10 +1,11 @@
 # INDEX
-# /----
+# -----
 # put the cursor on a line and press SHIFT + ENTER
 
 /tutorial/welcome
 /tutorial/controls
 /tutorial/commands
+/tutorial/help
  
 # actors
 
@@ -16,3 +17,4 @@
 # utils
 
 /tutorial/utils/rand
+/tutorial/utils/custom/cmds

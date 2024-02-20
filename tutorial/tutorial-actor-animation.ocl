@@ -1,60 +1,41 @@
 # ACTOR ANIMATION
 # ---------------
 # Some commands manage animation parameters.
-
-/free *
-/new box box-spitneat
-
 # For example, we can change the animation speed (1 being normal)
 
-/speed box 0.5
+/speed tut 0.5
 
-/speed box 2
+/speed tut 2
 
-/speed box 1
+/speed tut 1
 
 # stop
-
-/stop box
+/stop tut
 
 # set a frame (if the number is greater than the number for frames
 # it will wrap around 0)
-
-/frame box 8
+/frame tut 8
 
 # play again
-
-/play box
+/play tut
 
 # play backwards
-
-/play/reverse box
+/backwards tut
 
 # play forwards
-
-/play box
+/play tut
 
 # stop the looping
+/noloop tut
 
-/noloop box
-
-# play once and vanish (it only hides the animation -- try evaluating it
-# multiple times
-
-/once box
-
-# in the next section we'll deal with multiple actors
-
-
+# loop again
+/loop tut
 
 # next
-
-/tutorial/actor-multi
+/tutorial/actor/multi
 
 # previous
-
-/tutorial/actor-attributes
+/tutorial/actor/attributes
 
 # up
-
 /tutorial/index

@@ -1,5 +1,5 @@
 # CUSTOM COMMANDS (DEFS)
-# -----------
+# ----------------------
 # We can define custom commands with '/def'.
 # This is useful to combine simple commands into complex instructions.
 
@@ -11,19 +11,32 @@
      ...
 
 # NEWCMD: is the new command name - must include a leading slash '/'
-# VARS: (optional) are any number of strings that we can use in the embedded commands
+# VARS: (optional) is an arbitrary number of args (including none).
+#       They must be declared with a type (:s, :i, :f, :b, :...).
 # CMD, TARGET and ARGS: any valid commands, including previously defined DEFs
 #                       they need to be tabluated (press tab on every new line)
 #                       VARS can be used in the commands with a leading $
 
-# for exmaple, we can create an actor at a random position with a random
-# size and a random color
+# for exmaple, we can create an actor with the tutorial animation at a random position
+# with a random size, angle and speed and a set red value
+# (evaluate the following block with CTRL + ENTER)
 
-/def /randactor actor anim
-     /new $actor anim
-     /rand /position/x $actor 0.1 0.9
-     /rand /position/y $actor 0.1 0.9
-     /rand /scale $actor 0.3 0.7
-     /rand /color/r $actor 0 1
-     /rand /color/g $actor 0 1
-     /rand /color/b $actor 0 1
+/def /randactor actor:s red:f
+     /create $actor tutorial-animation
+     /rand /size $actor 0.3 1.7
+     /rand /angle $actor 0 360
+     /rand /speed $actor 1 2
+     /color $actor $red 0 0
+     /loop $actor
+
+# now we can use it with any loaded animation
+/randactor bla 0.5
+
+# we can even randomize the red value of our custom command
+/rand /randactor bla 0 1
+
+# previous
+/tutorial/utils/rand
+
+# up
+/tutorial/index

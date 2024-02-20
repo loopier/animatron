@@ -11,6 +11,7 @@
      /post To post something, use /post <your message>
      /editor/clear
      /editor/open/from res://tutorial/tutorial.ocl
+     /assets/path res://tutorial/animations
 
 /def /tutorial/actors
 	/editor/clear
@@ -35,6 +36,10 @@
 /def /tutorial/controls
 	/editor/clear
 	/editor/open/from res://tutorial/tutorial-controls.ocl
+
+/def /tutorial/help
+	/editor/clear
+	/editor/open/from res://tutorial/tutorial-help.ocl
 
 /def /tutorial/index
 	/editor/clear
