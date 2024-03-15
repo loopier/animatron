@@ -1,5 +1,11 @@
 #!/bin/sh
 
+# usage:
+#
+# ocl2html commands/extended.ocl help
+#
+# this will create a help.html file from the ./commands/extended.ocl comments
+
 src=$1
 dest=$2
 # grep '^\# ' $doc
