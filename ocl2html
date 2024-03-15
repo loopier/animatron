@@ -11,7 +11,7 @@ dest=$2
 # grep '^\# ' $doc
 # filename=${1%.*}
 # filename=$filename".txt"
-filename=$dest".txt"
+filename=$dest".adoc"
 
 # print all but the first column
 grep '^#' $src | sed 's/^# //' > $filename

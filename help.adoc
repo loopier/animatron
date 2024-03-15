@@ -1,0 +1,275 @@
+= Animatron
+:toc:
+
+== Getting Info
+
+[[list-commands]]
+=== List all commands
+Lists all available commands.
+
+.Usage
+
+  /commands
+
+=== List assets available on disk.
+List all available animation clips that are on the current assets path.
+
+This list includes all clips that are on the disk, no matter if they are loaded or not.
+
+See also: <<list-animations,`/animations`>>
+
+.Usage
+
+  /assets
+
+[[list-animations]]
+=== List animations
+List all animations that are loaded to memory.
+
+.Usage
+
+  /animations
+
+[[list-actors]]
+=== List actors
+List all actors that have been created.
+
+.Usage
+
+  /actors
+
+
+== Actor Management
+
+=== Loading assets
+Load a preset from `user://presets/`.
+
+.Arguments
+- `name` (_String_) - relative path to the file from `user://presets/`.
+
+.Usage
+  /commands/load mycommands/somecommands.ocl
+
+=== Create
+Load and create a new *actor* with an *animation*.
+
+NOTE: the *animation* will be loaded if it isn't already.
+
+.Arguments
+- `actor` (_String_) - whatever name you want to give to the actor.
+- `animation` (_String_) - whatever name you want to give to the actor.
+
+.Usage
+  /new lola mama
+
+=== Delete
+Delete the *actor*.
+
+.Arguments
+- `actor` (_String_) - any existing actor.
+
+.Usage
+  /free lola
+
+or
+
+  /delete lola
+
+=== Reload
+Reload *animation* frames from disk.
+
+.Arguments
+- `animation` (_String_) - name of the asset.
+
+.Usage
+  /reload mama
+
+
+== Transform
+
+=== Position
+Set the *x* and *y* coordinates (in pixels) of the *actor*.
+
+.Arguments
+- `actor` (_String_) - name of the actor.
+- `x` (_float_) - position in the *x* axis in pixels.
+- `y` (_float_) - position in the *y* axis in pixels.
+
+.Usage
+  /position lola 500 500
+
+or
+  /pos mama 500 500
+
+=== Position in the X axis
+Set the *x* coordinate (in pixels) of the *actor*.
+
+.Arguments
+- `actor` (_String_) - name of the actor.
+- `x` (_float_) - position in the *x* axis in pixels.
+
+.Usage
+  /position/x lola 500
+
+or
+
+  /pos/x mama 500
+
+or
+
+  /x mama 500
+
+=== Position in the Y axis
+Set the *y* coordinate (in pixels) of the *actor*.
+
+.Arguments
+- `actor` (_String_) - name of the actor.
+- `y` (_float_) - position in the *y* axis in pixels.
+
+.Usage
+  /position/x lola 500
+
+or
+
+  /pos/y mama 500
+
+or
+
+  /y mama 500
+
+=== Move
+Move *actor* relative to the current position in both *x* and *y* axis.
+
+.Arguments
+- `actor` (_String_) - name of the actor
+- `x` (_float_) - Position in *pixels* of the actor on the *x* axis
+- `y` (_float_) - Position in *pixels* of the actor on the *y* axis
+
+.Usage
+  /move lola 100 100
+
+=== Move on the X axis
+Move *actor* relative to the current position in the *x* axis.
+
+.Arguments
+- `actor` (_String_) - name of the actor
+- `x` (_float_) - Position in *pixels* of the actor on the *x* axis
+
+.Usage
+  /move/x lola 100
+
+=== Move on the Y axis
+Move *actor* relative to the current position in the *y* axis.
+
+.Arguments
+- `actor` (_String_) - name of the actor
+- `y` (_float_) - Position in *pixels* of the actor on the *y* axis
+
+.Usage
+  /move/y lola 100
+
+=== Angle
+Set the rotation of the *actor* in *degrees*.
+
+.Arguments
+- `actor` (_String_) - name of the actor
+- `degrees` (_String_) - angle in *degrees*
+
+.Usage
+  /angle lola 45
+
+=== Rotate
+Rotate the *actor* some *degrees* relative to the current angle.
+
+.Arguments
+- `actor` (_String_) - name of the actor
+- `degrees` (_String_) - angle in *degrees*
+
+.Usage
+  /rotate lola 10
+
+=== Size
+Set the *actor*'s *size* relative to the normal size.
+
+.Arguments
+- `actor` (_String_) - name of the actor
+- `size` (_float_) - size of the actor. `1` is normal size.
+
+.Usage
+   /size lola 1.5
+
+=== Size X and Y
+Set the *actor*'s *size* relative to the normal size with different values on
+the *x* and *y* axis.
+
+.Arguments
+- `actor` (_String_) - name of the actor
+- `x` (_float_) - size of the actor on the X axis.
+- `y` (_float_) - size of the actor on the Y axis.
+
+.Usage
+   /size/xy lola 1.5 0.7
+
+=== Size X
+Set the *actor*'s *size* relative to the normal size on the *x* axis.
+
+.Arguments
+- `actor` (_String_) - name of the actor
+- `x` (_float_) - size of the actor on the X axis.
+
+.Usage
+   /size/x lola 1.5 0.7
+
+=== Size Y
+Set the *actor*'s *size* relative to the normal size on the *y* axis.
+
+.Arguments
+- `actor` (_String_) - name of the actor
+- `y` (_float_) - size of the actor on the Y axis.
+
+.Usage
+   /size/y lola 1.5 0.7
+
+SCALE the ACTOR relative to the current size
+SCALE the ACTOR relative to the current size on both axis X and Y
+SCALE the ACTOR relative to the current size on the X axis
+SCALE the ACTOR relative to the current size on the Y axis
+
+visibility                                                                    #
+
+Make the ACTOR visible
+Make the ACTOR invisible
+
+color                                                                         #
+
+
+animation                                                                     #
+
+Play the ACTOR's animation
+Play the ACTOR's animation backwards
+Stop the ACTOR's animation
+Play the animation from START to END frames.
+Set the ACTOR's ANIMATION.
+See /animation
+Set the ACTOR's animation SPEED (1 = normal speed, 2 = 2 x speed).
+Set the ACTOR's current FRAME.
+Set the ACTOR's current FRAME.
+Set the first FRAME of the loop in ACTOR's animation. Defaults to 0.
+Set the last FRAME of the loop in ACTOR's animation.
+Defaults to number of frames of the animation.
+Loop the ACTOR's animation
+Don't loop the ACTOR's animation
+Set the ACTOR's animation drawing offset in pixels.
+Set the ACTOR's animation drawing offset on the X axis.
+Set the ACTOR's animation drawing offset on the Y axis.
+
+text label                                                                    #
+
+
+editor                                                                        #
+
+
+extras                                                                        #
+
+Creates a pair of 2 ANIMATIONs into a single "object" with a NAME.
+This allows to create actors with separate line and fill colors.
