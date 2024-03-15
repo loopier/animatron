@@ -1,0 +1,15 @@
+#!/bin/sh
+
+doc=$1
+# grep '^\# ' $doc
+filename=${1%.*}
+filename="/tmp/"$filename".txt"
+
+# print all but the first column
+grep '^#' $doc | sed 's/^# //' > $filename
+# remove spacing lines
+sed 's/^#$//' -i $filename
+sed 's/^#*//' -i $filename
+cat $filename
+# convert to html
+asciidoctor $filename
