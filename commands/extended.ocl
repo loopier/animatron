@@ -4,8 +4,7 @@
 #################################################################################
 # == Getting Info
 #################################################################################
-# [[list-commands]]
-# === List all commands
+# === List commands
 # Lists all available commands.
 #
 # .Usage
@@ -15,7 +14,7 @@
 /def /commands
      /commands/list
 
-# === List assets available on disk.
+# === List assets
 # List all available animation clips that are on the current assets path.
 #
 # This list includes all clips that are on the disk, no matter if they are loaded or not.
@@ -29,7 +28,6 @@
 /def /assets
      /assets/list
 
-# [[list-animations]]
 # === List animations
 # List all animations that are loaded to memory.
 #
@@ -40,7 +38,6 @@
 /def /animations
      /animations/list
 
-# [[list-actors]]
 # === List actors
 # List all actors that have been created.
 #
@@ -51,31 +48,30 @@
 /def /actors
      /actors/list
 
-[[actors]]
 #################################################################################
 # == Actor Management
 #################################################################################
-# === Loading assets
+# === /preset name
 # Load a preset from `user://presets/`.
 #
-# .Arguments
-# - `name` (_String_) - relative path to the file from `user://presets/`.
+# //.Arguments
+# `name`:: _String_ - relative path to the file from `user://presets/`.
 #
 # .Usage
-#   /commands/load mycommands/somecommands.ocl
+#   /preset mycommands/somecommands.ocl
 #
 /def /preset name:s
      /commands/load presets/$name.ocl
      /$name
 
-# === Create
+# === /new actor animation
 # Load and create a new *actor* with an *animation*.
 #
 # NOTE: the *animation* will be loaded if it isn't already.
 #
 # .Arguments
-# - `actor` (_String_) - whatever name you want to give to the actor.
-# - `animation` (_String_) - whatever name you want to give to the actor.
+# `actor`:: _String_ - whatever name you want to give to the actor.
+# `animation`:: _String_ - whatever name you want to give to the actor.
 #
 # .Usage
 #   /new lola mama
@@ -84,11 +80,11 @@
      /load $animation
      /create $actor $animation
 
-# === Delete
+# === /free actor
 # Delete the *actor*.
 #
 # .Arguments
-# - `actor` (_String_) - any existing actor.
+# `actor`:: _String_ - any existing actor.
 #
 # .Usage
 #   /free lola
@@ -106,7 +102,7 @@
 # Reload *animation* frames from disk.
 #
 # .Arguments
-# - `animation` (_String_) - name of the asset.
+# `animation`:: _String_ - name of the asset.
 #
 # .Usage
 #   /reload mama
@@ -122,9 +118,9 @@
 # Set the *x* and *y* coordinates (in pixels) of the *actor*.
 #
 # .Arguments
-# - `actor` (_String_) - name of the actor.
-# - `x` (_float_) - position in the *x* axis in pixels.
-# - `y` (_float_) - position in the *y* axis in pixels.
+# `actor`:: _String_ - name of the actor.
+# `x`:: _float_ - position in the *x* axis in pixels.
+# `y`:: _float_ - position in the *y* axis in pixels.
 #
 # .Usage
 #   /position lola 500 500
@@ -142,8 +138,8 @@
 # Set the *x* coordinate (in pixels) of the *actor*.
 #
 # .Arguments
-# - `actor` (_String_) - name of the actor.
-# - `x` (_float_) - position in the *x* axis in pixels.
+# `actor`:: _String_ - name of the actor.
+# `x`:: _float_ - position in the *x* axis in pixels.
 #
 # .Usage
 #   /position/x lola 500
@@ -169,8 +165,8 @@
 # Set the *y* coordinate (in pixels) of the *actor*.
 #
 # .Arguments
-# - `actor` (_String_) - name of the actor.
-# - `y` (_float_) - position in the *y* axis in pixels.
+# `actor`:: _String_ - name of the actor.
+# `y`:: _float_ - position in the *y* axis in pixels.
 #
 # .Usage
 #   /position/x lola 500
@@ -196,9 +192,9 @@
 # Move *actor* relative to the current position in both *x* and *y* axis.
 #
 # .Arguments
-# - `actor` (_String_) - name of the actor
-# - `x` (_float_) - Position in *pixels* of the actor on the *x* axis
-# - `y` (_float_) - Position in *pixels* of the actor on the *y* axis
+# `actor`:: _String_ - name of the actor
+# `x`:: _float_ - Position in *pixels* of the actor on the *x* axis
+# `y`:: _float_ - Position in *pixels* of the actor on the *y* axis
 #
 # .Usage
 #   /move lola 100 100
@@ -210,8 +206,8 @@
 # Move *actor* relative to the current position in the *x* axis.
 #
 # .Arguments
-# - `actor` (_String_) - name of the actor
-# - `x` (_float_) - Position in *pixels* of the actor on the *x* axis
+# `actor`:: _String_ - name of the actor
+# `x`:: _float_ - Position in *pixels* of the actor on the *x* axis
 #
 # .Usage
 #   /move/x lola 100
@@ -223,8 +219,8 @@
 # Move *actor* relative to the current position in the *y* axis.
 #
 # .Arguments
-# - `actor` (_String_) - name of the actor
-# - `y` (_float_) - Position in *pixels* of the actor on the *y* axis
+# `actor`:: _String_ - name of the actor
+# `y`:: _float_ - Position in *pixels* of the actor on the *y* axis
 #
 # .Usage
 #   /move/y lola 100
@@ -236,8 +232,8 @@
 # Set the rotation of the *actor* in *degrees*.
 #
 # .Arguments
-# - `actor` (_String_) - name of the actor
-# - `degrees` (_String_) - angle in *degrees*
+# `actor`:: _String_ - name of the actor
+# `degrees`:: _String_ - angle in *degrees*
 #
 # .Usage
 #   /angle lola 45
@@ -249,8 +245,8 @@
 # Rotate the *actor* some *degrees* relative to the current angle.
 #
 # .Arguments
-# - `actor` (_String_) - name of the actor
-# - `degrees` (_String_) - angle in *degrees*
+# `actor`:: _String_ - name of the actor
+# `degrees`:: _String_ - angle in *degrees*
 #
 # .Usage
 #   /rotate lola 10
@@ -262,8 +258,8 @@
 # Set the *actor*'s *size* relative to the normal size.
 #
 # .Arguments
-# - `actor` (_String_) - name of the actor
-# - `size` (_float_) - size of the actor. `1` is normal size.
+# `actor`:: _String_ - name of the actor
+# `size`:: _float_ - size of the actor. `1` is normal size.
 #
 # .Usage
 #    /size lola 1.5
@@ -276,9 +272,9 @@
 # the *x* and *y* axis.
 #
 # .Arguments
-# - `actor` (_String_) - name of the actor
-# - `x` (_float_) - size of the actor on the X axis.
-# - `y` (_float_) - size of the actor on the Y axis.
+# `actor`:: _String_ - name of the actor
+# `x`:: _float_ - size of the actor on the X axis.
+# `y`:: _float_ - size of the actor on the Y axis.
 #
 # .Usage
 #    /size/xy lola 1.5 0.7
@@ -290,8 +286,8 @@
 # Set the *actor*'s *size* relative to the normal size on the *x* axis.
 #
 # .Arguments
-# - `actor` (_String_) - name of the actor
-# - `x` (_float_) - size of the actor on the X axis.
+# `actor`:: _String_ - name of the actor
+# `x`:: _float_ - size of the actor on the X axis.
 #
 # .Usage
 #    /size/x lola 1.5 0.7
@@ -303,8 +299,8 @@
 # Set the *actor*'s *size* relative to the normal size on the *y* axis.
 #
 # .Arguments
-# - `actor` (_String_) - name of the actor
-# - `y` (_float_) - size of the actor on the Y axis.
+# `actor`:: _String_ - name of the actor
+# `y`:: _float_ - size of the actor on the Y axis.
 #
 # .Usage
 #    /size/y lola 1.5 0.7
@@ -312,7 +308,11 @@
 /def /size/y actor:s y:f
      /property /scale/y $actor $y
 
+# === Scale
 # SCALE the ACTOR relative to the current size
+
+# .Arguments
+#
 /def /scale actor:s scale:f
      /method /apply/scale $actor $scale $scale
 
@@ -442,3 +442,12 @@
      /create $name $animation-fl
      /create $name-ln $animation-ln
      /parent $name-ln $name
+
+
+#################################################################################
+# app
+#################################################################################
+/def /animatron/demo
+     /editor/clear
+     /editor/open/from res://slides/ca/animatron-demo.ocl
+     /editor/font/size 32

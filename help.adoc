@@ -3,85 +3,63 @@
 
 == Getting Info
 
-[[list-commands]]
-=== List all commands
+=== List commands
 Lists all available commands.
-
-.Usage
 
   /commands
 
-=== List assets available on disk.
+=== List assets
 List all available animation clips that are on the current assets path.
 
 This list includes all clips that are on the disk, no matter if they are loaded or not.
 
-See also: <<list-animations,`/animations`>>
-
-.Usage
-
   /assets
 
-[[list-animations]]
+See also: <<list-animations,`/animations`>>
+
 === List animations
 List all animations that are loaded to memory.
 
-.Usage
-
   /animations
 
-[[list-actors]]
 === List actors
 List all actors that have been created.
-
-.Usage
 
   /actors
 
 
 == Actor Management
 
-=== Loading assets
+=== /preset name
 Load a preset from `user://presets/`.
 
-.Arguments
-- `name` (_String_) - relative path to the file from `user://presets/`.
+`name`:: _String_ - relative path to the file from `user://presets/`.
 
-.Usage
   /commands/load mycommands/somecommands.ocl
 
-=== Create
+=== /new actor animation
 Load and create a new *actor* with an *animation*.
 
 NOTE: the *animation* will be loaded if it isn't already.
 
-.Arguments
-- `actor` (_String_) - whatever name you want to give to the actor.
-- `animation` (_String_) - whatever name you want to give to the actor.
+`actor`:: _String_ - whatever name you want to give to the actor.
+`animation`:: _String_ - whatever name you want to give to the actor.
 
-.Usage
   /new lola mama
 
-=== Delete
+=== /free actor
 Delete the *actor*.
 
-.Arguments
-- `actor` (_String_) - any existing actor.
+`actor`:: _String_ - any existing actor.
 
-.Usage
   /free lola
-
-or
-
   /delete lola
 
-=== Reload
+=== /reload animation
 Reload *animation* frames from disk.
 
-.Arguments
-- `animation` (_String_) - name of the asset.
+`animation`:: _String_ - name of the asset.
 
-.Usage
   /reload mama
 
 
@@ -90,12 +68,12 @@ Reload *animation* frames from disk.
 === Position
 Set the *x* and *y* coordinates (in pixels) of the *actor*.
 
-.Arguments
-- `actor` (_String_) - name of the actor.
-- `x` (_float_) - position in the *x* axis in pixels.
-- `y` (_float_) - position in the *y* axis in pixels.
+//.Arguments
+`actor`:: _String_ - name of the actor.
+`x`:: _float_ - position in the *x* axis in pixels.
+`y`:: _float_ - position in the *y* axis in pixels.
 
-.Usage
+//.Usage
   /position lola 500 500
 
 or
@@ -104,11 +82,11 @@ or
 === Position in the X axis
 Set the *x* coordinate (in pixels) of the *actor*.
 
-.Arguments
-- `actor` (_String_) - name of the actor.
-- `x` (_float_) - position in the *x* axis in pixels.
+//.Arguments
+`actor`:: _String_ - name of the actor.
+`x`:: _float_ - position in the *x* axis in pixels.
 
-.Usage
+//.Usage
   /position/x lola 500
 
 or
@@ -122,11 +100,11 @@ or
 === Position in the Y axis
 Set the *y* coordinate (in pixels) of the *actor*.
 
-.Arguments
-- `actor` (_String_) - name of the actor.
-- `y` (_float_) - position in the *y* axis in pixels.
+//.Arguments
+`actor`:: _String_ - name of the actor.
+`y`:: _float_ - position in the *y* axis in pixels.
 
-.Usage
+//.Usage
   /position/x lola 500
 
 or
@@ -140,97 +118,100 @@ or
 === Move
 Move *actor* relative to the current position in both *x* and *y* axis.
 
-.Arguments
-- `actor` (_String_) - name of the actor
-- `x` (_float_) - Position in *pixels* of the actor on the *x* axis
-- `y` (_float_) - Position in *pixels* of the actor on the *y* axis
+//.Arguments
+`actor`:: _String_ - name of the actor
+`x`:: _float_ - Position in *pixels* of the actor on the *x* axis
+`y`:: _float_ - Position in *pixels* of the actor on the *y* axis
 
-.Usage
+//.Usage
   /move lola 100 100
 
 === Move on the X axis
 Move *actor* relative to the current position in the *x* axis.
 
-.Arguments
-- `actor` (_String_) - name of the actor
-- `x` (_float_) - Position in *pixels* of the actor on the *x* axis
+//.Arguments
+`actor`:: _String_ - name of the actor
+`x`:: _float_ - Position in *pixels* of the actor on the *x* axis
 
-.Usage
+//.Usage
   /move/x lola 100
 
 === Move on the Y axis
 Move *actor* relative to the current position in the *y* axis.
 
-.Arguments
-- `actor` (_String_) - name of the actor
-- `y` (_float_) - Position in *pixels* of the actor on the *y* axis
+//.Arguments
+`actor`:: _String_ - name of the actor
+`y`:: _float_ - Position in *pixels* of the actor on the *y* axis
 
-.Usage
+//.Usage
   /move/y lola 100
 
 === Angle
 Set the rotation of the *actor* in *degrees*.
 
-.Arguments
-- `actor` (_String_) - name of the actor
-- `degrees` (_String_) - angle in *degrees*
+//.Arguments
+`actor`:: _String_ - name of the actor
+`degrees`:: _String_ - angle in *degrees*
 
-.Usage
+//.Usage
   /angle lola 45
 
 === Rotate
 Rotate the *actor* some *degrees* relative to the current angle.
 
-.Arguments
-- `actor` (_String_) - name of the actor
-- `degrees` (_String_) - angle in *degrees*
+//.Arguments
+`actor`:: _String_ - name of the actor
+`degrees`:: _String_ - angle in *degrees*
 
-.Usage
+//.Usage
   /rotate lola 10
 
 === Size
 Set the *actor*'s *size* relative to the normal size.
 
-.Arguments
-- `actor` (_String_) - name of the actor
-- `size` (_float_) - size of the actor. `1` is normal size.
+//.Arguments
+`actor`:: _String_ - name of the actor
+`size`:: _float_ - size of the actor. `1` is normal size.
 
-.Usage
+//.Usage
    /size lola 1.5
 
 === Size X and Y
 Set the *actor*'s *size* relative to the normal size with different values on
 the *x* and *y* axis.
 
-.Arguments
-- `actor` (_String_) - name of the actor
-- `x` (_float_) - size of the actor on the X axis.
-- `y` (_float_) - size of the actor on the Y axis.
+//.Arguments
+`actor`:: _String_ - name of the actor
+`x`:: _float_ - size of the actor on the X axis.
+`y`:: _float_ - size of the actor on the Y axis.
 
-.Usage
+//.Usage
    /size/xy lola 1.5 0.7
 
 === Size X
 Set the *actor*'s *size* relative to the normal size on the *x* axis.
 
-.Arguments
-- `actor` (_String_) - name of the actor
-- `x` (_float_) - size of the actor on the X axis.
+//.Arguments
+`actor`:: _String_ - name of the actor
+`x`:: _float_ - size of the actor on the X axis.
 
-.Usage
+//.Usage
    /size/x lola 1.5 0.7
 
 === Size Y
 Set the *actor*'s *size* relative to the normal size on the *y* axis.
 
-.Arguments
-- `actor` (_String_) - name of the actor
-- `y` (_float_) - size of the actor on the Y axis.
+//.Arguments
+`actor`:: _String_ - name of the actor
+`y`:: _float_ - size of the actor on the Y axis.
 
-.Usage
+//.Usage
    /size/y lola 1.5 0.7
 
+=== Scale
 SCALE the ACTOR relative to the current size
+//.Arguments
+
 SCALE the ACTOR relative to the current size on both axis X and Y
 SCALE the ACTOR relative to the current size on the X axis
 SCALE the ACTOR relative to the current size on the Y axis

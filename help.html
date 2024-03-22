@@ -442,17 +442,17 @@ body.book #toc,body.book #preamble,body.book h1.sect0,body.book .sect1>h2{page-b
 <ul class="sectlevel1">
 <li><a href="#_getting_info">Getting Info</a>
 <ul class="sectlevel2">
-<li><a href="#list-commands">List all commands</a></li>
-<li><a href="#_list_assets_available_on_disk">List assets available on disk.</a></li>
-<li><a href="#list-animations">List animations</a></li>
-<li><a href="#list-actors">List actors</a></li>
+<li><a href="#_list_commands">List commands</a></li>
+<li><a href="#_list_assets">List assets</a></li>
+<li><a href="#_list_animations">List animations</a></li>
+<li><a href="#_list_actors">List actors</a></li>
 </ul>
 </li>
 <li><a href="#_actor_management">Actor Management</a>
 <ul class="sectlevel2">
-<li><a href="#_loading_assets">Loading assets</a></li>
-<li><a href="#_create">Create</a></li>
-<li><a href="#_delete">Delete</a></li>
+<li><a href="#_preset_name">/preset name</a></li>
+<li><a href="#_new_actor_animation">/new actor animation</a></li>
+<li><a href="#_free_actor">/free actor</a></li>
 <li><a href="#_reload">Reload</a></li>
 </ul>
 </li>
@@ -470,6 +470,7 @@ body.book #toc,body.book #preamble,body.book h1.sect0,body.book .sect1>h2{page-b
 <li><a href="#_size_x_and_y">Size X and Y</a></li>
 <li><a href="#_size_x">Size X</a></li>
 <li><a href="#_size_y">Size Y</a></li>
+<li><a href="#_scale">Scale</a></li>
 </ul>
 </li>
 </ul>
@@ -480,7 +481,7 @@ body.book #toc,body.book #preamble,body.book h1.sect0,body.book .sect1>h2{page-b
 <h2 id="_getting_info">Getting Info</h2>
 <div class="sectionbody">
 <div class="sect2">
-<h3 id="list-commands">List all commands</h3>
+<h3 id="_list_commands">List commands</h3>
 <div class="paragraph">
 <p>Lists all available commands.</p>
 </div>
@@ -492,7 +493,7 @@ body.book #toc,body.book #preamble,body.book h1.sect0,body.book .sect1>h2{page-b
 </div>
 </div>
 <div class="sect2">
-<h3 id="_list_assets_available_on_disk">List assets available on disk.</h3>
+<h3 id="_list_assets">List assets</h3>
 <div class="paragraph">
 <p>List all available animation clips that are on the current assets path.</p>
 </div>
@@ -510,7 +511,7 @@ body.book #toc,body.book #preamble,body.book h1.sect0,body.book .sect1>h2{page-b
 </div>
 </div>
 <div class="sect2">
-<h3 id="list-animations">List animations</h3>
+<h3 id="_list_animations">List animations</h3>
 <div class="paragraph">
 <p>List all animations that are loaded to memory.</p>
 </div>
@@ -522,7 +523,7 @@ body.book #toc,body.book #preamble,body.book h1.sect0,body.book .sect1>h2{page-b
 </div>
 </div>
 <div class="sect2">
-<h3 id="list-actors">List actors</h3>
+<h3 id="_list_actors">List actors</h3>
 <div class="paragraph">
 <p>List all actors that have been created.</p>
 </div>
@@ -539,17 +540,17 @@ body.book #toc,body.book #preamble,body.book h1.sect0,body.book .sect1>h2{page-b
 <h2 id="_actor_management">Actor Management</h2>
 <div class="sectionbody">
 <div class="sect2">
-<h3 id="_loading_assets">Loading assets</h3>
+<h3 id="_preset_name">/preset name</h3>
 <div class="paragraph">
 <p>Load a preset from <code>user://presets/</code>.</p>
 </div>
-<div class="ulist">
-<div class="title">Arguments</div>
-<ul>
-<li>
-<p><code>name</code> (<em>String</em>) - relative path to the file from <code>user://presets/</code>.</p>
-</li>
-</ul>
+<div class="dlist">
+<dl>
+<dt class="hdlist1"><code>name</code></dt>
+<dd>
+<p><em>String</em> - relative path to the file from <code>user://presets/</code>.</p>
+</dd>
+</dl>
 </div>
 <div class="literalblock">
 <div class="title">Usage</div>
@@ -559,7 +560,7 @@ body.book #toc,body.book #preamble,body.book h1.sect0,body.book .sect1>h2{page-b
 </div>
 </div>
 <div class="sect2">
-<h3 id="_create">Create</h3>
+<h3 id="_new_actor_animation">/new actor animation</h3>
 <div class="paragraph">
 <p>Load and create a new <strong>actor</strong> with an <strong>animation</strong>.</p>
 </div>
@@ -575,16 +576,18 @@ the <strong>animation</strong> will be loaded if it isn&#8217;t already.
 </tr>
 </table>
 </div>
-<div class="ulist">
+<div class="dlist">
 <div class="title">Arguments</div>
-<ul>
-<li>
-<p><code>actor</code> (<em>String</em>) - whatever name you want to give to the actor.</p>
-</li>
-<li>
-<p><code>animation</code> (<em>String</em>) - whatever name you want to give to the actor.</p>
-</li>
-</ul>
+<dl>
+<dt class="hdlist1"><code>actor</code></dt>
+<dd>
+<p><em>String</em> - whatever name you want to give to the actor.</p>
+</dd>
+<dt class="hdlist1"><code>animation</code></dt>
+<dd>
+<p><em>String</em> - whatever name you want to give to the actor.</p>
+</dd>
+</dl>
 </div>
 <div class="literalblock">
 <div class="title">Usage</div>
@@ -594,17 +597,18 @@ the <strong>animation</strong> will be loaded if it isn&#8217;t already.
 </div>
 </div>
 <div class="sect2">
-<h3 id="_delete">Delete</h3>
+<h3 id="_free_actor">/free actor</h3>
 <div class="paragraph">
 <p>Delete the <strong>actor</strong>.</p>
 </div>
-<div class="ulist">
+<div class="dlist">
 <div class="title">Arguments</div>
-<ul>
-<li>
-<p><code>actor</code> (<em>String</em>) - any existing actor.</p>
-</li>
-</ul>
+<dl>
+<dt class="hdlist1"><code>actor</code></dt>
+<dd>
+<p><em>String</em> - any existing actor.</p>
+</dd>
+</dl>
 </div>
 <div class="literalblock">
 <div class="title">Usage</div>
@@ -626,13 +630,14 @@ the <strong>animation</strong> will be loaded if it isn&#8217;t already.
 <div class="paragraph">
 <p>Reload <strong>animation</strong> frames from disk.</p>
 </div>
-<div class="ulist">
+<div class="dlist">
 <div class="title">Arguments</div>
-<ul>
-<li>
-<p><code>animation</code> (<em>String</em>) - name of the asset.</p>
-</li>
-</ul>
+<dl>
+<dt class="hdlist1"><code>animation</code></dt>
+<dd>
+<p><em>String</em> - name of the asset.</p>
+</dd>
+</dl>
 </div>
 <div class="literalblock">
 <div class="title">Usage</div>
@@ -651,19 +656,22 @@ the <strong>animation</strong> will be loaded if it isn&#8217;t already.
 <div class="paragraph">
 <p>Set the <strong>x</strong> and <strong>y</strong> coordinates (in pixels) of the <strong>actor</strong>.</p>
 </div>
-<div class="ulist">
+<div class="dlist">
 <div class="title">Arguments</div>
-<ul>
-<li>
-<p><code>actor</code> (<em>String</em>) - name of the actor.</p>
-</li>
-<li>
-<p><code>x</code> (<em>float</em>) - position in the <strong>x</strong> axis in pixels.</p>
-</li>
-<li>
-<p><code>y</code> (<em>float</em>) - position in the <strong>y</strong> axis in pixels.</p>
-</li>
-</ul>
+<dl>
+<dt class="hdlist1"><code>actor</code></dt>
+<dd>
+<p><em>String</em> - name of the actor.</p>
+</dd>
+<dt class="hdlist1"><code>x</code></dt>
+<dd>
+<p><em>float</em> - position in the <strong>x</strong> axis in pixels.</p>
+</dd>
+<dt class="hdlist1"><code>y</code></dt>
+<dd>
+<p><em>float</em> - position in the <strong>y</strong> axis in pixels.</p>
+</dd>
+</dl>
 </div>
 <div class="literalblock">
 <div class="title">Usage</div>
@@ -681,16 +689,18 @@ the <strong>animation</strong> will be loaded if it isn&#8217;t already.
 <div class="paragraph">
 <p>Set the <strong>x</strong> coordinate (in pixels) of the <strong>actor</strong>.</p>
 </div>
-<div class="ulist">
+<div class="dlist">
 <div class="title">Arguments</div>
-<ul>
-<li>
-<p><code>actor</code> (<em>String</em>) - name of the actor.</p>
-</li>
-<li>
-<p><code>x</code> (<em>float</em>) - position in the <strong>x</strong> axis in pixels.</p>
-</li>
-</ul>
+<dl>
+<dt class="hdlist1"><code>actor</code></dt>
+<dd>
+<p><em>String</em> - name of the actor.</p>
+</dd>
+<dt class="hdlist1"><code>x</code></dt>
+<dd>
+<p><em>float</em> - position in the <strong>x</strong> axis in pixels.</p>
+</dd>
+</dl>
 </div>
 <div class="literalblock">
 <div class="title">Usage</div>
@@ -720,16 +730,18 @@ the <strong>animation</strong> will be loaded if it isn&#8217;t already.
 <div class="paragraph">
 <p>Set the <strong>y</strong> coordinate (in pixels) of the <strong>actor</strong>.</p>
 </div>
-<div class="ulist">
+<div class="dlist">
 <div class="title">Arguments</div>
-<ul>
-<li>
-<p><code>actor</code> (<em>String</em>) - name of the actor.</p>
-</li>
-<li>
-<p><code>y</code> (<em>float</em>) - position in the <strong>y</strong> axis in pixels.</p>
-</li>
-</ul>
+<dl>
+<dt class="hdlist1"><code>actor</code></dt>
+<dd>
+<p><em>String</em> - name of the actor.</p>
+</dd>
+<dt class="hdlist1"><code>y</code></dt>
+<dd>
+<p><em>float</em> - position in the <strong>y</strong> axis in pixels.</p>
+</dd>
+</dl>
 </div>
 <div class="literalblock">
 <div class="title">Usage</div>
@@ -759,19 +771,22 @@ the <strong>animation</strong> will be loaded if it isn&#8217;t already.
 <div class="paragraph">
 <p>Move <strong>actor</strong> relative to the current position in both <strong>x</strong> and <strong>y</strong> axis.</p>
 </div>
-<div class="ulist">
+<div class="dlist">
 <div class="title">Arguments</div>
-<ul>
-<li>
-<p><code>actor</code> (<em>String</em>) - name of the actor</p>
-</li>
-<li>
-<p><code>x</code> (<em>float</em>) - Position in <strong>pixels</strong> of the actor on the <strong>x</strong> axis</p>
-</li>
-<li>
-<p><code>y</code> (<em>float</em>) - Position in <strong>pixels</strong> of the actor on the <strong>y</strong> axis</p>
-</li>
-</ul>
+<dl>
+<dt class="hdlist1"><code>actor</code></dt>
+<dd>
+<p><em>String</em> - name of the actor</p>
+</dd>
+<dt class="hdlist1"><code>x</code></dt>
+<dd>
+<p><em>float</em> - Position in <strong>pixels</strong> of the actor on the <strong>x</strong> axis</p>
+</dd>
+<dt class="hdlist1"><code>y</code></dt>
+<dd>
+<p><em>float</em> - Position in <strong>pixels</strong> of the actor on the <strong>y</strong> axis</p>
+</dd>
+</dl>
 </div>
 <div class="literalblock">
 <div class="title">Usage</div>
@@ -785,16 +800,18 @@ the <strong>animation</strong> will be loaded if it isn&#8217;t already.
 <div class="paragraph">
 <p>Move <strong>actor</strong> relative to the current position in the <strong>x</strong> axis.</p>
 </div>
-<div class="ulist">
+<div class="dlist">
 <div class="title">Arguments</div>
-<ul>
-<li>
-<p><code>actor</code> (<em>String</em>) - name of the actor</p>
-</li>
-<li>
-<p><code>x</code> (<em>float</em>) - Position in <strong>pixels</strong> of the actor on the <strong>x</strong> axis</p>
-</li>
-</ul>
+<dl>
+<dt class="hdlist1"><code>actor</code></dt>
+<dd>
+<p><em>String</em> - name of the actor</p>
+</dd>
+<dt class="hdlist1"><code>x</code></dt>
+<dd>
+<p><em>float</em> - Position in <strong>pixels</strong> of the actor on the <strong>x</strong> axis</p>
+</dd>
+</dl>
 </div>
 <div class="literalblock">
 <div class="title">Usage</div>
@@ -808,16 +825,18 @@ the <strong>animation</strong> will be loaded if it isn&#8217;t already.
 <div class="paragraph">
 <p>Move <strong>actor</strong> relative to the current position in the <strong>y</strong> axis.</p>
 </div>
-<div class="ulist">
+<div class="dlist">
 <div class="title">Arguments</div>
-<ul>
-<li>
-<p><code>actor</code> (<em>String</em>) - name of the actor</p>
-</li>
-<li>
-<p><code>y</code> (<em>float</em>) - Position in <strong>pixels</strong> of the actor on the <strong>y</strong> axis</p>
-</li>
-</ul>
+<dl>
+<dt class="hdlist1"><code>actor</code></dt>
+<dd>
+<p><em>String</em> - name of the actor</p>
+</dd>
+<dt class="hdlist1"><code>y</code></dt>
+<dd>
+<p><em>float</em> - Position in <strong>pixels</strong> of the actor on the <strong>y</strong> axis</p>
+</dd>
+</dl>
 </div>
 <div class="literalblock">
 <div class="title">Usage</div>
@@ -831,16 +850,18 @@ the <strong>animation</strong> will be loaded if it isn&#8217;t already.
 <div class="paragraph">
 <p>Set the rotation of the <strong>actor</strong> in <strong>degrees</strong>.</p>
 </div>
-<div class="ulist">
+<div class="dlist">
 <div class="title">Arguments</div>
-<ul>
-<li>
-<p><code>actor</code> (<em>String</em>) - name of the actor</p>
-</li>
-<li>
-<p><code>degrees</code> (<em>String</em>) - angle in <strong>degrees</strong></p>
-</li>
-</ul>
+<dl>
+<dt class="hdlist1"><code>actor</code></dt>
+<dd>
+<p><em>String</em> - name of the actor</p>
+</dd>
+<dt class="hdlist1"><code>degrees</code></dt>
+<dd>
+<p><em>String</em> - angle in <strong>degrees</strong></p>
+</dd>
+</dl>
 </div>
 <div class="literalblock">
 <div class="title">Usage</div>
@@ -854,16 +875,18 @@ the <strong>animation</strong> will be loaded if it isn&#8217;t already.
 <div class="paragraph">
 <p>Rotate the <strong>actor</strong> some <strong>degrees</strong> relative to the current angle.</p>
 </div>
-<div class="ulist">
+<div class="dlist">
 <div class="title">Arguments</div>
-<ul>
-<li>
-<p><code>actor</code> (<em>String</em>) - name of the actor</p>
-</li>
-<li>
-<p><code>degrees</code> (<em>String</em>) - angle in <strong>degrees</strong></p>
-</li>
-</ul>
+<dl>
+<dt class="hdlist1"><code>actor</code></dt>
+<dd>
+<p><em>String</em> - name of the actor</p>
+</dd>
+<dt class="hdlist1"><code>degrees</code></dt>
+<dd>
+<p><em>String</em> - angle in <strong>degrees</strong></p>
+</dd>
+</dl>
 </div>
 <div class="literalblock">
 <div class="title">Usage</div>
@@ -877,16 +900,18 @@ the <strong>animation</strong> will be loaded if it isn&#8217;t already.
 <div class="paragraph">
 <p>Set the <strong>actor</strong>'s <strong>size</strong> relative to the normal size.</p>
 </div>
-<div class="ulist">
+<div class="dlist">
 <div class="title">Arguments</div>
-<ul>
-<li>
-<p><code>actor</code> (<em>String</em>) - name of the actor</p>
-</li>
-<li>
-<p><code>size</code> (<em>float</em>) - size of the actor. <code>1</code> is normal size.</p>
-</li>
-</ul>
+<dl>
+<dt class="hdlist1"><code>actor</code></dt>
+<dd>
+<p><em>String</em> - name of the actor</p>
+</dd>
+<dt class="hdlist1"><code>size</code></dt>
+<dd>
+<p><em>float</em> - size of the actor. <code>1</code> is normal size.</p>
+</dd>
+</dl>
 </div>
 <div class="literalblock">
 <div class="title">Usage</div>
@@ -901,19 +926,22 @@ the <strong>animation</strong> will be loaded if it isn&#8217;t already.
 <p>Set the <strong>actor</strong>'s <strong>size</strong> relative to the normal size with different values on
 the <strong>x</strong> and <strong>y</strong> axis.</p>
 </div>
-<div class="ulist">
+<div class="dlist">
 <div class="title">Arguments</div>
-<ul>
-<li>
-<p><code>actor</code> (<em>String</em>) - name of the actor</p>
-</li>
-<li>
-<p><code>x</code> (<em>float</em>) - size of the actor on the X axis.</p>
-</li>
-<li>
-<p><code>y</code> (<em>float</em>) - size of the actor on the Y axis.</p>
-</li>
-</ul>
+<dl>
+<dt class="hdlist1"><code>actor</code></dt>
+<dd>
+<p><em>String</em> - name of the actor</p>
+</dd>
+<dt class="hdlist1"><code>x</code></dt>
+<dd>
+<p><em>float</em> - size of the actor on the X axis.</p>
+</dd>
+<dt class="hdlist1"><code>y</code></dt>
+<dd>
+<p><em>float</em> - size of the actor on the Y axis.</p>
+</dd>
+</dl>
 </div>
 <div class="literalblock">
 <div class="title">Usage</div>
@@ -927,16 +955,18 @@ the <strong>x</strong> and <strong>y</strong> axis.</p>
 <div class="paragraph">
 <p>Set the <strong>actor</strong>'s <strong>size</strong> relative to the normal size on the <strong>x</strong> axis.</p>
 </div>
-<div class="ulist">
+<div class="dlist">
 <div class="title">Arguments</div>
-<ul>
-<li>
-<p><code>actor</code> (<em>String</em>) - name of the actor</p>
-</li>
-<li>
-<p><code>x</code> (<em>float</em>) - size of the actor on the X axis.</p>
-</li>
-</ul>
+<dl>
+<dt class="hdlist1"><code>actor</code></dt>
+<dd>
+<p><em>String</em> - name of the actor</p>
+</dd>
+<dt class="hdlist1"><code>x</code></dt>
+<dd>
+<p><em>float</em> - size of the actor on the X axis.</p>
+</dd>
+</dl>
 </div>
 <div class="literalblock">
 <div class="title">Usage</div>
@@ -950,16 +980,18 @@ the <strong>x</strong> and <strong>y</strong> axis.</p>
 <div class="paragraph">
 <p>Set the <strong>actor</strong>'s <strong>size</strong> relative to the normal size on the <strong>y</strong> axis.</p>
 </div>
-<div class="ulist">
+<div class="dlist">
 <div class="title">Arguments</div>
-<ul>
-<li>
-<p><code>actor</code> (<em>String</em>) - name of the actor</p>
-</li>
-<li>
-<p><code>y</code> (<em>float</em>) - size of the actor on the Y axis.</p>
-</li>
-</ul>
+<dl>
+<dt class="hdlist1"><code>actor</code></dt>
+<dd>
+<p><em>String</em> - name of the actor</p>
+</dd>
+<dt class="hdlist1"><code>y</code></dt>
+<dd>
+<p><em>float</em> - size of the actor on the Y axis.</p>
+</dd>
+</dl>
 </div>
 <div class="literalblock">
 <div class="title">Usage</div>
@@ -967,9 +999,15 @@ the <strong>x</strong> and <strong>y</strong> axis.</p>
 <pre>/size/y lola 1.5 0.7</pre>
 </div>
 </div>
+</div>
+<div class="sect2">
+<h3 id="_scale">Scale</h3>
 <div class="paragraph">
 <p>SCALE the ACTOR relative to the current size
-SCALE the ACTOR relative to the current size on both axis X and Y
+.Arguments</p>
+</div>
+<div class="paragraph">
+<p>SCALE the ACTOR relative to the current size on both axis X and Y
 SCALE the ACTOR relative to the current size on the X axis
 SCALE the ACTOR relative to the current size on the Y axis</p>
 </div>
@@ -1024,7 +1062,7 @@ This allows to create actors with separate line and fill colors.</p>
 </div>
 <div id="footer">
 <div id="footer-text">
-Last updated 2024-03-15 11:15:24 +0100
+Last updated 2024-03-19 16:28:36 +0100
 </div>
 </div>
 </body>
