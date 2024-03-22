@@ -35,9 +35,9 @@ func _init_midi():
 		chan["noteOnNumVelocity"].fill([])
 
 func _ready():
-	#Log.setLevel(Log.LOG_LEVEL_VERBOSE)
+	Log.setLevel(Log.LOG_LEVEL_VERBOSE)
 #	Log.setLevel(Log.LOG_LEVEL_DEBUG)
-	Log.setLevel(Log.LOG_LEVEL_INFO)
+	#Log.setLevel(Log.LOG_LEVEL_INFO)
 	
 	osc = OscReceiver.new()
 	self.add_child.call_deferred(osc)
@@ -317,3 +317,6 @@ func _on_load_dialog_confirmed():
 
 func _on_save_dialog_confirmed():
 	Log.debug("Main save confirmed: %s" % [$SaveDialog.current_path])
+
+func _on_animation_finished(name):
+	Log.debug("Animation finished: %s" % [name])

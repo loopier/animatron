@@ -3,6 +3,8 @@ extends AnimatedSprite2D
 @onready var start_frame := 0
 @onready var end_frame := 0
 
+signal animation_finsihed(name)
+
 # Called when the node enters the scene tree for the first time.
 func _ready():
 	set_end_frame(sprite_frames.get_frame_count(get_animation()))
@@ -13,12 +15,13 @@ func _process(delta):
 	pass
 
 func _on_frame_changed():
+	if is_playing and ((get_frame() == end_frame - 1 and get_speed_scale() > 0) or (get_frame() == start_frame and get_speed_scale() < 0)):
+		animation_finished.emit(get_parent().name)
+		
 	if is_playing() and get_frame() > end_frame:
 		set_frame(start_frame if get_speed_scale() > 0 else end_frame)
-		animation_finished.emit()
 	elif is_playing() and get_frame() < start_frame: 
 		set_frame(end_frame if get_speed_scale() < 0 else start_frame)
-		animation_finished.emit()
 
 func _on_animation_changed():
 	#set_frame_progress(0)
@@ -30,9 +33,9 @@ func _on_animation_changed():
 ## Sets the lower value to [param start_frame] and the highest value to [param end_frame].
 ## This is done to be consistent in the playing speed.
 func adjust_start_and_end_frames():
-		var tmp = end_frame
-		set_end_frame(start_frame)
-		set_start_frame(tmp)
+	var tmp = end_frame
+	set_end_frame(start_frame)
+	set_start_frame(tmp)
 
 func adjust_speed_scale():
 	if start_frame < end_frame:

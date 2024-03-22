@@ -669,6 +669,8 @@ func createActor(actorName: String, anim: String) -> Status:
 	# Node.finde_child(pattern) -- see Node docs
 	actor.set_owner(actorsNode)
 	
+	actor.get_node("Animation").animation_finished.connect(commandManager._on_animation_finished)
+	
 	if result.isError():
 		result = setActorText([actorName, actorName])
 		return result
