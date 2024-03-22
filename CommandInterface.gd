@@ -1082,23 +1082,26 @@ func listChildren(parentName: String) -> Status:
 	return Status.ok(children, "%s" % [children])
 
 func setInFrontOfActor(args: Array) -> Status:
-	var result = getActor(args[0])
-	var targetResult = getActors(args[1])
+	var result = getActors(args[0])
+	var targetResult = getActor(args[1])
 	if result.isError(): return result
 	if targetResult.isError(): return targetResult
-	var actor = result.value
-	for target in targetResult.value:
+	var target = targetResult.value
+	for actor in result.value:
 		actorsNode.move_child(actor, target.get_index()+1)
 	return Status.ok()
 
 func setBehindActor(args: Array) -> Status:
-	var result = getActor(args[0])
-	var targetResult = getActors(args[1])
+	var result = getActors(args[0])
+	var targetResult = getActor(args[1])
 	if result.isError(): return result
 	if targetResult.isError(): return targetResult
-	var actor = result.value
-	for target in targetResult.value:
-		actorsNode.move_child(actor, max(0, target.get_index()-1))
+	#var actor = result.value
+	var target = targetResult.value
+	for actor in result.value:
+		var actIndex = actor.get_index()
+		var targIndex = target.get_index()
+		actorsNode.move_child(actor, target.get_index() - 1 if target.get_index() > 0 else 0 )
 	return Status.ok()
 
 func setTopActor(args: Array) -> Status:
