@@ -34,7 +34,10 @@ func startServer():
 
 func startServerOn(listenPort: int):
 	serverPort = listenPort
-	startServer()	
+	startServer()
+	
+func _process(_delta):
+	pass
 
 # 'delta' is the elapsed time since the previous update.
 func _physics_process(_delta):

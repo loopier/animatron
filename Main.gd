@@ -90,7 +90,9 @@ func _ready():
 
 # Called every frame. 'delta' is the elapsed time since the previous frame./
 func _process(_delta):
-	pass
+	# FIX: !!! this is a very dirty hack. The _physics_process func must be called
+	# from the engine automatically, not like this!
+	osc._physics_process(_delta)
 
 func _input(event):
 	if event.is_action_pressed("toggle_editor", true):
