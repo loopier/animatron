@@ -1,3 +1,4 @@
+extends Node
 class_name OscReceiver
 
 class OscMessage:
@@ -117,7 +118,7 @@ func getArgTypesIndex(buf: StreamPeer) -> int:
 func getArgs(_buf: StreamPeer) -> Array:
 	return []
 
-static func addString(buf: StreamPeer, inStr: String):
+func addString(buf: StreamPeer, inStr: String):
 	buf.put_data(inStr.to_ascii_buffer())
 	var padding := 4 - inStr.length() % 4
 	if padding == 4:
@@ -129,7 +130,7 @@ static func addString(buf: StreamPeer, inStr: String):
 func sendMessage(target: String, oscAddr: String, oscArgs: Array):
 	oscBuf.clear()
 	oscArgBuf.clear()
-	OscReceiver.addString(oscBuf, oscAddr)
+	addString(oscBuf, oscAddr)
 	var argTags := ","
 	for arg in oscArgs:
 		match typeof(arg):
@@ -141,7 +142,7 @@ func sendMessage(target: String, oscAddr: String, oscArgs: Array):
 				oscArgBuf.put_32(arg)
 			TYPE_STRING, TYPE_STRING_NAME:
 				argTags += "s"
-				OscReceiver.addString(oscArgBuf, arg)
+				addString(oscArgBuf, arg)
 			TYPE_BOOL:
 				argTags += "T" if arg else "F"
 			TYPE_NIL:
@@ -149,7 +150,7 @@ func sendMessage(target: String, oscAddr: String, oscArgs: Array):
 			_:
 				Log.error("Unsupported OSC type: %s" % typeof(arg))				
 
-	OscReceiver.addString(oscBuf, argTags)
+	addString(oscBuf, argTags)
 	oscBuf.put_data(oscArgBuf.data_array)
 	
 	var addrPort := target.split("/")

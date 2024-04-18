@@ -1,8 +1,9 @@
 extends Node2D
 class_name Main
 
+var Osc := preload("res://osc_receiver.tscn")
 var osc: OscReceiver
-var oscSender: OscReceiver # FIX: this is misleading.
+var oscSender: OscReceiver
 static var defaultConfigPath := "res://config/default.ocl"
 static var configPath := "user://config/config.ocl"
 var metanode := preload("res://meta_node.tscn")
@@ -56,15 +57,8 @@ func initPostWindowMsg():
 func _ready():
 	Log.setLevel(Log.LOG_LEVEL_VERBOSE)
 #	Log.setLevel(Log.LOG_LEVEL_DEBUG)
-<<<<<<< Updated upstream
 	#Log.setLevel(Log.LOG_LEVEL_INFO)
-=======
-	Log.setLevel(Log.LOG_LEVEL_INFO)
 	initPostWindowMsg()
-<<<<<<< Updated upstream
->>>>>>> Stashed changes
-=======
->>>>>>> Stashed changes
 	
 	osc = OscReceiver.new()
 	self.add_child.call_deferred(osc)
@@ -117,21 +111,7 @@ func _ready():
 
 # Called every frame. 'delta' is the elapsed time since the previous frame./
 func _process(_delta):
-<<<<<<< HEAD
-	# FIX: !!! this is a very dirty hack. The _physics_process func must be called
-	# from the engine automatically, not like this!
-<<<<<<< Updated upstream
-<<<<<<< Updated upstream
-	osc._physics_process(_delta)
-=======
-=======
->>>>>>> Stashed changes
-#	osc._physics_process(_delta)
 	pass
->>>>>>> Stashed changes
-=======
-	pass
->>>>>>> parent of 639367c (UNFIX: hack to make OSC work)
 
 func _input(event):
 	if event.is_action_pressed("toggle_editor", true):
@@ -360,14 +340,5 @@ func _on_save_dialog_confirmed():
 	Log.debug("Main save confirmed: %s" % [$SaveDialog.current_path])
 
 func _on_animation_finished(name):
-<<<<<<< Updated upstream
-<<<<<<< Updated upstream
-	Log.debug("Animation finished: %s" % [name])
-=======
 	#Log.debug("Animation finished: %s" % [name])
 	pass
->>>>>>> Stashed changes
-=======
-	#Log.debug("Animation finished: %s" % [name])
-	pass
->>>>>>> Stashed changes

@@ -1,0 +1,6 @@
+[gd_scene load_steps=2 format=3 uid="uid://btcnc5v1jq6l1"]
+
+[ext_resource type="Script" path="res://osc/OscReceiver.gd" id="1_shmud"]
+
+[node name="OscReceiver" type="Node"]
+script = ExtResource("1_shmud")
