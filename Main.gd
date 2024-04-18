@@ -117,6 +117,7 @@ func _ready():
 
 # Called every frame. 'delta' is the elapsed time since the previous frame./
 func _process(_delta):
+<<<<<<< HEAD
 	# FIX: !!! this is a very dirty hack. The _physics_process func must be called
 	# from the engine automatically, not like this!
 <<<<<<< Updated upstream
@@ -128,6 +129,9 @@ func _process(_delta):
 #	osc._physics_process(_delta)
 	pass
 >>>>>>> Stashed changes
+=======
+	pass
+>>>>>>> parent of 639367c (UNFIX: hack to make OSC work)
 
 func _input(event):
 	if event.is_action_pressed("toggle_editor", true):
