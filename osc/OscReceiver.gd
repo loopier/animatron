@@ -34,20 +34,7 @@ func startServer():
 
 func startServerOn(listenPort: int):
 	serverPort = listenPort
-<<<<<<< HEAD
 	startServer()
-<<<<<<< Updated upstream
-<<<<<<< Updated upstream
-	
-func _process(_delta):
-	pass
-=======
->>>>>>> Stashed changes
-=======
->>>>>>> Stashed changes
-=======
-	startServer()	
->>>>>>> parent of 639367c (UNFIX: hack to make OSC work)
 
 # 'delta' is the elapsed time since the previous update.
 func _physics_process(_delta):
