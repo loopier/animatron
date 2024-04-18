@@ -61,6 +61,9 @@ func _ready():
 =======
 	Log.setLevel(Log.LOG_LEVEL_INFO)
 	initPostWindowMsg()
+<<<<<<< Updated upstream
+>>>>>>> Stashed changes
+=======
 >>>>>>> Stashed changes
 	
 	osc = OscReceiver.new()
@@ -117,8 +120,11 @@ func _process(_delta):
 	# FIX: !!! this is a very dirty hack. The _physics_process func must be called
 	# from the engine automatically, not like this!
 <<<<<<< Updated upstream
+<<<<<<< Updated upstream
 	osc._physics_process(_delta)
 =======
+=======
+>>>>>>> Stashed changes
 #	osc._physics_process(_delta)
 	pass
 >>>>>>> Stashed changes
@@ -351,7 +357,12 @@ func _on_save_dialog_confirmed():
 
 func _on_animation_finished(name):
 <<<<<<< Updated upstream
+<<<<<<< Updated upstream
 	Log.debug("Animation finished: %s" % [name])
+=======
+	#Log.debug("Animation finished: %s" % [name])
+	pass
+>>>>>>> Stashed changes
 =======
 	#Log.debug("Animation finished: %s" % [name])
 	pass
