@@ -34,10 +34,34 @@ func _init_midi():
 		chan["noteOnNumVelocity"].resize(128)
 		chan["noteOnNumVelocity"].fill([])
 
+func _init():
+	printVersion()
+
+func getAnimatronVersion() -> String:
+	return ProjectSettings.get_setting("application/config/version")
+
+func printVersion():
+	Log.info("Animatron version: %s" % [getAnimatronVersion()])
+
+func initPostWindowMsg():
+	var msg = ""
+	msg += "Animatron\nversion %s\n\n" % [getAnimatronVersion()]
+	msg += "---\n\n"
+	msg += "To see the tutorial write:\n\n"
+	msg += "/tutorial\n\n"
+	msg += "and press SHIF + ENTER while the cursor is on that line.\n\n"
+	msg += "---\n\n"
+	$HSplitContainer/PostWindow.set_text(msg)
+
 func _ready():
 	Log.setLevel(Log.LOG_LEVEL_VERBOSE)
 #	Log.setLevel(Log.LOG_LEVEL_DEBUG)
+<<<<<<< Updated upstream
 	#Log.setLevel(Log.LOG_LEVEL_INFO)
+=======
+	Log.setLevel(Log.LOG_LEVEL_INFO)
+	initPostWindowMsg()
+>>>>>>> Stashed changes
 	
 	osc = OscReceiver.new()
 	self.add_child.call_deferred(osc)
@@ -92,7 +116,12 @@ func _ready():
 func _process(_delta):
 	# FIX: !!! this is a very dirty hack. The _physics_process func must be called
 	# from the engine automatically, not like this!
+<<<<<<< Updated upstream
 	osc._physics_process(_delta)
+=======
+#	osc._physics_process(_delta)
+	pass
+>>>>>>> Stashed changes
 
 func _input(event):
 	if event.is_action_pressed("toggle_editor", true):
@@ -321,4 +350,9 @@ func _on_save_dialog_confirmed():
 	Log.debug("Main save confirmed: %s" % [$SaveDialog.current_path])
 
 func _on_animation_finished(name):
+<<<<<<< Updated upstream
 	Log.debug("Animation finished: %s" % [name])
+=======
+	#Log.debug("Animation finished: %s" % [name])
+	pass
+>>>>>>> Stashed changes

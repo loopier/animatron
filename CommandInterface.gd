@@ -678,7 +678,7 @@ func createActor(actorName: String, anim: String) -> Status:
 	actor.get_node("Animation").animation_finished.connect(_on_animation_finished)
 	return Status.ok(actor, msg)
 
-func _on_animation_finished():
+func _on_animation_finished(actorName):
 	#Log.debug("animation finished")
 	pass
 

@@ -35,9 +35,12 @@ func startServer():
 func startServerOn(listenPort: int):
 	serverPort = listenPort
 	startServer()
+<<<<<<< Updated upstream
 	
 func _process(_delta):
 	pass
+=======
+>>>>>>> Stashed changes
 
 # 'delta' is the elapsed time since the previous update.
 func _physics_process(_delta):

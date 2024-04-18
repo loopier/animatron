@@ -1,3 +1,8 @@
+# on Linux, a virtual MIDI device needs to be created with:
+#
+# > sudo modprobe snd_virmidi
+#
+
 class_name Midi
 extends Node
 
