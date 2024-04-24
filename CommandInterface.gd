@@ -669,8 +669,6 @@ func createActor(actorName: String, anim: String) -> Status:
 	# Node.finde_child(pattern) -- see Node docs
 	actor.set_owner(actorsNode)
 	
-	actor.get_node("Animation").animation_finished.connect(commandManager._on_animation_finished)
-	
 	if result.isError():
 		result = setActorText([actorName, actorName])
 		return result
@@ -678,7 +676,7 @@ func createActor(actorName: String, anim: String) -> Status:
 	actor.get_node("Animation").animation_finished.connect(_on_animation_finished)
 	return Status.ok(actor, msg)
 
-func _on_animation_finished(actorName):
+func _on_animation_finished():
 	#Log.debug("animation finished")
 	pass
 
@@ -1084,26 +1082,23 @@ func listChildren(parentName: String) -> Status:
 	return Status.ok(children, "%s" % [children])
 
 func setInFrontOfActor(args: Array) -> Status:
-	var result = getActors(args[0])
-	var targetResult = getActor(args[1])
+	var result = getActor(args[0])
+	var targetResult = getActors(args[1])
 	if result.isError(): return result
 	if targetResult.isError(): return targetResult
-	var target = targetResult.value
-	for actor in result.value:
+	var actor = result.value
+	for target in targetResult.value:
 		actorsNode.move_child(actor, target.get_index()+1)
 	return Status.ok()
 
 func setBehindActor(args: Array) -> Status:
-	var result = getActors(args[0])
-	var targetResult = getActor(args[1])
+	var result = getActor(args[0])
+	var targetResult = getActors(args[1])
 	if result.isError(): return result
 	if targetResult.isError(): return targetResult
-	#var actor = result.value
-	var target = targetResult.value
-	for actor in result.value:
-		var actIndex = actor.get_index()
-		var targIndex = target.get_index()
-		actorsNode.move_child(actor, target.get_index() - 1 if target.get_index() > 0 else 0 )
+	var actor = result.value
+	for target in targetResult.value:
+		actorsNode.move_child(actor, max(0, target.get_index()-1))
 	return Status.ok()
 
 func setTopActor(args: Array) -> Status:
