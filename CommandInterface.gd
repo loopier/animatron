@@ -621,7 +621,8 @@ func loadImageSequence(path: String) -> Status:
 	if animName != "default" and animationsLibrary.has_animation(animName):
 		return Status.error("Animation already loaded: '%s'" % [animName])
 	animationsLibrary.add_animation(animName)
-	addImageFiles(path, animName, filenames)
+	var task_callable = Callable(self, "addImageFiles").bind(path, animName, filenames)
+	var task_id = WorkerThreadPool.add_task(task_callable)
 	return Status.ok(true, "Loaded %s frames: %s" % [animationsLibrary.get_frame_count(animName), animName])
 
 ## Adds image files to Animations Library
