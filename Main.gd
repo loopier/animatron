@@ -340,5 +340,13 @@ func _on_save_dialog_confirmed():
 	Log.debug("Main save confirmed: %s" % [$SaveDialog.current_path])
 
 func _on_animation_finished(name):
-	#Log.debug("Animation finished: %s" % [name])
+	if stateMachines.has(name):
+		var actor = actors.find_child(name)
+		var animation = actor.get_node("Animation").get_animation()
+		if not stateMachines[name].states.has(animation): return
+		var nextStates = stateMachines[name].states[animation]
+		var nextState = nextStates[randi() % nextStates.size()]
+		if animationsLibrary.has_animation(nextState):
+			evalCommands([["/create", name, nextState]], "gdscript")
+		Log.debug("%s state machine - %s(%s): %s" % [name, animation, nextState, nextStates])
 	pass

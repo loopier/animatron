@@ -674,7 +674,7 @@ func createActor(actorName: String, anim: String) -> Status:
 		result = setActorText([actorName, actorName])
 		return result
 	
-	actor.get_node("Animation").animation_finished.connect(_on_animation_finished)
+	actor.get_node("Animation").animation_finished.connect(commandManager._on_animation_finished)
 	return Status.ok(actor, msg)
 
 func _on_animation_finished():
