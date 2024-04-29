@@ -1,9 +1,9 @@
 #/commands/load res://test/test-init-code.ocl
 /commands/load res://commands/extended.ocl
-#/commands/load res://tutorial/tutorial-def.ocl
+/commands/load res://tutorial/tutorial-def.ocl
 #/commands/load res://slides/ca/animatron-slides-def.ocl
 #/commands/load res://slides/en/animatron-slides-def.ocl
 /editor/clear
-/post/toggle
+#/post/toggle
 /editor/toggle
 
