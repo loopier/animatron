@@ -50,7 +50,7 @@ func initPostWindowMsg():
 	msg += "---\n\n"
 	msg += "To see the tutorial write:\n\n"
 	msg += "/tutorial\n\n"
-	msg += "and press SHIF + ENTER while the cursor is on that line.\n\n"
+	msg += "and press SHIFT + ENTER while the cursor is on that line.\n\n"
 	msg += "---\n\n"
 	$HSplitContainer/PostWindow.set_text(msg)
 
