@@ -18,7 +18,7 @@
 # - /color
 
 # these commands set a property in absolute values.
-# Compare them to their relative counterparts.
+# Compare them to their relative counterparts by evaluating each line multiple times.
 
 /scale tut 0.9
 /size tut 2
