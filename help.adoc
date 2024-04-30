@@ -1,5 +1,5 @@
 = Animatron
-:toc:
+:toc: left
 
 == Getting Info
 
@@ -38,13 +38,14 @@ Load a preset from `user://presets/`.
   /commands/load mycommands/somecommands.ocl
 
 === /new actor animation
+`actor`:: _String_ - whatever name you want to give to the actor.
+`animation`:: _String_ - whatever name you want to give to the actor.
 Load and create a new *actor* with an *animation*.
 
 NOTE: the *animation* will be loaded if it isn't already.
 
-`actor`:: _String_ - whatever name you want to give to the actor.
-`animation`:: _String_ - whatever name you want to give to the actor.
 
+.Usage
   /new lola mama
 
 === /free actor
@@ -68,12 +69,12 @@ Reload *animation* frames from disk.
 === Position
 Set the *x* and *y* coordinates (in pixels) of the *actor*.
 
-//.Arguments
+.Arguments
 `actor`:: _String_ - name of the actor.
 `x`:: _float_ - position in the *x* axis in pixels.
 `y`:: _float_ - position in the *y* axis in pixels.
 
-//.Usage
+.Usage
   /position lola 500 500
 
 or
@@ -82,11 +83,11 @@ or
 === Position in the X axis
 Set the *x* coordinate (in pixels) of the *actor*.
 
-//.Arguments
+.Arguments
 `actor`:: _String_ - name of the actor.
 `x`:: _float_ - position in the *x* axis in pixels.
 
-//.Usage
+.Usage
   /position/x lola 500
 
 or
@@ -100,11 +101,11 @@ or
 === Position in the Y axis
 Set the *y* coordinate (in pixels) of the *actor*.
 
-//.Arguments
+.Arguments
 `actor`:: _String_ - name of the actor.
 `y`:: _float_ - position in the *y* axis in pixels.
 
-//.Usage
+.Usage
   /position/x lola 500
 
 or
@@ -118,99 +119,99 @@ or
 === Move
 Move *actor* relative to the current position in both *x* and *y* axis.
 
-//.Arguments
+.Arguments
 `actor`:: _String_ - name of the actor
 `x`:: _float_ - Position in *pixels* of the actor on the *x* axis
 `y`:: _float_ - Position in *pixels* of the actor on the *y* axis
 
-//.Usage
+.Usage
   /move lola 100 100
 
 === Move on the X axis
 Move *actor* relative to the current position in the *x* axis.
 
-//.Arguments
+.Arguments
 `actor`:: _String_ - name of the actor
 `x`:: _float_ - Position in *pixels* of the actor on the *x* axis
 
-//.Usage
+.Usage
   /move/x lola 100
 
 === Move on the Y axis
 Move *actor* relative to the current position in the *y* axis.
 
-//.Arguments
+.Arguments
 `actor`:: _String_ - name of the actor
 `y`:: _float_ - Position in *pixels* of the actor on the *y* axis
 
-//.Usage
+.Usage
   /move/y lola 100
 
 === Angle
 Set the rotation of the *actor* in *degrees*.
 
-//.Arguments
+.Arguments
 `actor`:: _String_ - name of the actor
 `degrees`:: _String_ - angle in *degrees*
 
-//.Usage
+.Usage
   /angle lola 45
 
 === Rotate
 Rotate the *actor* some *degrees* relative to the current angle.
 
-//.Arguments
+.Arguments
 `actor`:: _String_ - name of the actor
 `degrees`:: _String_ - angle in *degrees*
 
-//.Usage
+.Usage
   /rotate lola 10
 
 === Size
 Set the *actor*'s *size* relative to the normal size.
 
-//.Arguments
+.Arguments
 `actor`:: _String_ - name of the actor
 `size`:: _float_ - size of the actor. `1` is normal size.
 
-//.Usage
+.Usage
    /size lola 1.5
 
 === Size X and Y
 Set the *actor*'s *size* relative to the normal size with different values on
 the *x* and *y* axis.
 
-//.Arguments
+.Arguments
 `actor`:: _String_ - name of the actor
 `x`:: _float_ - size of the actor on the X axis.
 `y`:: _float_ - size of the actor on the Y axis.
 
-//.Usage
+.Usage
    /size/xy lola 1.5 0.7
 
 === Size X
 Set the *actor*'s *size* relative to the normal size on the *x* axis.
 
-//.Arguments
+.Arguments
 `actor`:: _String_ - name of the actor
 `x`:: _float_ - size of the actor on the X axis.
 
-//.Usage
+.Usage
    /size/x lola 1.5 0.7
 
 === Size Y
 Set the *actor*'s *size* relative to the normal size on the *y* axis.
 
-//.Arguments
+.Arguments
 `actor`:: _String_ - name of the actor
 `y`:: _float_ - size of the actor on the Y axis.
 
-//.Usage
+.Usage
    /size/y lola 1.5 0.7
 
 === Scale
 SCALE the ACTOR relative to the current size
-//.Arguments
+.Arguments
 
 SCALE the ACTOR relative to the current size on both axis X and Y
 SCALE the ACTOR relative to the current size on the X axis

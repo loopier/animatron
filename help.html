@@ -4,7 +4,7 @@
 <meta charset="UTF-8">
 <meta http-equiv="X-UA-Compatible" content="IE=edge">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<meta name="generator" content="Asciidoctor 2.0.21">
+<meta name="generator" content="Asciidoctor 2.0.20">
 <title>Animatron</title>
 <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Open+Sans:300,300italic,400,400italic,600,600italic%7CNoto+Serif:400,400italic,700,700italic%7CDroid+Sans+Mono:400,700">
 <style>
@@ -140,7 +140,7 @@ p a>code:hover{color:rgba(0,0,0,.9)}
 #content::before{content:none}
 #header>h1:first-child{color:rgba(0,0,0,.85);margin-top:2.25rem;margin-bottom:0}
 #header>h1:first-child+#toc{margin-top:8px;border-top:1px solid #dddddf}
-#header>h1:only-child{border-bottom:1px solid #dddddf;padding-bottom:8px}
+#header>h1:only-child,body.toc2 #header>h1:nth-last-child(2){border-bottom:1px solid #dddddf;padding-bottom:8px}
 #header .details{border-bottom:1px solid #dddddf;line-height:1.45;padding-top:.25em;padding-bottom:.25em;padding-left:.25em;color:rgba(0,0,0,.6);display:flex;flex-flow:row wrap}
 #header .details span:first-child{margin-left:-.125em}
 #header .details span.email a{color:rgba(0,0,0,.85)}
@@ -162,7 +162,6 @@ p a>code:hover{color:rgba(0,0,0,.9)}
 #toctitle{color:#7a2518;font-size:1.2em}
 @media screen and (min-width:768px){#toctitle{font-size:1.375em}
 body.toc2{padding-left:15em;padding-right:0}
-body.toc2 #header>h1:nth-last-child(2){border-bottom:1px solid #dddddf;padding-bottom:8px}
 #toc.toc2{margin-top:0!important;background:#f8f8f7;position:fixed;width:15em;left:0;top:0;border-right:1px solid #e7e7e9;border-top-width:0!important;border-bottom-width:0!important;z-index:1000;padding:1.25em 1em;height:100%;overflow:auto}
 #toc.toc2 #toctitle{margin-top:0;margin-bottom:.8rem;font-size:1.2em}
 #toc.toc2>ul{font-size:.9em;margin-bottom:0}
@@ -328,7 +327,7 @@ a.image{text-decoration:none;display:inline-block}
 a.image object{pointer-events:none}
 sup.footnote,sup.footnoteref{font-size:.875em;position:static;vertical-align:super}
 sup.footnote a,sup.footnoteref a{text-decoration:none}
-sup.footnote a:active,sup.footnoteref a:active,#footnotes .footnote a:first-of-type:active{text-decoration:underline}
+sup.footnote a:active,sup.footnoteref a:active{text-decoration:underline}
 #footnotes{padding-top:.75em;padding-bottom:.75em;margin-bottom:.625em}
 #footnotes hr{width:20%;min-width:6.25em;margin:-.25em 0 .75em;border-width:1px 0 0}
 #footnotes .footnote{padding:0 .375em 0 .225em;line-height:1.3334;font-size:.875em;margin-left:1.2em;margin-bottom:.2em}
@@ -433,11 +432,34 @@ body.book #toc,body.book #preamble,body.book h1.sect0,body.book .sect1>h2{page-b
 #footer-text{color:rgba(0,0,0,.6);font-size:.9em}}
 @media amzn-kf8{#header,#content,#footnotes,#footer{padding:0}}
 </style>
+<style>
+dt {
+    float: left;
+    <!-- width: 30%; -->
+    text-align: right;
+    padding: .25em;
+    clear:left
+}
+
+dd {
+    float: left;
+    <!-- width: 60%; -->
+    padding: .25em 0;
+}
+
+dl:after {
+    content:"";
+    display:table;
+    align:left;
+    clear:both;
+}
+
+</style>
 </head>
-<body class="article">
+<body class="article toc2 toc-left">
 <div id="header">
 <h1>Animatron</h1>
-<div id="toc" class="toc">
+<div id="toc" class="toc2">
 <div id="toctitle">Table of Contents</div>
 <ul class="sectlevel1">
 <li><a href="#_getting_info">Getting Info</a>
@@ -453,7 +475,7 @@ body.book #toc,body.book #preamble,body.book h1.sect0,body.book .sect1>h2{page-b
 <li><a href="#_preset_name">/preset name</a></li>
 <li><a href="#_new_actor_animation">/new actor animation</a></li>
 <li><a href="#_free_actor">/free actor</a></li>
-<li><a href="#_reload">Reload</a></li>
+<li><a href="#_reload_animation">/reload animation</a></li>
 </ul>
 </li>
 <li><a href="#_transform">Transform</a>
@@ -486,7 +508,6 @@ body.book #toc,body.book #preamble,body.book h1.sect0,body.book .sect1>h2{page-b
 <p>Lists all available commands.</p>
 </div>
 <div class="literalblock">
-<div class="title">Usage</div>
 <div class="content">
 <pre>/commands</pre>
 </div>
@@ -500,14 +521,13 @@ body.book #toc,body.book #preamble,body.book h1.sect0,body.book .sect1>h2{page-b
 <div class="paragraph">
 <p>This list includes all clips that are on the disk, no matter if they are loaded or not.</p>
 </div>
-<div class="paragraph">
-<p>See also: <a href="#list-animations"><code>/animations</code></a></p>
-</div>
 <div class="literalblock">
-<div class="title">Usage</div>
 <div class="content">
 <pre>/assets</pre>
 </div>
+</div>
+<div class="paragraph">
+<p>See also: <a href="#list-animations"><code>/animations</code></a></p>
 </div>
 </div>
 <div class="sect2">
@@ -516,7 +536,6 @@ body.book #toc,body.book #preamble,body.book h1.sect0,body.book .sect1>h2{page-b
 <p>List all animations that are loaded to memory.</p>
 </div>
 <div class="literalblock">
-<div class="title">Usage</div>
 <div class="content">
 <pre>/animations</pre>
 </div>
@@ -528,7 +547,6 @@ body.book #toc,body.book #preamble,body.book h1.sect0,body.book .sect1>h2{page-b
 <p>List all actors that have been created.</p>
 </div>
 <div class="literalblock">
-<div class="title">Usage</div>
 <div class="content">
 <pre>/actors</pre>
 </div>
@@ -549,20 +567,29 @@ body.book #toc,body.book #preamble,body.book h1.sect0,body.book .sect1>h2{page-b
 <dt class="hdlist1"><code>name</code></dt>
 <dd>
 <p><em>String</em> - relative path to the file from <code>user://presets/</code>.</p>
-</dd>
-</dl>
-</div>
 <div class="literalblock">
-<div class="title">Usage</div>
 <div class="content">
 <pre>/commands/load mycommands/somecommands.ocl</pre>
 </div>
 </div>
+</dd>
+</dl>
+</div>
 </div>
 <div class="sect2">
 <h3 id="_new_actor_animation">/new actor animation</h3>
-<div class="paragraph">
-<p>Load and create a new <strong>actor</strong> with an <strong>animation</strong>.</p>
+<div class="dlist">
+<dl>
+<dt class="hdlist1"><code>actor</code></dt>
+<dd>
+<p><em>String</em> - whatever name you want to give to the actor.</p>
+</dd>
+<dt class="hdlist1"><code>animation</code></dt>
+<dd>
+<p><em>String</em> - whatever name you want to give to the actor.
+Load and create a new <strong>actor</strong> with an <strong>animation</strong>.</p>
+</dd>
+</dl>
 </div>
 <div class="admonitionblock note">
 <table>
@@ -575,19 +602,6 @@ the <strong>animation</strong> will be loaded if it isn&#8217;t already.
 </td>
 </tr>
 </table>
-</div>
-<div class="dlist">
-<div class="title">Arguments</div>
-<dl>
-<dt class="hdlist1"><code>actor</code></dt>
-<dd>
-<p><em>String</em> - whatever name you want to give to the actor.</p>
-</dd>
-<dt class="hdlist1"><code>animation</code></dt>
-<dd>
-<p><em>String</em> - whatever name you want to give to the actor.</p>
-</dd>
-</dl>
 </div>
 <div class="literalblock">
 <div class="title">Usage</div>
@@ -602,48 +616,37 @@ the <strong>animation</strong> will be loaded if it isn&#8217;t already.
 <p>Delete the <strong>actor</strong>.</p>
 </div>
 <div class="dlist">
-<div class="title">Arguments</div>
 <dl>
 <dt class="hdlist1"><code>actor</code></dt>
 <dd>
 <p><em>String</em> - any existing actor.</p>
+<div class="literalblock">
+<div class="content">
+<pre>/free lola
+/delete lola</pre>
+</div>
+</div>
 </dd>
 </dl>
 </div>
-<div class="literalblock">
-<div class="title">Usage</div>
-<div class="content">
-<pre>/free lola</pre>
-</div>
-</div>
-<div class="paragraph">
-<p>or</p>
-</div>
-<div class="literalblock">
-<div class="content">
-<pre>/delete lola</pre>
-</div>
-</div>
 </div>
 <div class="sect2">
-<h3 id="_reload">Reload</h3>
+<h3 id="_reload_animation">/reload animation</h3>
 <div class="paragraph">
 <p>Reload <strong>animation</strong> frames from disk.</p>
 </div>
 <div class="dlist">
-<div class="title">Arguments</div>
 <dl>
 <dt class="hdlist1"><code>animation</code></dt>
 <dd>
 <p><em>String</em> - name of the asset.</p>
-</dd>
-</dl>
-</div>
 <div class="literalblock">
-<div class="title">Usage</div>
 <div class="content">
 <pre>/reload mama</pre>
 </div>
+</div>
+</dd>
+</dl>
 </div>
 </div>
 </div>
@@ -1062,7 +1065,7 @@ This allows to create actors with separate line and fill colors.</p>
 </div>
 <div id="footer">
 <div id="footer-text">
-Last updated 2024-03-19 16:28:36 +0100
+Last updated 2024-04-29 11:47:04 +0200
 </div>
 </div>
 </body>
