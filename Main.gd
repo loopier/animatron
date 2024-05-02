@@ -4,6 +4,7 @@ class_name Main
 var Osc := preload("res://osc_receiver.tscn")
 var osc: OscReceiver
 var oscSender: OscReceiver
+var DocGenerator := preload("res://doc_generator.gd")
 static var defaultConfigPath := "res://config/default.ocl"
 static var configPath := "user://config/config.ocl"
 var metanode := preload("res://meta_node.tscn")
@@ -37,6 +38,7 @@ func _init_midi():
 
 func _init():
 	printVersion()
+	DocGenerator.generateFrom("res://commands/extended.ocl")
 
 func getAnimatronVersion() -> String:
 	return ProjectSettings.get_setting("application/config/version")
