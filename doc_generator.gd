@@ -17,9 +17,9 @@ static func generateFrom(inputFilePath: String) -> Status:
 	Log.verbose("Generating docs from: %s" % [inputFilePath])
 	var contents = getTextFromFile(inputFilePath).value
 	var textBlocks = getTextBlocks(contents).value
-	var asciidoc = DocGenerator.formatAsciiDoc(textBlocks).value
 	var filename = inputFilePath.get_file().get_basename()
 	var asciidocPath = "res://docs/%s.adoc" % [filename]
+	var asciidoc = DocGenerator.formatAsciiDoc(textBlocks).value
 	var result = writeTextToFile(asciidocPath, asciidoc)
 	if result.isError(): return Status.error("Could not write helpf file: %s" % [inputFilePath])
 	return Status.ok(true, "Help file successfully generated from: %s\nto: %s" % [inputFilePath, asciidocPath])
@@ -27,7 +27,7 @@ static func generateFrom(inputFilePath: String) -> Status:
 static func getTextBlocks(text: String) -> Status:
 	var blocks := []
 	var rex = RegEx.new()
-	rex.compile("((#\\s*(.*)\\n)*(\\/def\\s.*\\n))")
+	rex.compile("((#\\s*(.*)\\n)+(\\/def\\s.*\\n)*)")
 	var result = rex.search_all(text)
 	if result:
 		blocks = result
