@@ -57,9 +57,9 @@ func initPostWindowMsg():
 	$HSplitContainer/PostWindow.set_text(msg)
 
 func _ready():
-	Log.setLevel(Log.LOG_LEVEL_VERBOSE)
+	#Log.setLevel(Log.LOG_LEVEL_VERBOSE)
 #	Log.setLevel(Log.LOG_LEVEL_DEBUG)
-	#Log.setLevel(Log.LOG_LEVEL_INFO)
+	Log.setLevel(Log.LOG_LEVEL_INFO)
 	initPostWindowMsg()
 	
 	osc = OscReceiver.new()
