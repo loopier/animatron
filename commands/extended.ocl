@@ -1,115 +1,71 @@
 # = Animatron
-# :toc:
+# :toc: left
 
 #################################################################################
 # == Getting Info
 #################################################################################
-# [[list-commands]]
-# === List all commands
+
 # Lists all available commands.
 #
-# .Usage
-#
-#   /commands
+# _Example:_ `/commands`
 #
 /def /commands
      /commands/list
 
-# === List assets available on disk.
 # List all available animation clips that are on the current assets path.
 #
 # This list includes all clips that are on the disk, no matter if they are loaded or not.
 #
-# See also: <<list-animations,`/animations`>>
+# See also: <<_animations,/animations>>
 #
-# .Usage
-#
-#   /assets
+# _Example:_ `/assets`
 #
 /def /assets
      /assets/list
 
-# [[list-animations]]
-# === List animations
 # List all animations that are loaded to memory.
 #
-# .Usage
-#
-#   /animations
+# _Example:_ `/animations`
 #
 /def /animations
      /animations/list
 
-# [[list-actors]]
-# === List actors
 # List all actors that have been created.
 #
-# .Usage
-#
-#   /actors
+# _Example:_ `/actors`
 #
 /def /actors
      /actors/list
 
-[[actors]]
 #################################################################################
 # == Actor Management
 #################################################################################
-# === Loading assets
-# Load a preset from `user://presets/`.
+
+# Load a preset from `user://presets/`, from a directory `name` under `user://presets/`.
 #
-# .Arguments
-# - `name` (_String_) - relative path to the file from `user://presets/`.
-#
-# .Usage
-#   /commands/load mycommands/somecommands.ocl
+# _Example:_ `/preset mycommands/somecommands.ocl`
 #
 /def /preset name:s
      /commands/load presets/$name.ocl
      /$name
 
-# === Create
-# Load and create a new *actor* with an *animation*.
+# Delete any existing `actor`.
 #
-# NOTE: the *animation* will be loaded if it isn't already.
-#
-# .Arguments
-# - `actor` (_String_) - whatever name you want to give to the actor.
-# - `animation` (_String_) - whatever name you want to give to the actor.
-#
-# .Usage
-#   /new lola mama
-#
-/def /new actor:s animation:s
-     /load $animation
-     /create $actor $animation
-
-# === Delete
-# Delete the *actor*.
-#
-# .Arguments
-# - `actor` (_String_) - any existing actor.
-#
-# .Usage
-#   /free lola
-#
-# or
-#
-#   /delete lola
+# _Example:_ `/free lola`
 #
 /def /free actor:s
      /remove $actor
+
+# Delete any existing `actor`.
+#
+# _Example:_ `/delete lola`
+#
 /def /delete actor:s
      /remove $actor
 
-# === Reload
-# Reload *animation* frames from disk.
+# Reload `animation` frames from disk.
 #
-# .Arguments
-# - `animation` (_String_) - name of the asset.
-#
-# .Usage
-#   /reload mama
+# _Example:_ `/reload mama`
 #
 /def /reload animation:s
      /unload $animation
@@ -118,327 +74,357 @@
 #################################################################################
 # == Transform
 #################################################################################
-# === Position
-# Set the *x* and *y* coordinates (in pixels) of the *actor*.
+
+# Set the `x` and `y` coordinates (in pixels) of the `actor`.
 #
-# .Arguments
-# - `actor` (_String_) - name of the actor.
-# - `x` (_float_) - position in the *x* axis in pixels.
-# - `y` (_float_) - position in the *y* axis in pixels.
-#
-# .Usage
-#   /position lola 500 500
+# _Example:_ `/position lola 500 500`
 #
 /def /position actor:s x:f y:f
      /method /set/position $actor $x $y
 
-# or
-#   /pos mama 500 500
+# See <<_position_actors_xf_yf,/position>>
 #
 /def /pos actor:s x:f y:f
      /position $actor $x $y
 
-# === Position in the X axis
-# Set the *x* coordinate (in pixels) of the *actor*.
+# Set the `x` coordinate (in pixels) of the `actor`.
 #
-# .Arguments
-# - `actor` (_String_) - name of the actor.
-# - `x` (_float_) - position in the *x* axis in pixels.
-#
-# .Usage
-#   /position/x lola 500
+# _Example:_ `/position/x lola 500`
 #
 /def /position/x actor:s x:f
      /property /position/x $actor $x
 
-# or
+# See <<_positionx_actors_xf,/position/x
 #
-#   /pos/x mama 500
+# _Example:_ `/pos/x mama 500`
 #
 /def /pos/x actor:s value:f
      /position/x $actor $value
 
-# or
+# See <<_positionx_actors_xf,/position/x
 #
-#   /x mama 500
+# _Example:_ `/x mama 500`
 #
 /def /x actor:s value:f
      /position/x $actor $value
 
-# === Position in the Y axis
-# Set the *y* coordinate (in pixels) of the *actor*.
+# Set the `y` coordinate (in pixels) of the `actor`.
 #
-# .Arguments
-# - `actor` (_String_) - name of the actor.
-# - `y` (_float_) - position in the *y* axis in pixels.
-#
-# .Usage
-#   /position/x lola 500
+# _Example:_ `/position/x lola 500`
 #
 /def /position/y actor:s y:f
      /property /position/y $actor $y
 
-# or
+# Set the `y` coordinate (in pixels) of the `actor`.
 #
-#   /pos/y mama 500
+# _Example:_ `/pos/y mama 500`
 #
 /def /pos/y actor:s value:f
      /position/y $actor $value
 
-# or
+# Set the `y` coordinate (in pixels) of the `actor`.
 #
-#   /y mama 500
+# _Example:_ `/y mama 500`
 #
 /def /y actor:s value:f
      /position/y $actor $value
 
-# === Move
-# Move *actor* relative to the current position in both *x* and *y* axis.
+# Move `actor` an amount of pixels relative to the current position in both `x` and `y` axis.
 #
-# .Arguments
-# - `actor` (_String_) - name of the actor
-# - `x` (_float_) - Position in *pixels* of the actor on the *x* axis
-# - `y` (_float_) - Position in *pixels* of the actor on the *y* axis
-#
-# .Usage
-#   /move lola 100 100
+# _Example:_ `/move lola 100 100`
 #
 /def /move actor:s x:f y:f
      /method /translate $actor $x $y
 
-# === Move on the X axis
-# Move *actor* relative to the current position in the *x* axis.
+# Move `actor` an amount of pixels relative to the current position in the `x` axis.
 #
-# .Arguments
-# - `actor` (_String_) - name of the actor
-# - `x` (_float_) - Position in *pixels* of the actor on the *x* axis
-#
-# .Usage
-#   /move/x lola 100
+# _Example:_ `/move/x lola 100`
 #
 /def /move/x actor:s x:f
      /method /translate $actor $x 0
 
-# === Move on the Y axis
-# Move *actor* relative to the current position in the *y* axis.
+# Move `actor` an amount of pixels relative to the current position in the `y` axis.
 #
-# .Arguments
-# - `actor` (_String_) - name of the actor
-# - `y` (_float_) - Position in *pixels* of the actor on the *y* axis
-#
-# .Usage
-#   /move/y lola 100
+# _Example:_ `/move/y lola 100`
 #
 /def /move/y actor:s y:f
      /method /translate $actor 0 $y
 
-# === Angle
-# Set the rotation of the *actor* in *degrees*.
+# Set the absolute rotation of the `actor` in `degrees`.
 #
-# .Arguments
-# - `actor` (_String_) - name of the actor
-# - `degrees` (_String_) - angle in *degrees*
-#
-# .Usage
-#   /angle lola 45
+# _Example:_ `/angle lola 45`
 #
 /def /angle actor:s degrees:f
      /property /rotation/degrees $actor $degrees
 
-# === Rotate
-# Rotate the *actor* some *degrees* relative to the current angle.
+# Rotate the `actor` some `degrees` relative to the current angle.
 #
-# .Arguments
-# - `actor` (_String_) - name of the actor
-# - `degrees` (_String_) - angle in *degrees*
-#
-# .Usage
-#   /rotate lola 10
+# _Example:_ `/rotate lola 10`
 #
 /def /rotate actor:s degrees:f
      /property/relative /rotation/degrees $actor $degrees
 
-# === Size
-# Set the *actor*'s *size* relative to the normal size.
+# Set the `actor`'s absolute `size` relative to the normal size (on both axis). `1` is normal size; `0.5` is half the size; `2` is twice the size.
 #
-# .Arguments
-# - `actor` (_String_) - name of the actor
-# - `size` (_float_) - size of the actor. `1` is normal size.
-#
-# .Usage
-#    /size lola 1.5
+# _Example:_ `/size lola 1.5`
 #
 /def /size actor:s size:f
      /property /scale $actor $size $size
 
-# === Size X and Y
-# Set the *actor*'s *size* relative to the normal size with different values on
-# the *x* and *y* axis.
+# Set the `actor`'s absolute `size` relative to the normal size with different values on the `x` and `y` axis.
 #
-# .Arguments
-# - `actor` (_String_) - name of the actor
-# - `x` (_float_) - size of the actor on the X axis.
-# - `y` (_float_) - size of the actor on the Y axis.
+# _See:_ <<_size_actors_sizef,/size>>
 #
-# .Usage
-#    /size/xy lola 1.5 0.7
+# _Example:_ `/size/xy lola 1.5 0.7`
 #
 /def /size/xy actor:s x:f y:f
      /property /scale $actor $x $y
 
-# === Size X
-# Set the *actor*'s *size* relative to the normal size on the *x* axis.
+# Set the `actor`'s absolute `size` relative to the normal size on the `x` axis.
 #
-# .Arguments
-# - `actor` (_String_) - name of the actor
-# - `x` (_float_) - size of the actor on the X axis.
-#
-# .Usage
-#    /size/x lola 1.5 0.7
+# _Example:_ `/size/x lola 1.5 0.7`
 #
 /def /size/x actor:s x:f
      /property /scale/x $actor $x
 
-# === Size Y
-# Set the *actor*'s *size* relative to the normal size on the *y* axis.
+# Set the `actor`'s absolute `size` relative to the normal size on the `y` axis.
 #
-# .Arguments
-# - `actor` (_String_) - name of the actor
-# - `y` (_float_) - size of the actor on the Y axis.
-#
-# .Usage
-#    /size/y lola 1.5 0.7
+# _Example:_ `/size/y lola 1.5 0.7`
 #
 /def /size/y actor:s y:f
      /property /scale/y $actor $y
 
-# SCALE the ACTOR relative to the current size
+# `scale` the `actor` relative to the current size equally on both axis.
+#
+# _Example:_ `/scale lola 1.5`
+#
 /def /scale actor:s scale:f
      /method /apply/scale $actor $scale $scale
 
-# SCALE the ACTOR relative to the current size on both axis X and Y
+# `scale` the `actor` relative to the current size, with different values for each axis `x` and `y`
+#
+# _Example:_ `/scale/xy lola 1.5 0.5`
+#
 /def /scale/xy actor:s x:f y:f
      /method /apply/scale $actor $x $y
 
-# SCALE the ACTOR relative to the current size on the X axis
+# `scale` the `actor` relative to the current size on the `x` axis
+#
+# _Example:_ `/scale/x lola 1.5`
+#
 /def /scale/x actor:s x:f
      /method /apply/scale $actor $x 1
 
-# SCALE the ACTOR relative to the current size on the Y axis
+# `scale` the `actor` relative to the current size on the `y` axis
+#
+# _Example:_ `/scale/y lola 1.5`
+#
 /def /scale/y actor:s y:f
      /method /apply/scale $actor 1 $y
 
 #################################################################################
-# visibility                                                                    #
+# == visibility
 #################################################################################
-# Make the ACTOR visible
+
+# Make the `actor` visible
+#
+# _Example:_ `/show lola`
+#
 /def /show actor:s
      /method /show $actor
 
-# Make the ACTOR invisible
+# Make the `actor` invisible
+#
+# _Example:_ `/hide lola`
+#
 /def /hide actor:s
      /method /hide $actor
 
 #################################################################################
-# color                                                                         #
+# == color
 #################################################################################
+
+# Set the `actor`'s color to a `value` of red (between 0 and 1).
+#
+# _Example:_ `/color/r lola 0.5`
+#
 /def /color/r actor:s value:f
      /color $actor $value 0 0
 
+# Set the `actor`'s color to a `value` of green (between 0 and 1).
+#
+# _Example:_ `/color/g lola 0.5`
+#
 /def /color/g actor:s value:f
      /color $actor 0 $value 0
 
+# Set the `actor`'s color to a `value` of blue (between 0 and 1).
+#
+# _Example:_ `/color/b lola 0.5`
+#
 /def /color/b actor:s value:f
      /color $actor 0 0 $value
 
 #################################################################################
-# animation                                                                     #
+# == animation
 #################################################################################
-# Play the ACTOR's animation
+
+# Play the `actor`'s animation
+#
+# _Example:_ `/play lola`
+#
 /def /play actor:s
      /animation/method /play $actor
 
-# Play the ACTOR's animation backwards
+# Play the `actor`'s animation backwards
+#
+# _Example:_ `/play lola`
+#
 /def /backwards actor:s
      /animation/method /play/backwards $actor
 
-# Stop the ACTOR's animation
+# Stop the `actor`'s animation
+#
+# _Example:_ `/play lola`
+#
 /def /stop actor:s
      /animation/method /stop $actor
 
-# Play the animation from START to END frames.
+# Play the animation from `start` to `end` frames.
+#
+# _Example:_ `/play lola`
+#
 /def /play/range actor:s start:i end:i
      /start/frame $actor $start
      /end/frame $actor $end
 
-# Set the ACTOR's ANIMATION.
+# Change the `actor`'s `animation`.
+#
+# _Example:_ `/animation lola letter-a`
+#
 /def /animation actor:s animation:s
      /animation/method /set/animation $actor $animation
 
-# See /animation
+# See <<_animation,/animation>>
 /def /anim actor:s animation:s
      /animation $actor $animation
 
-# Set the ACTOR's animation SPEED (1 = normal speed, 2 = 2 x speed).
+# Set the `actor`'s animation `speed` (1 = normal speed, 2 = 2 x speed).
+#
+# _Example:_ `/speed lola 2.1`
+#
 /def /speed actor:s speed:f
      /animation/method /set/speed/scale $actor $speed
 
-# Set the ACTOR's current FRAME.
-/def /frame actor:s frame:f
+# Set the `actor`'s current `frame`. If the value of the `frame` is grater than the number of frames in the movie, it will wrap around.
+#
+# _Example:_ `/frame lola 4`
+#
+/def /frame actor:s frame:i
      /animation/property /frame $actor $frame
 
-# Set the ACTOR's current FRAME.
-/def /frame actor:s frame:f
-     /animation/property /frame $actor $frame
-
-# Set the first FRAME of the loop in ACTOR's animation. Defaults to 0.
+# Set the first `frame` of the loop in `actor`'s animation. Defaults to 0.
+#
+# _Example:_ `/start/frame lola 2`
+#
 /def /start/frame actor:s frame:f
      /animation/property /start/frame $actor $frame
 
-# Set the last FRAME of the loop in ACTOR's animation.
+# Set the last `frame` of the loop in `actor`'s animation.
 # Defaults to number of frames of the animation.
+#
+# _Example:_ `/end/frame lola 6`
+#
 /def /end/frame actor:s frame:f
      /animation/property /end/frame $actor $frame
 
-# Loop the ACTOR's animation
+# Loop the `actor`'s animation.
+#
+# _Example:_ `/loop lola`
+#
 /def /loop actor:s
      /play $actor
      /animation/frames/method /set/animation/loop $actor 1
 
-# Don't loop the ACTOR's animation
+# Don't loop the `actor`'s animation. Plays the animation stopping at the last frame.
+#
+# _Example:_ `/noloop lola`
+#
 /def /noloop actor:s
      /animation/frames/method /set/animation/loop $actor 0
 
-# Set the ACTOR's animation drawing offset in pixels.
+# Set the `actor`'s animation drawing offset (in pixels) relative to the anchor point.
+#
+# _Example:_ `/offset lola 50 -30`
+#
 /def /offset actor:s x:i y:i
 	/animation/property /offset $actor $x $y
 
-# Set the ACTOR's animation drawing offset on the X axis.
+# Set the `actor`'s animation drawing offset on the `x` axis.
+#
+# _Example:_ `/offset/x lola 50`
+#
 /def /offset/x actor:s pixels:i
 	/animation/property /offset/x $actor $x
 
-# Set the ACTOR's animation drawing offset on the Y axis.
+# Set the `actor`'s animation drawing offset on the `y` axis.
+#
+# _Example:_ `/offset/y lola -30`
+#
 /def /offset/y actor:s pixels:i
 	/animation/property /offset/y $actor $y
 
 #################################################################################
-# text label                                                                    #
+# == text label
 #################################################################################
+
+# Write text on the actor.
+#
+# _Example:_ `/type lola alo`
+#
 /def /type actor:s text:...
      /text/property /text $actor $text
 
 #################################################################################
-# editor                                                                        #
+# == editor
 #################################################################################
-/def /editor/font/size pixels
+
+# Set the editor's font size in `pixels`.
+#
+# _Example:_ `/editor/font/size 60`
+#
+/def /editor/font/size pixels:i
      /editor/property /font/size $pixels
 
 #################################################################################
-# extras                                                                        #
+# == extras
 #################################################################################
-# Creates a pair of 2 ANIMATIONs into a single "object" with a NAME.
-# This allows to create actors with separate line and fill colors.
-/def /comic name:s animation:s
-     /create $name $animation-fl
-     /create $name-ln $animation-ln
-     /parent $name-ln $name
+
+# Creates an `actor` with a pair of 2 `animation`s.
+# This allows to create actors with separate animations for line and fill colors.
+# The `*-ln` actor is a child of the main (fill) actor.
+#
+# Suppose we want to create an animation with separate fill and line colors. We would have to create 2 directories: one holding the line art and the other the fill.
+#
+# The directory holding the frames of the "fill" animation, should be named after the animation, for example "bla". Then, the animation holding the line art should be named "bla-ln".
+#
+# _Example:_ `/comic lola bla`
+#
+/def /comic actor:s animation:s
+     /create $actor $animation-fl
+     /create $actor-ln $animation-ln
+     /parent $actor-ln $name
+
+
+#################################################################################
+# app
+#################################################################################
+
+# Load the animatron demo.
+#
+# _Example:_ /animatron/demo
+#
+/def /animatron/demo
+     /editor/clear
+     /editor/open/from res://slides/ca/animatron-demo.ocl
+     /editor/font/size 32

@@ -1,0 +1,7 @@
+# doc line 1
+# doc line 2
+/def /cmd1 arg1
+
+# doc line 3
+# doc line 4
+/def /cmd2 arg2

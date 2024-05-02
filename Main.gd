@@ -1,8 +1,10 @@
 extends Node2D
 class_name Main
 
+var Osc := preload("res://osc_receiver.tscn")
 var osc: OscReceiver
-var oscSender: OscReceiver # FIX: this is misleading.
+var oscSender: OscReceiver
+var DocGenerator := preload("res://doc_generator.gd")
 static var defaultConfigPath := "res://config/default.ocl"
 static var configPath := "user://config/config.ocl"
 var metanode := preload("res://meta_node.tscn")
@@ -34,10 +36,31 @@ func _init_midi():
 		chan["noteOnNumVelocity"].resize(128)
 		chan["noteOnNumVelocity"].fill([])
 
+func _init():
+	printVersion()
+	DocGenerator.generateFrom("res://commands/extended.ocl")
+
+func getAnimatronVersion() -> String:
+	return ProjectSettings.get_setting("application/config/version")
+
+func printVersion():
+	Log.info("Animatron version: %s" % [getAnimatronVersion()])
+
+func initPostWindowMsg():
+	var msg = ""
+	msg += "Animatron\nversion %s\n\n" % [getAnimatronVersion()]
+	msg += "---\n\n"
+	msg += "To see the tutorial write:\n\n"
+	msg += "/tutorial\n\n"
+	msg += "and press SHIFT + ENTER while the cursor is on that line.\n\n"
+	msg += "---\n\n"
+	$HSplitContainer/PostWindow.set_text(msg)
+
 func _ready():
 	#Log.setLevel(Log.LOG_LEVEL_VERBOSE)
 #	Log.setLevel(Log.LOG_LEVEL_DEBUG)
 	Log.setLevel(Log.LOG_LEVEL_INFO)
+	initPostWindowMsg()
 	
 	osc = OscReceiver.new()
 	self.add_child.call_deferred(osc)
@@ -317,3 +340,15 @@ func _on_load_dialog_confirmed():
 
 func _on_save_dialog_confirmed():
 	Log.debug("Main save confirmed: %s" % [$SaveDialog.current_path])
+
+func _on_animation_finished(name):
+	if stateMachines.has(name):
+		var actor = actors.find_child(name)
+		var animation = actor.get_node("Animation").get_animation()
+		if not stateMachines[name].states.has(animation): return
+		var nextStates = stateMachines[name].states[animation]
+		var nextState = nextStates[randi() % nextStates.size()]
+		if animationsLibrary.has_animation(nextState):
+			evalCommands([["/create", name, nextState]], "gdscript")
+		Log.debug("%s state machine - %s(%s): %s" % [name, animation, nextState, nextStates])
+	pass

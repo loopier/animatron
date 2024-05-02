@@ -1,0 +1,369 @@
+:toc: left
+= Animatron
+
+
+
+== Getting Info
+
+=== /commands
+Lists all available commands.
+
+_Example:_ `/commands`
+
+
+=== /assets
+List all available animation clips that are on the current assets path.
+
+This list includes all clips that are on the disk, no matter if they are loaded or not.
+
+See also: <<_animations,/animations>>
+
+_Example:_ `/assets`
+
+
+=== /animations
+List all animations that are loaded to memory.
+
+_Example:_ `/animations`
+
+
+=== /actors
+List all actors that have been created.
+
+_Example:_ `/actors`
+
+
+
+
+== Actor Management
+
+=== /preset name:s
+Load a preset from `user://presets/`, from a directory `name` under `user://presets/`.
+
+_Example:_ `/preset mycommands/somecommands.ocl`
+
+
+=== /free actor:s
+Delete any existing `actor`.
+
+_Example:_ `/free lola`
+
+
+=== /delete actor:s
+Delete any existing `actor`.
+
+_Example:_ `/delete lola`
+
+
+=== /reload animation:s
+Reload `animation` frames from disk.
+
+_Example:_ `/reload mama`
+
+
+
+
+== Transform
+
+=== /position actor:s x:f y:f
+Set the `x` and `y` coordinates (in pixels) of the `actor`.
+
+_Example:_ `/position lola 500 500`
+
+
+=== /pos actor:s x:f y:f
+See <<_position_actors_xf_yf,/position>>
+
+
+=== /position/x actor:s x:f
+Set the `x` coordinate (in pixels) of the `actor`.
+
+_Example:_ `/position/x lola 500`
+
+
+=== /pos/x actor:s value:f
+See <<_positionx_actors_xf,/position/x
+
+_Example:_ `/pos/x mama 500`
+
+
+=== /x actor:s value:f
+See <<_positionx_actors_xf,/position/x
+
+_Example:_ `/x mama 500`
+
+
+=== /position/y actor:s y:f
+Set the `y` coordinate (in pixels) of the `actor`.
+
+_Example:_ `/position/x lola 500`
+
+
+=== /pos/y actor:s value:f
+Set the `y` coordinate (in pixels) of the `actor`.
+
+_Example:_ `/pos/y mama 500`
+
+
+=== /y actor:s value:f
+Set the `y` coordinate (in pixels) of the `actor`.
+
+_Example:_ `/y mama 500`
+
+
+=== /move actor:s x:f y:f
+Move `actor` an amount of pixels relative to the current position in both `x` and `y` axis.
+
+_Example:_ `/move lola 100 100`
+
+
+=== /move/x actor:s x:f
+Move `actor` an amount of pixels relative to the current position in the `x` axis.
+
+_Example:_ `/move/x lola 100`
+
+
+=== /move/y actor:s y:f
+Move `actor` an amount of pixels relative to the current position in the `y` axis.
+
+_Example:_ `/move/y lola 100`
+
+
+=== /angle actor:s degrees:f
+Set the absolute rotation of the `actor` in `degrees`.
+
+_Example:_ `/angle lola 45`
+
+
+=== /rotate actor:s degrees:f
+Rotate the `actor` some `degrees` relative to the current angle.
+
+_Example:_ `/rotate lola 10`
+
+
+=== /size actor:s size:f
+Set the `actor`'s absolute `size` relative to the normal size (on both axis). `1` is normal size; `0.5` is half the size; `2` is twice the size.
+
+_Example:_ `/size lola 1.5`
+
+
+=== /size/xy actor:s x:f y:f
+Set the `actor`'s absolute `size` relative to the normal size with different values on the `x` and `y` axis.
+
+_See:_ <<_size_actors_sizef,/size>>
+
+_Example:_ `/size/xy lola 1.5 0.7`
+
+
+=== /size/x actor:s x:f
+Set the `actor`'s absolute `size` relative to the normal size on the `x` axis.
+
+_Example:_ `/size/x lola 1.5 0.7`
+
+
+=== /size/y actor:s y:f
+Set the `actor`'s absolute `size` relative to the normal size on the `y` axis.
+
+_Example:_ `/size/y lola 1.5 0.7`
+
+
+=== /scale actor:s scale:f
+`scale` the `actor` relative to the current size equally on both axis.
+
+_Example:_ `/scale lola 1.5`
+
+
+=== /scale/xy actor:s x:f y:f
+`scale` the `actor` relative to the current size, with different values for each axis `x` and `y`
+
+_Example:_ `/scale/xy lola 1.5 0.5`
+
+
+=== /scale/x actor:s x:f
+`scale` the `actor` relative to the current size on the `x` axis
+
+_Example:_ `/scale/x lola 1.5`
+
+
+=== /scale/y actor:s y:f
+`scale` the `actor` relative to the current size on the `y` axis
+
+_Example:_ `/scale/y lola 1.5`
+
+
+
+
+== visibility
+
+=== /show actor:s
+Make the `actor` visible
+
+_Example:_ `/show lola`
+
+
+=== /hide actor:s
+Make the `actor` invisible
+
+_Example:_ `/hide lola`
+
+
+
+
+== color
+
+=== /color/r actor:s value:f
+Set the `actor`'s color to a `value` of red (between 0 and 1).
+
+_Example:_ `/color/r lola 0.5`
+
+
+=== /color/g actor:s value:f
+Set the `actor`'s color to a `value` of green (between 0 and 1).
+
+_Example:_ `/color/g lola 0.5`
+
+
+=== /color/b actor:s value:f
+Set the `actor`'s color to a `value` of blue (between 0 and 1).
+
+_Example:_ `/color/b lola 0.5`
+
+
+
+
+== animation
+
+=== /play actor:s
+Play the `actor`'s animation
+
+_Example:_ `/play lola`
+
+
+=== /backwards actor:s
+Play the `actor`'s animation backwards
+
+_Example:_ `/play lola`
+
+
+=== /stop actor:s
+Stop the `actor`'s animation
+
+_Example:_ `/play lola`
+
+
+=== /play/range actor:s start:i end:i
+Play the animation from `start` to `end` frames.
+
+_Example:_ `/play lola`
+
+
+=== /animation actor:s animation:s
+Change the `actor`'s `animation`.
+
+_Example:_ `/animation lola letter-a`
+
+
+=== /anim actor:s animation:s
+See <<_animation,/animation>>
+
+=== /speed actor:s speed:f
+Set the `actor`'s animation `speed` (1 = normal speed, 2 = 2 x speed).
+
+_Example:_ `/speed lola 2.1`
+
+
+=== /frame actor:s frame:i
+Set the `actor`'s current `frame`. If the value of the `frame` is grater than the number of frames in the movie, it will wrap around.
+
+_Example:_ `/frame lola 4`
+
+
+=== /start/frame actor:s frame:f
+Set the first `frame` of the loop in `actor`'s animation. Defaults to 0.
+
+_Example:_ `/start/frame lola 2`
+
+
+=== /end/frame actor:s frame:f
+Set the last `frame` of the loop in `actor`'s animation.
+Defaults to number of frames of the animation.
+
+_Example:_ `/end/frame lola 6`
+
+
+=== /loop actor:s
+Loop the `actor`'s animation.
+
+_Example:_ `/loop lola`
+
+
+=== /noloop actor:s
+Don't loop the `actor`'s animation. Plays the animation stopping at the last frame.
+
+_Example:_ `/noloop lola`
+
+
+=== /offset actor:s x:i y:i
+Set the `actor`'s animation drawing offset (in pixels) relative to the anchor point.
+
+_Example:_ `/offset lola 50 -30`
+
+
+=== /offset/x actor:s pixels:i
+Set the `actor`'s animation drawing offset on the `x` axis.
+
+_Example:_ `/offset/x lola 50`
+
+
+=== /offset/y actor:s pixels:i
+Set the `actor`'s animation drawing offset on the `y` axis.
+
+_Example:_ `/offset/y lola -30`
+
+
+
+
+== text label
+
+=== /type actor:s text:...
+Write text on the actor.
+
+_Example:_ `/type lola alo`
+
+
+
+
+== editor
+
+=== /editor/font/size pixels:i
+Set the editor's font size in `pixels`.
+
+_Example:_ `/editor/font/size 60`
+
+
+
+
+== extras
+
+=== /comic actor:s animation:s
+Creates an `actor` with a pair of 2 `animation`s.
+This allows to create actors with separate animations for line and fill colors.
+The `*-ln` actor is a child of the main (fill) actor.
+
+Suppose we want to create an animation with separate fill and line colors. We would have to create 2 directories: one holding the line art and the other the fill.
+
+The directory holding the frames of the "fill" animation, should be named after the animation, for example "bla". Then, the animation holding the line art should be named "bla-ln".
+
+_Example:_ `/comic lola bla`
+
+
+
+
+app
+
+=== /animatron/demo
+Load the animatron demo.
+
+_Example:_ /animatron/demo
+
+

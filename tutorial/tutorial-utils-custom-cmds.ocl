@@ -14,7 +14,7 @@
 # VARS: (optional) is an arbitrary number of args (including none).
 #       They must be declared with a type (:s, :i, :f, :b, :...).
 # CMD, TARGET and ARGS: any valid commands, including previously defined DEFs
-#                       they need to be tabluated (press tab on every new line)
+#                       they need to be tabulated (press tab on every new line)
 #                       VARS can be used in the commands with a leading $
 
 # for exmaple, we can create an actor with the tutorial animation at a random position
