@@ -5,5 +5,3 @@
 #/commands/load res://slides/en/animatron-slides-def.ocl
 /editor/clear
 #/post/toggle
-/editor/toggle
-

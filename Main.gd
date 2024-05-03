@@ -49,11 +49,11 @@ func printVersion():
 
 func initPostWindowMsg():
 	var msg = ""
-	msg += "Animatron\nversion %s\n\n" % [getAnimatronVersion()]
-	msg += "---\n\n"
+	msg += "Animatron\nversion %s\n" % [getAnimatronVersion()]
+	msg += "---\n"
 	msg += "To see the tutorial write:\n\n"
 	msg += "/tutorial\n\n"
-	msg += "and press SHIFT + ENTER while the cursor is on that line.\n\n"
+	msg += "and press SHIFT + ENTER while the cursor is on that line.\n"
 	msg += "---\n\n"
 	$HSplitContainer/PostWindow.set_text(msg)
 

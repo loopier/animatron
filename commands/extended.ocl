@@ -2,7 +2,7 @@
 # :toc: left
 
 #################################################################################
-# == Getting Info
+# == info
 #################################################################################
 
 # Lists all available commands.
@@ -38,16 +38,8 @@
      /actors/list
 
 #################################################################################
-# == Actor Management
+# == actors
 #################################################################################
-
-# Load a preset from `user://presets/`, from a directory `name` under `user://presets/`.
-#
-# _Example:_ `/preset mycommands/somecommands.ocl`
-#
-/def /preset name:s
-     /commands/load presets/$name.ocl
-     /$name
 
 # Delete any existing `actor`.
 #
@@ -419,6 +411,14 @@
 #################################################################################
 # == app
 #################################################################################
+
+# Load a preset from `user://presets/`, from a directory `name` under `user://presets/`.
+#
+# _Example:_ `/preset mycommands/somecommands.ocl`
+#
+/def /preset name:s
+     /commands/load presets/$name.ocl
+     /$name
 
 # Load the animatron demo.
 #
