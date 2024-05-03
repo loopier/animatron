@@ -45,6 +45,8 @@ var coreCommands: Dictionary = {
 	"/get": CommandDescription.new(getVar, "variable:s", "Get the value of a VARIABLE."),
 	# log
 	"/log/level": CommandDescription.new(setLogLevel, "level:s", "Set the log level to either 'fatal', 'error', 'warn', 'debug' or 'verbose'"),
+	# window
+	"/window/method": CommandDescription.new(callWindowMethod, "", "Call a window method.", Flags.asArray(true)),
 	# general commands
 	"/commands/list": CommandDescription.new(listAllCommands, "", "Get list of available commands."),
 	"/commands/load": CommandDescription.new(loadCommandFile, "path:s", "Load a custom command definitions file, which should have the format described below."),
@@ -275,6 +277,17 @@ func setLogLevel(level: String) -> Status:
 		"debug": Log.setLevel(Log.LOG_LEVEL_DEBUG)
 		"verbose": Log.setLevel(Log.LOG_LEVEL_VERBOSE)
 	return Status.ok(Log.getLevel(), "Log level: %s" % [Log.getLevel()])
+
+func callWindowMethod(args: Array) -> Status:
+	Log.debug("CommandInterface::callWindowMethod: %s" % [args])
+	Log.debug("CommandInterface::callWindowMethod: %s" % [commandManager.get_parent().get_mode()])
+	var window = commandManager.get_parent()
+	# check if the method exists and format correctly
+	var method = getObjectMethod(window, args[0]).value.name
+	# these next lines could be in their own abstraction and used with any object, including Actors
+	var typedArgs = argsToMethodTypes(window, method, args.slice(1))
+	window.callv(method, typedArgs)
+	return Status.ok()
 
 func appendTextToEditor(args: Array) -> Status:
 	var msg = " ".join(args) if args.size() > 0 else ""
@@ -796,6 +809,8 @@ func callActorMethod(args: Array) -> Status:
 
 func getObjectMethod(obj: Object, methodName: String) -> Status:
 	var methods = obj.get_method_list()
+	if methodName.begins_with("/"): methodName = methodName.substr(1)
+	methodName = methodName.replace("/", "_")
 	for method in obj.get_method_list():
 		if method.name == methodName: 
 			return Status.ok(method)

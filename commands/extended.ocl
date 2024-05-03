@@ -417,7 +417,7 @@
 
 
 #################################################################################
-# app
+# == app
 #################################################################################
 
 # Load the animatron demo.
@@ -428,3 +428,54 @@
      /editor/clear
      /editor/open/from res://slides/ca/animatron-demo.ocl
      /editor/font/size 32
+
+#################################################################################
+# == window
+#################################################################################
+
+# See:
+# <<_window_mode_modi,/window/mode>>
+# <<_window_fullscreen,/window/fullscreen>>
+# <<_fullscreen,/fullscreen>>
+# <<_window_windowed,/window/windowed>>
+# <<_windowed,/windowed>>
+/def /window
+     /help /window
+
+# Set window mode.
+#
+# _Example:_ `/window/mode 3`
+#
+# 0: windowed
+# 1: minimized
+# 2: maximized
+# 3: fullscreen
+# 4: exclusive fullscreen
+#
+# See also <<_fullscreen,/fullscreen>>, <<_window,/window>>
+/def /window/mode mode:i
+     /window/method /set/mode $mode
+
+# Set window mode to fullscreen.
+#
+# _Example:_ `/window/fullscreen`
+#
+# See also <<_window_mode_modi,/window/mode>>
+/def /window/fullscreen
+     /window/mode 3
+
+# See <<_window_fullscreen,/window/fullscreen>>
+/def /fullscreen
+     /window/fullscreen
+
+# Set window mode to windowed.
+#
+# _Example:_ `/window/windowed`
+#
+# See also <<_window_mode_modi,/window/mode>>
+/def /window/windowed
+     /window/mode 0
+
+# See <<_window_windowed,/window/windowed>>
+/def /windowed
+     /window/windowed

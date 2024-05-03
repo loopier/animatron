@@ -58,8 +58,7 @@ func initPostWindowMsg():
 	$HSplitContainer/PostWindow.set_text(msg)
 
 func _ready():
-	#Log.setLevel(Log.LOG_LEVEL_VERBOSE)
-#	Log.setLevel(Log.LOG_LEVEL_DEBUG)
+	# if you need to change the log level, do it from the res://config/default.ocl
 	Log.setLevel(Log.LOG_LEVEL_INFO)
 	initPostWindowMsg()
 	

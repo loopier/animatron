@@ -359,11 +359,56 @@ _Example:_ `/comic lola bla`
 
 
 
-app
+== app
 
 === /animatron/demo
 Load the animatron demo.
 
 _Example:_ /animatron/demo
 
+
+
+
+== window
+
+=== /window
+See:
+<<_window_mode_modi,/window/mode>>
+<<_window_fullscreen,/window/fullscreen>>
+<<_fullscreen,/fullscreen>>
+<<_window_windowed,/window/windowed>>
+<<_windowed,/windowed>>
+
+=== /window/mode mode:i
+Set window mode.
+
+_Example:_ `/window/mode 3`
+
+0: windowed
+1: minimized
+2: maximized
+3: fullscreen
+4: exclusive fullscreen
+
+See also <<_fullscreen,/fullscreen>>, <<_window,/window>>
+
+=== /window/fullscreen
+Set window mode to fullscreen.
+
+_Example:_ `/window/fullscreen`
+
+See also <<_window_mode_modi,/window/mode>>
+
+=== /fullscreen
+See <<_window_fullscreen,/window/fullscreen>>
+
+=== /window/windowed
+Set window mode to windowed.
+
+_Example:_ `/window/windowed`
+
+See also <<_window_mode_modi,/window/mode>>
+
+=== /windowed
+See <<_window_windowed,/window/windowed>>
 
