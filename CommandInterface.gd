@@ -279,8 +279,6 @@ func setLogLevel(level: String) -> Status:
 	return Status.ok(Log.getLevel(), "Log level: %s" % [Log.getLevel()])
 
 func callWindowMethod(args: Array) -> Status:
-	Log.debug("CommandInterface::callWindowMethod: %s" % [args])
-	Log.debug("CommandInterface::callWindowMethod: %s" % [commandManager.get_parent().get_mode()])
 	var window = commandManager.get_parent()
 	# check if the method exists and format correctly
 	var method = getObjectMethod(window, args[0]).value.name
