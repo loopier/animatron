@@ -46,3 +46,21 @@ static func formatAsciiDoc(items: Array) -> Status:
 			ln += "\n"
 			asciidoc += ln
 	return Status.ok(asciidoc)
+
+## Find a [param def] in the [param text] and return its docstring
+static func getDocString(text:String, def: String) -> Status:
+	var rex = RegEx.new()
+	rex.compile("((#\\s*(.*)\\n)+\\/def\\s.*\\/*%s.*)" % [def])
+	#rex.compile(def)
+	var result = rex.search(text)
+	if result:
+		var docstring = result.get_string()
+		docstring = docstring.replace("# ", "")
+		docstring = docstring.replace("#", "")
+		docstring = docstring.replace("/def ", "")
+		docstring = Array(docstring.split("\n"))
+		var defstring = docstring.pop_at(-1) + "\n"
+		docstring.push_front(defstring.strip_edges())
+		docstring = "\n".join(docstring)
+		return Status.ok(docstring)
+	return Status.error("/def not found: %s" % [def])

@@ -80,3 +80,19 @@ func test_generateFrom_0():
 	#print(desiredText)
 	assert_typeof(result.value, TYPE_BOOL)
 	assert_eq(result.value, true)
+
+func test_getDocString():
+	var text = ""
+	text += "# doc string 1\n"
+	text += "/def /alo\n"
+	var def = "/alo"
+	var result = DocGenerator.getDocString(text, def)
+	var expected = "/alo\n\ndoc string 1"
+	assert_eq(result.value, expected)
+	text = "# doc string 1\n"
+	text += "# doc string 2\n"
+	text += "/def /alo arg1:s arg2:f\n"
+	def = "/alo"
+	result = DocGenerator.getDocString(text, def)
+	expected = "/alo arg1:s arg2:f\n\ndoc string 1\ndoc string 2"
+	assert_eq(result.value, expected)

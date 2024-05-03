@@ -180,6 +180,8 @@ func loadCommandFile(path: String) -> Status:
 	if file == null: return Status.ok([], "No command file '%s' found to load" % [path])
 	var contents = file.get_as_text(true)
 	var cmds: Array = convertTextToCommands(contents).value
+	if commandManager.loadedCmdFiles.find(file.get_path()) == -1: 
+		commandManager.loadedCmdFiles.push_back(file.get_path())
 	command_file_loaded.emit(cmds)
 	return Status.ok(cmds, "Loaded commands from: %s" % [path])
 
@@ -453,14 +455,21 @@ func getHelp(cmd: String) -> Status:
 	
 	postWindow.set_visible(true)
 	postWindow.set_text("")
-	# if it's a /def dump the def's code
-	if typeof(cmdDesc) == TYPE_DICTIONARY: 
-		var msg := "[HELP] custom definition\n\n/def %s" % [cmd]
+	# if it's a /def
+	if typeof(cmdDesc) == TYPE_DICTIONARY:
+		var text := ""
+		for file in commandManager.loadedCmdFiles:
+			text += DocGenerator.getTextFromFile(file).value
+		var msg : String = DocGenerator.getDocString(text, cmd).value.strip_edges()
+		msg += "\n\n"
+		msg += "[SOURCE]\n"
+		msg += "/def %s" % [cmd]
 		for key in cmdDesc.variables:
 			msg += " %s" % [key]
 		msg += "\n"
 		for subcmd in cmdDesc.subcommands:
 			msg += "\t%s\n" % [" ".join(subcmd)]
+		
 		return Status.ok(cmdDesc, msg)
 	
 	# it's a core command
