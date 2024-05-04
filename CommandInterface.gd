@@ -24,6 +24,7 @@ var assetHelpers := preload("res://asset_helpers.gd").new()
 @onready var editor: CodeEdit
 @onready var openFileDialog: FileDialog
 @onready var saveFileDialog: FileDialog
+@onready var loadPresetDialog: FileDialog
 @onready var postWindow: Node
 @onready var actorsNode: Node
 @onready var routinesNode: Node
@@ -179,7 +180,16 @@ func forCommand(args: Array) -> Status:
 func loadCommandFile(path: String) -> Status:
 	var file = FileAccess.open(path, FileAccess.READ)
 	if file == null: file = FileAccess.open("user://" + path, FileAccess.READ)
-	if file == null: return Status.ok([], "No command file '%s' found to load" % [path])
+	if file == null: file = FileAccess.open("res://" + path, FileAccess.READ)
+	if file == null: 
+		Log.verbose("File not found: '%s'" % [path])
+		# The following lines do nothing (?).
+		# I was trying to open the window at specific path, but it doesn't work.
+		#var dir = "user://" if path.get_base_dir() == "" else path.get_base_dir()
+		#Log.debug("dir: %s" % [dir])
+		#loadPresetDialog.set_current_file(dir)
+		loadPresetDialog.popup()
+		return Status.ok([])
 	var contents = file.get_as_text(true)
 	var cmds: Array = convertTextToCommands(contents).value
 	if commandManager.loadedCmdFiles.find(file.get_path()) == -1: 

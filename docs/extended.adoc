@@ -351,6 +351,12 @@ Load a preset from `user://presets/`, from a directory `name` under `user://pres
 _Example:_ `/preset mycommands/somecommands.ocl`
 
 
+=== /preset/load
+Load a preset using .
+
+_Example:_ `/preset mycommands/somecommands.ocl`
+
+
 === /animatron/demo
 Load the animatron demo.
 

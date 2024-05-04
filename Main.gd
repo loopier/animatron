@@ -95,6 +95,7 @@ func _ready():
 	cmdInterface.stateChangedCallback = Callable(self, "_on_state_changed")
 	cmdInterface.saveFileDialog = $SaveFileDialog
 	cmdInterface.openFileDialog = $OpenFileDialog
+	cmdInterface.loadPresetDialog = $LoadPresetDialog
 	_init_midi()
 	cmdInterface.midiCommands = midiCommands
 	
@@ -352,6 +353,11 @@ func _on_load_dialog_confirmed():
 
 func _on_save_dialog_confirmed():
 	Log.debug("Main save confirmed: %s" % [$SaveDialog.current_path])
+	
+func _on_load_preset_dialog_confirmed():
+	var path = $LoadPresetDialog.get_current_path()
+	evalCommand(["/commands/load", path], "gdscript")
+	Log.verbose("Loading preset from: %s" % [path])
 
 func _on_animation_finished(name):
 	if stateMachines.has(name):
