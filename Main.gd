@@ -41,6 +41,16 @@ func _init():
 	printVersion()
 	DocGenerator.generateFrom("res://commands/extended.ocl")
 
+func createUserConfig(path: String):
+	if not DirAccess.dir_exists_absolute(path.get_base_dir()):
+		DirAccess.make_dir_absolute(path.get_base_dir())
+		Log.verbose("Created dir: %s" % [path.get_base_dir()])
+	if not FileAccess.file_exists(path):
+		var file = FileAccess.open(path, FileAccess.WRITE_READ)
+		Log.verbose("User config file not found in: %s" % [path])
+		file.store_string("# Write your config here")
+		Log.verbose("Created config file: %s" % [path])
+
 func getAnimatronVersion() -> String:
 	return ProjectSettings.get_setting("application/config/version")
 
@@ -109,6 +119,8 @@ func _ready():
 	$Midi.midi_cc.connect(_on_midi_cc)
 	
 	loadConfig(defaultConfigPath)
+	if not FileAccess.file_exists(configPath):
+		createUserConfig(configPath)
 	loadConfig(configPath)
 
 # Called every frame. 'delta' is the elapsed time since the previous frame./
