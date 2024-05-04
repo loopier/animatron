@@ -3,7 +3,7 @@
 
 
 
-== Getting Info
+= info
 
 === /commands
 Lists all available commands.
@@ -35,13 +35,7 @@ _Example:_ `/actors`
 
 
 
-== Actor Management
-
-=== /preset name:s
-Load a preset from `user://presets/`, from a directory `name` under `user://presets/`.
-
-_Example:_ `/preset mycommands/somecommands.ocl`
-
+= actors
 
 === /free actor:s
 Delete any existing `actor`.
@@ -63,7 +57,7 @@ _Example:_ `/reload mama`
 
 
 
-== Transform
+== transform
 
 === /position actor:s x:f y:f
 Set the `x` and `y` coordinates (in pixels) of the `actor`.
@@ -333,16 +327,6 @@ _Example:_ `/type lola alo`
 
 
 
-== editor
-
-=== /editor/font/size pixels:i
-Set the editor's font size in `pixels`.
-
-_Example:_ `/editor/font/size 60`
-
-
-
-
 == extras
 
 === /comic actor:s animation:s
@@ -359,12 +343,28 @@ _Example:_ `/comic lola bla`
 
 
 
-== app
+= app
+
+=== /preset name:s
+Load a preset from `user://presets/`, from a directory `name` under `user://presets/`.
+
+_Example:_ `/preset mycommands/somecommands.ocl`
+
 
 === /animatron/demo
 Load the animatron demo.
 
 _Example:_ /animatron/demo
+
+
+
+
+== editor
+
+=== /editor/font/size pixels:i
+Set the editor's font size in `pixels`.
+
+_Example:_ `/editor/font/size 60`
 
 
 
