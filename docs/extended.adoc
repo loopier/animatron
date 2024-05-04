@@ -346,13 +346,14 @@ _Example:_ `/comic lola bla`
 = app
 
 === /preset name:s
-Load a preset from `user://presets/`, from a directory `name` under `user://presets/`.
+Load a preset from a directory `name` under `user://presets/`.
 
 _Example:_ `/preset mycommands/somecommands.ocl`
 
+See also: <<_preset_load,/preset/load>>
 
 === /preset/load
-Load a preset using .
+Load a preset using the file browser.
 
 _Example:_ `/preset mycommands/somecommands.ocl`
 
