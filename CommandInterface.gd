@@ -192,8 +192,8 @@ func loadCommandFile(path: String) -> Status:
 		return Status.ok([])
 	var contents = file.get_as_text(true)
 	var cmds: Array = convertTextToCommands(contents).value
-	if commandManager.loadedCmdFiles.find(file.get_path()) == -1: 
-		commandManager.loadedCmdFiles.push_back(file.get_path())
+	if commandManager.loadedCmdFiles.find(file.get_path()) == -1:
+		commandManager.loadedCmdFiles.push_back(path)
 	command_file_loaded.emit(cmds)
 	return Status.ok(cmds, "Loaded commands from: %s" % [path])
 

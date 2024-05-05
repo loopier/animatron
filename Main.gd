@@ -4,7 +4,6 @@ class_name Main
 var Osc := preload("res://osc_receiver.tscn")
 var osc: OscReceiver
 var oscSender: OscReceiver
-var DocGenerator := preload("res://doc_generator.gd")
 static var defaultConfigPath := "res://config/default.ocl"
 static var configPath := "user://config/config.ocl"
 var metanode := preload("res://meta_node.tscn")
@@ -39,7 +38,6 @@ func _init_midi():
 
 func _init():
 	printVersion()
-	DocGenerator.generateFrom("res://commands/extended.ocl")
 
 func createUserConfig(path: String):
 	if not DirAccess.dir_exists_absolute(path.get_base_dir()):
@@ -123,6 +121,7 @@ func _ready():
 	if not FileAccess.file_exists(configPath):
 		createUserConfig(configPath)
 	loadConfig(configPath)
+	cmdInterface.loadCommandFile("res://commands/extended.ocl")
 
 # Called every frame. 'delta' is the elapsed time since the previous frame./
 func _process(_delta):
@@ -222,11 +221,8 @@ func executeCommand(command: CommandDescription, args: Array) -> Status:
 		# Reduce the number of args to the expected size, else callv will fail.
 		# Exceeding arguments will be grouped into an array and passed as the last argument.
 		var callableNumArgs = getNumArgsForMethod(command.callable, command.callable.get_method())
-		#var callableArgs = getMethodSignature(command.callable, command.callable.get_method())
 		var excessArgs = args.slice(callableNumArgs)
 		var finalArgs = args.slice(0, callableNumArgs)
-		for arg in finalArgs:
-			Log.debug("%s(%s)" % [arg, typeof(arg)])
 		result = command.callable.callv(finalArgs)
 	return result
 
