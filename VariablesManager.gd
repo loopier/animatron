@@ -23,7 +23,6 @@ static func getAll() -> Dictionary:
 
 static func getValue(variableName: String) -> Variant:
 	var all := getAll()
-	var value: Variant
 	if not all.has(variableName): return null
 	return all[variableName]
 

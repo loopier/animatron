@@ -10,10 +10,6 @@ func _ready():
 	set_end_frame(sprite_frames.get_frame_count(get_animation()))
 	Log.verbose("%s:frame progress: %s" % [get_parent().name, frame_progress])
 
-# Called every frame. 'delta' is the elapsed time since the previous frame.
-func _process(delta):
-	pass
-
 func _on_frame_changed():
 	if is_playing and ((get_frame() == end_frame - 1 and get_speed_scale() > 0) or (get_frame() == start_frame and get_speed_scale() < 0)):
 		animation_finished.emit(get_parent().name)

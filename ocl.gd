@@ -6,10 +6,10 @@ var rnd := RandomNumberGenerator.new()
 func _for(args: Array) -> Array:
 	var result = []
 	var variableName = args[0]
-	var range = int(args[1])
+	var loopRange = int(args[1])
 	var items = args.slice(2)
 	var forVars := {}
-	for i in range:
+	for i in loopRange:
 		forVars[variableName] = i
 		var newCmd := []
 		for arg in items:
