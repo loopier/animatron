@@ -21,7 +21,7 @@ static func generateFrom(inputFilePath: String) -> Status:
 	var asciidocPath = "res://docs/%s.adoc" % [filename]
 	var asciidoc = DocGenerator.formatAsciiDoc(textBlocks).value
 	var result = writeTextToFile(asciidocPath, asciidoc)
-	if result.isError(): return Status.error("Could not write helpf file: %s" % [inputFilePath])
+	if result.isError(): return Status.error("Could not write help file: %s" % [inputFilePath])
 	return Status.ok(true, "Help file successfully generated from: %s\nto: %s" % [inputFilePath, asciidocPath])
 
 static func getTextBlocks(text: String) -> Status:
