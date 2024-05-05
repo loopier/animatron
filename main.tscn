@@ -90,6 +90,3 @@ ok_button_text = "Open"
 file_mode = 0
 access = 2
 show_hidden_files = true
-
-[connection signal="confirmed" from="OpenFileDialog" to="HSplitContainer/CodeEdit" method="_on_load_dialog_confirmed"]
-[connection signal="confirmed" from="LoadPresetDialog" to="." method="_on_load_preset_dialog_confirmed"]

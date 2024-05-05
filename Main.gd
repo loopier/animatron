@@ -109,6 +109,7 @@ func _ready():
 	$SaveFileDialog.file_selected.connect(editor.saveFile)
 	$OpenFileDialog.confirmed.connect(editor._on_load_dialog_confirmed)
 	$OpenFileDialog.file_selected.connect(editor.openFile)
+	$LoadPresetDialog.confirmed.connect(_on_load_preset_dialog_confirmed)
 	editor.saveDialog = $SaveFileDialog
 	editor.loadDialog = $OpenFileDialog
 	editor.eval_code.connect(_on_eval_code)
