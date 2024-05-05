@@ -480,6 +480,8 @@ func getHelp(cmd: String) -> Status:
 	if typeof(cmdDesc) == TYPE_DICTIONARY:
 		var text := ""
 		for file in commandManager.loadedCmdFiles:
+			var result = DocGenerator.getTextFromFile(file)
+			if result.isError(): continue
 			text += DocGenerator.getTextFromFile(file).value
 		var msg : String = DocGenerator.getDocString(text, cmd).value.strip_edges()
 		msg += "\n\n"
