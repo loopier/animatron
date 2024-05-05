@@ -170,7 +170,7 @@ func defineCommand(args: Array) -> Status:
 	var commandVariables = commandDef.slice(1)
 	var subCommands = splits.slice(1)
 	defCommands[commandName] = {"variables": commandVariables, "subcommands": subCommands}
-	return Status.ok([commandName, commandVariables, subCommands], "Added command def: %s %s" % [commandName, commandVariables, subCommands])
+	return Status.ok([commandName, commandVariables, subCommands], "Added command def: %s %s %s" % [commandName, commandVariables, subCommands])
 
 func forCommand(args: Array) -> Status:
 	var cmds: Array = ocl._for(args);
