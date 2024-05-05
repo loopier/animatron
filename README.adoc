@@ -55,7 +55,21 @@ If `Animatron.app` fails to run even after following the above steps, it may hav
     $ cd ~/Downloads   # change to wherever you have the app installed
     $ xattr -d -r com.apple.quarantine Animatron.app
 
+=== NixOS
+To run the binary you need to install `steam-run` in *NixOS configuration*, it won't work if you add it to `home-manager` configuration.
 
+    > sudo nvim /etc/nixos/configuration.nixos
+    ...
+    programs.steam.enable = true;
+
+    environment.systemPackages = [
+    pkgs.steam-run
+    ];
+    ...
+
+Then the binary can be run with
+
+     > steam-run path/to/Animatron.x86_64
 
 == Versions
 
