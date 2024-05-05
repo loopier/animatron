@@ -18,7 +18,7 @@ var metanode := preload("res://meta_node.tscn")
 var ocl: OpenControlLanguage
 var config := preload("res://Config.gd").new()
 @onready var editor := $HSplitContainer/CodeEdit
-@onready var postWindow := $HSplitContainer/VBoxContainer/PostWindow
+@onready var postWindow := $HSplitContainer/PostWindow
 
 #@onready var variablesManager: VariablesManager
 
