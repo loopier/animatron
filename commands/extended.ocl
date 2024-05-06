@@ -396,20 +396,28 @@
 /def /type actor:s text:...
      /text/property /text $actor $text
 
+# Clear text on the actor.
+# Text can also be cleared with just `/type actor`, without `text` argument.
+#
+# _Example:_ `/type/clear lola`
+#
+# _Example:_ `/type lola` (note there's no second argument)
+#
 /def /type/clear actor:s
      /text/property /text $actor
 
 #################################################################################
-# == extras
+# == experimental
 #################################################################################
 
-# Creates an `actor` with a pair of 2 `animation`s.
+# WARNING: Commands in this section are highly experimental. Proceed with caution.
+
+# Creates an `actor` with a pair of 2 `animation` 's.
+#
 # This allows to create actors with separate animations for line and fill colors.
 # The `*-ln` actor is a child of the main (fill) actor.
 #
-# Suppose we want to create an animation with separate fill and line colors. We would have to create 2 directories: one holding the line art and the other the fill.
-#
-# The directory holding the frames of the "fill" animation, should be named after the animation, for example "bla". Then, the animation holding the line art should be named "bla-ln".
+# Suppose we want to create an animation named `bla` with separate fill and line colors. We would have to create 2 directories: one holding the line (`bla-ln`) art and the other the fill (`bla-fl`).
 #
 # _Example:_ `/comic lola bla`
 #
