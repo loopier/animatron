@@ -2,6 +2,7 @@ extends AnimatedSprite2D
 
 @onready var start_frame := 0
 @onready var end_frame := 0
+@onready var loop_mode: Animation.LoopMode
 
 signal animation_finsihed(name)
 
@@ -12,6 +13,10 @@ func _ready():
 
 func _on_frame_changed():
 	if is_playing and ((get_frame() == end_frame - 1 and get_speed_scale() > 0) or (get_frame() == start_frame and get_speed_scale() < 0)):
+		if loop_mode == Animation.LOOP_PINGPONG:
+			set_speed_scale(get_speed_scale() * -1)
+			var dir = int(get_speed_scale() < 0) * 2 - 1
+			frame = max(0, (frame + 1) * dir)
 		animation_finished.emit(get_parent().name)
 		
 	if is_playing() and get_frame() > end_frame:
@@ -48,3 +53,5 @@ func set_end_frame(frame: int):
 	end_frame = clamp(frame, 0, sprite_frames.get_frame_count(get_animation()))
 	adjust_speed_scale()
 
+func set_loop_mode(loopMode: int):
+	self.loop_mode = loopMode

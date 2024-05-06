@@ -830,6 +830,7 @@ func getObjectMethod(obj: Object, methodName: String) -> Status:
 
 ## Converts and returns an array of anything into the correct types for the given method
 func argsToMethodTypes(object: Object, methodName: String, args: Array) -> Array:
+	if args.size() <= 0: return []
 	var method = getObjectMethod(object, methodName).value
 	var types = []
 	for i in method.args.size():
@@ -931,6 +932,7 @@ func callAnimationMethod(args: Array) -> Status:
 	args = args.slice(2)
 	for actor in result.value:
 		var animation = actor.get_node("Animation")
+		args = argsToMethodTypes(animation, method, args)
 		if len(args) == 0:
 			result = animation.call(method)
 		else:

@@ -26,13 +26,13 @@ func _def(def: Dictionary, values: Array) -> Array:
 	var cmdArray := []
 	var variables := VariablesManager.getAll()
 	for i in def.variables.size():
-		var varName = def.variables[i].split(':')[0]
+		var varName = str(def.variables[i].split(':')[0])
 		var varType = def.variables[i].split(":")[1]
 		# def arguments take precedence over "app" vars
 		if varType == "...":
 			variables[varName] = " ".join(values.slice(i))
 		else:
-			variables[varName] = values[i]
+			variables[varName] = values[min(i, values.size()-1)]
 	for cmd in def.subcommands:
 		var newCmd := []
 		for arg in cmd:

@@ -334,16 +334,35 @@
 #
 # _Example:_ `/loop lola`
 #
+# See also: <<_noloop,/noloop>>, <<_pingpong,/pingpong>>
+#
 /def /loop actor:s
      /play $actor
      /animation/frames/method /set/animation/loop $actor 1
+     /animation/method /set/loop/mode $actor 0
 
 # Don't loop the `actor`'s animation. Plays the animation stopping at the last frame.
 #
 # _Example:_ `/noloop lola`
 #
+# See also: <<_loop,/loop>>, <<_pingpong,/pingpong>>
+#
 /def /noloop actor:s
      /animation/frames/method /set/animation/loop $actor 0
+     /animation/method /set/loop/mode $actor 0
+
+# Make the loop go back and forth.
+#
+# _Example:_ `/pingpong lola`
+
+# See also: <<_loop,/loop>>, <<_noloop,/noloop>>
+#
+# NOTE: (for devs) This is inconsistent with <<_loop,/loop>> <<_noloop,/noloop>>, as they use
+# a built-in method, while this had to be custom-coded in `Animation.gd` because
+# there's no such thing for `AnimatedSprite2D`.
+#
+/def /pingpong actor:s
+     /animation/method /set/loop/mode $actor 2
 
 # Set the `actor`'s animation drawing offset (in pixels) relative to the anchor point.
 #
