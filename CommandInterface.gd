@@ -194,6 +194,7 @@ func loadCommandFile(path: String) -> Status:
 	var cmds: Array = convertTextToCommands(contents).value
 	if commandManager.loadedCmdFiles.find(file.get_path()) == -1:
 		commandManager.loadedCmdFiles.push_back(path)
+	DocGenerator.generateFrom(file.get_path())
 	command_file_loaded.emit(cmds)
 	return Status.ok(cmds, "Loaded commands from: %s" % [path])
 

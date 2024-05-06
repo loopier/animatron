@@ -290,11 +290,27 @@ Loop the `actor`'s animation.
 
 _Example:_ `/loop lola`
 
+See also: <<_noloop,/noloop>>, <<_pingpong,/pingpong>>
+
 
 === /noloop actor:s
 Don't loop the `actor`'s animation. Plays the animation stopping at the last frame.
 
 _Example:_ `/noloop lola`
+
+See also: <<_loop,/loop>>, <<_pingpong,/pingpong>>
+
+
+_Example:_ `/pingpong lola`
+Make the loop go back and forth.
+
+
+=== /pingpong actor:s
+See also: <<_loop,/loop>>, <<_noloop,/noloop>>
+
+NOTE: (for devs) This is inconsistent with <<_loop,/loop>> <<_noloop,/noloop>>, as they use
+a built-in method, while this had to be custom-coded in `Animation.gd` because
+there's no such thing for `AnimatedSprite2D`.
 
 
 === /offset actor:s x:i y:i
