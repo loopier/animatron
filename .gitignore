@@ -11,3 +11,4 @@ export_presets.cfg
 
 addons/gut/*
 .gut*
+*.import
