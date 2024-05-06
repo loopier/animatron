@@ -301,11 +301,11 @@ _Example:_ `/noloop lola`
 See also: <<_loop,/loop>>, <<_pingpong,/pingpong>>
 
 
-_Example:_ `/pingpong lola`
+=== /pingpong actor:s
 Make the loop go back and forth.
 
+_Example:_ `/pingpong lola`
 
-=== /pingpong actor:s
 See also: <<_loop,/loop>>, <<_noloop,/noloop>>
 
 NOTE: (for devs) This is inconsistent with <<_loop,/loop>> <<_noloop,/noloop>>, as they use

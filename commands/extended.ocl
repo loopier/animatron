@@ -354,7 +354,7 @@
 # Make the loop go back and forth.
 #
 # _Example:_ `/pingpong lola`
-
+#
 # See also: <<_loop,/loop>>, <<_noloop,/noloop>>
 #
 # NOTE: (for devs) This is inconsistent with <<_loop,/loop>> <<_noloop,/noloop>>, as they use
