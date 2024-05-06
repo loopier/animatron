@@ -1,8 +1,8 @@
 [gd_scene load_steps=7 format=3 uid="uid://bv4h4a2us0yne"]
 
 [ext_resource type="Shader" path="res://meta_node.gdshader" id="1_srg6k"]
-[ext_resource type="FontFile" uid="uid://citw5lds10cgy" path="res://fonts/fs-blok-regular.ttf" id="2_8vq87"]
 [ext_resource type="Script" path="res://Animation.gd" id="2_wfrnp"]
+[ext_resource type="FontFile" uid="uid://bt0f0lpt7x3tv" path="res://fonts/TT2020StyleF-Regular.ttf" id="3_fjn8v"]
 
 [sub_resource type="ShaderMaterial" id="ShaderMaterial_lhcii"]
 resource_local_to_scene = true
@@ -14,7 +14,7 @@ shader_parameter/uSelected = false
 [sub_resource type="SpriteFrames" id="SpriteFrames_g6lqa"]
 
 [sub_resource type="Theme" id="Theme_2spbi"]
-default_font = ExtResource("2_8vq87")
+default_font = ExtResource("3_fjn8v")
 default_font_size = 64
 Label/colors/font_color = Color(0, 0, 0, 1)
 
