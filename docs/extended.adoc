@@ -76,13 +76,13 @@ _Example:_ `/position/x lola 500`
 
 
 === /pos/x actor:s value:f
-See <<_positionx_actors_xf,/position/x
+See <<_positionx_actors_xf,/position/x>>
 
 _Example:_ `/pos/x mama 500`
 
 
 === /x actor:s value:f
-See <<_positionx_actors_xf,/position/x
+See <<_positionx_actors_xf,/position/x>>
 
 _Example:_ `/x mama 500`
 
