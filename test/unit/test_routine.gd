@@ -20,6 +20,8 @@ func after_all():
 	gut.p("ran run teardown logger", 2)
 
 func test_addRoutine():
+	var oldLogLevel := Log.getLevel()
+	Log.setLevel(Log.LOG_LEVEL_VERBOSE)
 	var routine = ["bla",4,0.5,"/post alo"]
 	var result : = cmd.addRoutine(routine)
 	assert_eq(result.value, true)
@@ -32,3 +34,4 @@ func test_addRoutine():
 	result = cmd.addRoutine(routine)
 	assert_eq(result.msg, "New routine 'bla' (4 times every 0.5): [\"/post alo\", \"/post bye\"]")
 	assert_eq(bla.command, ["/post alo", "/post bye"])
+	Log.setLevel(oldLogLevel)

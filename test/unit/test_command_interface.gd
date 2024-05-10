@@ -110,6 +110,7 @@ func test_listCommands():
 /unload
 /visible
 /wait
+/window/method
 ".replace("\r", ""))
 
 func test_listAssets():
@@ -147,7 +148,10 @@ func test_parseArgs():
 	#assert_eq(cmd.parseArgs(["/x"]), [1])
 
 func test_newRoutine():
+	var oldLogLevel := Log.getLevel()
+	Log.setLevel(Log.LOG_LEVEL_VERBOSE)
 	var result := cmd.addRoutine(["routineA", "inf", 1, "/cmdA", "argA", 2])
+	Log.setLevel(oldLogLevel)
 	assert_eq(result.type, Status.OK)
 	assert_eq(result.value, true)
 	assert_eq(result.msg, "New routine 'routineA' (0 times every 1): [\"/cmdA\", \"argA\", 2]")

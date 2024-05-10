@@ -6,7 +6,7 @@ var DocGenerator
 func before_each():
 	gut.p("ran setup logger", 2)
 	main = preload("res://main.tscn").instantiate()
-	DocGenerator = preload("res://doc_generator.gd")
+	DocGenerator = preload("res://DocGenerator.gd")
 	add_child(main)
 
 func after_each():
@@ -87,12 +87,12 @@ func test_getDocString():
 	text += "/def /alo\n"
 	var def = "/alo"
 	var result = DocGenerator.getDocString(text, def)
-	var expected = "/alo\n\ndoc string 1"
+	var expected = "/alo\ndoc string 1"
 	assert_eq(result.value, expected)
 	text = "# doc string 1\n"
 	text += "# doc string 2\n"
 	text += "/def /alo arg1:s arg2:f\n"
 	def = "/alo"
 	result = DocGenerator.getDocString(text, def)
-	expected = "/alo arg1:s arg2:f\n\ndoc string 1\ndoc string 2"
+	expected = "/alo arg1:s arg2:f\ndoc string 1\ndoc string 2"
 	assert_eq(result.value, expected)

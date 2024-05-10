@@ -115,7 +115,10 @@ func test_arrayCommandsDeferred():
 	#----- Deferred: -----
 	# Tests to be added:
 	"/routine"
+	var oldLogLevel := Log.getLevel()
+	Log.setLevel(Log.LOG_LEVEL_VERBOSE)
 	result = main.evalCommand(["/routine", "test", 1, 0.1, "/post", "$myvar", "{$myvar / 2}"], "")
+	Log.setLevel(oldLogLevel)
 	assert_eq(result.type, Status.OK)
 	assert_eq(result.msg, "New routine 'test' (1 times every 0.1): [\"/post\", \"$myvar\", \"{$myvar / 2}\"]")
 	var test := main.routines.get_node("test")
