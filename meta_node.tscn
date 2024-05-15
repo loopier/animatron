@@ -44,4 +44,6 @@ scroll_active = false
 autowrap_mode = 0
 shortcut_keys_enabled = false
 
+[node name="AnimationPlayer" type="AnimationPlayer" parent="."]
+
 [connection signal="frame_changed" from="Animation" to="Animation" method="_on_frame_changed"]

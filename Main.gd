@@ -23,6 +23,8 @@ var config := preload("res://Config.gd").new()
 #@onready var variablesManager: VariablesManager
 
 @onready var animationsLibrary : SpriteFrames
+@onready var animationDataLibrary : AnimationLibrary
+
 func _init_midi():
 	# separate commands by channel
 	midiCommands.resize(16)
@@ -84,7 +86,9 @@ func _ready():
 	animationsLibraryNode.set_sprite_frames(SpriteFrames.new())
 	animationsLibrary = animationsLibraryNode.get_sprite_frames()
 	add_child.call_deferred(animationsLibraryNode)
+	animationDataLibrary = AnimationLibrary.new()
 	cmdInterface.animationsLibrary = animationsLibrary
+	cmdInterface.animationDataLibrary = animationDataLibrary
 	cmdInterface.actorsNode = $Actors
 	cmdInterface.editor = $HSplitContainer/CodeEdit
 	cmdInterface.postWindow = $HSplitContainer/PostWindow

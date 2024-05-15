@@ -34,6 +34,7 @@ var assetHelpers := preload("res://asset_helpers.gd").new()
 @onready var midiCommands: Array
 @onready var oscSender: OscReceiver
 var animationsLibrary: SpriteFrames ## The meta node containing these frames needs to be initialized in _ready
+var animationDataLibrary: AnimationLibrary
 var assetsPath := "user://assets"
 var animationAssetsPath := assetsPath + "/animations"
 var Flags := CommandDescription.Flags
@@ -143,6 +144,13 @@ var coreCommands: Dictionary = {
 	"/animation/property": CommandDescription.new(setAnimationProperty, "property:s actor:s value:...", "Change the ACTOR's ANIMATION GDScript PROPERTY. Slashes ('/') will be replaced for underscores '_'. Leading slash is optional.\n\nUsage: `/animation/property /rotation/degrees target 75`", Flags.asArray(false)),
 	"/animation/method": CommandDescription.new(callAnimationMethod, "method:s actor:s args:...", "Call a METHOD on the ACTOR's animation with some ARGS.", Flags.asArray(false)),
 	"/animation/frames/method": CommandDescription.new(callAnimationFramesMethod, "method:s actor:s args:...", "Call a METHOD on the ACTOR's animation with some ARGS.", Flags.asArray(false)),
+	
+	# animation data (not images)
+	#"/animate": CommandDescription.new(callAnimationPlayerMethod, "actor:s animation:s", "Load an animation from the library.", Flags.asArray(true)),
+	"/animation/player/method": CommandDescription.new(callAnimationPlayerMethod, "actor:s method:s args:...", "Call the `actor`'s `AnimationPlayer` `method` with given `args`.", Flags.asArray(true)),
+	"/animation/data/method": CommandDescription.new(callAnimationDataMethod, "method:s args:...", "Call a `method` related to `Animation` data. NOTE: this is not image sequences, it's data used to modify properties over time, like position or angle.", Flags.asArray(true)),
+	"/animation/data/add": CommandDescription.new(addAnimationData, "name:s", "Create a new `Animation` data object, give it a `name` and add it to the `Animation` library."),
+	"/animation/data/list": CommandDescription.new(listAnimationDataLibrary, "", "Get a list of existing `Animation` data objects."),
 }
 
 ## Custom command definitions
@@ -294,7 +302,9 @@ func callWindowMethod(args: Array) -> Status:
 	# check if the method exists and format correctly
 	var method = getObjectMethod(window, args[0]).value.name
 	# these next lines could be in their own abstraction and used with any object, including Actors
-	var typedArgs = argsToMethodTypes(window, method, args.slice(1))
+	var result = argsToMethodTypes(window, method, args.slice(1))
+	if result.isError(): return result
+	var typedArgs = result.value
 	window.callv(method, typedArgs)
 	return Status.ok()
 
@@ -709,6 +719,7 @@ func createActor(actorName: String, anim: String) -> Status:
 		result = setActorText([actorName, actorName])
 		return result
 	
+	actor.set_editable_instance(self, true)
 	actor.get_node("Animation").animation_finished.connect(commandManager._on_animation_finished)
 	return Status.ok(actor, msg)
 
@@ -827,20 +838,22 @@ func getObjectMethod(obj: Object, methodName: String) -> Status:
 	for method in obj.get_method_list():
 		if method.name == methodName: 
 			return Status.ok(method)
-	return Status.error("Method not found: %s(%s):%s" % [obj.name, obj.get_class(), methodName])
+	return Status.error("Method not found: %s(%s):%s" % [obj.get("name"), obj.get_class(), methodName])
 
 ## Converts and returns an array of anything into the correct types for the given method
-func argsToMethodTypes(object: Object, methodName: String, args: Array) -> Array:
-	if args.size() <= 0: return []
+func argsToMethodTypes(object: Object, methodName: String, args: Array) -> Status:
+	if args.size() <= 0: return Status.ok([])
 	var method = getObjectMethod(object, methodName).value
 	var types = []
+	if method.args.size() != args.size(): 
+		return Status.error("Wrong nunmber of arguments. Expected %d: %s - Given %d: %s" % [method.args.size(), method.args, args.size(), args])
 	for i in method.args.size():
 		match method.args[i].type:
 			TYPE_INT: types.append(args[i] as int)
 			TYPE_FLOAT: types.append(args[i] as float)
 			TYPE_BOOL: types.append(args[i] as int as bool)
 			_: types.append(args[i])
-	return types
+	return Status.ok(types)
 
 func setAnimationProperty(args: Array) -> Status:
 	var result = getActors(args[1])
@@ -933,10 +946,11 @@ func callAnimationMethod(args: Array) -> Status:
 	args = args.slice(2)
 	for actor in result.value:
 		var animation = actor.get_node("Animation")
-		args = argsToMethodTypes(animation, method, args)
-		if len(args) == 0:
+		result = argsToMethodTypes(animation, method, args).value
+		if typeof(args) == TYPE_ARRAY and len(args) == 0:
 			result = animation.call(method)
 		else:
+			args = result.value
 			result = animation.callv(method, args)
 	#return Status.ok(result, "Called %s.%s.%s(%s): %s" % [actor.get_name(), animation.get_animation(), method, args, result])
 	return Status.ok()
@@ -952,9 +966,55 @@ func callAnimationFramesMethod(args) -> Status:
 		# replace first argument with animation name
 		# most of the SpriteFrames methods need the animation name as first argument
 		args.insert(0, animation.get_animation())
-		args = argsToMethodTypes(frames, method, args)
+		result = argsToMethodTypes(frames, method, args)
+		if result.isError(): return result
+		args = result.value
 		result = frames.callv(method, args)
 	return Status.ok()
+
+func callAnimationPlayerMethod(args) -> Status:
+	Log.debug("AnimationPlayer method: %s" % [args])
+	var result = getActors(args[0])
+	if result.isError(): return result
+	for actor in result.value:
+		var method = _cmdToGdScript(args[1])
+		result = argsToMethodTypes(actor.get_node("AnimationPlayer"), method, args.slice(2))
+		if result.isError(): return result
+		args = result.value
+		Log.debug("TODO: call %s.animationPlayer.%s" % [actor.name,method])
+	return Status.ok()
+
+func callAnimationDataMethod(args) -> Status:
+	Log.debug("Animation* method: %s" % [args])
+	var method = _cmdToGdScript(args[0])
+	if animationDataLibrary.has_method(args[0]):
+		var result = argsToMethodTypes(animationDataLibrary, method, args.slice(1))
+		if result.isError(): return result
+		args = result.value
+		animationDataLibrary.callv(method, args)
+		return Status.ok()
+	var animationDataName = args[0]
+	var animationData = animationDataLibrary.get_animation(animationDataName)
+	if animationData == null: 
+		return Status.error("Animation data not found.")
+	method = args[1]
+	var result = argsToMethodTypes(animationData, method, args.slice(2))
+	if result.isError(): return result
+	args = result. value
+	animationData.callv(method, args)
+	Log.debug("Track count %s: %d" % [animationDataName, animationData.get_track_count()])
+	return Status.ok()
+
+func addAnimationData(name: String) -> Status:
+	animationDataLibrary.add_animation(name, Animation.new())
+	return Status.ok()
+
+func listAnimationDataLibrary() -> Status:
+	var list := "Animation Data Library:\n"
+	for animation in animationDataLibrary.get_animation_list():
+		list += "%s\n" % [animation]
+	return Status.ok(list, list)
+	
 
 # Note that the red/green/blue arguments can't have static typing,
 # because the Callable.callv() call will fail (Array members can't

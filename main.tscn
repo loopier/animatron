@@ -90,3 +90,5 @@ ok_button_text = "Open"
 file_mode = 0
 access = 2
 show_hidden_files = true
+
+[node name="AnimationPlayer" type="AnimationPlayer" parent="."]
