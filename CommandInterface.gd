@@ -848,7 +848,7 @@ func argsToMethodTypes(object: Object, methodName: String, args: Array) -> Statu
 	var method = getObjectMethod(object, methodName).value
 	var types = []
 	if method.args.size() != args.size(): 
-		return Status.error("Wrong nunmber of arguments. Expected %d: %s - Given %d: %s" % [method.args.size(), method.args, args.size(), args])
+		return Status.error("Wrong nunmber of arguments for method %s. Expected %d: %s - Given %d: %s" % [methodName, method.args.size(), method.args, args.size(), args])
 	for i in method.args.size():
 		match method.args[i].type:
 			TYPE_INT: types.append(args[i] as int)
@@ -999,12 +999,11 @@ func removeAnimationData(args: Array) -> Status:
 
 func callAnimationDataMethod(args: Array) -> Status:
 	Log.debug("Animation* method: %s" % [args])
-	var method = _cmdToGdScript(args[0])
 	var animationDataName = args[0]
 	var animationData = animationDataLibrary.get_animation(animationDataName)
 	if animationData == null: 
 		return Status.error("Animation data not found.")
-	method = args[1]
+	var method = _cmdToGdScript(args[1])
 	var result = argsToMethodTypes(animationData, method, args.slice(2))
 	if result.isError(): return result
 	args = result. value

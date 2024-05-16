@@ -429,7 +429,7 @@
 # _Example:_ `/animation/data/add/track myanimationdata 0`
 #
 /def /animation/data/add/track name:s type:i
-     /animation/data/method /add/track $name $type
+     /animation/data/method $name /add/track $type -1
 
 #################################################################################
 # == text label
