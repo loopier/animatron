@@ -147,9 +147,11 @@ var coreCommands: Dictionary = {
 	
 	# animation data (not images)
 	#"/animate": CommandDescription.new(callAnimationPlayerMethod, "actor:s animation:s", "Load an animation from the library.", Flags.asArray(true)),
+	"/animation/data/create": CommandDescription.new(createAnimationData, "name:s", "Create a new `Animation` data object and add it to the library. No tracks are created, they need to be created with a different command.", Flags.asArray(true)),
+	"/animation/data/remove": CommandDescription.new(removeAnimationData, "name:s", "Remove the `Animation` data object from the library.", Flags.asArray(true)),
 	"/animation/player/method": CommandDescription.new(callAnimationPlayerMethod, "actor:s method:s args:...", "Call the `actor`'s `AnimationPlayer` `method` with given `args`.", Flags.asArray(true)),
 	"/animation/data/method": CommandDescription.new(callAnimationDataMethod, "method:s args:...", "Call a `method` related to `Animation` data. NOTE: this is not image sequences, it's data used to modify properties over time, like position or angle.", Flags.asArray(true)),
-	"/animation/data/add": CommandDescription.new(addAnimationData, "name:s", "Create a new `Animation` data object, give it a `name` and add it to the `Animation` library."),
+	"/animation/data/library/method": CommandDescription.new(callAnimationDataLibraryMethod, "method:s args:...", "Call a `method` on the `AnimationLibrary`.", Flags.asArray(true)),
 	"/animation/data/list": CommandDescription.new(listAnimationDataLibrary, "", "Get a list of existing `Animation` data objects."),
 }
 
@@ -984,15 +986,20 @@ func callAnimationPlayerMethod(args) -> Status:
 		Log.debug("TODO: call %s.animationPlayer.%s" % [actor.name,method])
 	return Status.ok()
 
-func callAnimationDataMethod(args) -> Status:
+func createAnimationData(args: Array) -> Status:
+	var name = args[0]
+	var animation = Animation.new()
+	animationDataLibrary.add_animation(name, animation)
+	listAnimationDataLibrary()
+	return Status.ok()
+
+func removeAnimationData(args: Array) -> Status:
+	animationDataLibrary.remove_animation(args[0])
+	return Status.ok()
+
+func callAnimationDataMethod(args: Array) -> Status:
 	Log.debug("Animation* method: %s" % [args])
 	var method = _cmdToGdScript(args[0])
-	if animationDataLibrary.has_method(args[0]):
-		var result = argsToMethodTypes(animationDataLibrary, method, args.slice(1))
-		if result.isError(): return result
-		args = result.value
-		animationDataLibrary.callv(method, args)
-		return Status.ok()
 	var animationDataName = args[0]
 	var animationData = animationDataLibrary.get_animation(animationDataName)
 	if animationData == null: 
@@ -1005,8 +1012,14 @@ func callAnimationDataMethod(args) -> Status:
 	Log.debug("Track count %s: %d" % [animationDataName, animationData.get_track_count()])
 	return Status.ok()
 
-func addAnimationData(name: String) -> Status:
-	animationDataLibrary.add_animation(name, Animation.new())
+func callAnimationDataLibraryMethod(args: Array) -> Status:
+	Log.debug("Animation Library method")
+	var method = _cmdToGdScript(args[0])
+	if not animationDataLibrary.has_method(method): return Status.error("Method for AnimationLibrary not found: %s" % [method])
+	var result = argsToMethodTypes(animationDataLibrary, method, args.slice(1))
+	if result.isError(): return result
+	args = result.value
+	animationDataLibrary.callv(method, args)
 	return Status.ok()
 
 func listAnimationDataLibrary() -> Status:

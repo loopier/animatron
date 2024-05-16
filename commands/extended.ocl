@@ -369,21 +369,67 @@
 # _Example:_ `/offset lola 50 -30`
 #
 /def /offset actor:s x:i y:i
-	/animation/property /offset $actor $x $y
+     /animation/property /offset $actor $x $y
 
 # Set the `actor`'s animation drawing offset on the `x` axis.
 #
 # _Example:_ `/offset/x lola 50`
 #
 /def /offset/x actor:s pixels:i
-	/animation/property /offset/x $actor $x
+     /animation/property /offset/x $actor $x
 
 # Set the `actor`'s animation drawing offset on the `y` axis.
 #
 # _Example:_ `/offset/y lola -30`
 #
 /def /offset/y actor:s pixels:i
-	/animation/property /offset/y $actor $y
+     /animation/property /offset/y $actor $y
+
+#################################################################################
+# == animation data
+#################################################################################
+
+
+# WARNING: Commands in this section are highly experimental. Proceed with caution.
+#
+# Commands in this section describe ways to create and manipulate animation data,
+# which can be used to animate anything in the engine. Animations are divided into
+# tracks and each track must be linked to an actor. The state of that actor can be
+# changed through time, by adding timed keys (events) to the track.
+#
+
+# Create an animation data object to animate values.
+#
+# _Example:_ `/animation/data/value myanimationdata`
+#
+/def /animation/data/value name:s
+     /animation/data/create $name
+     /animation/data/add/track $name 0
+
+
+# Create an animation data object to animate methods.
+#
+# _Example:_ `/animation/data/method myanimationdata`
+#
+/def /animation/data/method name:s
+     /animation/data/create $name
+     /animation/data/add/track $name 5
+
+# Create an animation data object to animate other animation data objects.
+#
+# _Example:_ `/animation/data/animation myanimationdata`
+#
+/def /animation/data/animation name:s
+     /animation/data/create $name
+     /animation/data/add/track $name 8
+
+# Add a track of the given `type` to the animation data object identified by `name`.
+# Track type numbers and details can be found in https://docs.godotengine.org/en/stable/classes/class_animation.html#enum-animation-tracktype[Godot's docs].
+#
+# _Example:_ `/animation/data/add/track myanimationdata 0`
+#
+/def /animation/data/add/track name:s type:i
+     /animation/data/method /add/track $name $type
 
 #################################################################################
 # == text label

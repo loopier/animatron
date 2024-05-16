@@ -333,6 +333,43 @@ _Example:_ `/offset/y lola -30`
 
 
 
+== animation data
+
+=== /animation/data/value name:s
+WARNING: Commands in this section are highly experimental. Proceed with caution.
+
+Commands in this section describe ways to create and manipulate animation data,
+which can be used to animate anything in the engine. Animations are divided into
+tracks and each track must be linked to an actor. The state of that actor can be
+changed through time, by adding timed keys (events) to the track.
+
+
+Create an animation data object to animate values.
+
+_Example:_ `/animation/data/value myanimationdata`
+
+
+=== /animation/data/method name:s
+Create an animation data object to animate methods.
+
+_Example:_ `/animation/data/method myanimationdata`
+
+
+=== /animation/data/animation name:s
+Create an animation data object to animate other animation data objects.
+
+_Example:_ `/animation/data/animation myanimationdata`
+
+
+=== /animation/data/add/track name:s type:i
+Add a track of the given `type` to the animation data object identified by `name`.
+Track type numbers and details can be found in https://docs.godotengine.org/en/stable/classes/class_animation.htmlenum-animation-tracktype[Godot's docs].
+
+_Example:_ `/animation/data/add/track myanimationdata 0`
+
+
+
+
 == text label
 
 === /type actor:s text:...
