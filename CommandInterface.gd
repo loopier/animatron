@@ -786,9 +786,9 @@ func setActorProperty(args: Array) -> Status:
 	for actor in result.value:
 		result = getArgsAsPropertyType(actor, property, args.slice(2))
 		if result.isError(): return result
-		property = result.value.propertyName
+		var actorProperty = result.value.propertyName
 		var value = result.value.propertyValue
-		actor.set(property, value)
+		actor.set(actorProperty, value)
 	return Status.ok()
 
 func setActorRelativeProperty(args: Array) -> Status:
