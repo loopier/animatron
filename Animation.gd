@@ -55,3 +55,13 @@ func set_end_frame(frame: int):
 
 func set_loop_mode(loopMode: int):
 	self.loop_mode = loopMode
+
+func next_frame():
+	var numFrames = end_frame - start_frame
+	var nextFrame = (frame + 1) % numFrames + start_frame
+	self.set_frame(nextFrame)
+
+func previous_frame():
+	var numFrames = end_frame - start_frame
+	var newFrame = frame - 1 if frame > 0 else end_frame
+	self.set_frame(newFrame)

@@ -156,14 +156,14 @@
 /def /rotate actor:s degrees:f
      /property/relative /rotation/degrees $actor $degrees
 
-# Set the `actor`'s absolute `size` relative to the normal size (on both axis). `1` is normal size; `0.5` is half the size; `2` is twice the size.
+# Set the `actor` 's absolute `size` relative to the normal size (on both axis). `1` is normal size; `0.5` is half the size; `2` is twice the size.
 #
 # _Example:_ `/size lola 1.5`
 #
 /def /size actor:s size:f
      /property /scale $actor $size $size
 
-# Set the `actor`'s absolute `size` relative to the normal size with different values on the `x` and `y` axis.
+# Set the `actor` 's absolute `size` relative to the normal size with different values on the `x` and `y` axis.
 #
 # _See:_ <<_size_actors_sizef,/size>>
 #
@@ -172,14 +172,14 @@
 /def /size/xy actor:s x:f y:f
      /property /scale $actor $x $y
 
-# Set the `actor`'s absolute `size` relative to the normal size on the `x` axis.
+# Set the `actor` 's absolute `size` relative to the normal size on the `x` axis.
 #
 # _Example:_ `/size/x lola 1.5 0.7`
 #
 /def /size/x actor:s x:f
      /property /scale/x $actor $x
 
-# Set the `actor`'s absolute `size` relative to the normal size on the `y` axis.
+# Set the `actor` 's absolute `size` relative to the normal size on the `y` axis.
 #
 # _Example:_ `/size/y lola 1.5 0.7`
 #
@@ -236,21 +236,21 @@
 # == color
 #################################################################################
 
-# Set the `actor`'s color to a `value` of red (between 0 and 1).
+# Set the `actor` 's color to a `value` of red (between 0 and 1).
 #
 # _Example:_ `/color/r lola 0.5`
 #
 /def /color/r actor:s value:f
      /color $actor $value 0 0
 
-# Set the `actor`'s color to a `value` of green (between 0 and 1).
+# Set the `actor` 's color to a `value` of green (between 0 and 1).
 #
 # _Example:_ `/color/g lola 0.5`
 #
 /def /color/g actor:s value:f
      /color $actor 0 $value 0
 
-# Set the `actor`'s color to a `value` of blue (between 0 and 1).
+# Set the `actor` 's color to a `value` of blue (between 0 and 1).
 #
 # _Example:_ `/color/b lola 0.5`
 #
@@ -261,21 +261,21 @@
 # == animation
 #################################################################################
 
-# Play the `actor`'s animation
+# Play the `actor` 's animation
 #
 # _Example:_ `/play lola`
 #
 /def /play actor:s
      /animation/method /play $actor
 
-# Play the `actor`'s animation backwards
+# Play the `actor` 's animation backwards
 #
 # _Example:_ `/play lola`
 #
 /def /backwards actor:s
      /animation/method /play/backwards $actor
 
-# Stop the `actor`'s animation
+# Stop the `actor` 's animation
 #
 # _Example:_ `/play lola`
 #
@@ -290,7 +290,7 @@
      /start/frame $actor $start
      /end/frame $actor $end
 
-# Change the `actor`'s `animation`.
+# Change the `actor` 's `animation`.
 #
 # _Example:_ `/animation lola letter-a`
 #
@@ -301,28 +301,42 @@
 /def /anim actor:s animation:s
      /animation $actor $animation
 
-# Set the `actor`'s animation `speed` (1 = normal speed, 2 = 2 x speed).
+# Set the `actor` 's animation `speed` (1 = normal speed, 2 = 2 x speed).
 #
 # _Example:_ `/speed lola 2.1`
 #
 /def /speed actor:s speed:f
      /animation/method /set/speed/scale $actor $speed
 
-# Set the `actor`'s current `frame`. If the value of the `frame` is grater than the number of frames in the movie, it will wrap around.
+# Set the `actor` 's current `frame`. If the value of the `frame` is grater than the number of frames in the movie, it will wrap around.
 #
 # _Example:_ `/frame lola 4`
 #
 /def /frame actor:s frame:i
      /animation/property /frame $actor $frame
 
-# Set the first `frame` of the loop in `actor`'s animation. Defaults to 0.
+# Advance `actor` 's animation by one frame.
+#
+# _Example:_ `/next/frame lola 2`
+#
+/def /next/frame actor:s
+     /animation/method /next/frame $actor
+
+# Move `actor` 's animation one frame backwards.
+#
+# _Example:_ `/prev/frame lola 2`
+#
+/def /prev/frame actor:s
+     /animation/method /previous/frame $actor
+
+# Set the first `frame` of the loop in `actor` 's animation. Defaults to 0.
 #
 # _Example:_ `/start/frame lola 2`
 #
 /def /start/frame actor:s frame:f
      /animation/property /start/frame $actor $frame
 
-# Set the last `frame` of the loop in `actor`'s animation.
+# Set the last `frame` of the loop in `actor` 's animation.
 # Defaults to number of frames of the animation.
 #
 # _Example:_ `/end/frame lola 6`
@@ -330,7 +344,7 @@
 /def /end/frame actor:s frame:f
      /animation/property /end/frame $actor $frame
 
-# Loop the `actor`'s animation.
+# Loop the `actor` 's animation.
 #
 # _Example:_ `/loop lola`
 #
@@ -341,7 +355,7 @@
      /animation/frames/method /set/animation/loop $actor 1
      /animation/method /set/loop/mode $actor 0
 
-# Don't loop the `actor`'s animation. Plays the animation stopping at the last frame.
+# Don't loop the `actor` 's animation. Plays the animation stopping at the last frame.
 #
 # _Example:_ `/noloop lola`
 #
@@ -364,21 +378,21 @@
 /def /pingpong actor:s
      /animation/method /set/loop/mode $actor 2
 
-# Set the `actor`'s animation drawing offset (in pixels) relative to the anchor point.
+# Set the `actor` 's animation drawing offset (in pixels) relative to the anchor point.
 #
 # _Example:_ `/offset lola 50 -30`
 #
 /def /offset actor:s x:i y:i
      /animation/property /offset $actor $x $y
 
-# Set the `actor`'s animation drawing offset on the `x` axis.
+# Set the `actor` 's animation drawing offset on the `x` axis.
 #
 # _Example:_ `/offset/x lola 50`
 #
 /def /offset/x actor:s pixels:i
      /animation/property /offset/x $actor $x
 
-# Set the `actor`'s animation drawing offset on the `y` axis.
+# Set the `actor` 's animation drawing offset on the `y` axis.
 #
 # _Example:_ `/offset/y lola -30`
 #
