@@ -22,10 +22,11 @@ var metanode := preload("res://meta_node.tscn")
 @onready var Routine := preload("res://RoutineNode.tscn")
 var assetHelpers := preload("res://asset_helpers.gd").new()
 @onready var editor: CodeEdit
+@onready var textContainer: Node
+@onready var postWindow: Node
 @onready var openFileDialog: FileDialog
 @onready var saveFileDialog: FileDialog
 @onready var loadPresetDialog: FileDialog
-@onready var postWindow: Node
 @onready var actorsNode: Node
 @onready var routinesNode: Node
 @onready var stateMachines: Dictionary
@@ -87,6 +88,7 @@ var coreCommands: Dictionary = {
 	# for (loop)
 	"/for": CommandDescription.new(forCommand, "varName:s iterations:i cmd:s", "Iterate `iterations` times over `varName`, substituting the current iteration value in each call to `cmd`.", Flags.asArray(true)),
 	# editor
+	"/editor/toggle": CommandDescription.new(toggleEditor, "", "Toggle editor and post window visibility."),
 	"/editor/append": CommandDescription.new(appendTextToEditor, "text:...", "Append TEXT to the last line of the editor.", Flags.asArray(true)),
 	"/editor/clear": CommandDescription.new(clearEditor, "", "Delete all text from the editor."),
 	"/editor/open": CommandDescription.new(openTextFile, "", "Open a file dialog and append the selected file contents at the end."),
@@ -308,6 +310,10 @@ func callWindowMethod(args: Array) -> Status:
 	if result.isError(): return result
 	var typedArgs = result.value
 	window.callv(method, typedArgs)
+	return Status.ok()
+
+func toggleEditor() -> Status:
+	textContainer.set_visible(not(textContainer.is_visible()))
 	return Status.ok()
 
 func appendTextToEditor(args: Array) -> Status:
@@ -952,7 +958,7 @@ func callAnimationMethod(args: Array) -> Status:
 		if typeof(args) == TYPE_ARRAY and len(args) == 0:
 			result = animation.call(method)
 		else:
-			args = result.value
+			args = result.value if typeof(args) == typeof(Status.ok()) else result
 			result = animation.callv(method, args)
 	#return Status.ok(result, "Called %s.%s.%s(%s): %s" % [actor.get_name(), animation.get_animation(), method, args, result])
 	return Status.ok()

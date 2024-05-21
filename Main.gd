@@ -91,6 +91,7 @@ func _ready():
 	cmdInterface.animationDataLibrary = animationDataLibrary
 	cmdInterface.actorsNode = $Actors
 	cmdInterface.editor = $HSplitContainer/CodeEdit
+	cmdInterface.textContainer = $HSplitContainer
 	cmdInterface.postWindow = $HSplitContainer/PostWindow
 	cmdInterface.routinesNode = $Routines
 	cmdInterface.stateMachines = Dictionary(stateMachines)
@@ -134,7 +135,8 @@ func _process(_delta):
 
 func _input(event):
 	if event.is_action_pressed("toggle_editor", true):
-		$HSplitContainer.set_visible(not($HSplitContainer.is_visible()))
+		#$HSplitContainer.set_visible(not($HSplitContainer.is_visible()))
+		evalCommand(["/editor/toggle"], "")
 		_ignoreEvent()
 	if event.is_action_pressed("clear_post", true):
 		postWindow.clear()
