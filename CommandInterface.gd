@@ -162,6 +162,7 @@ var defCommands := {}
 
 # Called when the node enters the scene tree for the first time.
 func _ready():
+	coreCommands.make_read_only()
 	oscSender = OscReceiver.new()
 	thread = Thread.new()
 	mutex = Mutex.new()

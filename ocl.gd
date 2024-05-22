@@ -1,6 +1,9 @@
 class_name OpenControlLanguage
 
-var rnd := RandomNumberGenerator.new()
+var variableRegex := RegEx.create_from_string("\\$(\\w+)")
+var fullExpressionRegex := RegEx.create_from_string("^\\{([^{}]*)\\}$")
+var expressionRegex := RegEx.create_from_string("\\{([^{}]*)\\}")
+var spacesRegex := RegEx.create_from_string("\\s+")
 
 ## Example: [code]/for i 4 /post bla_$i or $i[/code]
 func _for(args: Array) -> Array:
@@ -43,12 +46,10 @@ func _def(def: Dictionary, values: Array) -> Array:
 	return cmdArray
 
 func _resolveVariables(arg, variables: Dictionary, skipUnknown: bool) -> Status:
-	var regex := RegEx.new()
-	regex.compile("\\$(\\w+)")
 	var offset := 0
 	while typeof(arg) == TYPE_STRING:
 		var str : String = arg
-		var match := regex.search(str, offset)
+		var match := variableRegex.search(str, offset)
 		if not match: break
 		var varName := match.get_string(1)
 		if variables.has(varName):
@@ -149,19 +150,15 @@ func _evalExpr(exprStr: String, vars: PackedStringArray, varValues: Array) -> St
 func _getExpression(str) -> String:
 	if typeof(str) != TYPE_STRING:
 		return ""
-	var regex := RegEx.new()
-	regex.compile("^\\{([^{}]*)\\}$")
-	var result := regex.search(str)
+	var result := fullExpressionRegex.search(str)
 	return result.strings[1].strip_edges() if result else ""
 
 ## In a string with expressions (e.g. "some {5 + 7    } stuff"),
 ## remove the spaces within the expression ("some {5+7} stuff").
 func _removeExpressionSpaces(str: String) -> String:
-	var regex := RegEx.new()
-	regex.compile("\\{([^{}]*)\\}")
 	var removedStr := ""
 	var lastIndex := 0
-	for result in regex.search_all(str):
+	for result in expressionRegex.search_all(str):
 		Log.debug("result %d to %d: '%s'" % [result.get_start(), result.get_end(), result.get_string()])
 		removedStr += str.substr(lastIndex, result.get_start() - lastIndex)
 		removedStr += _removeSpaces(result.get_string())
@@ -170,6 +167,4 @@ func _removeExpressionSpaces(str: String) -> String:
 	return removedStr
 
 func _removeSpaces(str: String) -> String:
-	var regex := RegEx.new()
-	regex.compile("\\s+")
-	return regex.sub(str, "", true)
+	return spacesRegex.sub(str, "", true)
