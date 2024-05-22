@@ -193,7 +193,7 @@ func evalCommand(cmdArray: Array, sender: String) -> Status:
 	
 	# post and reply result
 	_on_command_finished(result, sender)
-	if result.msg.length() > 0: post(result.msg)
+	#if result.msg.length() > 0: post(result.msg)
 	return result
 
 ## Executes a [param command] described in a [CommandDescription], with the given [param args].
