@@ -7,7 +7,7 @@ var oscSender: OscReceiver
 static var defaultConfigPath := "res://config/default.ocl"
 static var configPath := "user://config/config.ocl"
 var metanode := preload("res://meta_node.tscn")
-@onready var actors := $Actors
+@onready var actors := $SubViewport/Actors
 @onready var cmdInterface : CommandInterface = $CommandInterface
 @onready var lastSender : String = "localhost"
 @onready var Routine := preload("res://RoutineNode.tscn")
@@ -89,7 +89,7 @@ func _ready():
 	animationDataLibrary = AnimationLibrary.new()
 	cmdInterface.animationsLibrary = animationsLibrary
 	cmdInterface.animationDataLibrary = animationDataLibrary
-	cmdInterface.actorsNode = $Actors
+	cmdInterface.actorsNode = $SubViewport/Actors
 	cmdInterface.editor = $HSplitContainer/CodeEdit
 	cmdInterface.textContainer = $HSplitContainer
 	cmdInterface.postWindow = $HSplitContainer/PostWindow
