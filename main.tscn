@@ -1,6 +1,7 @@
-[gd_scene load_steps=10 format=3 uid="uid://q56taxhy2mot"]
+[gd_scene load_steps=11 format=3 uid="uid://q56taxhy2mot"]
 
 [ext_resource type="Script" path="res://Main.gd" id="1_70ykf"]
+[ext_resource type="Script" path="res://SubViewport.gd" id="2_rdrjh"]
 [ext_resource type="Script" path="res://CommandInterface.gd" id="2_xp2d0"]
 [ext_resource type="Script" path="res://Midi.gd" id="3_68liq"]
 [ext_resource type="Theme" uid="uid://cccwlwk873tqt" path="res://styles/code_edit.theme" id="3_fotw2"]
@@ -23,6 +24,7 @@ script = ExtResource("1_70ykf")
 [node name="SubViewport" type="SubViewport" parent="."]
 disable_3d = true
 size = Vector2i(1920, 1080)
+script = ExtResource("2_rdrjh")
 
 [node name="Actors" type="Node" parent="SubViewport"]
 
