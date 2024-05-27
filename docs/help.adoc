@@ -49,6 +49,12 @@ Delete any existing `actor`.
 _Example:_ `/delete lola`
 
 
+=== /clear actor:s
+Delete any existing `actor`.
+
+_Example:_ `/delete lola`
+
+
 === /reload animation:s
 Reload `animation` frames from disk.
 
@@ -398,6 +404,14 @@ _Example:_ `/type/clear lola`
 
 _Example:_ `/type lola` (note there's no second argument)
 
+
+=== /text/visible/ratio actor:s ratio:f
+Set the fraction of characters to display, relative to the total number of characters.
+`1.0` displays all characters. `0.5` displays half the characters.
+
+_Example:_ `/text/visible/ratio lola 0.5`
+
+See also: <<_type_actors_text,/type>>
 
 
 
