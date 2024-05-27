@@ -1,0 +1,878 @@
+:toc: left
+= Animatron
+
+
+
+= info
+
+=== /commands
+Lists all available commands.
+
+_Example:_ `/commands`
+
+
+=== /assets
+List all available animation clips that are on the current assets path.
+
+This list includes all clips that are on the disk, no matter if they are loaded or not.
+
+See also: <<_animations,/animations>>
+
+_Example:_ `/assets`
+
+
+=== /animations
+List all animations that are loaded to memory.
+
+_Example:_ `/animations`
+
+
+=== /actors
+List all actors that have been created.
+
+_Example:_ `/actors`
+
+
+
+
+= actors
+
+=== /free actor:s
+Delete any existing `actor`.
+
+_Example:_ `/free lola`
+
+
+=== /delete actor:s
+Delete any existing `actor`.
+
+_Example:_ `/delete lola`
+
+
+=== /reload animation:s
+Reload `animation` frames from disk.
+
+_Example:_ `/reload mama`
+
+
+
+
+== transform
+
+=== /position actor:s x:f y:f
+Set the `x` and `y` coordinates (in pixels) of the `actor`.
+
+_Example:_ `/position lola 500 500`
+
+
+=== /pos actor:s x:f y:f
+See <<_position_actors_xf_yf,/position>>
+
+
+=== /position/x actor:s x:f
+Set the `x` coordinate (in pixels) of the `actor`.
+
+_Example:_ `/position/x lola 500`
+
+
+=== /pos/x actor:s value:f
+See <<_positionx_actors_xf,/position/x>>
+
+_Example:_ `/pos/x mama 500`
+
+
+=== /x actor:s value:f
+See <<_positionx_actors_xf,/position/x>>
+
+_Example:_ `/x mama 500`
+
+
+=== /position/y actor:s y:f
+Set the `y` coordinate (in pixels) of the `actor`.
+
+_Example:_ `/position/x lola 500`
+
+
+=== /pos/y actor:s value:f
+Set the `y` coordinate (in pixels) of the `actor`.
+
+_Example:_ `/pos/y mama 500`
+
+
+=== /y actor:s value:f
+Set the `y` coordinate (in pixels) of the `actor`.
+
+_Example:_ `/y mama 500`
+
+
+=== /move actor:s x:f y:f
+Move `actor` an amount of pixels relative to the current position in both `x` and `y` axis.
+
+_Example:_ `/move lola 100 100`
+
+
+=== /move/x actor:s x:f
+Move `actor` an amount of pixels relative to the current position in the `x` axis.
+
+_Example:_ `/move/x lola 100`
+
+
+=== /move/y actor:s y:f
+Move `actor` an amount of pixels relative to the current position in the `y` axis.
+
+_Example:_ `/move/y lola 100`
+
+
+=== /angle actor:s degrees:f
+Set the absolute rotation of the `actor` in `degrees`.
+
+_Example:_ `/angle lola 45`
+
+
+=== /rotate actor:s degrees:f
+Rotate the `actor` some `degrees` relative to the current angle.
+
+_Example:_ `/rotate lola 10`
+
+
+=== /size actor:s size:f
+Set the `actor` 's absolute `size` relative to the normal size (on both axis). `1` is normal size; `0.5` is half the size; `2` is twice the size.
+
+_Example:_ `/size lola 1.5`
+
+
+=== /size/xy actor:s x:f y:f
+Set the `actor` 's absolute `size` relative to the normal size with different values on the `x` and `y` axis.
+
+_See:_ <<_size_actors_sizef,/size>>
+
+_Example:_ `/size/xy lola 1.5 0.7`
+
+
+=== /size/x actor:s x:f
+Set the `actor` 's absolute `size` relative to the normal size on the `x` axis.
+
+_Example:_ `/size/x lola 1.5 0.7`
+
+
+=== /size/y actor:s y:f
+Set the `actor` 's absolute `size` relative to the normal size on the `y` axis.
+
+_Example:_ `/size/y lola 1.5 0.7`
+
+
+=== /scale actor:s scale:f
+`scale` the `actor` relative to the current size equally on both axis.
+
+_Example:_ `/scale lola 1.5`
+
+
+=== /scale/xy actor:s x:f y:f
+`scale` the `actor` relative to the current size, with different values for each axis `x` and `y`
+
+_Example:_ `/scale/xy lola 1.5 0.5`
+
+
+=== /scale/x actor:s x:f
+`scale` the `actor` relative to the current size on the `x` axis
+
+_Example:_ `/scale/x lola 1.5`
+
+
+=== /scale/y actor:s y:f
+`scale` the `actor` relative to the current size on the `y` axis
+
+_Example:_ `/scale/y lola 1.5`
+
+
+
+
+== visibility
+
+=== /show actor:s
+Make the `actor` visible
+
+_Example:_ `/show lola`
+
+
+=== /hide actor:s
+Make the `actor` invisible
+
+_Example:_ `/hide lola`
+
+
+
+
+== color
+
+=== /color/r actor:s value:f
+Set the `actor` 's color to a `value` of red (between 0 and 1).
+
+_Example:_ `/color/r lola 0.5`
+
+
+=== /color/g actor:s value:f
+Set the `actor` 's color to a `value` of green (between 0 and 1).
+
+_Example:_ `/color/g lola 0.5`
+
+
+=== /color/b actor:s value:f
+Set the `actor` 's color to a `value` of blue (between 0 and 1).
+
+_Example:_ `/color/b lola 0.5`
+
+
+
+
+== animation
+
+=== /play actor:s
+Play the `actor` 's animation
+
+_Example:_ `/play lola`
+
+
+=== /backwards actor:s
+Play the `actor` 's animation backwards
+
+_Example:_ `/play lola`
+
+
+=== /stop actor:s
+Stop the `actor` 's animation
+
+_Example:_ `/play lola`
+
+
+=== /play/range actor:s start:i end:i
+Play the animation from `start` to `end` frames.
+
+_Example:_ `/play lola`
+
+
+=== /animation actor:s animation:s
+Change the `actor` 's `animation`.
+
+_Example:_ `/animation lola letter-a`
+
+
+=== /anim actor:s animation:s
+See <<_animation,/animation>>
+
+=== /speed actor:s speed:f
+Set the `actor` 's animation `speed` (1 = normal speed, 2 = 2 x speed).
+
+_Example:_ `/speed lola 2.1`
+
+
+=== /frame actor:s frame:i
+Set the `actor` 's current `frame`. If the value of the `frame` is grater than the number of frames in the movie, it will wrap around.
+
+_Example:_ `/frame lola 4`
+
+
+=== /next/frame actor:s
+Advance `actor` 's animation by one frame.
+
+_Example:_ `/next/frame lola 2`
+
+
+=== /prev/frame actor:s
+Move `actor` 's animation one frame backwards.
+
+_Example:_ `/prev/frame lola 2`
+
+
+=== /start/frame actor:s frame:f
+Set the first `frame` of the loop in `actor` 's animation. Defaults to 0.
+
+_Example:_ `/start/frame lola 2`
+
+
+=== /end/frame actor:s frame:f
+Set the last `frame` of the loop in `actor` 's animation.
+Defaults to number of frames of the animation.
+
+_Example:_ `/end/frame lola 6`
+
+
+=== /loop actor:s
+Loop the `actor` 's animation.
+
+_Example:_ `/loop lola`
+
+See also: <<_noloop,/noloop>>, <<_pingpong,/pingpong>>
+
+
+=== /noloop actor:s
+Don't loop the `actor` 's animation. Plays the animation stopping at the last frame.
+
+_Example:_ `/noloop lola`
+
+See also: <<_loop,/loop>>, <<_pingpong,/pingpong>>
+
+
+=== /pingpong actor:s
+Make the loop go back and forth.
+
+_Example:_ `/pingpong lola`
+
+See also: <<_loop,/loop>>, <<_noloop,/noloop>>
+
+NOTE: (for devs) This is inconsistent with <<_loop,/loop>> <<_noloop,/noloop>>, as they use
+a built-in method, while this had to be custom-coded in `Animation.gd` because
+there's no such thing for `AnimatedSprite2D`.
+
+
+=== /offset actor:s x:i y:i
+Set the `actor` 's animation drawing offset (in pixels) relative to the anchor point.
+
+_Example:_ `/offset lola 50 -30`
+
+
+=== /offset/x actor:s pixels:i
+Set the `actor` 's animation drawing offset on the `x` axis.
+
+_Example:_ `/offset/x lola 50`
+
+
+=== /offset/y actor:s pixels:i
+Set the `actor` 's animation drawing offset on the `y` axis.
+
+_Example:_ `/offset/y lola -30`
+
+
+
+
+== animation data
+
+=== /animation/data/value name:s
+WARNING: Commands in this section are highly experimental. Proceed with caution.
+
+Commands in this section describe ways to create and manipulate animation data,
+which can be used to animate anything in the engine. Animations are divided into
+tracks and each track must be linked to an actor. The state of that actor can be
+changed through time, by adding timed keys (events) to the track.
+
+
+Create an animation data object to animate values.
+
+_Example:_ `/animation/data/value myanimationdata`
+
+
+=== /animation/data/method name:s
+Create an animation data object to animate methods.
+
+_Example:_ `/animation/data/method myanimationdata`
+
+
+=== /animation/data/animation name:s
+Create an animation data object to animate other animation data objects.
+
+_Example:_ `/animation/data/animation myanimationdata`
+
+
+=== /animation/data/add/track name:s type:i
+Add a track of the given `type` to the animation data object identified by `name`.
+Track type numbers and details can be found in https://docs.godotengine.org/en/stable/classes/class_animation.htmlenum-animation-tracktype[Godot's docs].
+
+_Example:_ `/animation/data/add/track myanimationdata 0`
+
+
+
+
+== text label
+
+=== /type actor:s text:...
+Write text on the actor.
+
+_Example:_ `/type lola alo`
+
+
+=== /type/clear actor:s
+Clear text on the actor.
+Text can also be cleared with just `/type actor`, without `text` argument.
+
+_Example:_ `/type/clear lola`
+
+_Example:_ `/type lola` (note there's no second argument)
+
+
+
+
+== experimental
+
+WARNING: Commands in this section are highly experimental. Proceed with caution.
+
+=== /comic actor:s animation:s
+Creates an `actor` with a pair of 2 `animation` 's.
+
+This allows to create actors with separate animations for line and fill colors.
+The `*-ln` actor is a child of the main (fill) actor.
+
+Suppose we want to create an animation named `bla` with separate fill and line colors. We would have to create 2 directories: one holding the line (`bla-ln`) art and the other the fill (`bla-fl`).
+
+_Example:_ `/comic lola bla`
+
+
+
+
+= app
+
+=== /preset name:s
+Load a preset from a directory `name` under `user://presets/`.
+
+_Example:_ `/preset mycommands/somecommands.ocl`
+
+See also: <<_preset_load,/preset/load>>
+
+=== /preset/load
+Load a preset using the file browser.
+
+_Example:_ `/preset mycommands/somecommands.ocl`
+
+
+=== /animatron/demo
+Load the animatron demo.
+
+_Example:_ /animatron/demo
+
+
+
+
+== editor
+
+=== /editor/font/size pixels:i
+Set the editor's font size in `pixels`.
+
+_Example:_ `/editor/font/size 60`
+
+
+
+
+== window
+
+=== /window
+See:
+<<_windowmode_modi,/window/mode>>
+<<_windowfullscreen,/window/fullscreen>>
+<<_fullscreen,/fullscreen>>
+<<_windowwindowed,/window/windowed>>
+<<_windowed,/windowed>>
+
+=== /window/mode mode:i
+Set window mode.
+
+_Example:_ `/window/mode 3`
+
+0: windowed
+1: minimized
+2: maximized
+3: fullscreen
+4: exclusive fullscreen
+
+See also <<_fullscreen,/fullscreen>>, <<_window,/window>>
+
+=== /window/fullscreen
+Set window mode to fullscreen.
+
+_Example:_ `/window/fullscreen`
+
+See also <<_windowmode_modi,/window/mode>>
+
+=== /fullscreen
+See <<_windowfullscreen,/window/fullscreen>>
+
+=== /window/windowed
+Set window mode to windowed.
+
+_Example:_ `/window/windowed`
+
+See also <<_windowmode_modi,/window/mode>>
+
+=== /windowed
+See <<_windowwindowed,/window/windowed>>
+
+
+
+== osc
+
+=== /osc msg:s
+Send an OSC `msg` to a remote server.
+
+See
+<<_oscsend_msgs,/osc/send>>
+<<_oscremote_ips_porti,/osc/remote>>
+
+= core
+=== /actors/list 
+
+Get list of current actor instances. Returns /list/actors/reply OSC message.
+
+=== /animation/data/create name:s
+
+Create a new `Animation` data object and add it to the library. No tracks are created, they need to be created with a different command.
+
+=== /animation/data/library/method method:s args:...
+
+Call a `method` on the `AnimationLibrary`.
+
+=== /animation/data/list 
+
+Get a list of existing `Animation` data objects.
+
+=== /animation/data/method method:s args:...
+
+Call a `method` related to `Animation` data. NOTE: this is not image sequences, it's data used to modify properties over time, like position or angle.
+
+=== /animation/data/remove name:s
+
+Remove the `Animation` data object from the library.
+
+=== /animation/frames/method method:s actor:s args:...
+
+Call a METHOD on the ACTOR's animation with some ARGS.
+
+=== /animation/method method:s actor:s args:...
+
+Call a METHOD on the ACTOR's animation with some ARGS.
+
+=== /animation/player/method actor:s method:s args:...
+
+Call the `actor`'s `AnimationPlayer` `method` with given `args`.
+
+=== /animation/property property:s actor:s value:...
+
+Change the ACTOR's ANIMATION GDScript PROPERTY. Slashes ('/') will be replaced for underscores '_'. Leading slash is optional.
+
+Usage: `/animation/property /rotation/degrees target 75`
+
+=== /animations/list 
+
+Get the list of available (loaded) animations.
+
+=== /assets/list 
+
+Get the list of available (unloaded) assets. Assets must be loaded as animations in order to create actor instances.
+
+=== /assets/path path:s
+
+Set the path for the parent directory of the assets.
+
+=== /behind actor:s target:s
+
+Draw the ACTOR behind the TARGET.
+
+=== /bottom actor:s
+
+Draw the ACTOR behind everything else.
+
+=== /center actor:s
+
+Set the ACTOR to the center of the screen.
+
+=== /children/list parent:s
+
+List all PARENT's children actors.
+
+=== /color actor:s r:f g:f b:f
+
+Add an RGB colour to the ACTOR. R, G and B should be in the 0-1 range (can be negative to subtract colour). Set to black (0,0,0) to restore its original colour.
+
+=== /commands/list 
+
+Get list of available commands.
+
+=== /commands/load path:s
+
+Load a custom command definitions file, which should have the format described below.
+
+=== /create actor:s animation:s
+
+Create an ACTOR that plays ANIMATION.
+
+=== /def cmdName:s [args:v] subcommands:c
+
+Define a custom OSC command that is a list of other OSC commands. This may be recursive, so each SUBCOMMAND may reference one of the built-in commands, or another custom-defined command. Another way to define custom commands is via the file commands/init.osc. The CMDNAME string (first argument) may include argument names (ARG1 ... ARGN), which may be referenced as SUBCOMMAND arguments using $ARG1 ... $ARGN. Example: /def "/addsel actor anim" "/create $actor $anim" "/select $actor". 
+
+=== /editor/append text:...
+
+Append TEXT to the last line of the editor.
+
+=== /editor/clear 
+
+Delete all text from the editor.
+
+=== /editor/open 
+
+Open a file dialog and append the selected file contents at the end.
+
+=== /editor/open/from path:s
+
+Load code from PATH and append it to the end.
+
+=== /editor/property property:s value:...
+
+Change the editor's font GDScript PROPERTY. Slashes ('/') will be replaced for underscores '_'. Leading slash is optional.
+
+Usage: `/editor/property /font/size 32`
+
+=== /editor/save 
+
+Save the code using a file dialog.
+
+=== /editor/save/to path:s
+
+Save the code to PATH.
+
+=== /editor/toggle 
+
+Toggle editor and post window visibility.
+
+=== /flip/h actor:s
+
+Flip ACTOR horizontally.
+
+=== /flip/v actor:s
+
+Flip/ ACTOR vertically.
+
+=== /for varName:s iterations:i cmd:s
+
+Iterate `iterations` times over `varName`, substituting the current iteration value in each call to `cmd`.
+
+=== /front actor:s target:s
+
+Draw the ACTOR in front of the TARGET.
+
+=== /get variable:s
+
+Get the value of a VARIABLE.
+
+=== /help cmd:s
+
+Get documentation about CMD.
+
+=== /load animation:s
+
+Load an ANIMATION asset from disk. It will create an animation with the same name as the asset. Wildcards are supported, so several animations can be loaded at once. See also: `/assets/list`.
+
+=== /log/level level:s
+
+Set the log level to either 'fatal', 'error', 'warn', 'debug' or 'verbose'
+
+=== /method method:s actor:s args:...
+
+Generic command to call an ACTOR's METHOD with some ARGS.
+
+=== /midi/cc channel:i cmd:s
+
+Map the control value to a CMD. The last 2 CMD arguments should be MIN and MAX, in that order. Example: /midi/cc 0 /position/x target 0 1920. *WARNING: this only works with commands that accept 1 argument.*
+
+=== /midi/cc/free channel:i [num:i]
+
+Remove a cmd from the event.
+
+=== /midi/free 
+
+Remove all commands from MIDI events.
+
+=== /midi/list event:s [args:v]
+
+List commands for the EVENT in CHANNEL and optional NUM. Events is one of: noteon, noteonnum, noteonvelocity, noteonnumvelocity (NUM), noteontrig (NUM), noteoff, noteoffnum, cc (NUM)
+
+=== /midi/noteoff channel:i cmd:s
+
+Execute a CMD when a note-off MIDI event is triggered on any note.
+
+=== /midi/noteoff/free channel:i [num:i]
+
+Remove a cmd from the event.
+
+=== /midi/noteoff/num channel:i cmd:s
+
+Map the released NOTE number to a CMD. The last 2 CMD arguments should be MIN and MAX, in that order. Example: /midi/noteon/num 0 /position/x target 0 1920. *WARNING: this only works with commands that accept 1 argument.*
+
+=== /midi/noteoff/num/free channel:i [num:i]
+
+Remove a cmd from the event.
+
+=== /midi/noteon channel:i cmd:s
+
+Execute a CMD when a note-on MIDI event is triggered on any note.
+
+=== /midi/noteon/free channel:i [num:i]
+
+Remove a cmd from the event.
+
+=== /midi/noteon/num channel:i cmd:s
+
+Map the pressed note number to a CMD. The last 2 CMD arguments should be MIN and MAX, in that order. Example: /midi/noteon/num 0 /position/x target 0 1920. *WARNING: this only works with commands that accept 1 argument.*
+
+=== /midi/noteon/num/free channel:i [num:i]
+
+Remove a cmd from the event.
+
+=== /midi/noteon/num/velocity channel:i note:i cmd:s
+
+Map the NOTE velocity to a CMD. The last 2 CMD arguments should be MIN and MAX, in that order. Example: /midi/noteon/num 0 60 /position/y target 0 1080. *WARNING: this only works with commands that accept 1 argument.*
+
+=== /midi/noteon/num/velocity/free channel:i [num:i]
+
+Remove a cmd from the event.
+
+=== /midi/noteon/trig channel:i note:i cmd:s
+
+Execute a CMD when a note-on event is triggered on a specific NOTE.
+
+=== /midi/noteon/trig/free channel:i [num:i]
+
+Remove a cmd from the event.
+
+=== /midi/noteon/velocity channel:i cmd:s
+
+Map the velocity of any note to a CMD. The last 2 CMD arguments should be MIN and MAX, in that order. Example: /midi/noteon/num 0 /position/y target 0 1080. *WARNING: this only works with commands that accept 1 argument.*.
+
+=== /opacity actor:s opacity:f
+
+Set OPACITY of ACTOR and its children.
+
+=== /osc/remote ip:s port:i
+
+Set the IP address and PORT number of a remote OSC server.
+
+=== /osc/send msg:s
+
+Send an OSC message to a remote server. See `/osc/remote`.
+
+=== /parent child:s parent:s
+
+Set an actor to be the CHILD of another PARENT actor.
+
+=== /parent/free child:s
+
+Free the CHILD actor from it's parent.
+
+=== /post msg:s
+
+Print MSG in the post window.
+
+=== /post/clear 
+
+Clear post window contents.
+
+=== /post/hide 
+
+Hide post window.
+
+=== /post/show 
+
+Show post window.
+
+=== /post/toggle 
+
+Toggle post window visibility.
+
+=== /property property:s actor:s value:...
+
+Generic command to set the VALUE to any PROPERTY of an ACTOR.
+
+=== /property/relative property:s actor:s value:...
+
+Generic command to set the VALUE to any PROPERTY of an ACTOR.
+
+=== /rand cmd:s actor:s min:f max:f
+
+Send a CMD to an ACTOR with a random value between MIN and MAX. If a wildcard is used, e.g. `bl*`, all ACTORs with with a name that begins with `bl` will get a different value. *WARNING: This only works with single-value commands.*
+
+=== /remove actor:s
+
+Delete the ACTOR by name (remove its instance). 
+
+=== /routine name:s repeats:i interval:f cmd:...
+
+Start a routine named NAME that sends CMD every INTERVAL of time (in seconds) for an arbitrary number of REPEATS.
+
+=== /routine/finished routine:s cmd:s
+
+Set the CMD to be sent when the ROUTINE (name) is finished.
+
+=== /routine/free name:s
+
+Remove the routine named NAME
+
+=== /routine/start name:s
+
+Start the routine named NAME.
+
+=== /routine/stop name:s
+
+Stop the routine named NAME.
+
+=== /routines 
+
+Get the list of routines.
+
+=== /set variable:type value:ifbs...
+
+Set a user VARIABLE with a VALUE, specifying the TYPE (:i = int, :f = float, :b = bool, :s string, :... = arbitrary number of arguments passed as array).
+
+Usage: /set x:f 3.14
+
+=== /state/add machine:s state:s next:s
+
+Add a STATE with a name to the state MACHINE. NEXT states is an arbitrary number of next possible states. Example: `/state/add mymachine stateA state1 state2` would create a new stateA in `mymachine` that would either repeat or move on to `state2.
+
+See `/state/def`
+
+=== /state/def state:s entry:s exit:s
+
+Define a STATE with an ENTRY `/def` to be executed when the state begins, and an EXIT `/def` to be executed when it ends. Both should be existing `/def`s without parameters.
+
+See `/state/add` and `/state/next`
+
+=== /state/free machine:s state:s
+
+Remove the STATE from the state MACHINE.
+
+=== /state/next machine:s
+
+Change MACHINE to next state.  This will send the 'exit' command of the current state, and the 'entry' command of the next state.
+
+See `/state/def`
+
+=== /states 
+
+Get a list of states for the given ACTOR.
+
+=== /text/property property:s actor:s value:...
+
+Change the ACTOR's text GDScript PROPERTY. Slashes ('/') will be replaced for underscores '_'. Leading slash is optional.
+
+Usage: `/text/property /text target alo bla`
+
+=== /top actor:s
+
+Draw the ACTOR on top of everything else.
+
+=== /tween dur:f transition:s property:s actor:s value:f
+
+Tweens a PROPERTY of an ACTOR between the current value and final VALUE in a span of time equal to DURation, in seconds. The TRANSITION must be one of: linear, sine, quint, quart, quad, expo, elastic, cubic, circ, bounce, back and spring.
+
+=== /unload animation:s
+
+Removes the ANIMATION asset from disk. This allows to free memory, and to reload a fresh version of the animation.
+
+=== /visible actor:s visibility:b
+
+Set ACTOR's VISIBILITY to either true or false.
+
+=== /wait time:f cmd:...
+
+Wait some TIME to execute the CMD.
+
+=== /window/method 
+
+Call a window method.
+

@@ -534,10 +534,10 @@
 #################################################################################
 
 # See:
-# <<_window_mode_modi,/window/mode>>
-# <<_window_fullscreen,/window/fullscreen>>
+# <<_windowmode_modi,/window/mode>>
+# <<_windowfullscreen,/window/fullscreen>>
 # <<_fullscreen,/fullscreen>>
-# <<_window_windowed,/window/windowed>>
+# <<_windowwindowed,/window/windowed>>
 # <<_windowed,/windowed>>
 /def /window
      /help /window
@@ -560,11 +560,11 @@
 #
 # _Example:_ `/window/fullscreen`
 #
-# See also <<_window_mode_modi,/window/mode>>
+# See also <<_windowmode_modi,/window/mode>>
 /def /window/fullscreen
      /window/mode 3
 
-# See <<_window_fullscreen,/window/fullscreen>>
+# See <<_windowfullscreen,/window/fullscreen>>
 /def /fullscreen
      /window/fullscreen
 
@@ -572,10 +572,22 @@
 #
 # _Example:_ `/window/windowed`
 #
-# See also <<_window_mode_modi,/window/mode>>
+# See also <<_windowmode_modi,/window/mode>>
 /def /window/windowed
      /window/mode 0
 
-# See <<_window_windowed,/window/windowed>>
+# See <<_windowwindowed,/window/windowed>>
 /def /windowed
      /window/windowed
+
+#################################################################################
+# == osc
+#################################################################################
+
+# Send an OSC `msg` to a remote server.
+#
+# See
+# <<_oscsend_msgs,/osc/send>>
+# <<_oscremote_ips_porti,/osc/remote>>
+/def /osc msg:s
+     /osc/send $msg

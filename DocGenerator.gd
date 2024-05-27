@@ -15,14 +15,29 @@ static func writeTextToFile(inputFilePath: String, text: String) -> Status:
 
 static func generateFrom(inputFilePath: String) -> Status:
 	Log.verbose("Generating docs from: %s" % [inputFilePath])
-	var contents = getTextFromFile(inputFilePath).value
-	var textBlocks = getTextBlocks(contents).value
 	var filename = inputFilePath.get_file().get_basename()
 	var asciidocPath = "res://docs/%s.adoc" % [filename]
-	var asciidoc = DocGenerator.formatAsciiDoc(textBlocks).value
+	var asciidoc = asciidocFromCommandsFile(inputFilePath)
 	var result = writeTextToFile(asciidocPath, asciidoc)
 	if result.isError(): return Status.error("Could not write help file: %s" % [inputFilePath])
 	return Status.ok(true, "Help file successfully generated from: %s\nto: %s" % [inputFilePath, asciidocPath])
+
+static func asciidocFromCommandsFile(filepath: String) -> String:
+	var filename = filepath.get_file().get_basename()
+	var contents = getTextFromFile(filepath).value
+	var textBlocks = getTextBlocks(contents).value
+	return DocGenerator.formatAsciiDoc(textBlocks).value
+
+static func asciidocFromCommandDescriptions(cmdDescriptions: Dictionary) -> String:
+	var keys = cmdDescriptions.keys()
+	keys.sort()
+	var contents := "= core\n"
+	for cmd in keys:
+		var args = cmdDescriptions[cmd].argsDescription
+		var desc = cmdDescriptions[cmd].description
+		contents += "=== %s %s\n\n" % [cmd, args]
+		contents += "%s\n\n" % [desc]
+	return contents
 
 static func getTextBlocks(text: String) -> Status:
 	var blocks := []

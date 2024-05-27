@@ -128,6 +128,9 @@ func _ready():
 		createUserConfig(configPath)
 	loadConfig(configPath)
 	cmdInterface.loadCommandFile("res://commands/extended.ocl")
+	var helpContents := DocGenerator.asciidocFromCommandsFile("res://commands/extended.ocl")
+	helpContents += DocGenerator.asciidocFromCommandDescriptions(cmdInterface.coreCommands)
+	DocGenerator.writeTextToFile("res://docs/help.adoc", helpContents)
 
 # Called every frame. 'delta' is the elapsed time since the previous frame./
 func _process(_delta):
