@@ -27,7 +27,8 @@ func test_getCommand():
 	assert_eq(aCommand.toGdScript, false)
 
 func test_listCommands():
-	assert_eq(cmd.listCommands(cmd.coreCommands).value, "
+	# Note we remove /spout/send, which doesn't exist on all platforms
+	assert_eq(cmd.listCommands(cmd.coreCommands).value.replace("/spout/send\n", ""), "
 --
 /actors/list
 /animation/data/create
@@ -115,6 +116,7 @@ func test_listCommands():
 /top
 /tween
 /unload
+/view/size
 /visible
 /wait
 /window/method

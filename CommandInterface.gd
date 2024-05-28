@@ -165,6 +165,9 @@ var defCommands := {}
 
 # Called when the node enters the scene tree for the first time.
 func _ready():
+	if OS.get_name() == "Windows":
+		coreCommands["/spout/send"] = CommandDescription.new(spoutSend, "name:s", "Send the workspace view as a texture via Spout, to be used in external applications. This is only supported on Windows.")
+	
 	coreCommands.make_read_only()
 	oscSender = OscReceiver.new()
 	thread = Thread.new()
@@ -328,6 +331,9 @@ func setSubViewportSize(args: Array) -> Status:
 		subViewport.set_size(get_window().size)
 	mirrorDisplay._on_viewport_size_changed()
 	return Status.ok()
+
+func spoutSend(name: String) -> Status:
+	return subViewport.startSpout(name)
 
 func toggleEditor() -> Status:
 	textContainer.set_visible(not(textContainer.is_visible()))

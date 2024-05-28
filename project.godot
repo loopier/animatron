@@ -85,4 +85,5 @@ open_text_file={
 
 [rendering]
 
+renderer/rendering_method="gl_compatibility"
 environment/defaults/default_clear_color=Color(0.196078, 0.196078, 0.196078, 1)
