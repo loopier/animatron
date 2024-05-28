@@ -1176,7 +1176,7 @@ func center(actorName: String) -> Status:
 	var result = getActors(actorName)
 	if result.isError(): return result
 	for actor in result.value:
-		actor.set_position(Vector2(0.5,0.5) * get_parent().get_viewport_rect().size)
+		actor.set_position(subViewport.size as Vector2 / 2)
 	return Status.ok()
 
 func parentActor(childName: String, parentName: String) -> Status:
