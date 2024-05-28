@@ -93,6 +93,7 @@ func _ready():
 	cmdInterface.editor = $HSplitContainer/CodeEdit
 	cmdInterface.textContainer = $HSplitContainer
 	cmdInterface.postWindow = $HSplitContainer/PostWindow
+	cmdInterface.subViewport = $SubViewport
 	cmdInterface.routinesNode = $Routines
 	cmdInterface.stateMachines = Dictionary(stateMachines)
 	cmdInterface.stateChangedCallback = Callable(self, "_on_state_changed")

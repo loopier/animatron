@@ -878,6 +878,10 @@ Tweens a PROPERTY of an ACTOR between the current value and final VALUE in a spa
 
 Removes the ANIMATION asset from disk. This allows to free memory, and to reload a fresh version of the animation.
 
+=== /view/size width:i height:i
+
+Set the view's `width` and `height`. This is used for off-screen rendering, so it can be sent over to other apps (Spout, ...).
+
 === /visible actor:s visibility:b
 
 Set ACTOR's VISIBILITY to either true or false.

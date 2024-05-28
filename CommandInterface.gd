@@ -24,6 +24,7 @@ var assetHelpers := preload("res://asset_helpers.gd").new()
 @onready var editor: CodeEdit
 @onready var textContainer: Node
 @onready var postWindow: Node
+@onready var subViewport: SubViewport
 @onready var openFileDialog: FileDialog
 @onready var saveFileDialog: FileDialog
 @onready var loadPresetDialog: FileDialog
@@ -50,6 +51,7 @@ var coreCommands: Dictionary = {
 	"/log/level": CommandDescription.new(setLogLevel, "level:s", "Set the log level to either 'fatal', 'error', 'warn', 'debug' or 'verbose'"),
 	# window
 	"/window/method": CommandDescription.new(callWindowMethod, "", "Call a window method.", Flags.asArray(true)),
+	"/view/size": CommandDescription.new(setSubViewportSize, "width:i height:i", "Set the view's `width` and `height`. This is used for off-screen rendering, so it can be sent over to other apps (Spout, ...).", Flags.asArray(true)),
 	# general commands
 	"/commands/list": CommandDescription.new(listAllCommands, "", "Get list of available commands."),
 	"/commands/load": CommandDescription.new(loadCommandFile, "path:s", "Load a custom command definitions file, which should have the format described below."),
@@ -311,6 +313,12 @@ func callWindowMethod(args: Array) -> Status:
 	if result.isError(): return result
 	var typedArgs = result.value
 	window.callv(method, typedArgs)
+	return Status.ok()
+
+func setSubViewportSize(args: Array) -> Status:
+	var width : int = int(args[0])
+	var height : int = int(args[1])
+	subViewport.set_size(Vector2i(width, height))
 	return Status.ok()
 
 func toggleEditor() -> Status:
