@@ -6,14 +6,13 @@ func _ready():
 	_on_viewport_size_changed()
 
 func _on_viewport_size_changed():
-	# Use content size rather than viewport size
-	var viewSize: Vector2i = get_window().content_scale_size
-	var viewWidth := viewSize.x as float
-	var viewHeight:= viewSize.y as float
+	var viewSize := get_window().size as Vector2
 
 	if centered:
-		set_position(Vector2(viewWidth/2, viewHeight/2))
+		set_position(viewSize/2)
 
-	# Set same scale value horiz/vert to maintain aspect ratio
-	#var scale := viewWidth / texture.get_size().x
-	set_scale(Vector2(1, 1))
+	var scale2D := viewSize / texture.get_size()
+	var scale: float = min(scale2D.x, scale2D.y)
+	
+	if scale == INF: scale = 1
+	set_scale(Vector2(scale, scale))

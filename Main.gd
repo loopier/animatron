@@ -68,6 +68,11 @@ func initPostWindowMsg():
 	$HSplitContainer/PostWindow.set_text(msg)
 
 func _ready():
+	# Have the content area fit to fill the main window
+	# To change the "stage" size to something of fixed resolution,
+	# use `/view/size sizeX sizeY`
+	get_window().content_scale_size = Vector2i(0, 0)
+	
 	# if you need to change the log level, do it from the res://config/default.ocl
 	Log.setLevel(Log.LOG_LEVEL_INFO)
 	initPostWindowMsg()
@@ -93,6 +98,7 @@ func _ready():
 	cmdInterface.editor = $HSplitContainer/CodeEdit
 	cmdInterface.textContainer = $HSplitContainer
 	cmdInterface.postWindow = $HSplitContainer/PostWindow
+	cmdInterface.mirrorDisplay = $MirrorDisplay
 	cmdInterface.subViewport = $SubViewport
 	cmdInterface.routinesNode = $Routines
 	cmdInterface.stateMachines = Dictionary(stateMachines)

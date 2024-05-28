@@ -25,6 +25,7 @@ var assetHelpers := preload("res://asset_helpers.gd").new()
 @onready var textContainer: Node
 @onready var postWindow: Node
 @onready var subViewport: SubViewport
+var mirrorDisplay: Sprite2D
 @onready var openFileDialog: FileDialog
 @onready var saveFileDialog: FileDialog
 @onready var loadPresetDialog: FileDialog
@@ -318,7 +319,14 @@ func callWindowMethod(args: Array) -> Status:
 func setSubViewportSize(args: Array) -> Status:
 	var width : int = int(args[0])
 	var height : int = int(args[1])
-	subViewport.set_size(Vector2i(width, height))
+	if width > 0 and height > 0:
+		subViewport.userSetSize = true
+		var newSize := Vector2(width, height)
+		subViewport.set_size(newSize)
+	else:
+		subViewport.userSetSize = false
+		subViewport.set_size(get_window().size)
+	mirrorDisplay._on_viewport_size_changed()
 	return Status.ok()
 
 func toggleEditor() -> Status:
