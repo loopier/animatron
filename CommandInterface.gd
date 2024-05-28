@@ -167,6 +167,7 @@ var defCommands := {}
 func _ready():
 	if OS.get_name() == "Windows":
 		coreCommands["/spout/send"] = CommandDescription.new(spoutSend, "name:s", "Send the workspace view as a texture via Spout, to be used in external applications. This is only supported on Windows.")
+		coreCommands["/spout/stop"] = CommandDescription.new(spoutStop, "", "Stop Spout connection; stop sending the workspace view as a texture. This is only supported on Windows.")
 	
 	coreCommands.make_read_only()
 	oscSender = OscReceiver.new()
@@ -333,7 +334,10 @@ func setSubViewportSize(args: Array) -> Status:
 	return Status.ok()
 
 func spoutSend(name: String) -> Status:
-	return subViewport.startSpout(name)
+	return subViewport.spoutStart(name)
+
+func spoutStop() -> Status:
+	return subViewport.spoutStop()
 
 func toggleEditor() -> Status:
 	textContainer.set_visible(not(textContainer.is_visible()))

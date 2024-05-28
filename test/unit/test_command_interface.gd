@@ -28,7 +28,7 @@ func test_getCommand():
 
 func test_listCommands():
 	# Note we remove /spout/send, which doesn't exist on all platforms
-	assert_eq(cmd.listCommands(cmd.coreCommands).value.replace("/spout/send\n", ""), "
+	assert_eq(cmd.listCommands(cmd.coreCommands).value.replace("/spout/send\n", "").replace("/spout/stop\n", ""), "
 --
 /actors/list
 /animation/data/create

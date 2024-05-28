@@ -6,11 +6,21 @@ func _ready():
 	get_window().connect("size_changed", _on_top_viewport_size_changed)
 	_on_top_viewport_size_changed()
 
-func startSpout(name: String) -> Status:
+func spoutStart(name: String) -> Status:
 	if OS.get_name() == "Windows":
-		spout = Spout.new()
+		# Do this instantiation trick to avoid using the class Spout,
+		# which will not exist on Linux or Mac
+		spout = ClassDB.instantiate(&"Spout")
 		spout.set_sender_name(name)
 		RenderingServer.frame_post_draw.connect(_on_frame_post_draw)
+		return Status.ok();
+	return Status.error("Spout only supported on Windows")
+
+func spoutStop() -> Status:
+	if OS.get_name() == "Windows":
+		spout = null
+		if RenderingServer.frame_post_draw.is_connected(_on_frame_post_draw):
+			RenderingServer.frame_post_draw.disconnect(_on_frame_post_draw)
 		return Status.ok();
 	return Status.error("Spout only supported on Windows")
 	
@@ -38,4 +48,4 @@ func _on_frame_post_draw():
 		var handle := RenderingServer.texture_get_native_handle(viewport_texture)
 	
 		# 0x0DE1 (3553) = GL_TEXTURE_2D in the Open GL API (Texture Target)
-		(spout as Spout).send_texture(handle, 0x0DE1, size.x, size.y, false, 0)
+		spout.send_texture(handle, 0x0DE1, size.x, size.y, false, 0)
