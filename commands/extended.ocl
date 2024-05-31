@@ -555,6 +555,7 @@
 # <<_fullscreen,/fullscreen>>
 # <<_windowwindowed,/window/windowed>>
 # <<_windowed,/windowed>>
+# <<_windowsize_widthi_heighti,/window/size>>
 /def /window
      /help /window
 
@@ -595,6 +596,13 @@
 # See <<_windowwindowed,/window/windowed>>
 /def /windowed
      /window/windowed
+
+# Set window dimensions.
+#
+# _Example:_ `/window/size 640 480`
+#
+/def /window/size width:i height:i
+     /window/method /set/size $width $height
 
 #################################################################################
 # == osc

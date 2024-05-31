@@ -311,14 +311,7 @@ func setLogLevel(level: String) -> Status:
 
 func callWindowMethod(args: Array) -> Status:
 	var window = commandManager.get_parent()
-	# check if the method exists and format correctly
-	var method = getObjectMethod(window, args[0]).value.name
-	# these next lines could be in their own abstraction and used with any object, including Actors
-	var result = argsToMethodTypes(window, method, args.slice(1))
-	if result.isError(): return result
-	var typedArgs = result.value
-	window.callv(method, typedArgs)
-	return Status.ok()
+	return callObjectMethod(window, args)
 
 func setSubViewportSize(args: Array) -> Status:
 	var width : int = int(args[0])
@@ -875,6 +868,31 @@ func getObjectMethod(obj: Object, methodName: String) -> Status:
 			return Status.ok(method)
 	return Status.error("Method not found: %s(%s):%s" % [obj.get("name"), obj.get_class(), methodName])
 
+func callObjectMethod(obj: Variant, args: Array) -> Status:
+	var method = _cmdToGdScript(args[0])
+	args = args.slice(1)
+	var result = getObjectMethod(obj, method)
+	if result.isError(): return result
+	var methodArgs = result.value.args
+	if methodArgs.size() < 1: 
+		obj.call(method)
+		return Status.ok()
+	
+	var argType = methodArgs[0].type
+	match argType:
+		TYPE_INT: methodArgs = args[0] as int
+		TYPE_FLOAT: methodArgs = args[0] as float
+		TYPE_BOOL: methodArgs = args[0] as bool
+		TYPE_VECTOR2, TYPE_VECTOR2I: methodArgs = Vector2(args[0] as float, args[1] as float)
+		TYPE_VECTOR3, TYPE_VECTOR3I: methodArgs = Vector3(args[0] as float, args[1] as float, args[2] as float)
+		TYPE_VECTOR4, TYPE_VECTOR4I: methodArgs = Vector4(args[0] as float, args[1] as float, args[2] as float, args[3] as float)
+		TYPE_COLOR: methodArgs = Color(args[0] as float, args[1] as float, args[2] as float)
+		_: methodArgs = " ".join(args)
+	
+	obj.call(method, methodArgs)
+	
+	return Status.ok()
+
 ## Converts and returns an array of anything into the correct types for the given method
 func argsToMethodTypes(object: Object, methodName: String, args: Array) -> Status:
 	if args.size() <= 0: return Status.ok([])
@@ -887,6 +905,10 @@ func argsToMethodTypes(object: Object, methodName: String, args: Array) -> Statu
 			TYPE_INT: types.append(args[i] as int)
 			TYPE_FLOAT: types.append(args[i] as float)
 			TYPE_BOOL: types.append(args[i] as int as bool)
+			TYPE_VECTOR2: types.append(Vector2(args[0] as float, args[1] as float))
+			TYPE_VECTOR3: types.append(Vector3(args[0] as float, args[1] as float, args[2] as float))
+			TYPE_VECTOR4: types.append(Vector4(args[0] as float, args[1] as float, args[2] as float, args[3] as float))
+			TYPE_COLOR: types.append(Color(args[0] as float, args[1] as float, args[2] as float))
 			_: types.append(args[i])
 	return Status.ok(types)
 

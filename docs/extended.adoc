@@ -474,6 +474,7 @@ See:
 <<_fullscreen,/fullscreen>>
 <<_windowwindowed,/window/windowed>>
 <<_windowed,/windowed>>
+<<_windowsize_widthi_heighti,/window/size>>
 
 === /window/mode mode:i
 Set window mode.
@@ -507,6 +508,12 @@ See also <<_windowmode_modi,/window/mode>>
 
 === /windowed
 See <<_windowwindowed,/window/windowed>>
+
+=== /window/size width:i height:i
+Set window dimensions.
+
+_Example:_ `/window/size 640 480`
+
 
 
 
