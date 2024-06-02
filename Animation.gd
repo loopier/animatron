@@ -26,10 +26,19 @@ func _on_frame_changed():
 
 func _on_animation_changed():
 	#set_frame_progress(0)
-	Log.verbose("%s:%s:frame progress: %s" % [get_parent().name, animation, frame_progress])
-	Log.verbose("%s:%s:speed: %s" % [get_parent().name, animation, speed_scale])
-	Log.verbose("%s:%s:animation speed: %s" % [get_parent().name, animation, sprite_frames.get_animation_speed(animation)])
-	Log.verbose("%s:%s:frames: %s" % [get_parent().name, animation, sprite_frames.get_frame_count(animation)])
+	#Log.verbose("%s:%s:frame progress: %s" % [get_parent().name, animation, frame_progress])
+	##Log.verbose("%s:%s:speed: %s" % [get_parent().name, animation, speed_scale])
+	#Log.verbose("%s:%s:animation speed: %s" % [get_parent().name, animation, sprite_frames.get_animation_speed(animation)])
+	#Log.verbose("%s:%s:frames: %s" % [get_parent().name, animation, sprite_frames.get_frame_count(animation)])
+	var progress = frame_progress
+	var speed_scale = get_speed_scale()
+	var anim_speed = sprite_frames.get_animation_speed(animation)
+	#var frames = sprite_frames.get_frame_count(animation)
+	#var current_frame = get_frame()
+	#var current_progress = get_frame_progress()
+	set_frame(0)
+	set_frame_progress(0)
+	pass
 
 ## Sets the lower value to [param start_frame] and the highest value to [param end_frame].
 ## This is done to be consistent in the playing speed.
@@ -51,6 +60,7 @@ func set_start_frame(frame: int):
 
 func set_end_frame(frame: int):
 	end_frame = clamp(frame, 0, sprite_frames.get_frame_count(get_animation()))
+	if frame < 0: end_frame = sprite_frames.get_frame_count(get_animation())
 	adjust_speed_scale()
 
 func set_loop_mode(loopMode: int):

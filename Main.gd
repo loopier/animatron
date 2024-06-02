@@ -392,6 +392,6 @@ func _on_animation_finished(name):
 		var nextStates = stateMachines[name].states[animation]
 		var nextState = nextStates[randi() % nextStates.size()]
 		if animationsLibrary.has_animation(nextState):
-			evalCommands([["/create", name, nextState]], "gdscript")
+			evalCommands([["/animation", name, nextState]], "gdscript")
 		Log.debug("%s state machine - %s(%s): %s" % [name, animation, nextState, nextStates])
 	pass

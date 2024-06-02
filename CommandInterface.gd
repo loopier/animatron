@@ -1174,6 +1174,7 @@ func listStates() -> Status:
 	var msg := "State machines:\n"
 	for machine in machines:
 		msg += "%s(%s): %s" % [machine, stateMachines[machine].status(), stateMachines[machine].list()]
+	msg += "\n"
 	return Status.ok(machines, msg)
 
 func addStateMachine(name: String):

@@ -316,6 +316,8 @@
 #
 /def /animation actor:s animation:s
      /animation/method /set/animation $actor $animation
+     /end/frame $actor -1
+     /speed $actor 2
 
 # See <<_animation,/animation>>
 /def /anim actor:s animation:s
