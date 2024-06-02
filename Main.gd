@@ -134,10 +134,22 @@ func _ready():
 	if not FileAccess.file_exists(configPath):
 		createUserConfig(configPath)
 	loadConfig(configPath)
+	var argsConfig := getPathFromArgs()
+	if argsConfig.length() > 0: loadConfig(argsConfig)
 	cmdInterface.loadCommandFile("res://commands/extended.ocl")
 	var helpContents := DocGenerator.asciidocFromCommandsFile("res://commands/extended.ocl")
 	helpContents += DocGenerator.asciidocFromCommandDescriptions(cmdInterface.coreCommands)
 	DocGenerator.writeTextToFile("res://docs/help.adoc", helpContents)
+
+func getPathFromArgs() -> String:
+	Log.verbose("CLI args: %s" % [OS.get_cmdline_args()])
+	Log.verbose("CLI user args: %s" % [OS.get_cmdline_user_args()])
+	var path := ""
+	for arg in OS.get_cmdline_user_args():
+		var keyValue = arg.split("=")
+		if keyValue[0] == "--file": return keyValue[1]
+	return path
+	
 
 # Called every frame. 'delta' is the elapsed time since the previous frame./
 func _process(_delta):

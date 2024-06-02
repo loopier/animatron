@@ -47,6 +47,10 @@ If you want to use images that are in other directories, you can change the asse
 
 We strongly recommend using your own animations, but you can find some of ours in https://my.hidrive.com/share/jzod7tz1uq[this link].
 
+
+== Usage
+
+
 === MacOS
 Run `Animatron.app` by double-clicking it. The first time you run it, it may be prevented from opening by the macOS Gatekeeper. In this case, you should right-click (or Control-click) the app and select *Open*. If a security warning dialog appears, click the *Open* button to explicitly give permission to run it (only do this if you're sure you've downloaded Animatron from a reliable source). Once you've given your permission, it will remember it for future runs.
 
@@ -70,6 +74,22 @@ To run the binary you need to install `steam-run` in *NixOS configuration*, it w
 Then the binary can be run with
 
      > steam-run path/to/Animatron.x86_64
+
+== Configuration
+
+Animatron can be run with default and user configurations, stored in `.ocl` files.
+
+And `.ocl` file is a text file full of OSC commands.
+
+Modify `user://config/config.ocl` to create a custom default configuration that will be loaded and executed every time you start Animatron.
+
+Config files can also be passed as arguments, which Animatron will run when booting:
+
+       $ animatron -- --file=path/to/your/config/file.ocl
+
+Note the empty `--` before `--file=...`.
+
+Passing a config file as an argument is a simple way to boot Animatron ready for specific sessions.
 
 == Versions
 
