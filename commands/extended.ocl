@@ -242,6 +242,7 @@
 #################################################################################
 # == color
 #################################################################################
+# See also <<_color_actors_rf_gf_bf,/color>>
 
 # Set the `actor` 's color to a `value` of red (between 0 and 1).
 #
@@ -263,6 +264,18 @@
 #
 /def /color/b actor:s value:f
      /color $actor 0 0 $value
+
+# Same as <<_color_actors_rf_gf_bf,/color>>, but this subtracts the value to the current color, while `/color` adds to it.
+#
+# Using `/tint x 1 0 0` turns white into red, keeping black as black.
+#
+# Using `/color x 1 0 0` turns black into red, keeping white as white.
+#
+# _Example:_ `/tint lola 0.5 0.25 0.0`
+#
+/def /tint actor:s r:f g:f b:f
+     /color $actor {$r-1} {$g-1} {$b-1}
+
 
 #################################################################################
 # == animation
