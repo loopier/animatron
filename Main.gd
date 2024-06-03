@@ -140,6 +140,7 @@ func _ready():
 	var helpContents := DocGenerator.asciidocFromCommandsFile("res://commands/extended.ocl")
 	helpContents += DocGenerator.asciidocFromCommandDescriptions(cmdInterface.coreCommands)
 	DocGenerator.writeTextToFile("res://docs/help.adoc", helpContents)
+	initPostWindowMsg()
 
 func getPathFromArgs() -> String:
 	Log.verbose("CLI args: %s" % [OS.get_cmdline_args()])
