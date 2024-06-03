@@ -111,6 +111,33 @@ Set the `y` coordinate (in pixels) of the `actor`.
 _Example:_ `/y mama 500`
 
 
+=== /y/sort parentActor:s sort:b
+Sort actors according to their `y` position value. Actors with a higher `y` value will be
+drawn lower on the screen and on top of actors with a smaller `y` position value.
+
+If `sort` is `1`, child nodes with the lowest Y position are drawn before those with a higher `y` position.
+
+If `sort` is `0`, Y-sorting is disabled.
+
+This feature is set on the `parentActor`, so if you want actors to be sorted according to their `y` position value,
+they need to be children of a common `parentActor`.
+
+_Example:_ `/y/sort lola 1`
+
+  /create a bla
+  /create b bla
+  /create c alo
+  /parent a c
+  /parent b c
+  /y/sort c 1
+
+
+=== /y/sort/enable parentActor:s
+See <<_ysort_parentActors_sortb,/y/sort>>
+
+=== /y/sort/disable parentActor:s
+See <<_ysort_parentActors_sortb,/y/sort>>
+
 === /move actor:s x:f y:f
 Move `actor` an amount of pixels relative to the current position in both `x` and `y` axis.
 
@@ -273,12 +300,6 @@ Change the `actor` 's `animation`.
 
 _Example:_ `/animation lola letter-a`
 
-
-/animation/frames/method /set/animation/speed $actor 12
-
-/end/frame $actor -1
-
-/speed $actor 2
 
 === /anim actor:s animation:s
 See <<_animation,/animation>>

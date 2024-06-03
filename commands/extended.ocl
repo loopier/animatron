@@ -128,6 +128,36 @@
 /def /y actor:s value:f
      /position/y $actor $value
 
+# Sort actors according to their `y` position value. Actors with a higher `y` value will be
+# drawn lower on the screen and on top of actors with a smaller `y` position value.
+#
+# If `sort` is `1`, child nodes with the lowest Y position are drawn before those with a higher `y` position.
+#
+# If `sort` is `0`, Y-sorting is disabled.
+#
+# This feature is set on the `parentActor`, so if you want actors to be sorted according to their `y` position value,
+# they need to be children of a common `parentActor`.
+#
+# _Example:_ `/y/sort lola 1`
+#
+#   /create a bla
+#   /create b bla
+#   /create c alo
+#   /parent a c
+#   /parent b c
+#   /y/sort c 1
+#
+/def /y/sort parentActor:s sort:b
+     /method /set/y/sort/enabled $parentActor $sort
+
+# See <<_ysort_parentActors_sortb,/y/sort>>
+/def /y/sort/enable parentActor:s
+     /y/sort $parentActor 1
+
+# See <<_ysort_parentActors_sortb,/y/sort>>
+/def /y/sort/disable parentActor:s
+     /y/sort $parentActor 0
+
 # Move `actor` an amount of pixels relative to the current position in both `x` and `y` axis.
 #
 # _Example:_ `/move lola 100 100`
@@ -317,6 +347,7 @@
 /def /animation actor:s animation:s
      /animation/method /set/animation $actor $animation
      /animation/frames/method /set/animation/speed $actor 12
+     /end/frame $actor -1
 
 # See <<_animation,/animation>>
 /def /anim actor:s animation:s

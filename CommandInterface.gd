@@ -850,7 +850,7 @@ func callActorMethod(args: Array) -> Status:
 		match methodArgs[0].type:
 			TYPE_INT: methodArgs = args[0] as int
 			TYPE_FLOAT: methodArgs = args[0] as float
-			TYPE_BOOL: methodArgs = args[0] as bool
+			TYPE_BOOL: methodArgs = args[0] as int as bool
 			TYPE_VECTOR2: methodArgs = Vector2(args[0] as float, args[1] as float)
 			TYPE_VECTOR3: methodArgs = Vector3(args[0] as float, args[1] as float, args[2] as float)
 			TYPE_VECTOR4: methodArgs = Vector4(args[0] as float, args[1] as float, args[2] as float, args[3] as float)
