@@ -75,7 +75,6 @@ func _ready():
 	
 	# if you need to change the log level, do it from the res://config/default.ocl
 	Log.setLevel(Log.LOG_LEVEL_INFO)
-	initPostWindowMsg()
 	
 	osc = OscReceiver.new()
 	self.add_child.call_deferred(osc)
