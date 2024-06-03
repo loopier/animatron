@@ -274,6 +274,12 @@ Change the `actor` 's `animation`.
 _Example:_ `/animation lola letter-a`
 
 
+/animation/frames/method /set/animation/speed $actor 12
+
+/end/frame $actor -1
+
+/speed $actor 2
+
 === /anim actor:s animation:s
 See <<_animation,/animation>>
 
