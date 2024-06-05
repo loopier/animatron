@@ -522,7 +522,9 @@ func getHelp(cmd: String) -> Status:
 			var result = DocGenerator.getTextFromFile(file)
 			if result.isError(): continue
 			text += DocGenerator.getTextFromFile(file).value
-		var msg : String = DocGenerator.getDocString(text, cmd).value.strip_edges()
+		var result : Status = DocGenerator.getDocString(text, cmd)
+		if result.isError(): return result
+		var msg : String = result.value.strip_edges()
 		msg += "\n\n"
 		msg += "[SOURCE]\n"
 		msg += "/def %s" % [cmd]
