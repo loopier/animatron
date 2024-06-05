@@ -637,7 +637,11 @@ List all PARENT's children actors.
 
 === /color actor:s r:f g:f b:f
 
-Add an RGB colour to the ACTOR. R, G and B should be in the 0-1 range (can be negative to subtract colour). Set to black (0,0,0) to restore its original colour.
+Modulate the ACTOR by an RGB colour. R, G and B should be in the 0-1 range. Set to white (1,1,1) to restore its original colour.
+
+=== /color/add actor:s r:f g:f b:f
+
+Add an RGB colour to the ACTOR. R, G and B should be in the 0-1 range (can be negative to subtract colour). Set to black (0,0,0) to remove its effect. The addition is done after the modulation by `/color` (if any).
 
 === /commands/list 
 

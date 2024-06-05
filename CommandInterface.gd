@@ -70,7 +70,8 @@ var coreCommands: Dictionary = {
 	"/actors/list": CommandDescription.new(listActors, "", "Get list of current actor instances. Returns /list/actors/reply OSC message."),
 	"/create": CommandDescription.new(createActor, "actor:s animation:s", "Create an ACTOR that plays ANIMATION."),
 	"/remove": CommandDescription.new(removeActor, "actor:s", "Delete the ACTOR by name (remove its instance). "),
-	"/color": CommandDescription.new(colorActor, "actor:s r:f g:f b:f", "Add an RGB colour to the ACTOR. R, G and B should be in the 0-1 range (can be negative to subtract colour). Set to black (0,0,0) to restore its original colour."),
+	"/color": CommandDescription.new(colorActor, "actor:s r:f g:f b:f", "Modulate the ACTOR by an RGB colour. R, G and B should be in the 0-1 range. Set to white (1,1,1) to restore its original colour."),
+	"/color/add": CommandDescription.new(addColorActor, "actor:s r:f g:f b:f", "Add an RGB colour to the ACTOR. R, G and B should be in the 0-1 range (can be negative to subtract colour). Set to black (0,0,0) to remove its effect. The addition is done after the modulation by `/color` (if any)."),
 	"/opacity": CommandDescription.new(setActorOpacity, "actor:s opacity:f", "Set OPACITY of ACTOR and its children."),
 	# routines
 	"/routine": CommandDescription.new(addRoutine, "name:s repeats:i interval:f cmd:...", "Start a routine named NAME that sends CMD every INTERVAL of time (in seconds) for an arbitrary number of REPEATS.", Flags.asArray(true)),
@@ -1094,9 +1095,18 @@ func colorActor(actorName: String, red, green, blue) -> Status:
 	if result.isError(): return result
 	for actor in result.value:
 		var animation := actor.get_node("Animation") as AnimatedSprite2D
+		var rgb := Color(red as float, green as float, blue as float)
+		animation.self_modulate = rgb
+		setTextColor(actorName, red, green, blue)
+	return Status.ok()
+
+func addColorActor(actorName: String, red, green, blue) -> Status:
+	var result := getActors(actorName)
+	if result.isError(): return result
+	for actor in result.value:
+		var animation := actor.get_node("Animation") as AnimatedSprite2D
 		var rgb := Vector3(red as float, green as float, blue as float)
 		setImageShaderUniform(animation, "uAddColor", rgb)
-		setTextColor(actorName, red, green, blue)
 	return Status.ok()
 
 func setActorOpacity(actorName: String, alpha: Variant) -> Status:

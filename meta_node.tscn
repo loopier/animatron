@@ -2,7 +2,7 @@
 
 [ext_resource type="Shader" path="res://meta_node.gdshader" id="1_srg6k"]
 [ext_resource type="Script" path="res://Animation.gd" id="2_wfrnp"]
-[ext_resource type="FontFile" uid="uid://bt0f0lpt7x3tv" path="res://fonts/TT2020StyleF-Regular.ttf" id="3_fjn8v"]
+[ext_resource type="FontFile" uid="uid://daia8ao3j3s85" path="res://fonts/TT2020StyleF-Regular.ttf" id="3_fjn8v"]
 
 [sub_resource type="ShaderMaterial" id="ShaderMaterial_lhcii"]
 resource_local_to_scene = true

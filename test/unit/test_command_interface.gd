@@ -48,6 +48,7 @@ func test_listCommands():
 /center
 /children/list
 /color
+/color/add
 /commands/list
 /commands/load
 /create
