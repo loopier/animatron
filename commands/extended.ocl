@@ -320,7 +320,7 @@
 
 # Play the `actor` 's animation backwards
 #
-# _Example:_ `/play lola`
+# _Example:_ `/backwards lola`
 #
 /def /backwards actor:s
      /animation/method /play/backwards $actor

@@ -280,7 +280,7 @@ _Example:_ `/play lola`
 === /backwards actor:s
 Play the `actor` 's animation backwards
 
-_Example:_ `/play lola`
+_Example:_ `/backwards lola`
 
 
 === /stop actor:s
