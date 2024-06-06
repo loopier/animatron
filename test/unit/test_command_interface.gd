@@ -69,6 +69,7 @@ func test_listCommands():
 /help
 /load
 /log/level
+/mask
 /method
 /midi/cc
 /midi/cc/free
@@ -117,6 +118,7 @@ func test_listCommands():
 /top
 /tween
 /unload
+/unmask
 /view/size
 /visible
 /wait
