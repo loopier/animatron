@@ -135,9 +135,11 @@ var coreCommands: Dictionary = {
 	"/visible": CommandDescription.new(toggleActorProperty, "actor:s visibility:b", "Set ACTOR's VISIBILITY to either true or false.", Flags.gdScript()),
 	"/parent": CommandDescription.new(parentActor, "child:s parent:s", "Set an actor to be the CHILD of another PARENT actor."),
 	"/parent/free": CommandDescription.new(parentActorFree, "child:s", "Free the CHILD actor from it's parent."),
+	"/mask": CommandDescription.new(maskActor, "child:s mask:s", "Mask a child ACTOR by a parent ACTOR"),
+	"/unmask": CommandDescription.new(unmaskActor, "mask:s", "Stop an ACTOR from behaving as a mask. Any masked child nodes will be reparented to the top level (similar to `/parent/free`)."),
 	"/children/list": CommandDescription.new(listChildren, "parent:s", "List all PARENT's children actors."),
-	"/front": CommandDescription.new(setInFrontOfActor, "actor:s target:s", "Draw the ACTOR in front of the TARGET.", Flags.asArray(false)),
-	"/behind": CommandDescription.new(setBehindActor, "actor:s target:s", "Draw the ACTOR behind the TARGET.", Flags.asArray(false)),
+	"/front": CommandDescription.new(setInFrontOfActor, "actor:s target:s", "Draw the ACTOR immediately in front of the TARGET.", Flags.asArray(false)),
+	"/behind": CommandDescription.new(setBehindActor, "actor:s target:s", "Draw the ACTOR immediately behind the TARGET.", Flags.asArray(false)),
 	"/top": CommandDescription.new(setTopActor, "actor:s", "Draw the ACTOR on top of everything else.", Flags.asArray(false)),
 	"/bottom": CommandDescription.new(setBottomActor, "actor:s", "Draw the ACTOR behind everything else.", Flags.asArray(false)),
 	"/center": CommandDescription.new(center, "actor:s", "Set the ACTOR to the center of the screen."),
@@ -1232,10 +1234,12 @@ func parentActor(childName: String, parentName: String) -> Status:
 	if result.isError(): return result
 	for child in result.value:
 		var oldParent = child.get_parent()
+		var oldChildGlobalTransform := child.global_transform as Transform2D
 		oldParent.remove_child(child)
-		parent.add_child(child)
+		var parentSprite := parent.get_node("Animation") as AnimatedSprite2D
+		parentSprite.add_child(child)
 		# preserve children transforms
-		child.transform = parent.transform.affine_inverse() * child.transform
+		child.transform = parent.global_transform.affine_inverse() * oldChildGlobalTransform
 		Log.verbose("%s emmancipated from %s" % [child.name, oldParent.name])
 		Log.verbose("%s is child of %s" % [child.name, parent.name])
 	return Status.ok()
@@ -1245,12 +1249,49 @@ func parentActorFree(childName: String) -> Status:
 	if result.isError(): return result
 	for child in result.value:
 		var parent = child.get_parent()
-		parent.remove_child(child)
-		actorsNode.add_child(child)
-		# preserve children transforms
-		child.transform = parent.transform * child.transform
+		if parent != actorsNode:
+			var oldChildGlobalTransform := child.global_transform as Transform2D
+			parent.remove_child(child)
+			actorsNode.add_child(child)
+			# preserve children transforms
+			child.transform = oldChildGlobalTransform
 	return Status.ok()
 
+func maskActor(childName: String, maskName: String) -> Status:
+	var result = getActor(maskName)
+	if result.isError(): return result
+	var parent = result.value
+	result = getActors(childName)
+	if result.isError(): return result
+	for child in result.value:
+		var oldParent = child.get_parent()
+		var oldChildGlobalTransform := child.global_transform as Transform2D
+		oldParent.remove_child(child)
+		var maskSprite := parent.get_node("Animation") as AnimatedSprite2D
+		maskSprite.add_child(child)
+		maskSprite.clip_children = CanvasItem.CLIP_CHILDREN_ONLY
+		maskSprite.use_parent_material = true
+		# preserve children transforms
+		child.transform = parent.global_transform.affine_inverse() * oldChildGlobalTransform
+	return Status.ok()
+
+func unmaskActor(maskName: String) -> Status:
+	var result = getActors(maskName)
+	if result.isError(): return result
+	for mask in result.value:
+		var maskSprite := mask.get_node("Animation") as AnimatedSprite2D
+		for child in maskSprite.get_children():
+			if child as CharacterBody2D != null:
+				var oldChildGlobalTransform := child.global_transform as Transform2D
+				maskSprite.remove_child(child)
+				actorsNode.add_child(child)
+				# preserve children transforms
+				child.transform = oldChildGlobalTransform
+				
+		maskSprite.clip_children = CanvasItem.CLIP_CHILDREN_DISABLED
+		maskSprite.use_parent_material = false
+	return Status.ok()
+	
 func listChildren(parentName: String) -> Status:
 	var result = getActor(parentName)
 	if result.isError(): return result
@@ -1267,8 +1308,12 @@ func setInFrontOfActor(args: Array) -> Status:
 	if result.isError(): return result
 	if targetResult.isError(): return targetResult
 	var actor = result.value
+	var actorParent := actor.get_parent() as Node
 	for target in targetResult.value:
-		actorsNode.move_child(actor, target.get_index()+1)
+		if target.get_parent() == actorParent:
+			actorParent.move_child(actor, target.get_index()+1)
+		else:
+			Log.warn("Actor and target don't share the same parent...skipping")
 	return Status.ok()
 
 func setBehindActor(args: Array) -> Status:
@@ -1277,22 +1322,28 @@ func setBehindActor(args: Array) -> Status:
 	if result.isError(): return result
 	if targetResult.isError(): return targetResult
 	var actor = result.value
+	var actorParent := actor.get_parent() as Node
 	for target in targetResult.value:
-		actorsNode.move_child(actor, max(0, target.get_index()-1))
+		if target.get_parent() == actorParent:
+			actorParent.move_child(actor, max(0, target.get_index()-1))
+		else:
+			Log.warn("Actor and target don't share the same parent...skipping")
 	return Status.ok()
 
 func setTopActor(args: Array) -> Status:
 	var result = getActors(args[0])
 	if result.isError(): return result
 	for actor in result.value:
-		actorsNode.move_child(actor, actorsNode.get_child_count())
+		var parent := actor.get_parent() as Node
+		parent.move_child(actor, parent.get_child_count())
 	return Status.ok(true)
 
 func setBottomActor(args: Array) -> Status:
 	var result = getActors(args[0])
 	if result.isError(): return result
 	for actor in result.value:
-		actorsNode.move_child(actor, 0)
+		var parent := actor.get_parent() as Node
+		parent.move_child(actor, 0)
 	return Status.ok()
 
 func randCmdValue(args: Array) -> Status:

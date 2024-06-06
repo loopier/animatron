@@ -621,7 +621,7 @@ Set the path for the parent directory of the assets.
 
 === /behind actor:s target:s
 
-Draw the ACTOR behind the TARGET.
+Draw the ACTOR immediately behind the TARGET.
 
 === /bottom actor:s
 
@@ -707,7 +707,7 @@ Iterate `iterations` times over `varName`, substituting the current iteration va
 
 === /front actor:s target:s
 
-Draw the ACTOR in front of the TARGET.
+Draw the ACTOR immediately in front of the TARGET.
 
 === /get variable:s
 
@@ -724,6 +724,10 @@ Load an ANIMATION asset from disk. It will create an animation with the same nam
 === /log/level level:s
 
 Set the log level to either 'fatal', 'error', 'warn', 'debug' or 'verbose'
+
+=== /mask child:s mask:s
+
+Mask a child ACTOR by a parent ACTOR
 
 === /method method:s actor:s args:...
 
@@ -926,6 +930,10 @@ Tweens a PROPERTY of an ACTOR between the current value and final VALUE in a spa
 === /unload animation:s
 
 Removes the ANIMATION asset from disk. This allows to free memory, and to reload a fresh version of the animation.
+
+=== /unmask mask:s
+
+Stop an ACTOR from behaving as a mask. Any masked child nodes will be reparented to the top level (similar to `/parent/free`).
 
 === /view/size width:i height:i
 
