@@ -1226,6 +1226,16 @@ func center(actorName: String) -> Status:
 		actor.set_position(subViewport.size as Vector2 / 2)
 	return Status.ok()
 
+func reparentActor(child: Node, oldParent: Node, newParent: Node) -> Status:
+	if child.is_ancestor_of(newParent):
+		var newParentName := newParent.name if newParent is Sprite2D else newParent.get_parent().name
+		Log.warn("'%s' is an ancestor of '%s', reparenting would cause a cycle" % [child.name, newParentName])
+		return Status.error("Reparenting would introduce a cycle...")
+	oldParent.remove_child(child)
+	newParent.add_child(child)
+	Log.verbose("%s emmancipated from %s" % [child.name, oldParent.name])
+	return Status.ok()
+
 func parentActor(childName: String, parentName: String) -> Status:
 	var result = getActor(parentName)
 	if result.isError(): return result
@@ -1233,14 +1243,12 @@ func parentActor(childName: String, parentName: String) -> Status:
 	result = getActors(childName)
 	if result.isError(): return result
 	for child in result.value:
-		var oldParent = child.get_parent()
 		var oldChildGlobalTransform := child.global_transform as Transform2D
-		oldParent.remove_child(child)
 		var parentSprite := parent.get_node("Animation") as AnimatedSprite2D
-		parentSprite.add_child(child)
+		result = reparentActor(child, child.get_parent(), parentSprite)
+		if result.isError(): return result
 		# preserve children transforms
 		child.transform = parent.global_transform.affine_inverse() * oldChildGlobalTransform
-		Log.verbose("%s emmancipated from %s" % [child.name, oldParent.name])
 		Log.verbose("%s is child of %s" % [child.name, parent.name])
 	return Status.ok()
 
@@ -1248,11 +1256,11 @@ func parentActorFree(childName: String) -> Status:
 	var result = getActors(childName)
 	if result.isError(): return result
 	for child in result.value:
-		var parent = child.get_parent()
-		if parent != actorsNode:
+		var oldParent := child.get_parent() as Node
+		if oldParent != actorsNode:
 			var oldChildGlobalTransform := child.global_transform as Transform2D
-			parent.remove_child(child)
-			actorsNode.add_child(child)
+			result = reparentActor(child, oldParent, actorsNode)
+			if result.isError(): return result
 			# preserve children transforms
 			child.transform = oldChildGlobalTransform
 	return Status.ok()
@@ -1264,11 +1272,10 @@ func maskActor(childName: String, maskName: String) -> Status:
 	result = getActors(childName)
 	if result.isError(): return result
 	for child in result.value:
-		var oldParent = child.get_parent()
 		var oldChildGlobalTransform := child.global_transform as Transform2D
-		oldParent.remove_child(child)
 		var maskSprite := parent.get_node("Animation") as AnimatedSprite2D
-		maskSprite.add_child(child)
+		result = reparentActor(child, child.get_parent(), maskSprite)
+		if result.isError(): return result
 		maskSprite.clip_children = CanvasItem.CLIP_CHILDREN_ONLY
 		maskSprite.use_parent_material = true
 		# preserve children transforms
@@ -1283,8 +1290,8 @@ func unmaskActor(maskName: String) -> Status:
 		for child in maskSprite.get_children():
 			if child as CharacterBody2D != null:
 				var oldChildGlobalTransform := child.global_transform as Transform2D
-				maskSprite.remove_child(child)
-				actorsNode.add_child(child)
+				result = reparentActor(child, maskSprite, actorsNode)
+				if result.isError(): return result
 				# preserve children transforms
 				child.transform = oldChildGlobalTransform
 				
