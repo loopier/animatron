@@ -1,0 +1,13 @@
+=== What is Animatron
+
+Animatron is an experimental environment designed to improvise with image sequences in a live performance.
+
+You can use it to create visuals by combining animations in real time, just like a musician would combine notes with an instrument to create music.
+
+There's plenty of full-featured software for generating visuals in a live performance.
+
+Nearly all of them, though, work at the pixel level using something called _shaders_.
+
+Animatron, on the other hand, uses the image sequence as the building block.
+
+The former are to visuals what an audio synthesizer is to music, while Animatron would be more of a sampler.

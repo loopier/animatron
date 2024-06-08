@@ -1,54 +1,37 @@
+/def /tutorial/info path:s
+     /post/file $path
+
+/def /tutorial/code path:s
+     /editor/open/from $path
+
+/def /tutorial/clear
+     /post/clear
+     /editor/clear
+
 /def /tutorial
      /post/show
+     /tutorial/clear
+     /tutorial/info res://tutorial/tutorial-welcome-info.adoc
+     /tutorial/code res://tutorial/tutorial-welcome-code.ocl
+
+/def /tutorial/introduction
+     /tutorial/clear
+     /tutorial/info res://tutorial/tutorial-intro-info.adoc
+     /tutorial/code res://tutorial/tutorial-intro-code.ocl
+
+/def /what/is/animatron
      /post/clear
-     /post This is the POST WINDOW where info about the system will appear.
-     /post \n
-     /post It can be toggled with CTRL + P or
-     /post with the commands /post/toggle, /post/show or /post/hide
-     /post \n
-     /post To clear it use /post/clear
-     /post \n
-     /post To post something, use /post <your message>
-     /editor/clear
-     /editor/open/from res://tutorial/tutorial.ocl
-     /assets/path res://tutorial/animations
+     /tutorial/info res://tutorial/tutorial-intro-whatis-info.adoc
 
-/def /tutorial/actors
-	/editor/clear
-	/editor/open/from res://tutorial/tutorial-actors.ocl
+/def /what/can/it/do
+     /post/clear
+     /tutorial/info res://tutorial/tutorial-intro-whatcanitdo-info.adoc
 
-/def /tutorial/actor/animation
-	/editor/clear
-	/editor/open/from res://tutorial/tutorial-actor-animation.ocl
+/def /how/does/it/work
+     /post/clear
+     /tutorial/info res://tutorial/tutorial-intro-howdoesitwork-info.adoc
 
-/def /tutorial/actor/attributes
-	/editor/clear
-	/editor/open/from res://tutorial/tutorial-actor-attributes.ocl
-
-/def /tutorial/actor/multi
-	/editor/clear
-	/editor/open/from res://tutorial/tutorial-actor-multi.ocl
-
-/def /tutorial/commands
-	/editor/clear
-	/editor/open/from res://tutorial/tutorial-commands.ocl
-
-/def /tutorial/controls
-	/editor/clear
-	/editor/open/from res://tutorial/tutorial-controls.ocl
-
-/def /tutorial/help
-	/editor/clear
-	/editor/open/from res://tutorial/tutorial-help.ocl
-
-/def /tutorial/index
-	/editor/clear
-	/editor/open/from res://tutorial/tutorial-index.ocl
-
-/def /tutorial/utils/custom/cmds
-	/editor/clear
-	/editor/open/from res://tutorial/tutorial-utils-custom-cmds.ocl
-
-/def /tutorial/utils/rand
-	/editor/clear
-    /editor/open/from res://tutorial/tutorial-utils-rand.ocl
+/def /tutorial/overview
+     /tutorial/clear
+     /tutorial/info res://tutorial/tutorial-overview-info.adoc
+     /tutorial/code res://tutorial/tutorial-overview-code.ocl

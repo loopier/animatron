@@ -829,6 +829,10 @@ Print MSG in the post window.
 
 Clear post window contents.
 
+=== /post/file path:s
+
+Print the contents of a file on the post window.
+
 === /post/hide 
 
 Hide post window.

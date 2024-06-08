@@ -1,0 +1,32 @@
+
+/tutorial/intro
+
+Animatron is a software to control animations in a live performance.
+
+The building block is what we call an ACTOR.
+Actors can be controlled with OSC messages from Animatron or from a remote software or device.
+The message syntax for OSC messages will be exactly the same regardless where you send them from.
+
+You'll need to know 2 basic keyboard shortcuts: 
+- SHIFT + ENTER - to evaluate a single line
+- CONTROL + ENTER - to evaluate a block (anything between empty lines)
+
+Try putting to cursor on the following line and pressing
+SHIFT + ENTER to evaluate it.
+
+/help /post
+
+You should see a help hint explaining how to use the /post message.
+Here you can see the basic syntax of any OSC message. The word with a leading slash '/' is 
+the OSC address. In Animatron we call it COMMAND. Anything after it is an argument. Commands
+my have an arbitrary number of arguments, including none.
+
+To get info about any command, just type '/help /<COMMAND>'.
+
+To get a list of commands use
+
+/commands/list
+
+and check the console or post window.
+
+/tutorial/actor/create

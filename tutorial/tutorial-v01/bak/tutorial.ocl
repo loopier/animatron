@@ -1,0 +1,7 @@
+/def /tutorial/intro
+    /editor/clear
+    /editor/open/from user://tutorial/tutorial-intro.ocl
+
+/def /tutorial/actor/create
+    /editor/clear
+    /editor/open/from user://tutorial/tutorial-actor-create.ocl

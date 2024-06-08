@@ -105,6 +105,7 @@ var coreCommands: Dictionary = {
 	"/post/hide": CommandDescription.new(hidePost, "", "Hide post window."),
 	"/post/toggle": CommandDescription.new(togglePost, "", "Toggle post window visibility."),
 	"/post/clear": CommandDescription.new(clearPost, "", "Clear post window contents."),
+	"/post/file": CommandDescription.new(postFile, "path:s", "Print the contents of a file on the post window."),
 	# osc
 	"/osc/remote": CommandDescription.new(connectOscRemote, "ip:s port:i", "Set the IP address and PORT number of a remote OSC server.", Flags.asArray(true)),
 	"/osc/send": CommandDescription.new(sendOscMsg, "msg:s", "Send an OSC message to a remote server. See `/osc/remote`.", Flags.asArray(true)),
@@ -386,6 +387,15 @@ func togglePost() -> Status:
 
 func clearPost() -> Status:
 	postWindow.set_text("")
+	return Status.ok()
+
+func postFile(path: String) -> Status:
+	Log.debug("posting text: %s" % [path])
+	var file = FileAccess.open(path, FileAccess.READ)
+	if file == null: return Status.error("file not found: %s" % [path])
+	var content = file.get_as_text(true)
+	file.close()
+	post([content])
 	return Status.ok()
 
 func connectOscRemote(args: Array) -> Status:

@@ -1,0 +1,17 @@
+=== How does it work?
+
+As we said earlier, to do anything in Animatron you need to send it *commands*.
+
+You can write them in the editor or send them from other software or devices in the same network using OSC messages. But we'll stick to the editor for now, to keep things simple.
+
+For everything that you can do with Animatron, there's a command. See the full <<help.adoc#,OSC reference documentaion>> for the list of available commands.
+
+==== Custom commands
+
+As you progress you'll want to do more complex things.
+
+It can be annoying to type all the commands for complex behaviours everytime you want need them to happen.
+
+To simpify this, you can create your new commands to group complex command sequences. These are called *defs*, for _definition_.
+
+As you would expect, there's also a command to create defs.
