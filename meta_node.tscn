@@ -1,5 +1,6 @@
-[gd_scene load_steps=7 format=3 uid="uid://bv4h4a2us0yne"]
+[gd_scene load_steps=8 format=3 uid="uid://bv4h4a2us0yne"]
 
+[ext_resource type="Script" path="res://MetaNode.gd" id="1_dit08"]
 [ext_resource type="Shader" path="res://meta_node.gdshader" id="1_srg6k"]
 [ext_resource type="Script" path="res://Animation.gd" id="2_wfrnp"]
 [ext_resource type="FontFile" uid="uid://daia8ao3j3s85" path="res://fonts/TT2020StyleF-Regular.ttf" id="3_fjn8v"]
@@ -19,6 +20,7 @@ default_font_size = 64
 Label/colors/font_color = Color(0, 0, 0, 1)
 
 [node name="MetaNode" type="CharacterBody2D"]
+script = ExtResource("1_dit08")
 
 [node name="Animation" type="AnimatedSprite2D" parent="."]
 material = SubResource("ShaderMaterial_lhcii")

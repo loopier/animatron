@@ -1095,19 +1095,18 @@ func listAnimationDataLibrary() -> Status:
 func colorActor(actorName: String, red, green, blue) -> Status:
 	var result := getActors(actorName)
 	if result.isError(): return result
+	var rgb := Color(red as float, green as float, blue as float)
 	for actor in result.value:
-		var animation := actor.get_node("Animation") as AnimatedSprite2D
-		var rgb := Color(red as float, green as float, blue as float)
-		animation.self_modulate = rgb
+		actor.color = rgb
 		setTextColor(actorName, red, green, blue)
 	return Status.ok()
 
 func addColorActor(actorName: String, red, green, blue) -> Status:
 	var result := getActors(actorName)
 	if result.isError(): return result
+	var rgb := Vector3(red as float, green as float, blue as float)
 	for actor in result.value:
 		var animation := actor.get_node("Animation") as AnimatedSprite2D
-		var rgb := Vector3(red as float, green as float, blue as float)
 		setImageShaderUniform(animation, "uAddColor", rgb)
 	return Status.ok()
 
