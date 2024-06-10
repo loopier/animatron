@@ -109,6 +109,7 @@ func test_listCommands():
 /routine/stop
 /routines
 /set
+/shader
 /state/add
 /state/def
 /state/free

@@ -56,6 +56,7 @@ func test_findExprString():
 	assert_eq(ocl._getExpression("{   5 / 8 - 2 \t\n}"), "5 / 8 - 2") # Remove whitespace around
 	assert_eq(ocl._getExpression("{sin(t*6.28) * exp(-0.5)"), "") # Missing closing brace
 	assert_eq(ocl._getExpression("sin(t*6.28) * exp(-0.5)}"), "") # Missing opening brace
+	assert_eq(ocl._getExpression("{{5 / 8 - 2}}"), "") # Not an expression due to double braces
 	assert_eq(ocl._getExpression("{ sin(t*6.28) * exp(-0.5) }"), "sin(t*6.28) * exp(-0.5)")
 	gut.p("Strings without {} should return empty expression")
 	assert_eq(ocl._getExpression("hello"), "")
@@ -67,6 +68,7 @@ func test_findExprString():
 func test_removeExprSpaces():
 	assert_eq(ocl._removeExpressionSpaces("/position/x bla { 6 * 19 + 100    } 17"), "/position/x bla {6*19+100} 17")
 	assert_eq(ocl._removeExpressionSpaces(" there { sin( x + 9\t)  \n  }  { a + b }"), " there {sin(x+9)}  {a+b}")
+	assert_eq(ocl._removeExpressionSpaces(" this is {{ not an expression }} but { this is }"), " this is {{ not an expression }} but {thisis}")
 
 func test_removeSpaces():
 	assert_eq(ocl._removeSpaces("this is a test"), "thisisatest")

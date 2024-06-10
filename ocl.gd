@@ -1,8 +1,9 @@
 class_name OpenControlLanguage
 
 var variableRegex := RegEx.create_from_string("\\$(\\w+)")
-var fullExpressionRegex := RegEx.create_from_string("^\\{([^{}]*)\\}$")
-var expressionRegex := RegEx.create_from_string("\\{([^{}]*)\\}")
+# Braces around {something} means expression, but double braces {{avoids}} expression evaluation
+var fullExpressionRegex := RegEx.create_from_string("^(?<!\\{)\\{([^{}]+)\\}(?!\\})$") # RegEx.create_from_string("^\\{([^{}]+)\\}$")
+var expressionRegex := RegEx.create_from_string(     "(?<!\\{)\\{([^{}]+)\\}(?!\\})")  #  RegEx.create_from_string("\\{([^{}]+)\\}")
 var spacesRegex := RegEx.create_from_string("\\s+")
 
 ## Example: [code]/for i 4 /post bla_$i or $i[/code]
