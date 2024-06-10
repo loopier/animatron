@@ -1,0 +1,11 @@
+/tutorial/goto size
+
+/size lola 2
+
+/size lola 0.5
+
+/scale lola 0.5
+
+/scale lola 2
+
+/tutorial/goto color

@@ -1,17 +1,13 @@
 === What can Animatron do?
 
-If you have ever done any animation, you know it takes a crazy amount of time and work, and it's completely unthinkable to do it as a performing art.
-
-With some preparation, Animatron allows you to do exactly that: perform as an animator.
-
-All you need is a few image sequences and some way to control the software, which can be done in many ways, although it was initially developed with live coding in mind.
+It can create a collage of animations, which you can then modify in real time.
 
 You could "play" it with a MIDI keyboard, as an image piano, so to speak.
 
 Or with the motion sensors of your phone.
 
-It can also be used collaboratively, with many users controling it at the same time, or cross-controling many Animatron instances in a multi-user setup.
+It can also be used collaboratively, with many users controlling it at the same time, or cross-controling many Animatron instances in a multi-user setup.
 
-I use it as my go-to slideshow engine when I give workshops.
+You can use it to present a slideshow.
 
-Actually, this tutorial is done with Animatron itself :)
+This tutorial is done with Animatron itself :)

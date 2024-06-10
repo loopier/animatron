@@ -2,20 +2,14 @@
 
 === Actors
 
-In Animatron, everything is an *actor*. You put actors on the stage, and make them play image sequences (animations). Then you can modify their playback speed, transform them and move them around. You can group them, arrange their stacking order, and change their visibility, and many many other things.
+Everything in Animatron is an *actor*.
 
-=== Commands
+You put actors on the stage and send them commands to perform actions.
 
-As we said before, you need to send commands to Animatron with the instructions you want it to perform.
+The most basic action is playing an image sequence, creating an animation.
 
-A command is an OSC message that can be sent from any software that supports the OSC protocol. It can be from the same computer where Animatron is running or from another device in the same network.
+=== Assets
 
-In case there's no other software to control it, you can type commands in the editor included in Animatron. We'll use it for the rest of the tutorial.
+An asset is the collection of images creating the image sequence; they are the frames.
 
-For everything that you can do with Animatron, there's a command for it. See the full <<help.adoc#,OSC reference documentaion>> for the list of available commands.
-
-==== Custom commands
-
-As you progress you'll want to do more complex things. It can be annoying to type all the commands for complex behaviours everytime you want need them to happen.
-
-To simpify this, you can create your new commands to group complex command sequences. These are called *defs*, for _definition_. As you would expect, there's also a command for it.
+To see a list of all the available assets, use the `/assets` command.

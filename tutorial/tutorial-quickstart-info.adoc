@@ -1,0 +1,23 @@
+== Quick Start
+
+NOTE: Whenever you get lost, because this text goes away, execute the line at the top of the editor to get back to it.
+
+First of all you need to load some image sequences.
+
+To see the list of available animations, use `/animations`.
+
+It's probably empty. That's because we haven't loaded any, yet.
+
+To see the list of avaiable animations for loading, use `/assets`.
+
+Choose one and load it with `/load <name>`.
+
+If all went well, excuting `/animations` now should display one item in the list with the number of frames of the animation between parenthesis `()`.
+
+Now let's create an actor named `lola` with this animation using `/create <actor-name> <animation-name>`.
+
+You should see an animation running.
+
+To remove it from the stage use `/clear <name>`.
+
+/tutorial/goto play

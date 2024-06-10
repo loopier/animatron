@@ -1,0 +1,11 @@
+=== Move
+
+Actors can be moved around with `/position <actor> <x_pixles> <y_pixles>`.
+
+The top-left corner is `0` for both `x` and `y`. The bottom right is the window width and height, probably `x` being `1920` and `y` being `1080`.
+
+To place it in the middle of the window, use `/center`.
+
+To move it along one axis use either `/x` or `/y`
+
+You can also move it relative to the current position with `/move`, `/move/x` and `/move/y`. Try executing the same move command several times. Compare it to the position commands.

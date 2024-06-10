@@ -1,0 +1,7 @@
+== Getting help
+
+To see all the commands available use `/commands`.
+
+The command `/help <command>` will show information on the post window about the command.
+
+Commands sometimes need arguments. The help documentaion will display their name followed by a colon `:` and their type.

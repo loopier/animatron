@@ -1,1 +1,5 @@
-/tutorial/overview
+/tutorial/goto overview
+
+/assets
+
+/tutorial/goto quickstart

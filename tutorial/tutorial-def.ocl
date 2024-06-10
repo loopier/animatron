@@ -1,37 +1,22 @@
-/def /tutorial/info path:s
-     /post/file $path
-
-/def /tutorial/code path:s
-     /editor/open/from $path
-
 /def /tutorial/clear
      /post/clear
      /editor/clear
 
+/def /tutorial/load/info section:s
+     /post/file res://tutorial/tutorial-$section-info.adoc
+
+/def /tutorial/load/code section:s
+     /editor/open/from res://tutorial/tutorial-$section-code.ocl
+
+/def /tutorial/load section:s
+     /tutorial/load/info $section
+     /tutorial/load/code $section
+
+/def /tutorial/goto section:s
+     /tutorial/clear
+     /tutorial/load $section
+
 /def /tutorial
      /post/show
      /tutorial/clear
-     /tutorial/info res://tutorial/tutorial-welcome-info.adoc
-     /tutorial/code res://tutorial/tutorial-welcome-code.ocl
-
-/def /tutorial/introduction
-     /tutorial/clear
-     /tutorial/info res://tutorial/tutorial-intro-info.adoc
-     /tutorial/code res://tutorial/tutorial-intro-code.ocl
-
-/def /what/is/animatron
-     /post/clear
-     /tutorial/info res://tutorial/tutorial-intro-whatis-info.adoc
-
-/def /what/can/it/do
-     /post/clear
-     /tutorial/info res://tutorial/tutorial-intro-whatcanitdo-info.adoc
-
-/def /how/does/it/work
-     /post/clear
-     /tutorial/info res://tutorial/tutorial-intro-howdoesitwork-info.adoc
-
-/def /tutorial/overview
-     /tutorial/clear
-     /tutorial/info res://tutorial/tutorial-overview-info.adoc
-     /tutorial/code res://tutorial/tutorial-overview-code.ocl
+     /tutorial/load welcome

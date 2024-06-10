@@ -1,8 +1,8 @@
-/tutorial/introduction
+/tutorial/goto intro
 
-/what/is/animatron
-/what/can/it/do
-/how/does/it/work
+/what-is-animatron
+/what-can-it-do
+/how-does-it-work
 
 # go to the next section
-/tutorial/overview
+/tutorial/goto getting-help

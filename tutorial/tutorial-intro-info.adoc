@@ -1,9 +1,13 @@
 == Introduction
 
-This section will help you find out what you need to get started and introduce some broad features to give you a feel for what you can achieve with Animatron.
+To use animatron you send it *commands*.
 
-First of all you need to know how to exectue *commands*. A command is a message with an instruction and some parameters. In the editor is a list of commands (without parameters) that will let you navigate this section.
+A *command* is a message with an instruction, which may need parameters.
 
-Try executing any of them by placing the cursor anywhere on the line of your choice and pressing kbd:[shift + enter].
+In the editor is a list of commands that will let you navigate this section.
+
+NOTE: If you get lost because this text goes away, execute the command at the very top.
+
+Try executing each of them by placing the cursor anywhere on a line of your choice and pressing kbd:[shift + enter].
 
 When you are finished, execute the last command which will lead you to the next section.

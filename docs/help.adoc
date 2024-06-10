@@ -717,6 +717,13 @@ Get the value of a VARIABLE.
 
 Get documentation about CMD.
 
+A command sometimes needs parameters, which are described in the help documentation with their name followed by a colon `:` and their type. Parameter types include
+- `s` - string
+- `i` - integer
+- `f` - float
+- `b` - boolean
+- `...` - arbitrary number of paramters of any type
+
 === /load animation:s
 
 Load an ANIMATION asset from disk. It will create an animation with the same name as the asset. Wildcards are supported, so several animations can be loaded at once. See also: `/assets/list`.

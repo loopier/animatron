@@ -1,0 +1,9 @@
+/tutorial/goto rotate
+
+/center lola
+
+/angle lola 45
+
+/rotate lola -15
+
+/tutorial/goto size

@@ -44,7 +44,7 @@ var Flags := CommandDescription.Flags
 
 ## Core commands map.[br]
 var coreCommands: Dictionary = {
-	"/help": CommandDescription.new(getHelp, "cmd:s", "Get documentation about CMD."),
+	"/help": CommandDescription.new(getHelp, "cmd:s", "Get documentation about CMD.\n\nA command sometimes needs parameters, which are described in the help documentation with their name followed by a colon `:` and their type. Parameter types include\n- `s` - string\n- `i` - integer\n- `f` - float\n- `b` - boolean\n- `...` - arbitrary number of paramters of any type"),
 #	"/test": CommandDescription.new(getActor, "", "This is just a test"), ## used to test random stuff
 	"/set": CommandDescription.new(setVar, "variable:type value:ifbs...", "Set a user VARIABLE with a VALUE, specifying the TYPE (:i = int, :f = float, :b = bool, :s string, :... = arbitrary number of arguments passed as array).\n\nUsage: /set x:f 3.14", Flags.asArray(false)),
 	"/get": CommandDescription.new(getVar, "variable:s", "Get the value of a VARIABLE."),

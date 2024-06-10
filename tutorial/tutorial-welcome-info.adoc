@@ -2,10 +2,8 @@
 
 This tutorial will introduce you to *Animatron* and give you an overview of its features.
 
-In the following pages, you'll learn what you can do with Animatron. We will introduce the most essential concepts, run you through the interface, the basic keybindings (keyboard shortcuts) and give you tips to make the most of your time learning it.
-
 You are reading this in the *post window*.
 
 To the left is the *editor*.
 
-Place the cursor on the line in the editor and press kbd:[Ctrl + Enter]
+Place the cursor on the line with the text in the editor and press kbd:[shift + enter]

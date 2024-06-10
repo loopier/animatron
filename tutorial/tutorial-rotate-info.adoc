@@ -1,0 +1,5 @@
+== Rotate
+
+Actors can be set to a specific angle with `/angle <name> <degrees>`.
+
+To rotate it relative to the current angle, use `/rotate`.

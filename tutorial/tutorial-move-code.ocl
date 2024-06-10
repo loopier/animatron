@@ -1,0 +1,21 @@
+/tutorial/goto move
+
+/position lola 100 900
+
+/position lola 900 100
+
+/position lola 1920 1080
+
+/center lola
+
+/x lola 1800
+
+/y lola 800
+
+/move/x lola -100
+
+/move/y lola -50
+
+/move lola 150 100
+
+/tutorial/goto rotate
