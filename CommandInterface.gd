@@ -73,7 +73,7 @@ var coreCommands: Dictionary = {
 	"/color": CommandDescription.new(colorActor, "actor:s r:f g:f b:f", "Modulate the ACTOR by an RGB colour. R, G and B should be in the 0-1 range. Set to white (1,1,1) to restore its original colour."),
 	"/color/add": CommandDescription.new(addColorActor, "actor:s r:f g:f b:f", "Add an RGB colour to the ACTOR. R, G and B should be in the 0-1 range (can be negative to subtract colour). Set to black (0,0,0) to remove its effect. The addition is done after the modulation by `/color` (if any)."),
 	"/opacity": CommandDescription.new(setActorOpacity, "actor:s opacity:f", "Set OPACITY of ACTOR and its children."),
-	"/shader": CommandDescription.new(setActorShader, "actor:s code:...", "Set the SHADER code for an ACTOR. If the code does not compile, then the default shader will be used. Passing an empty string for the shader will reset it to the default shader. Be sure to use double braces `{{}}` around functions and code blocks.", Flags.asArray(true)),
+	"/shader": CommandDescription.new(setActorShader, "actor:s code:...", "Set the SHADER code for an ACTOR. If the code does not compile, then the default shader will be used. Passing no code argument for the shader will reset it to the default shader. Be sure to use double braces `{{}}` around functions and code blocks.", Flags.asArray(true)),
 	
 	# routines
 	"/routine": CommandDescription.new(addRoutine, "name:s repeats:i interval:f cmd:...", "Start a routine named NAME that sends CMD every INTERVAL of time (in seconds) for an arbitrary number of REPEATS.", Flags.asArray(true)),
@@ -1125,9 +1125,13 @@ func setActorShader(args: Array) -> Status:
 	if result.isError(): return result
 	for actor in result.value:
 		var animation := actor.get_node("Animation") as AnimatedSprite2D
-		var code := " ".join(args.slice(1))
-		#code = "shader_type canvas_item; void fragment() {{ float scl = mix(8.0, 128.0, pow(fract(TIME * 0.25), 2)); COLOR = texture(TEXTURE, floor(UV*scl)/scl) + vec4(0,fract(TIME),0,0); }}"
-		animation.material.shader.code = code
+		args = args.slice(1)
+		if not args.is_empty():
+			var code := " ".join(args)
+			#code = "shader_type canvas_item; void fragment() {{ float scl = mix(8.0, 128.0, pow(fract(TIME * 0.25), 2)); COLOR = texture(TEXTURE, floor(UV*scl)/scl) + vec4(0,fract(TIME),0,0); }}"
+			animation.material.shader.code = code
+		else:
+			animation.material.shader.code = actor.defaultShader.code
 	return result
 
 static func setImageShaderUniform(image: AnimatedSprite2D, uName: StringName, uValue: Variant) -> void:

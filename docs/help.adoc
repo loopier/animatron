@@ -889,7 +889,7 @@ Usage: /set x:f 3.14
 
 === /shader actor:s code:...
 
-Set the SHADER code for an ACTOR. If the code does not compile, then the default shader will be used. Passing an empty string for the shader will reset it to the default shader. Be sure to use double braces `{{}}` around functions and code blocks.
+Set the SHADER code for an ACTOR. If the code does not compile, then the default shader will be used. Passing no code argument for the shader will reset it to the default shader. Be sure to use double braces `{{}}` around functions and code blocks.
 
 === /state/add machine:s state:s next:s
 
