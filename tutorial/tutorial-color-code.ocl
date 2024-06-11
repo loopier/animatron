@@ -1,1 +1,11 @@
 /tutorial/goto color
+
+/load square
+
+/create lola square
+
+/color lola 1 0 0
+
+/color/add lola 0 1 0
+
+/color lola 0 0.5 0

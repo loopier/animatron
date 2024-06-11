@@ -1,2 +1,10 @@
-
 /tutorial/goto intro
+
+/tutorial/goto getting-help
+/tutorial/goto overview
+/tutorial/goto quickstart
+/tutorial/goto play
+/tutorial/goto move
+/tutorial/goto rotate
+/tutorial/goto size
+/tutorial/goto color
