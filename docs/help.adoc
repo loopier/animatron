@@ -898,6 +898,10 @@ Set a user VARIABLE with a VALUE, specifying the TYPE (:i = int, :f = float, :b 
 
 Usage: /set x:f 3.14
 
+=== /shader actor:s code:...
+
+Set the SHADER code for an ACTOR. If the code does not compile, then the default shader will be used. Passing no code argument for the shader will reset it to the default shader. Be sure to use double braces `{{}}` around functions and code blocks.
+
 === /state/add machine:s state:s next:s
 
 Add a STATE with a name to the state MACHINE. NEXT states is an arbitrary number of next possible states. Example: `/state/add mymachine stateA state1 state2` would create a new stateA in `mymachine` that would either repeat or move on to `state2.
