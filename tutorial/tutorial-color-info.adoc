@@ -1,4 +1,4 @@
-= Color
+=== Color
 
 To change the color of an actor, use `/color`.
 

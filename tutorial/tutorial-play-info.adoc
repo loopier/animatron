@@ -8,6 +8,10 @@ Change the frame with `/frame`.
 
 Or go frame by frame with `/next/frame` or `/prev/frame`.
 
+And play it again with `/play`
+
+Then play a range of frames with `/play/range`.
+
 Change the playback speed with `/speed <actor> multiplier`. Setting it to `1` plays at normal speed. `0.5` plays at half speed and `2` doubles the play rate.
 
-To play it wbackwards, either set a negative `/speed` value or use `/play/backwards`.
+To play it wbackwards, set a negative `/speed` value.

@@ -11,11 +11,15 @@
 /prev/frame lola
 
 /play lola
+
+/play/range lola 3 7
+
 /speed lola 0.5
 
 /speed lola -0.25
 
 /speed lola 0.5
-/play/backwards
 
 /tutorial/goto move
+
+/tutorial
