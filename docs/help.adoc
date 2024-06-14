@@ -887,9 +887,21 @@ Set a user VARIABLE with a VALUE, specifying the TYPE (:i = int, :f = float, :b 
 
 Usage: /set x:f 3.14
 
-=== /shader actor:s code:...
+=== /shader actor:s shader:s
 
-Set the SHADER code for an ACTOR. If the code does not compile, then the default shader will be used. Passing no code argument for the shader will reset it to the default shader. Be sure to use double braces `{{}}` around functions and code blocks.
+Assign the SHADER to an ACTOR. Passing an empty name for the shader argument will reset the Actor to use the default shader.
+
+=== /shader/create shader:s code:...
+
+Create a named SHADER object with the given Godot shader CODE. If the code does not compile, then the default shader will be used. Passing no code argument for the shader will reset it to the default shader. Be sure to use double braces `{{}}` around functions and code blocks.
+
+=== /shader/load shader:s
+
+Load a named SHADER object from disk, located in a file with `.gdshader` extension in the `shaders` subdirectory of the user assets path. Sending `*` as the shader name will cause all custom shaders in that directory to be loaded.
+
+=== /shader/property actor:s property:s value:...
+
+Set a SHADER property (aka 'uniform' variable) for an ACTOR. The `value` will depend on the type of the property, for example a `vec3` would require three floats, a `float` only requires a single value.
 
 === /state/add machine:s state:s next:s
 

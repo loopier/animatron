@@ -30,6 +30,7 @@ var mirrorDisplay: Sprite2D
 @onready var saveFileDialog: FileDialog
 @onready var loadPresetDialog: FileDialog
 @onready var actorsNode: Node
+@onready var shadersLibrary := {}
 @onready var routinesNode: Node
 @onready var stateMachines: Dictionary
 @onready var stateChangedCallback: Callable
@@ -40,6 +41,7 @@ var animationsLibrary: SpriteFrames ## The meta node containing these frames nee
 var animationDataLibrary: AnimationLibrary
 var assetsPath := "user://assets"
 var animationAssetsPath := assetsPath + "/animations"
+var shaderAssetsPath := assetsPath + "/shaders"
 var Flags := CommandDescription.Flags
 
 ## Core commands map.[br]
@@ -73,7 +75,10 @@ var coreCommands: Dictionary = {
 	"/color": CommandDescription.new(colorActor, "actor:s r:f g:f b:f", "Modulate the ACTOR by an RGB colour. R, G and B should be in the 0-1 range. Set to white (1,1,1) to restore its original colour."),
 	"/color/add": CommandDescription.new(addColorActor, "actor:s r:f g:f b:f", "Add an RGB colour to the ACTOR. R, G and B should be in the 0-1 range (can be negative to subtract colour). Set to black (0,0,0) to remove its effect. The addition is done after the modulation by `/color` (if any)."),
 	"/opacity": CommandDescription.new(setActorOpacity, "actor:s opacity:f", "Set OPACITY of ACTOR and its children."),
-	"/shader": CommandDescription.new(setActorShader, "actor:s code:...", "Set the SHADER code for an ACTOR. If the code does not compile, then the default shader will be used. Passing no code argument for the shader will reset it to the default shader. Be sure to use double braces `{{}}` around functions and code blocks.", Flags.asArray(true)),
+	"/shader/create": CommandDescription.new(createShader, "shader:s code:...", "Create a named SHADER object with the given Godot shader CODE. If the code does not compile, then the default shader will be used. Passing no code argument for the shader will reset it to the default shader. Be sure to use double braces `{{}}` around functions and code blocks.", Flags.asArray(true)),
+	"/shader/load": CommandDescription.new(loadShader, "shader:s", "Load a named SHADER object from disk, located in a file with `.gdshader` extension in the `shaders` subdirectory of the user assets path. Sending `*` as the shader name will cause all custom shaders in that directory to be loaded."),
+	"/shader": CommandDescription.new(setActorShader, "actor:s shader:s", "Assign the SHADER to an ACTOR. Passing an empty name for the shader argument will reset the Actor to use the default shader."),
+	"/shader/property": CommandDescription.new(setActorShaderProperty, "actor:s property:s value:...", "Set a SHADER property (aka 'uniform' variable) for an ACTOR. The `value` will depend on the type of the property, for example a `vec3` would require three floats, a `float` only requires a single value.", Flags.asArray(true)),
 	
 	# routines
 	"/routine": CommandDescription.new(addRoutine, "name:s repeats:i interval:f cmd:...", "Start a routine named NAME that sends CMD every INTERVAL of time (in seconds) for an arbitrary number of REPEATS.", Flags.asArray(true)),
@@ -178,6 +183,7 @@ func _ready():
 	oscSender = OscReceiver.new()
 	thread = Thread.new()
 	mutex = Mutex.new()
+	shadersLibrary["Default"] = load("res://meta_node.gdshader")
 
 # Called every frame. 'delta' is the elapsed time since the previous frame.
 func _process(_delta):
@@ -713,6 +719,15 @@ func addImageFiles(path: String, animName: String, filenames: PackedStringArray)
 			var texture := assetHelpers.loadImage(path.path_join(file))
 			animationsLibrary.add_frame(animName, texture)
 
+func getShader(shaderName: String) -> Status:
+	var shader := shadersLibrary.get(shaderName) as Shader
+	var msg: String
+	if shader == null:
+		shader = Shader.new()
+		msg = "Created new shader '%s'" % [shaderName]
+		shadersLibrary[shaderName] = shader
+	return Status.ok(shader, msg)
+
 func getAllActors() -> Status:
 	return Status.ok(actorsNode.get_children(true))
 
@@ -747,7 +762,7 @@ func createActor(actorName: String, anim: String) -> Status:
 	center(actorName)
 	
 	# Need to set an owner so it appears in the SceneTree and can be found using
-	# Node.finde_child(pattern) -- see Node docs
+	# Node.find_child(pattern) -- see Node docs
 	actor.set_owner(actorsNode)
 	
 	if result.isError():
@@ -1120,19 +1135,51 @@ func setActorOpacity(actorName: String, alpha: Variant) -> Status:
 		setImageShaderUniform(animation, "uAlpha", alpha as float)
 	return result
 
-func setActorShader(args: Array) -> Status:
-	var result := getActors(args[0])
+func createShader(args: Array) -> Status:
+	var result := getShader(args[0])
+	if result.isError(): return result
+	var shader := result.value as Shader
+	args = args.slice(1)
+	if not args.is_empty():
+		var code := " ".join(args)
+		#code = "shader_type canvas_item; void fragment() {{ float scl = mix(8.0, 128.0, pow(fract(TIME * 0.25), 2)); COLOR = texture(TEXTURE, floor(UV*scl)/scl) + vec4(0,fract(TIME),0,0); }}"
+		shader.code = code
+	else:
+		shader.code = shadersLibrary.get("Default").code
+	return result
+
+func loadShader(shaderName: String) -> Status:
+	var path := shaderAssetsPath.path_join(shaderName)
+	var dir := DirAccess.open(shaderAssetsPath)
+	var shaders := assetHelpers.getFilesMatching(shaderAssetsPath, shaderName, func(ext): return ext == "gdshader")
+	if not shaders.is_empty():
+		return assetHelpers.loadShaders(shadersLibrary, shaders)
+	return Status.error("No shader '%s' found to load" % [shaderName])
+
+func setActorShader(actorName: String, shaderName: String) -> Status:
+	if shaderName.is_empty(): shaderName = "Default"
+	var result := getShader(shaderName)
+	if result.isError(): return result
+	var shader := result.value as Shader
+	result = getActors(actorName)
 	if result.isError(): return result
 	for actor in result.value:
 		var animation := actor.get_node("Animation") as AnimatedSprite2D
-		args = args.slice(1)
-		if not args.is_empty():
-			var code := " ".join(args)
-			#code = "shader_type canvas_item; void fragment() {{ float scl = mix(8.0, 128.0, pow(fract(TIME * 0.25), 2)); COLOR = texture(TEXTURE, floor(UV*scl)/scl) + vec4(0,fract(TIME),0,0); }}"
-			animation.material.shader.code = code
-		else:
-			animation.material.shader.code = actor.defaultShader.code
+		animation.material.shader = shader
 	return result
+
+func setActorShaderProperty(actorName: String, propertyName: String, value:Array) -> Status:
+	#if shaderName.is_empty(): shaderName = "Default"
+	#var result := getShader(shaderName)
+	#if result.isError(): return result
+	#var shader := result.value as Shader
+	#result = getActors(actorName)
+	#if result.isError(): return result
+	#for actor in result.value:
+	#	var animation := actor.get_node("Animation") as AnimatedSprite2D
+	#	animation.material.shader = shader
+	#return result
+	return Status.ok()
 
 static func setImageShaderUniform(image: AnimatedSprite2D, uName: StringName, uValue: Variant) -> void:
 	image.material.set_shader_parameter(uName, uValue)
