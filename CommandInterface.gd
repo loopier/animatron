@@ -1013,6 +1013,7 @@ func arrayToVector(input: Array) -> Variant:
 	for i in len(input):
 		input[i] = float(input[i])
 	match len(input):
+		1: return input[0]
 		2: return Vector2(input[0], input[1])
 		3: return Vector3(input[0], input[1], input[2])
 		4: return Vector4(input[0], input[1], input[2], input[3])
@@ -1168,22 +1169,21 @@ func setActorShader(actorName: String, shaderName: String) -> Status:
 		animation.material.shader = shader
 	return result
 
-func setActorShaderProperty(actorName: String, propertyName: String, value:Array) -> Status:
-	#if shaderName.is_empty(): shaderName = "Default"
-	#var result := getShader(shaderName)
-	#if result.isError(): return result
-	#var shader := result.value as Shader
-	#result = getActors(actorName)
-	#if result.isError(): return result
-	#for actor in result.value:
-	#	var animation := actor.get_node("Animation") as AnimatedSprite2D
-	#	animation.material.shader = shader
-	#return result
+func setActorShaderProperty(args: Array) -> Status:
+	var actorName: String = args[0]
+	var propertyName : String = args[1]
+	var value = arrayToVector(args.slice(2))
+
+	var result := getActors(actorName)
+	if result.isError(): return result
+	for actor in result.value:
+		var animation := actor.get_node("Animation") as AnimatedSprite2D
+		setImageShaderUniform(animation, propertyName, value)
+	return result
 	return Status.ok()
 
 static func setImageShaderUniform(image: AnimatedSprite2D, uName: StringName, uValue: Variant) -> void:
 	image.material.set_shader_parameter(uName, uValue)
-
 
 func listRoutines() -> Status:
 	var routineList := []
