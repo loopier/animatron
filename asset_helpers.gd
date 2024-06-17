@@ -59,6 +59,21 @@ static func getAssetFilesMatching(path: String, nameWildcard: String) -> Diction
 			filename = dir.get_next()
 	return files
 
+static func getFilesMatching(path: String, nameWildcard: String, matchExtension: Callable = func(ext): return true) -> Array[String]:
+	var dir := DirAccess.open(path)
+	var files : Array[String] = []
+	if dir:
+		dir.list_dir_begin()
+		var filename := dir.get_next()
+		while filename:
+			var fullPath := path.path_join(filename)
+			var extMatches := matchExtension.call(filename.get_extension()) as bool
+			if not dir.current_is_dir() and extMatches:
+				var baseFile := filename.get_basename()
+				if baseFile.match(nameWildcard):
+					files.push_back(fullPath)
+			filename = dir.get_next()
+	return files
 
 static func loadImage(path: String) -> ImageTexture:
 	Log.verbose("Loading image: %s" % [path])
@@ -162,3 +177,28 @@ func loadSequences(animFramesLibrary: SpriteFrames, sequences: Array[String]):
 				var height := texture.get_size().y
 				animFramesLibrary.add_frame(info.name, texture, frameId)
 				frameId += 1
+
+func loadShaders(shaderLibrary: Dictionary, shaderNames: Array[String]) -> Status:
+	# Add the runtime-loaded shaders to our pre-existing library
+	var loaded := []
+	var failed := []
+	for shaderPath in shaderNames:
+		var shaderName := shaderPath.get_file().get_basename()
+		var shader := ResourceLoader.load(shaderPath, "Shader") as Shader
+		# I don't see a way to detect Shader compilation failure, so
+		# we can report the failure here... This workaround may give
+		# a hint (it assumes shaders have at least one uniform).
+		# https://forum.godotengine.org/t/how-to-detect-shader-compilation-errors-at-runtime/66687
+		if shader.get_shader_uniform_list().is_empty():
+			Log.warn("'%s' has no uniforms: possibly invalid shader." % [shaderName])
+		if shader:
+			shaderLibrary[shaderName] = shader
+			loaded.append(shaderName)
+		else:
+			failed.append(shaderName)
+	var statusString := ""
+	if not loaded.is_empty():
+		statusString = "Loaded shaders:\n%s" % [loaded]
+	if not failed.is_empty():
+		statusString += "\nFailed to load shaders:\n%s" % [failed]
+	return Status.ok(true, statusString)
