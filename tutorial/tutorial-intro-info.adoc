@@ -8,6 +8,12 @@ In the editor is a list of commands that will let you navigate this section.
 
 NOTE: If you get lost because this text goes away, execute the command at the very top.
 
-Try executing each of them by placing the cursor anywhere on a line of your choice and pressing kbd:[shift + enter].
+To execute a command put the cursor anywhere on a line of your choice and press kbd:[shift + enter].
+
+Blocks of commands (delimited by empty lines) can also be executed with kbd:[ctrl + enter].
+
+Try executing the commands listed in the editor.
+
+Lines beginning with a pound sign (#) will be ignored. These are comments.
 
 When you are finished, execute the last command which will lead you to the next section.

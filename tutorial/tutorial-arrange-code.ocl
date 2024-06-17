@@ -1,0 +1,23 @@
+/tutorial/goto arrange
+
+/free *
+
+/load square
+
+/create white square
+/create black square
+/create yellow square
+/create red square
+/color black 0 0 0
+/color yellow 1 1 0
+/color red 1 0 0
+/move black 400
+/move yellow 300 -200
+/angle red 45
+
+/behind red yellow
+/front red white
+/behind red white
+/front red black
+
+/tutorial/index

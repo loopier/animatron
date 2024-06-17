@@ -6,4 +6,4 @@ You are reading this in the *post window*.
 
 To the left is the *editor*.
 
-Place the cursor on the line with the text in the editor and press kbd:[shift + enter]
+Place the cursor on the line of your choice in the editor and press kbd:[shift + enter]

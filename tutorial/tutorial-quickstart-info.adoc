@@ -6,7 +6,7 @@ First of all you need to load some image sequences.
 
 To see the list of available animations, use `/animations`.
 
-It's probably empty. That's because we haven't loaded any, yet.
+It's probably empty. That's because we haven't loaded anything, yet.
 
 To see the list of avaiable animations for loading, use `/assets`.
 

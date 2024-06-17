@@ -1,0 +1,3 @@
+=== Arrange
+
+The order in which the actors are drawn can be changed with `/front` and `/behind`.

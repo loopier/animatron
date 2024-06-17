@@ -20,3 +20,6 @@
      /post/show
      /tutorial/clear
      /tutorial/load welcome
+
+/def /tutorial/index
+     /tutorial
