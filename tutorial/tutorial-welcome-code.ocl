@@ -10,3 +10,11 @@
 /tutorial/goto size
 /tutorial/goto color
 /tutorial/goto arrange
+/tutorial/goto rand
+/tutorial/goto mask
+
+/tutorial/goto parent
+/tutorial/goto group
+/tutorial/goto def
+/tutorial/goto tween
+/tutorial/goto routine

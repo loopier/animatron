@@ -1,0 +1,18 @@
+/tutorial/goto group
+
+/load square
+/load circle
+
+/create ale circle
+/create alo square
+/create blip square
+/create blop square
+/create bloup square
+
+/rand /size * 0.25 0.5
+/rand /x * 500 1500
+
+/color a* 1 0 0
+/rand /angle bl?p 0 360
+
+/tutorial/index

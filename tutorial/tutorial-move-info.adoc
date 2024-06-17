@@ -1,6 +1,6 @@
 === Move
 
-Actors can be moved around with `/position <actor> <x_pixles> <y_pixles>`.
+Actors can be moved around with `/position <actor> <x_pixels> <y_pixels>`.
 
 The top-left corner is `0` for both `x` and `y`. The bottom right is the window width and height, probably `x` being `1920` and `y` being `1080`.
 

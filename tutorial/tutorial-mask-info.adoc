@@ -1,0 +1,7 @@
+= mask
+
+An actor can be masked with any another actor.
+
+`/mask <masked> <mask>`
+
+Be aware that the masked actor will be "inside" the mask actor, so any transformations will happen relative to the mask.

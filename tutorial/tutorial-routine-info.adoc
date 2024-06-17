@@ -1,0 +1,10 @@
+= routine
+
+The `/routine` command allows calling one command more than once over a period of time.
+
+
+You need to give it a name (so it can be cancelled at any time), a number of repeats and the interval of time -in seconds- at which you want the repeats to happen (use `inf` to repeat it for ever). Then you specify the command you want to be repeated.
+
+`/routine <name> <repeats> <interval> <cmd>`
+
+To stop a routine use `/routine/free <name>`.

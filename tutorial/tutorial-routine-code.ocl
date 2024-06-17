@@ -1,0 +1,13 @@
+/tutorial/goto routine
+
+/load square
+
+/create a square
+
+/routine bla 4 0.5 /rotate a 15
+
+/routine bla inf 0.25 /rotate a 10
+
+/routine/free bla
+
+/tutorial/index

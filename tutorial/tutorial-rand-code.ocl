@@ -1,0 +1,9 @@
+/tutorial/goto rand
+
+/load square
+
+/create a square
+
+/rand /angle a 0 360
+
+/tutorial/index

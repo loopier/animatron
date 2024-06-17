@@ -1,0 +1,7 @@
+= tween
+
+Properties of actors can be animated over time with `/tween`.
+
+The property will be changed from the current value to the given value in the time specified, transitioning with an interpolation curve.
+
+For a list of available transition curves see `/help /tween`.

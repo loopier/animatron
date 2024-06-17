@@ -1,0 +1,7 @@
+= rand
+
+Commands with ONLY ONE ARGUMENT can be randomized.
+
+Call the command as you normally would, but give it 2 values: minimun and maximum.
+
+Each time you evaluate the command it will send a random value within the range.

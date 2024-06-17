@@ -1,0 +1,18 @@
+/tutorial/goto parent
+
+/load square
+
+/create a square
+/create b square
+/size * 0.25
+/move/x b 300
+
+/rotate a 20
+
+/parent b a
+
+/rotate a 20
+
+/parent/free b
+
+/tutorial/index

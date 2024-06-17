@@ -1,0 +1,11 @@
+/tutorial/goto def
+
+/def /alo name:s angle:f
+     /create $name square
+     /angle $name $angle
+
+/load square
+
+/alo bla 45
+
+/tutorial/index

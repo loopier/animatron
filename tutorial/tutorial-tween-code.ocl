@@ -1,0 +1,11 @@
+/tutorial/goto tween
+
+/load square
+
+/create a square
+
+/tween 4 sine /position a 1750 1080
+
+/tween 4 linear /position a 960 540
+
+/tutorial/index

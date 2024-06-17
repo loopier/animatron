@@ -1,0 +1,12 @@
+/tutorial/goto mask
+
+/load square
+/load circle
+
+/create a square
+/create b circle
+/color b 0 0 0
+
+/mask a b
+
+/tutorial/index

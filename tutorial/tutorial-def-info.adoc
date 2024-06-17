@@ -1,0 +1,29 @@
+= def
+
+Custom commands can be created to group complex behaviours made out of other commands.
+
+The command to create custom commands is `/def`.
+
+To create a `/def`, give it a name, and optional arguments specifying their types.
+
+`/def /<your_cmd> [<arg1>:type ... <argN>:type]`
+
+Arguments can be of different types:
+
+- `s` is a String (text), e.g.: `alo`
+- `i` is an intenger number, e.g.: `13`
+- `f` is a floating point number, e.g.: `2.14`
+- `b` is a boolean (0 or 1), e.g.: `0`
+- `...` is an arbitrary number of arguments of any type and can only be used as last argument, e.g.: `alo 13 2.14 0`
+
+To use a variable value on a command inside the def, prepend a `$` to its name.
+
+The commands in the def NEED TO BE TABULATED. This is VERY IMPORTANT. Otherwise they will be parsed as individual commands.
+
+Evaluate the `/def` block with kbd:[ctrl + enter] to add it to the system.
+
+Then you can use it just like any other command.
+
+Defs are useful in many different ways. For example, if you have another software or device that sends specific OSC commands, you can declare the message address as `/def` in Animatron and put any behaviour you like to happen when the message arrives.
+
+Another way to use them is to create custom syntax. If you don't find a command very intuitive, just declare a `/def` with the syntax that works best for you and use that instead.

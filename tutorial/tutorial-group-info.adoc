@@ -1,0 +1,10 @@
+= group
+
+Commands can be executed in bulk with wildcards.
+
+Create a bunch of actors with similar names, then use a wildcard to send a command to all of them.
+
+When using  `/rand` with wildcards, it will send a different value to each actor.
+
+`*` will match any number of characters.
+`?` will match exactly one character (which can be anything).

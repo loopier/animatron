@@ -1,0 +1,5 @@
+= parent
+
+Actors can be linked to other actors with `/parent`.
+
+`/parent child parent`
