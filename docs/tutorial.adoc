@@ -1,0 +1,993 @@
+= Tutorial
+:toc: left
+
+== Overview
+
+=== Actors
+
+Everything in Animatron is an *actor*.
+
+You put actors on the stage and send them commands to perform actions.
+
+The most basic action is playing an image sequence, creating an animation.
+
+=== Assets
+
+An asset is the collection of images creating the image sequence; they are the frames.
+
+To see a list of all the available assets, use the `/assets` command.
+
+	/tutorial/goto overview
+	
+	/assets
+	
+	/tutorial/goto quickstart
+	
+	/tutorial/index
+	
+= parent
+
+Actors can be linked to other actors with `/parent`.
+
+`/parent child parent`
+
+	/tutorial/goto parent
+	
+	/load square
+	
+	/create a square
+	/create b square
+	/size * 0.25
+	/move/x b 300
+	
+	/rotate a 20
+	
+	/parent b a
+	
+	/rotate a 20
+	
+	/parent/free b
+	
+	/tutorial/index
+	
+== Size
+
+To change the size of the actor use `/size`. The value of `1` is the normal size.
+
+Scaling is done with  `/scale`.
+
+	/tutorial/goto size
+	
+	/size lola 2
+	
+	/size lola 0.5
+	
+	/scale lola 0.5
+	
+	/scale lola 2
+	
+	/tutorial/goto color
+	
+	/tutorial/index
+	
+== Rotate
+
+Actors can be set to a specific angle with `/angle <name> <degrees>`.
+
+To rotate it relative to the current angle, use `/rotate`.
+
+	/tutorial/goto rotate
+	
+	/center lola
+	
+	/angle lola 45
+	
+	/rotate lola -15
+	
+	/tutorial/goto size
+	
+	/tutorial/index
+	
+== Size
+
+To change the size of the actor use `/size`. The value of `1` is the normal size.
+
+Scaling is done with  `/scale`.
+
+	/tutorial/goto size
+	
+	/size lola 2
+	
+	/size lola 0.5
+	
+	/scale lola 0.5
+	
+	/scale lola 2
+	
+	/tutorial/goto color
+	
+	/tutorial/index
+	
+=== Move
+
+Actors can be moved around with `/position <actor> <x_pixels> <y_pixels>`.
+
+The top-left corner is `0` for both `x` and `y`. The bottom right is the window width and height, probably `x` being `1920` and `y` being `1080`.
+
+To place it in the middle of the window, use `/center`.
+
+To move it along one axis use either `/x` or `/y`
+
+You can also move it relative to the current position with `/move`, `/move/x` and `/move/y`. Try executing the same move command several times. Compare it to the position commands.
+
+	/tutorial/goto move
+	
+	/position lola 100 900
+	
+	/position lola 900 100
+	
+	/position lola 1920 1080
+	
+	/center lola
+	
+	/x lola 1800
+	
+	/y lola 800
+	
+	/move/x lola -100
+	
+	/move/y lola -50
+	
+	/move lola 150 100
+	
+	/tutorial/goto rotate
+	
+	/tutorial/index
+	
+=== Move
+
+Actors can be moved around with `/position <actor> <x_pixels> <y_pixels>`.
+
+The top-left corner is `0` for both `x` and `y`. The bottom right is the window width and height, probably `x` being `1920` and `y` being `1080`.
+
+To place it in the middle of the window, use `/center`.
+
+To move it along one axis use either `/x` or `/y`
+
+You can also move it relative to the current position with `/move`, `/move/x` and `/move/y`. Try executing the same move command several times. Compare it to the position commands.
+
+	/tutorial/goto move
+	
+	/position lola 100 900
+	
+	/position lola 900 100
+	
+	/position lola 1920 1080
+	
+	/center lola
+	
+	/x lola 1800
+	
+	/y lola 800
+	
+	/move/x lola -100
+	
+	/move/y lola -50
+	
+	/move lola 150 100
+	
+	/tutorial/goto rotate
+	
+	/tutorial/index
+	
+=== Color
+
+To change the color of an actor, use `/color`.
+
+The values are R G B, from 0.0 to 1.0.
+
+The values are multipliers for each of the channels.
+
+All `0` s is black.
+
+All `1` s is white.
+
+You can also add to the original color with `/color/add`.
+
+	/tutorial/goto color
+	
+	/load square
+	
+	/create lola square
+	
+	/color lola 1 0 0
+	
+	/color/add lola 0 1 0
+	
+	/color lola 0 0.5 0
+	
+	/tutorial/index
+	
+=== What can Animatron do?
+
+It can create a collage of animations, which you can then modify in real time.
+
+You could "play" it with a MIDI keyboard, as an image piano, so to speak.
+
+Or with the motion sensors of your phone.
+
+It can also be used collaboratively, with many users controlling it at the same time, or cross-controling many Animatron instances in a multi-user setup.
+
+You can use it to present a slideshow.
+
+This tutorial is done with Animatron itself :)
+
+=== How does it work?
+
+Everything in Animatron is done using *commands*.
+
+You can write them in the editor or send them from other software or devices in the same network using OSC messages.
+
+See the full <<help.adoc#,list>> of available commands.
+
+==== Custom commands
+
+Custom commands can be defined to create complex behaviours out of other commands.
+
+We call these custom commands *defs*, for _definition_.
+
+Defs are created with the `/def` command.
+
+== Animatron tutorial
+
+This tutorial will introduce you to *Animatron* and give you an overview of its features.
+
+You are reading this in the *post window*.
+
+To the left is the *editor*.
+
+Place the cursor on the line of your choice in the editor and press kbd:[shift + enter]
+
+	
+	/tutorial/goto intro
+	/tutorial/goto getting-help
+	/tutorial/goto overview
+	/tutorial/goto quickstart
+	
+	/tutorial/goto play
+	/tutorial/goto move
+	/tutorial/goto rotate
+	/tutorial/goto size
+	/tutorial/goto color
+	/tutorial/goto arrange
+	/tutorial/goto rand
+	/tutorial/goto mask
+	
+	/tutorial/goto parent
+	/tutorial/goto group
+	/tutorial/goto def
+	/tutorial/goto tween
+	/tutorial/goto routine
+	
+== Quick Start
+
+NOTE: Whenever you get lost, because this text goes away, execute the line at the top of the editor to get back to it.
+
+First of all you need to load some image sequences.
+
+To see the list of available animations, use `/animations`.
+
+It's probably empty. That's because we haven't loaded anything, yet.
+
+To see the list of avaiable animations for loading, use `/assets`.
+
+Choose one and load it with `/load <name>`.
+
+If all went well, excuting `/animations` now should display one item in the list with the number of frames of the animation between parenthesis `()`.
+
+Now let's create an actor named `lola` with this animation using `/create <actor-name> <animation-name>`.
+
+You should see an animation running.
+
+To remove it from the stage use `/clear <name>`.
+
+/tutorial/goto play
+
+	/tutorial/goto quickstart
+	
+	/animations
+	
+	/assets
+	
+	/load numbers
+	
+	/create lola numbers
+	
+	/clear lola
+	
+	/tutorial/goto play
+	
+	/tutorial/index
+	
+== Introduction
+
+To use animatron you send it *commands*.
+
+A *command* is a message with an instruction, which may need parameters.
+
+In the editor is a list of commands that will let you navigate this section.
+
+NOTE: If you get lost because this text goes away, execute the command at the very top.
+
+To execute a command put the cursor anywhere on a line of your choice and press kbd:[shift + enter].
+
+Blocks of commands (delimited by empty lines) can also be executed with kbd:[ctrl + enter].
+
+Try executing the commands listed in the editor.
+
+Lines beginning with a pound sign (#) will be ignored. These are comments.
+
+When you are finished, execute the last command which will lead you to the next section.
+
+	/tutorial/goto intro
+	
+	/what-is-animatron
+	/what-can-it-do
+	/how-does-it-work
+	
+	# go to the next section
+	/tutorial/goto getting-help
+	
+	/tutorial/index
+	
+= def
+
+Custom commands can be created to group complex behaviours made out of other commands.
+
+The command to create custom commands is `/def`.
+
+To create a `/def`, give it a name, and optional arguments specifying their types.
+
+`/def /<your_cmd> [<arg1>:type ... <argN>:type]`
+
+Arguments can be of different types:
+
+- `s` is a String (text), e.g.: `alo`
+- `i` is an intenger number, e.g.: `13`
+- `f` is a floating point number, e.g.: `2.14`
+- `b` is a boolean (0 or 1), e.g.: `0`
+- `...` is an arbitrary number of arguments of any type and can only be used as last argument, e.g.: `alo 13 2.14 0`
+
+To use a variable value on a command inside the def, prepend a `$` to its name.
+
+The commands in the def NEED TO BE TABULATED. This is VERY IMPORTANT. Otherwise they will be parsed as individual commands.
+
+Evaluate the `/def` block with kbd:[ctrl + enter] to add it to the system.
+
+Then you can use it just like any other command.
+
+Defs are useful in many different ways. For example, if you have another software or device that sends specific OSC commands, you can declare the message address as `/def` in Animatron and put any behaviour you like to happen when the message arrives.
+
+Another way to use them is to create custom syntax. If you don't find a command very intuitive, just declare a `/def` with the syntax that works best for you and use that instead.
+
+	/tutorial/goto def
+	
+	/def /alo name:s angle:f
+	     /create $name square
+	     /angle $name $angle
+	
+	/load square
+	
+	/alo bla 45
+	
+	/tutorial/index
+	
+= rand
+
+Commands with ONLY ONE ARGUMENT can be randomized.
+
+Call the command as you normally would, but give it 2 values: minimun and maximum.
+
+Each time you evaluate the command it will send a random value within the range.
+
+	/tutorial/goto rand
+	
+	/load square
+	
+	/create a square
+	
+	/rand /angle a 0 360
+	
+	/tutorial/index
+	
+=== Arrange
+
+The order in which the actors are drawn can be changed with `/front` and `/behind`.
+
+	/tutorial/goto arrange
+	
+	/free *
+	
+	/load square
+	
+	/create white square
+	/create black square
+	/create yellow square
+	/create red square
+	/color black 0 0 0
+	/color yellow 1 1 0
+	/color red 1 0 0
+	/move black 400
+	/move yellow 300 -200
+	/angle red 45
+	
+	/behind red yellow
+	/front red white
+	/behind red white
+	/front red black
+	
+	/tutorial/index
+	
+== Animatron tutorial
+
+This tutorial will introduce you to *Animatron* and give you an overview of its features.
+
+You are reading this in the *post window*.
+
+To the left is the *editor*.
+
+Place the cursor on the line of your choice in the editor and press kbd:[shift + enter]
+
+	
+	/tutorial/goto intro
+	/tutorial/goto getting-help
+	/tutorial/goto overview
+	/tutorial/goto quickstart
+	
+	/tutorial/goto play
+	/tutorial/goto move
+	/tutorial/goto rotate
+	/tutorial/goto size
+	/tutorial/goto color
+	/tutorial/goto arrange
+	/tutorial/goto rand
+	/tutorial/goto mask
+	
+	/tutorial/goto parent
+	/tutorial/goto group
+	/tutorial/goto def
+	/tutorial/goto tween
+	/tutorial/goto routine
+	
+=== What is Animatron
+
+Animatron is an experimental environment designed to improvise with image sequences in a live performance.
+
+You can use it to create visuals by combining animations in real time, just like a musician would combine notes with an instrument to create music.
+
+= def
+
+Custom commands can be created to group complex behaviours made out of other commands.
+
+The command to create custom commands is `/def`.
+
+To create a `/def`, give it a name, and optional arguments specifying their types.
+
+`/def /<your_cmd> [<arg1>:type ... <argN>:type]`
+
+Arguments can be of different types:
+
+- `s` is a String (text), e.g.: `alo`
+- `i` is an intenger number, e.g.: `13`
+- `f` is a floating point number, e.g.: `2.14`
+- `b` is a boolean (0 or 1), e.g.: `0`
+- `...` is an arbitrary number of arguments of any type and can only be used as last argument, e.g.: `alo 13 2.14 0`
+
+To use a variable value on a command inside the def, prepend a `$` to its name.
+
+The commands in the def NEED TO BE TABULATED. This is VERY IMPORTANT. Otherwise they will be parsed as individual commands.
+
+Evaluate the `/def` block with kbd:[ctrl + enter] to add it to the system.
+
+Then you can use it just like any other command.
+
+Defs are useful in many different ways. For example, if you have another software or device that sends specific OSC commands, you can declare the message address as `/def` in Animatron and put any behaviour you like to happen when the message arrives.
+
+Another way to use them is to create custom syntax. If you don't find a command very intuitive, just declare a `/def` with the syntax that works best for you and use that instead.
+
+	/tutorial/goto def
+	
+	/def /alo name:s angle:f
+	     /create $name square
+	     /angle $name $angle
+	
+	/load square
+	
+	/alo bla 45
+	
+	/tutorial/index
+	
+= mask
+
+An actor can be masked with any another actor.
+
+`/mask <masked> <mask>`
+
+Be aware that the masked actor will be "inside" the mask actor, so any transformations will happen relative to the mask.
+
+	/tutorial/goto mask
+	
+	/load square
+	/load circle
+	
+	/create a square
+	/create b circle
+	/color b 0 0 0
+	
+	/mask a b
+	
+	/tutorial/index
+	
+== Getting help
+
+To see all the commands available use `/commands`.
+
+The command `/help <command>` will show information on the post window about the command.
+
+Commands sometimes need arguments. The help documentaion will display their name followed by a colon `:` and their type.
+
+	/tutorial/goto getting-help
+	
+	/commands
+	
+	/help /help
+	
+	/tutorial/goto overview
+	
+	/tutorial/index
+	
+== Getting help
+
+To see all the commands available use `/commands`.
+
+The command `/help <command>` will show information on the post window about the command.
+
+Commands sometimes need arguments. The help documentaion will display their name followed by a colon `:` and their type.
+
+	/tutorial/goto getting-help
+	
+	/commands
+	
+	/help /help
+	
+	/tutorial/goto overview
+	
+	/tutorial/index
+	
+= tween
+
+Properties of actors can be animated over time with `/tween`.
+
+The property will be changed from the current value to the given value in the time specified, transitioning with an interpolation curve.
+
+For a list of available transition curves see `/help /tween`.
+
+	/tutorial/goto tween
+	
+	/load square
+	
+	/create a square
+	
+	/tween 4 sine /position a 1750 1080
+	
+	/tween 4 linear /position a 960 540
+	
+	/tutorial/index
+	
+== Quick Start
+
+NOTE: Whenever you get lost, because this text goes away, execute the line at the top of the editor to get back to it.
+
+First of all you need to load some image sequences.
+
+To see the list of available animations, use `/animations`.
+
+It's probably empty. That's because we haven't loaded anything, yet.
+
+To see the list of avaiable animations for loading, use `/assets`.
+
+Choose one and load it with `/load <name>`.
+
+If all went well, excuting `/animations` now should display one item in the list with the number of frames of the animation between parenthesis `()`.
+
+Now let's create an actor named `lola` with this animation using `/create <actor-name> <animation-name>`.
+
+You should see an animation running.
+
+To remove it from the stage use `/clear <name>`.
+
+/tutorial/goto play
+
+	/tutorial/goto quickstart
+	
+	/animations
+	
+	/assets
+	
+	/load numbers
+	
+	/create lola numbers
+	
+	/clear lola
+	
+	/tutorial/goto play
+	
+	/tutorial/index
+	
+=== Color
+
+To change the color of an actor, use `/color`.
+
+The values are R G B, from 0.0 to 1.0.
+
+The values are multipliers for each of the channels.
+
+All `0` s is black.
+
+All `1` s is white.
+
+You can also add to the original color with `/color/add`.
+
+	/tutorial/goto color
+	
+	/load square
+	
+	/create lola square
+	
+	/color lola 1 0 0
+	
+	/color/add lola 0 1 0
+	
+	/color lola 0 0.5 0
+	
+	/tutorial/index
+	
+= mask
+
+An actor can be masked with any another actor.
+
+`/mask <masked> <mask>`
+
+Be aware that the masked actor will be "inside" the mask actor, so any transformations will happen relative to the mask.
+
+	/tutorial/goto mask
+	
+	/load square
+	/load circle
+	
+	/create a square
+	/create b circle
+	/color b 0 0 0
+	
+	/mask a b
+	
+	/tutorial/index
+	
+= tween
+
+Properties of actors can be animated over time with `/tween`.
+
+The property will be changed from the current value to the given value in the time specified, transitioning with an interpolation curve.
+
+For a list of available transition curves see `/help /tween`.
+
+	/tutorial/goto tween
+	
+	/load square
+	
+	/create a square
+	
+	/tween 4 sine /position a 1750 1080
+	
+	/tween 4 linear /position a 960 540
+	
+	/tutorial/index
+	
+= group
+
+Commands can be executed in bulk with wildcards.
+
+Create a bunch of actors with similar names, then use a wildcard to send a command to all of them.
+
+When using  `/rand` with wildcards, it will send a different value to each actor.
+
+`*` will match any number of characters.
+`?` will match exactly one character (which can be anything).
+
+	/tutorial/goto group
+	
+	/load square
+	/load circle
+	
+	/create ale circle
+	/create alo square
+	/create blip square
+	/create blop square
+	/create bloup square
+	
+	/rand /size * 0.25 0.5
+	/rand /x * 500 1500
+	
+	/color a* 1 0 0
+	/rand /angle bl?p 0 360
+	
+	/tutorial/index
+	
+=== Arrange
+
+The order in which the actors are drawn can be changed with `/front` and `/behind`.
+
+	/tutorial/goto arrange
+	
+	/free *
+	
+	/load square
+	
+	/create white square
+	/create black square
+	/create yellow square
+	/create red square
+	/color black 0 0 0
+	/color yellow 1 1 0
+	/color red 1 0 0
+	/move black 400
+	/move yellow 300 -200
+	/angle red 45
+	
+	/behind red yellow
+	/front red white
+	/behind red white
+	/front red black
+	
+	/tutorial/index
+	
+== Rotate
+
+Actors can be set to a specific angle with `/angle <name> <degrees>`.
+
+To rotate it relative to the current angle, use `/rotate`.
+
+	/tutorial/goto rotate
+	
+	/center lola
+	
+	/angle lola 45
+	
+	/rotate lola -15
+	
+	/tutorial/goto size
+	
+	/tutorial/index
+	
+= routine
+
+The `/routine` command allows calling one command more than once over a period of time.
+
+
+You need to give it a name (so it can be cancelled at any time), a number of repeats and the interval of time -in seconds- at which you want the repeats to happen (use `inf` to repeat it for ever). Then you specify the command you want to be repeated.
+
+`/routine <name> <repeats> <interval> <cmd>`
+
+To stop a routine use `/routine/free <name>`.
+
+	/tutorial/goto routine
+	
+	/load square
+	
+	/create a square
+	
+	/routine bla 4 0.5 /rotate a 15
+	
+	/routine bla inf 0.25 /rotate a 10
+	
+	/routine/free bla
+	
+	/tutorial/index
+	
+= group
+
+Commands can be executed in bulk with wildcards.
+
+Create a bunch of actors with similar names, then use a wildcard to send a command to all of them.
+
+When using  `/rand` with wildcards, it will send a different value to each actor.
+
+`*` will match any number of characters.
+`?` will match exactly one character (which can be anything).
+
+	/tutorial/goto group
+	
+	/load square
+	/load circle
+	
+	/create ale circle
+	/create alo square
+	/create blip square
+	/create blop square
+	/create bloup square
+	
+	/rand /size * 0.25 0.5
+	/rand /x * 500 1500
+	
+	/color a* 1 0 0
+	/rand /angle bl?p 0 360
+	
+	/tutorial/index
+	
+= rand
+
+Commands with ONLY ONE ARGUMENT can be randomized.
+
+Call the command as you normally would, but give it 2 values: minimun and maximum.
+
+Each time you evaluate the command it will send a random value within the range.
+
+	/tutorial/goto rand
+	
+	/load square
+	
+	/create a square
+	
+	/rand /angle a 0 360
+	
+	/tutorial/index
+	
+=== Play
+
+First create the actor again with `/create`.
+
+You can stop the animation with `/stop`.
+
+Change the frame with `/frame`.
+
+Or go frame by frame with `/next/frame` or `/prev/frame`.
+
+And play it again with `/play`
+
+Then play a range of frames with `/play/range`.
+
+Change the playback speed with `/speed <actor> multiplier`. Setting it to `1` plays at normal speed. `0.5` plays at half speed and `2` doubles the play rate.
+
+To play it wbackwards, set a negative `/speed` value.
+
+	/tutorial/goto play
+	
+	/create lola numbers
+	
+	/stop lola
+	
+	/frame lola 3
+	
+	/next/frame lola
+	
+	/prev/frame lola
+	
+	/play lola
+	
+	/play/range lola 3 7
+	
+	/speed lola 0.5
+	
+	/speed lola -0.25
+	
+	/speed lola 0.5
+	
+	/tutorial/goto move
+	
+	/tutorial/index
+	
+= parent
+
+Actors can be linked to other actors with `/parent`.
+
+`/parent child parent`
+
+	/tutorial/goto parent
+	
+	/load square
+	
+	/create a square
+	/create b square
+	/size * 0.25
+	/move/x b 300
+	
+	/rotate a 20
+	
+	/parent b a
+	
+	/rotate a 20
+	
+	/parent/free b
+	
+	/tutorial/index
+	
+== Introduction
+
+To use animatron you send it *commands*.
+
+A *command* is a message with an instruction, which may need parameters.
+
+In the editor is a list of commands that will let you navigate this section.
+
+NOTE: If you get lost because this text goes away, execute the command at the very top.
+
+To execute a command put the cursor anywhere on a line of your choice and press kbd:[shift + enter].
+
+Blocks of commands (delimited by empty lines) can also be executed with kbd:[ctrl + enter].
+
+Try executing the commands listed in the editor.
+
+Lines beginning with a pound sign (#) will be ignored. These are comments.
+
+When you are finished, execute the last command which will lead you to the next section.
+
+	/tutorial/goto intro
+	
+	/what-is-animatron
+	/what-can-it-do
+	/how-does-it-work
+	
+	# go to the next section
+	/tutorial/goto getting-help
+	
+	/tutorial/index
+	
+= routine
+
+The `/routine` command allows calling one command more than once over a period of time.
+
+
+You need to give it a name (so it can be cancelled at any time), a number of repeats and the interval of time -in seconds- at which you want the repeats to happen (use `inf` to repeat it for ever). Then you specify the command you want to be repeated.
+
+`/routine <name> <repeats> <interval> <cmd>`
+
+To stop a routine use `/routine/free <name>`.
+
+	/tutorial/goto routine
+	
+	/load square
+	
+	/create a square
+	
+	/routine bla 4 0.5 /rotate a 15
+	
+	/routine bla inf 0.25 /rotate a 10
+	
+	/routine/free bla
+	
+	/tutorial/index
+	
+== Overview
+
+=== Actors
+
+Everything in Animatron is an *actor*.
+
+You put actors on the stage and send them commands to perform actions.
+
+The most basic action is playing an image sequence, creating an animation.
+
+=== Assets
+
+An asset is the collection of images creating the image sequence; they are the frames.
+
+To see a list of all the available assets, use the `/assets` command.
+
+	/tutorial/goto overview
+	
+	/assets
+	
+	/tutorial/goto quickstart
+	
+	/tutorial/index
+	

@@ -139,6 +139,7 @@ func _ready():
 	var helpContents := DocGenerator.asciidocFromCommandsFile("res://commands/extended.ocl")
 	helpContents += DocGenerator.asciidocFromCommandDescriptions(cmdInterface.coreCommands)
 	DocGenerator.writeTextToFile("res://docs/help.adoc", helpContents)
+	DocGenerator.generateTutorial("res://docs/tutorial.adoc", "res://tutorial/")
 	initPostWindowMsg()
 
 func getPathFromArgs() -> String:

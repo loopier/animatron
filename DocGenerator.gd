@@ -79,3 +79,37 @@ static func getDocString(text:String, def: String) -> Status:
 		docstring = "\n".join(docstring)
 		return Status.ok(docstring)
 	return Status.error("/def not found: %s" % [def])
+
+## Generate a tutorial in [param destinationFile] from the files in [param fromDir].
+static func generateTutorial(destinationFile: String, fromDir: String):
+	Log.debug("Generating tutorial on: %s" % [destinationFile])
+	var asciidoc := "= Tutorial\n"
+	asciidoc += ":toc: left\n\n"
+	var dir = DirAccess.open(fromDir)
+	if dir:
+		dir.list_dir_begin()
+		var filename = dir.get_next()
+		while filename != "":
+			filename = dir.get_next()
+			var last = filename.rfind("-")
+			# somehow the cropping needs to be done in two reverse steps
+			var sectionName = filename.substr(0, last).substr(9)
+			Log.debug("%s: %s: %s" % [last, filename, sectionName])
+			if sectionName == "": continue
+			asciidoc += getTutorialSectionAsString(sectionName)
+			asciidoc += "\n"
+	var result = writeTextToFile(destinationFile, asciidoc)
+
+static func getTutorialSectionAsString(sectionName: String) -> String:
+	var asciidoc = ""
+	var info = "res://tutorial/tutorial-%s-info.adoc" % [sectionName]
+	var code = "res://tutorial/tutorial-%s-code.ocl" % [sectionName]
+	Log.verbose("%s: %s" % [sectionName, info])
+	var result = getTextFromFile(info)
+	if result.isError(): return asciidoc # FIX: this is silent failing, probably not desirable
+	asciidoc = result.value
+	result = getTextFromFile(code)
+	if result.isError(): return asciidoc
+	asciidoc += "\n\t"
+	asciidoc += result.value.replace("\n", "\n\t")
+	return asciidoc
