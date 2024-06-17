@@ -85,20 +85,19 @@ static func generateTutorial(destinationFile: String, fromDir: String):
 	Log.debug("Generating tutorial on: %s" % [destinationFile])
 	var asciidoc := "= Tutorial\n"
 	asciidoc += ":toc: left\n\n"
-	var dir = DirAccess.open(fromDir)
-	if dir:
-		dir.list_dir_begin()
-		var filename = dir.get_next()
-		while filename != "":
-			filename = dir.get_next()
-			var last = filename.rfind("-")
-			# somehow the cropping needs to be done in two reverse steps
-			var sectionName = filename.substr(0, last).substr(9)
-			Log.debug("%s: %s: %s" % [last, filename, sectionName])
-			if sectionName == "": continue
-			asciidoc += getTutorialSectionAsString(sectionName)
-			asciidoc += "\n"
-	var result = writeTextToFile(destinationFile, asciidoc)
+	var indexFilename = "tutorial-welcome-code.ocl"
+	var result = getTextFromFile("%s/%s" % [fromDir, indexFilename])
+	if result.isError(): return result
+	var sectionsText = result.value
+	var sections = sectionsText.split("\n")
+	for section in sections:
+		if section == "": continue
+		var sectionName = section.split(" ")[1]
+		#Log.debug("%s: %s" % [section, sectionName])
+		asciidoc += getTutorialSectionAsString(sectionName)
+		asciidoc += "\n"
+	#Log.debug(asciidoc)
+	result = writeTextToFile(destinationFile, asciidoc)
 
 static func getTutorialSectionAsString(sectionName: String) -> String:
 	var asciidoc = ""
