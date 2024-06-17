@@ -1,7 +1,7 @@
 #/commands/load res://test/test-init-code.ocl
 
 /commands/load res://commands/extended.ocl
-/commands/load res://tutorial/tutorial-def.ocl
+/commands/load res://commands/tutorial-def.ocl
 /editor/font/size 32
 
 #/commands/load res://slides/ca/animatron-slides-def.ocl
