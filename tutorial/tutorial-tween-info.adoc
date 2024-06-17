@@ -1,4 +1,4 @@
-= tween
+== tween
 
 Properties of actors can be animated over time with `/tween`.
 

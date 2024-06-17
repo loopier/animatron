@@ -1,4 +1,4 @@
-== Size
+== size
 
 To change the size of the actor use `/size`. The value of `1` is the normal size.
 

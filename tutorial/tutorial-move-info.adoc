@@ -1,4 +1,4 @@
-=== Move
+== move
 
 Actors can be moved around with `/position <actor> <x_pixels> <y_pixels>`.
 

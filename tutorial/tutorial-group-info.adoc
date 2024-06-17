@@ -1,4 +1,4 @@
-= group
+== group
 
 Commands can be executed in bulk with wildcards.
 

@@ -1,4 +1,4 @@
-== Rotate
+== rotate
 
 Actors can be set to a specific angle with `/angle <name> <degrees>`.
 

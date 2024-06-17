@@ -1,4 +1,4 @@
-= rand
+== rand
 
 Commands with ONLY ONE ARGUMENT can be randomized.
 

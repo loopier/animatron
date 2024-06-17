@@ -1,4 +1,4 @@
-= parent
+== parent
 
 Actors can be linked to other actors with `/parent`.
 

@@ -1,4 +1,4 @@
-=== Play
+== play
 
 First create the actor again with `/create`.
 

@@ -1,4 +1,4 @@
-= def
+== def
 
 Custom commands can be created to group complex behaviours made out of other commands.
 

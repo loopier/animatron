@@ -114,7 +114,7 @@ To remove it from the stage use `/clear <name>`.
 	
 	/tutorial/index
 	
-=== Play
+== play
 
 First create the actor again with `/create`.
 
@@ -158,7 +158,7 @@ To play it wbackwards, set a negative `/speed` value.
 	
 	/tutorial/index
 	
-=== Move
+== move
 
 Actors can be moved around with `/position <actor> <x_pixels> <y_pixels>`.
 
@@ -194,7 +194,7 @@ You can also move it relative to the current position with `/move`, `/move/x` an
 	
 	/tutorial/index
 	
-== Rotate
+== rotate
 
 Actors can be set to a specific angle with `/angle <name> <degrees>`.
 
@@ -212,7 +212,7 @@ To rotate it relative to the current angle, use `/rotate`.
 	
 	/tutorial/index
 	
-== Size
+== size
 
 To change the size of the actor use `/size`. The value of `1` is the normal size.
 
@@ -232,7 +232,7 @@ Scaling is done with  `/scale`.
 	
 	/tutorial/index
 	
-=== Color
+== color
 
 To change the color of an actor, use `/color`.
 
@@ -260,7 +260,7 @@ You can also add to the original color with `/color/add`.
 	
 	/tutorial/index
 	
-=== Arrange
+== arrange
 
 The order in which the actors are drawn can be changed with `/front` and `/behind`.
 
@@ -288,7 +288,7 @@ The order in which the actors are drawn can be changed with `/front` and `/behin
 	
 	/tutorial/index
 	
-= rand
+== rand
 
 Commands with ONLY ONE ARGUMENT can be randomized.
 
@@ -306,7 +306,7 @@ Each time you evaluate the command it will send a random value within the range.
 	
 	/tutorial/index
 	
-= mask
+== mask
 
 An actor can be masked with any another actor.
 
@@ -327,7 +327,7 @@ Be aware that the masked actor will be "inside" the mask actor, so any transform
 	
 	/tutorial/index
 	
-= parent
+== parent
 
 Actors can be linked to other actors with `/parent`.
 
@@ -352,7 +352,7 @@ Actors can be linked to other actors with `/parent`.
 	
 	/tutorial/index
 	
-= group
+== group
 
 Commands can be executed in bulk with wildcards.
 
@@ -382,7 +382,7 @@ When using  `/rand` with wildcards, it will send a different value to each actor
 	
 	/tutorial/index
 	
-= def
+== def
 
 Custom commands can be created to group complex behaviours made out of other commands.
 
@@ -424,7 +424,7 @@ Another way to use them is to create custom syntax. If you don't find a command 
 	
 	/tutorial/index
 	
-= tween
+== tween
 
 Properties of actors can be animated over time with `/tween`.
 
@@ -444,7 +444,7 @@ For a list of available transition curves see `/help /tween`.
 	
 	/tutorial/index
 	
-= routine
+== routine
 
 The `/routine` command allows calling one command more than once over a period of time.
 

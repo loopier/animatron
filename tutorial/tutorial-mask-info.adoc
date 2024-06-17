@@ -1,4 +1,4 @@
-= mask
+== mask
 
 An actor can be masked with any another actor.
 

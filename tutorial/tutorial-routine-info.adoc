@@ -1,4 +1,4 @@
-= routine
+== routine
 
 The `/routine` command allows calling one command more than once over a period of time.
 
