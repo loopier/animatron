@@ -387,6 +387,12 @@ Set the `actor` 's animation drawing offset on the `y` axis.
 _Example:_ `/offset/y lola -30`
 
 
+=== /unparent child:s
+Undo the relationship of the `child` actor to its current parent.
+
+_Example:_ `/unparent lola`
+
+
 
 
 == animation data

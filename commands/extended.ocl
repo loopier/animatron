@@ -451,6 +451,13 @@
 /def /offset/y actor:s pixels:i
      /animation/property /offset/y $actor $y
 
+# Undo the relationship of the `child` actor to its current parent.
+#
+# _Example:_ `/unparent lola`
+#
+/def /unparent child:s
+     /parent/free $child
+
 #################################################################################
 # == animation data
 #################################################################################
