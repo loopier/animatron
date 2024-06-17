@@ -82,6 +82,7 @@ static func getDocString(text:String, def: String) -> Status:
 
 ## Generate a tutorial in [param destinationFile] from the files in [param fromDir].
 static func generateTutorial(destinationFile: String, fromDir: String):
+	Log.debug("Generating tutorial from: %s" % [fromDir])
 	Log.debug("Generating tutorial on: %s" % [destinationFile])
 	var asciidoc := "= Tutorial\n"
 	asciidoc += ":toc: left\n\n"
@@ -96,14 +97,12 @@ static func generateTutorial(destinationFile: String, fromDir: String):
 		#Log.debug("%s: %s" % [section, sectionName])
 		asciidoc += getTutorialSectionAsString(sectionName)
 		asciidoc += "\n"
-	#Log.debug(asciidoc)
 	result = writeTextToFile(destinationFile, asciidoc)
 
 static func getTutorialSectionAsString(sectionName: String) -> String:
 	var asciidoc = ""
 	var info = "res://tutorial/tutorial-%s-info.adoc" % [sectionName]
 	var code = "res://tutorial/tutorial-%s-code.ocl" % [sectionName]
-	Log.verbose("%s: %s" % [sectionName, info])
 	var result = getTextFromFile(info)
 	if result.isError(): return asciidoc # FIX: this is silent failing, probably not desirable
 	asciidoc = result.value
