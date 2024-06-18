@@ -749,7 +749,7 @@ func getActor(actorName: String) -> Status:
 
 ## Returns an array of children matching the name pattern
 func getActors(namePattern: String) -> Status:
-	var actors = actorsNode.find_children(namePattern, "Node", true, false)
+	var actors = actorsNode.find_children(namePattern, "Node", false, false)
 	if actors == null or len(actors) == 0: return Status.error("No actors found: %s" % [namePattern])
 	return Status.ok(actors)
 
