@@ -492,7 +492,15 @@ To stop a routine use `/routine/free <name>`.
 	
 	/tutorial/index
 	
-== text
+== Text
+
+All actors can display a single line of text.
+
+If you create an actor with a non-existent animation, it will display the name of the actor instead of an animation.
+
+But text can be added to actors that have animations as well, with the `/type` command.
+
+Text can be trimmed with `/text/visible/ratio`. When set to `1` it will display the whole text. `0` will hide it. `0.5` will show half the first half of the text and hide the rest.
 
 	/tutorial/goto text
 	
@@ -503,7 +511,11 @@ To stop a routine use `/routine/free <name>`.
 	/load square
 	
 	/create bla square
-	/type bla alo
+	/type bla some random text # text is white
+	/text/color bla 1 0 0
+	/text/visible/ratio bla 0.1
+	/text/visible/ratio bla 0.25
+	/text/visible/ratio bla 1
 	
 	/tutorial/index
 	
