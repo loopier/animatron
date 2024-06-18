@@ -457,6 +457,13 @@ _Example:_ `/text/visible/ratio lola 0.5`
 
 See also: <<_type_actors_text,/type>>
 
+=== /text/color actor:s r:f g:f b:f
+Set the color of the text.
+
+_Example:_ `/text/color lola 1 0 0`
+
+See also: <<_type_actors_text,/type>>
+
 
 
 == experimental

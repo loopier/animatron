@@ -125,13 +125,11 @@ There are 2 wildcards:
 
 	/tutorial/goto wildcards
 	
-	/load square
-	
 	/create alo empty
 	/create blo empty
 	/create blip empty
-	/move/x alo 500
-	/move/x blip -500
+	/move/x alo -400
+	/move/x blip 400
 	
 	/rotate * 15
 	/rotate bl* 15
@@ -491,6 +489,21 @@ To stop a routine use `/routine/free <name>`.
 	/routine bla inf 0.25 /rotate a 10
 	
 	/routine/free bla
+	
+	/tutorial/index
+	
+== text
+
+	/tutorial/goto text
+	
+	/create bla whaterver
+	
+	/clear bla
+	
+	/load square
+	
+	/create bla square
+	/type bla alo
 	
 	/tutorial/index
 	

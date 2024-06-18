@@ -534,6 +534,15 @@
 /def /text/visible/ratio actor:s ratio:f
      /text/property /visible/ratio $actor $ratio
 
+# Set the color of the text.
+#
+# _Example:_ `/text/color lola 1 0 0`
+#
+# See also: <<_type_actors_text,/type>>
+/def /text/color actor:s r:f g:f b:f
+     /text/property /modulate $actor $r $g $b
+
+
 #################################################################################
 # == experimental
 #################################################################################
