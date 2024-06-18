@@ -1,3 +1,4 @@
+class_name IndirectView
 extends SubViewport
 var userSetSize := false
 var spout

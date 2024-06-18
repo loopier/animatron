@@ -24,7 +24,7 @@ var assetHelpers := preload("res://asset_helpers.gd").new()
 @onready var editor: CodeEdit
 @onready var textContainer: Node
 @onready var postWindow: Node
-@onready var subViewport: SubViewport
+var indirectView: IndirectView
 var mirrorDisplay: Sprite2D
 @onready var openFileDialog: FileDialog
 @onready var saveFileDialog: FileDialog
@@ -54,7 +54,7 @@ var coreCommands: Dictionary = {
 	"/log/level": CommandDescription.new(setLogLevel, "level:s", "Set the log level to either 'fatal', 'error', 'warn', 'debug' or 'verbose'"),
 	# window
 	"/window/method": CommandDescription.new(callWindowMethod, "", "Call a window method.", Flags.asArray(true)),
-	"/view/size": CommandDescription.new(setSubViewportSize, "width:i height:i", "Set the view's `width` and `height`. This is used for off-screen rendering, so it can be sent over to other apps (Spout, ...).", Flags.asArray(true)),
+	"/view/size": CommandDescription.new(setIndirectViewSize, "width:i height:i", "Set the view's `width` and `height`. This is used for off-screen rendering, so it can be sent over to other apps (Spout, ...).", Flags.asArray(true)),
 	# general commands
 	"/commands/list": CommandDescription.new(listAllCommands, "", "Get list of available commands."),
 	"/commands/load": CommandDescription.new(loadCommandFile, "path:s", "Load a custom command definitions file, which should have the format described below."),
@@ -325,24 +325,24 @@ func callWindowMethod(args: Array) -> Status:
 	var window = commandManager.get_parent()
 	return callObjectMethod(window, args)
 
-func setSubViewportSize(args: Array) -> Status:
+func setIndirectViewSize(args: Array) -> Status:
 	var width : int = int(args[0])
 	var height : int = int(args[1])
 	if width > 0 and height > 0:
-		subViewport.userSetSize = true
+		indirectView.userSetSize = true
 		var newSize := Vector2(width, height)
-		subViewport.set_size(newSize)
+		indirectView.set_size(newSize)
 	else:
-		subViewport.userSetSize = false
-		subViewport.set_size(get_window().size)
+		indirectView.userSetSize = false
+		indirectView.set_size(get_window().size)
 	mirrorDisplay._on_viewport_size_changed()
 	return Status.ok()
 
 func spoutSend(name: String) -> Status:
-	return subViewport.spoutStart(name)
+	return indirectView.spoutStart(name)
 
 func spoutStop() -> Status:
-	return subViewport.spoutStop()
+	return indirectView.spoutStop()
 
 func toggleEditor() -> Status:
 	textContainer.set_visible(not(textContainer.is_visible()))
@@ -1295,7 +1295,7 @@ func center(actorName: String) -> Status:
 	var result = getActors(actorName)
 	if result.isError(): return result
 	for actor in result.value:
-		actor.set_position(subViewport.size as Vector2 / 2)
+		actor.set_position(indirectView.size as Vector2 / 2)
 	return Status.ok()
 
 func reparentActor(child: Node, oldParent: Node, newParent: Node) -> Status:
