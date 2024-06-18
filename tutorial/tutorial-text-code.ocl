@@ -1,0 +1,16 @@
+/tutorial/goto text
+
+/create bla whaterver
+
+/clear bla
+
+/load square
+
+/create bla square
+/type bla some random text # text is white
+/text/color bla 1 0 0
+/text/visible/ratio bla 0.1
+/text/visible/ratio bla 0.25
+/text/visible/ratio bla 1
+
+/tutorial/index

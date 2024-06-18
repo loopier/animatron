@@ -1,0 +1,9 @@
+== Text
+
+All actors can display a single line of text.
+
+If you create an actor with a non-existent animation, it will display the name of the actor instead of an animation.
+
+But text can be added to actors that have animations as well, with the `/type` command.
+
+Text can be trimmed with `/text/visible/ratio`. When set to `1` it will display the whole text. `0` will hide it. `0.5` will show half the first half of the text and hide the rest.

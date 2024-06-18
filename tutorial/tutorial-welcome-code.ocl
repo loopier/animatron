@@ -3,6 +3,7 @@
 /tutorial/goto getting-help
 /tutorial/goto overview
 /tutorial/goto quickstart
+/tutorial/goto wildcards
 
 /tutorial/goto play
 /tutorial/goto move
@@ -18,3 +19,4 @@
 /tutorial/goto def
 /tutorial/goto tween
 /tutorial/goto routine
+/tutorial/goto text

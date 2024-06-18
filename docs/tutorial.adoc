@@ -114,6 +114,29 @@ To remove it from the stage use `/clear <name>`.
 	
 	/tutorial/index
 	
+== Wildcards
+
+When creating actors with similar names, we can send commands to all of them using wildcards.
+
+There are 2 wildcards:
+
+- `*` matches any number of characters. E.g.: `a*o` will match both `alo` and `allo`.
+- `?` matches exactly one character. E.g.: `a?o` will match both `alo` and `amo`, but not `allo`.
+
+	/tutorial/goto wildcards
+	
+	/create alo empty
+	/create blo empty
+	/create blip empty
+	/move/x alo -400
+	/move/x blip 400
+	
+	/rotate * 15
+	/rotate bl* 15
+	/rotate bl? 15
+	
+	/tutorial/index
+	
 == play
 
 First create the actor again with `/create`.
@@ -339,8 +362,8 @@ Actors can be linked to other actors with `/parent`.
 	
 	/create a square
 	/create b square
+	/move/x b 800
 	/size * 0.25
-	/move/x b 300
 	
 	/rotate a 20
 	
@@ -466,6 +489,21 @@ To stop a routine use `/routine/free <name>`.
 	/routine bla inf 0.25 /rotate a 10
 	
 	/routine/free bla
+	
+	/tutorial/index
+	
+== text
+
+	/tutorial/goto text
+	
+	/create bla whaterver
+	
+	/clear bla
+	
+	/load square
+	
+	/create bla square
+	/type bla alo
 	
 	/tutorial/index
 	
