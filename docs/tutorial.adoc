@@ -114,6 +114,31 @@ To remove it from the stage use `/clear <name>`.
 	
 	/tutorial/index
 	
+== Wildcards
+
+When creating actors with similar names, we can send commands to all of them using wildcards.
+
+There are 2 wildcards:
+
+- `*` matches any number of characters. E.g.: `a*o` will match both `alo` and `allo`.
+- `?` matches exactly one character. E.g.: `a?o` will match both `alo` and `amo`, but not `allo`.
+
+	/tutorial/goto wildcards
+	
+	/load square
+	
+	/create alo empty
+	/create blo empty
+	/create blip empty
+	/move/x alo 500
+	/move/x blip -500
+	
+	/rotate * 15
+	/rotate bl* 15
+	/rotate bl? 15
+	
+	/tutorial/index
+	
 == play
 
 First create the actor again with `/create`.

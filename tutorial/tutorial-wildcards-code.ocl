@@ -1,0 +1,13 @@
+/tutorial/goto wildcards
+
+/create alo empty
+/create blo empty
+/create blip empty
+/move/x alo -400
+/move/x blip 400
+
+/rotate * 15
+/rotate bl* 15
+/rotate bl? 15
+
+/tutorial/index
