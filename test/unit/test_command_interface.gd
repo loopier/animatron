@@ -95,6 +95,7 @@ func test_listCommands():
 /parent/free
 /post
 /post/clear
+/post/file
 /post/hide
 /post/show
 /post/toggle
