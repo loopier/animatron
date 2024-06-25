@@ -9,6 +9,7 @@ class OscMessage:
 signal osc_msg_received(addr: String, args: Array, sender: String)
 
 var socketUdp := PacketPeerUDP.new()
+var streamBuf := StreamPeerBuffer.new()
 var senderIP: String
 var senderPort: int
 enum {OSC_ARG_TYPE_NULL, OSC_ARG_TYPE_FLOAT=102, OSC_ARG_TYPE_INT=105, OSC_ARG_TYPE_STRING=115}
@@ -25,6 +26,8 @@ var oscArgBuf := StreamPeerBuffer.new()
 func _ready():
 	oscBuf.big_endian = true
 	oscArgBuf.big_endian = true
+	streamBuf.big_endian = true
+
 
 func startServer():
 	var err := socketUdp.bind(serverPort)
@@ -39,10 +42,11 @@ func startServerOn(listenPort: int):
 
 # 'delta' is the elapsed time since the previous update.
 func _physics_process(_delta):
-	while socketUdp.get_available_packet_count() > 0:
+	var numPackets := socketUdp.get_available_packet_count()
+	for i in numPackets:
 		var msg := parseOsc(socketUdp.get_packet())
 		var sender := "%s/%d" % [socketUdp.get_packet_ip(), socketUdp.get_packet_port()]
-		Log.verbose("OSC message received from %s: %s %s" % [sender, msg.addr, msg.args])
+		#Log.verbose("OSC message received from %s: %s %s" % [sender, msg.addr, msg.args])
 		osc_msg_received.emit(msg.addr, msg.args, sender)
 
 func _exit_tree():
@@ -55,31 +59,29 @@ func getServerPort() -> int:
 	return serverPort
 
 func parseOsc(packet: PackedByteArray) -> OscMessage:
-	var buf := StreamPeerBuffer.new()
-	buf.set_data_array(packet)
-	buf.set_big_endian(true)
-	var addr := getString(buf)
+	streamBuf.set_data_array(packet)
+	var addr := getString(streamBuf)
 	# move the cursor to the beginning of the argument types string fs
-	buf.seek(getArgTypesIndex(buf))
+	streamBuf.seek(getArgTypesIndex(streamBuf))
 	# get the types
-	var types := getString(buf)
+	var types := getString(streamBuf)
 	# skip the leading ','
 	var typeIndex := 1
 	# get the current type
 	var type := types.substr(typeIndex,1)
 	# get the last position of the type string
-	var end := buf.get_position()
+	var end := streamBuf.get_position()
 	# move the cursor to the next byte if the current one is not a multiple of 4
 	var next := end if end % 4 == 0 else end + 4 - (end % 4)
-	buf.seek(next)
+	streamBuf.seek(next)
 	# parse the arguments
 	var args := []
-	for i in buf.get_size():
+	for i in streamBuf.get_size():
 		type = types.substr(typeIndex, 1)
 		match type:
-			"i": args.append(getInt(buf))
-			"f": args.append(getFloat(buf))
-			"s": args.append(getString(buf))
+			"i": args.append(getInt(streamBuf))
+			"f": args.append(getFloat(streamBuf))
+			"s": args.append(getString(streamBuf))
 			"T": args.append(true)
 			"F": args.append(false)
 			"N": args.append(null)

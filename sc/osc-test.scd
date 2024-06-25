@@ -20,6 +20,18 @@ n.sendMsg("/animations/list");
 n.sendMsg("/animations");
 n.sendMsg("/actors/list");
 
+n.sendMsg("/load", "om-walk-e");
+n.sendMsg("/create", "x", "om-walk-e");
+(
+Tdef(\speedtest, {
+	var num = 100;
+	num.do{ arg i;
+		n.sendMsg("/pos", "x", sin(i/num * 2pi) * 500 + 960, 540);
+		0.035.wait;
+	}
+}).play
+)
+
 n.sendMsg("/load", "mama");
 n.sendMsg("/load", "numbers");
 n.sendMsg("/create", "x", "mama");
