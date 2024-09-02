@@ -1283,12 +1283,12 @@ func addState(args: Array) -> Status:
 func freeState(machineOrPattern: String, stateOrPattern: String) -> Status:
 	var machines: Dictionary = Helper.getMatchingDict(stateMachines, machineOrPattern)
 	for machineKey in machines.keys():
-		TODO: somehow "machines[machineKey]" doesn't return a dictionary
-		var machine : Dictionary = machines[machineKey]
-		print("%s: %s" % [typeof(machines[machine]), TYPE_DICTIONARY])
-		var machineStates : Dictionary = Helper.getMatchingDict(machine, stateOrPattern)
+		var machine : StateMachine = machines.get(machineKey)
+		var machineStates : Dictionary = Helper.getMatchingDict(machine.states, stateOrPattern)
 		for state in machineStates.keys():
-			stateMachines[machine].removeState(state)
+			stateMachines[machineKey].removeState(state)
+			if stateMachines[machineKey].isEmpty():
+				stateMachines.erase(machineKey)
 			return Status.ok(true, "%s -> Removed state: %s" % [machine, state])
 	return Status.error("Machine not found: %s" % [machineOrPattern])
 
