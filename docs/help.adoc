@@ -943,6 +943,10 @@ See `/state/add` and `/state/next`
 
 Remove the STATE from the state MACHINE.
 
+=== /state/free/all 
+
+Deletes all state machines.
+
 === /state/next machine:s
 
 Change MACHINE to next state.  This will send the 'exit' command of the current state, and the 'entry' command of the next state.

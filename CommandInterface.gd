@@ -93,6 +93,7 @@ var coreCommands: Dictionary = {
 	"/state/add": CommandDescription.new(addState, "machine:s state:s next:s", "Add a STATE with a name to the state MACHINE. NEXT states is an arbitrary number of next possible states. Example: `/state/add mymachine stateA state1 state2` would create a new stateA in `mymachine` that would either repeat or move on to `state2.\n\nSee `/state/def`", Flags.asArray(true)),
 	"/states": CommandDescription.new(listStates, "", "Get a list of states for the given ACTOR."),
 	"/state/free": CommandDescription.new(freeState, "machine:s state:s", "Remove the STATE from the state MACHINE."),
+	"/state/free/all": CommandDescription.new(freeAllStates, "", "Deletes all state machines."),
 	"/state/next": CommandDescription.new(nextState, "machine:s", "Change MACHINE to next state.  This will send the 'exit' command of the current state, and the 'entry' command of the next state.\n\nSee `/state/def`"),
 	# def
 	"/def": CommandDescription.new(defineCommand, "cmdName:s [args:v] subcommands:c", "Define a custom OSC command that is a list of other OSC commands. This may be recursive, so each SUBCOMMAND may reference one of the built-in commands, or another custom-defined command. Another way to define custom commands is via the file commands/init.osc. The CMDNAME string (first argument) may include argument names (ARG1 ... ARGN), which may be referenced as SUBCOMMAND arguments using $ARG1 ... $ARGN. Example: /def \"/addsel actor anim\" \"/create $actor $anim\" \"/select $actor\". ", Flags.asArray(true)),
@@ -1260,7 +1261,7 @@ func listStates() -> Status:
 	var msg := "State machines:\n"
 	for machine in machines:
 		msg += "%s(%s): %s" % [machine, stateMachines[machine].status(), stateMachines[machine].list()]
-	msg += "\n"
+		msg += "\n"
 	return Status.ok(machines, msg)
 
 func addStateMachine(name: String):
@@ -1279,11 +1280,21 @@ func addState(args: Array) -> Status:
 	stateMachines[machineName].addState(args[1], args.slice(2))
 	return Status.ok(stateMachines[machineName])
 
-func freeState(machine: String, state: String) -> Status:
-	if stateMachines.has(machine):
-		stateMachines[machine].removeState(state)
-		return Status.ok(true, "%s -> Removed state: %s" % [machine, state])
-	return Status.error("Machine not found: %s" % [machine])
+func freeState(machineOrPattern: String, stateOrPattern: String) -> Status:
+	var machines: Dictionary = Helper.getMatchingDict(stateMachines, machineOrPattern)
+	for machineKey in machines.keys():
+		TODO: somehow "machines[machineKey]" doesn't return a dictionary
+		var machine : Dictionary = machines[machineKey]
+		print("%s: %s" % [typeof(machines[machine]), TYPE_DICTIONARY])
+		var machineStates : Dictionary = Helper.getMatchingDict(machine, stateOrPattern)
+		for state in machineStates.keys():
+			stateMachines[machine].removeState(state)
+			return Status.ok(true, "%s -> Removed state: %s" % [machine, state])
+	return Status.error("Machine not found: %s" % [machineOrPattern])
+
+func freeAllStates() -> Status:
+	stateMachines.clear()
+	return Status.ok("All states deleted")
 
 func nextState(machine: String) -> Status:
 	if stateMachines.has(machine):
