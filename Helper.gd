@@ -18,3 +18,11 @@ static func flatArray(input: Array) -> Array:
 		else:
 			flat.append(item)
 	return flat
+
+## Returns a subset dictionary of the keys matching the [param pattern] in [param srcDict]
+static func getMatchingDict(srcDict : Dictionary, pattern : String) -> Dictionary:
+	var dict := {}
+	for key in srcDict.keys():
+		if key.match(pattern):
+			dict[key] = srcDict[key]
+	return dict
