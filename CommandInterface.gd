@@ -1440,8 +1440,10 @@ func randCmdValue(args: Array) -> Status:
 	var command = args[0]
 	var result = getActors(args[1])
 	if result.isError(): return result
+	var min = float(args[2])
+	var max = float(args[3])
 	for actor in result.value:
-		var value = randf_range(float(args[2]), float(args[3]))
+		var value = randf_range(min, max)
 		commandManager.evalCommand([command, actor.name, value], "CommandInterface")
 	return Status.ok(true)
 
