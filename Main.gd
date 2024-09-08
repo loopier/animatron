@@ -255,6 +255,7 @@ func executeCommand(command: CommandDescription, args: Array) -> Status:
 		var excessArgs = args.slice(callableNumArgs)
 		var finalArgs = args.slice(0, callableNumArgs)
 		result = command.callable.callv(finalArgs)
+	if result == null: return Status.ok()
 	return result
 
 func getMethodSignature(callable: Callable, methodName: String) -> Variant:
