@@ -749,9 +749,12 @@ func getActor(actorName: String) -> Status:
 	return Status.ok(actor)
 
 ## Returns an array of children matching the name pattern
-func getActors(namePattern: String) -> Status:
-	var actors = actorsNode.find_children(namePattern, "MetaNode", true, false)
-	if actors == null or len(actors) == 0: return Status.error("No actors found: %s" % [namePattern])
+func getActors(namePatternOrActor) -> Status:
+	if typeof(namePatternOrActor) == TYPE_OBJECT:
+		var actor := namePatternOrActor as MetaNode
+		if actor != null: return Status.ok([actor])
+	var actors = actorsNode.find_children(namePatternOrActor, "MetaNode", true, false)
+	if actors == null or len(actors) == 0: return Status.error("No actors found: %s" % [namePatternOrActor])
 	return Status.ok(actors)
 
 func createActor(actorName: String, anim: String) -> Status:
