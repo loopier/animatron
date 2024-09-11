@@ -61,7 +61,13 @@ auto_brace_completion_enabled = true
 auto_brace_completion_highlight_matching = true
 script = ExtResource("3_xiw00")
 
-[node name="PostWindow" type="CodeEdit" parent="HSplitContainer"]
+[node name="TabContainer" type="TabContainer" parent="HSplitContainer"]
+layout_direction = 2
+layout_mode = 2
+size_flags_horizontal = 3
+drag_to_rearrange_enabled = true
+
+[node name="PostWindow" type="CodeEdit" parent="HSplitContainer/TabContainer"]
 z_index = 1
 layout_mode = 2
 size_flags_horizontal = 3
@@ -75,6 +81,10 @@ drag_and_drop_selection_enabled = false
 virtual_keyboard_enabled = false
 middle_mouse_paste_enabled = false
 wrap_mode = 1
+
+[node name="CodeBlocks" type="VBoxContainer" parent="HSplitContainer/TabContainer"]
+visible = false
+layout_mode = 2
 
 [node name="SaveFileDialog" type="FileDialog" parent="."]
 title = "Load Preset"

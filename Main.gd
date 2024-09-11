@@ -18,7 +18,7 @@ var metanode := preload("res://meta_node.tscn")
 var ocl: OpenControlLanguage
 var config := preload("res://Config.gd").new()
 @onready var editor := $HSplitContainer/CodeEdit
-@onready var postWindow := $HSplitContainer/PostWindow
+@onready var postWindow := $HSplitContainer/TabContainer/PostWindow
 
 #@onready var variablesManager: VariablesManager
 
@@ -65,7 +65,7 @@ func initPostWindowMsg():
 	msg += "/tutorial\n\n"
 	msg += "and press SHIFT + ENTER while the cursor is on that line.\n"
 	msg += "---\n\n"
-	$HSplitContainer/PostWindow.set_text(msg)
+	postWindow.set_text(msg)
 
 func _ready():
 	# Have the content area fit to fill the main window
@@ -368,7 +368,7 @@ func _on_midi_cc(ch: int, num: int, velocity: int):
 	Log.verbose("MIDI CC: %s %s %s" % [ch, num, velocity])
 
 func post(msg: String):
-	if postWindow == null: postWindow = $HSplitContainer/PostWindow
+	if postWindow == null: postWindow = $HSplitContainer/TabContainer/PostWindow
 	postWindow.set_text(msg)
 	postWindow.set_caret_line(postWindow.get_line_count())
 
