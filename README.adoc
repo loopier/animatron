@@ -101,11 +101,12 @@ https://github.com/godotengine/godot[Godot Engine], which uses the
 https://github.com/godotengine/godot/blob/master/LICENSE.txt[MIT
 license], this project also makes use of the following third-party
 libraries with their own licenses:
+
 - https://github.com/you-win/spout-gd/[spout-gd] -
-  addons/spout-gd/spout-gd-LICENSE.txt[MPL-2.0 license]
+  link:addons/spout-gd/spout-gd-LICENSE.txt[MPL-2.0 license]
 - https://github.com/leadedge/Spout2/[Spout2] -
-  addons/spout-gd/Spout2-LICENSE.txt[BSD-2-Clause license]
-- https://github.com/bitwes/Gut[GUT] - addons/gut/LICENSE.md[MIT
+  link:addons/spout-gd/Spout2-LICENSE.txt[BSD-2-Clause license]
+- https://github.com/bitwes/Gut[GUT] - link:addons/gut/LICENSE.md[MIT
   license]
 
 See the linked license files of these projects for copyright and
