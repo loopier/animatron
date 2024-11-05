@@ -215,7 +215,7 @@ func loadCommandFile(path: String) -> Status:
 	if file == null: file = FileAccess.open("user://" + path, FileAccess.READ)
 	if file == null: file = FileAccess.open("res://" + path, FileAccess.READ)
 	if file == null: 
-		Log.verbose("File not found: '%s'" % [path])
+		Log.error("File not found: '%s'" % [path])
 		# The following lines do nothing (?).
 		# I was trying to open the window at specific path, but it doesn't work.
 		#var dir = "user://" if path.get_base_dir() == "" else path.get_base_dir()
