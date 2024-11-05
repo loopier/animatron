@@ -236,6 +236,7 @@ func convertTextToCommands(input: String) -> Status:
 	var cmds := []
 	var blocks := getTextBlocks(input)
 	for block in blocks:
+		block = ocl._removeExpressionSpaces(block)
 		if isDef(block):
 			cmds.append(convertDefBlockToCommand(block))
 		else:
