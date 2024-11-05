@@ -31,7 +31,11 @@ func _def(def: Dictionary, values: Array) -> Array:
 	var variables := VariablesManager.getAll()
 	for i in def.variables.size():
 		var varName = str(def.variables[i].split(':')[0])
-		var varType = def.variables[i].split(":")[1]
+		var varType = "s"
+		if def.variables[i].split(':').size() < 2: 
+			Log.error("Variable type not specified for argument %d ('%s'). See '/help /def'" % [i, varName])
+		else:
+			varType = def.variables[i].split(":")[1] 
 		# def arguments take precedence over "app" vars
 		if varType == "...":
 			variables[varName] = " ".join(values.slice(i))
