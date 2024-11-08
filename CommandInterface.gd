@@ -838,14 +838,14 @@ func _cmdToGdScriptSetter(property: String) -> String:
 func _cmdToGdScript(cmd: String) -> String:
 	if cmd.begins_with("/") or cmd.begins_with("_"):
 		cmd = cmd.substr(1)
-	else:
-		cmd
-	return cmd.replace("/", "_")
+	if cmd.contains("/"):
+		return cmd.replace("/", "_")
+	return cmd
 
 func setActorProperty(args: Array) -> Status:
 	var result = getActors(args[1])
 	if result.isError(): return result
-	var property = _cmdToGdScript(args[0])	
+	var property = _cmdToGdScript(args[0])
 	for actor in result.value:
 		result = getArgsAsPropertyType(actor, property, args.slice(2))
 		if result.isError(): return result
@@ -1037,7 +1037,7 @@ func arrayToVector(input: Array) -> Variant:
 func callAnimationMethod(args: Array) -> Status:
 	var result = getActors(args[1])
 	if result.isError(): return result
-	var method = _cmdToGdScript(args[0].substr(1))
+	var method = _cmdToGdScript(args[0])
 	args = args.slice(2)
 	for actor in result.value:
 		var animation = actor.get_node("Animation")
@@ -1053,7 +1053,7 @@ func callAnimationMethod(args: Array) -> Status:
 func callAnimationFramesMethod(args) -> Status:
 	var result = getActors(args[1])
 	if result.isError(): return result
-	var method = _cmdToGdScript(args[0].substr(1))
+	var method = _cmdToGdScript(args[0])
 	args = args.slice(2)
 	for actor in result.value:
 		var animation = actor.get_node("Animation")
