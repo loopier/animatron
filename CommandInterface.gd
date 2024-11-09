@@ -207,8 +207,6 @@ func defineCommand(args: Array) -> Status:
 
 func forCommand(args: Array) -> Status:
 	var cmds: Array = ocl._for(args)
-	var task_callable = Callable(ocl, "_for").bind(args)
-	var task_id = WorkerThreadPool.add_task(task_callable)
 	return commandManager.evalCommands(cmds, "CommandInterface")
 	
 ## Load commands from a file and return an array
