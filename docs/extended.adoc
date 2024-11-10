@@ -128,12 +128,12 @@ they need to be children of a common `parentActor`.
 
 _Example:_ `/y/sort lola 1`
 
-  /create a bla
-  /create b bla
-  /create c alo
-  /parent a c
-  /parent b c
-  /y/sort c 1
+/create a bla
+/create b bla
+/create c alo
+/parent a c
+/parent b c
+/y/sort c 1
 
 
 === /y/sort/enable parentActor:s
@@ -580,4 +580,30 @@ Send an OSC `msg` to a remote server.
 See
 <<_oscsend_msgs,/osc/send>>
 <<_oscremote_ips_porti,/osc/remote>>
+
+
+
+== midi
+
+=== /midi
+Receive MIDI messages
+
+See
+<<_midi_cc,/midi/cc>>
+<<_midi_cc/free,/midi/cc/free>>
+<<_midi_free,/midi/free>>
+<<_midi_list,/midi/list>>
+<<_midi_noteoff,/midi/noteoff>>
+<<_midi_noteoff_free,/midi/noteoff/free>>
+<<_midi_noteoff_num,/midi/noteoff/num>>
+<<_midi_noteoff_num_free,/midi/noteoff/num/free>>
+<<_midi_noteon,/midi/noteon>>
+<<_midi_noteon_free,/midi/noteon/free>>
+<<_midi_noteon_num,/midi/noteon/num>>
+<<_midi_noteon_num_free,/midi/noteon/num/free>>
+<<_midi_noteon_num_velocity,/midi/noteon/num/velocity>>
+<<_midi_noteon_num_velocity/free,/midi/noteon/num/velocity/free>>
+<<_midi_noteon_trig,/midi/noteon/trig>>
+<<_midi_noteon_trig_free,/midi/noteon/trig/free>>
+<<_midi_noteon_velocity,/midi/noteon/velocity>>
 
