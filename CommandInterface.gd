@@ -430,7 +430,7 @@ func midiCC(args: Array) -> Status:
 func midiNoteOnNum(args: Array) -> Status:
 	var chan = int(args[0])
 	var num = int(args[1])
-	# convert las 2 arguments (min and max)
+	# convert last 2 arguments (min and max)
 	args[-2] = float(args[-2])
 	args[-1] = float(args[-1])
 	midiCommands[chan]["noteOnNum"].append(args.slice(1))
