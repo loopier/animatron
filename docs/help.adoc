@@ -783,9 +783,9 @@ Mask a child ACTOR by a parent ACTOR
 
 Generic command to call an ACTOR's METHOD with some ARGS.
 
-=== /midi/cc channel:i cmd:s
+=== /midi/cc channel:i num:i cmd:s
 
-Map the control value to a CMD. The last 2 CMD arguments should be MIN and MAX, in that order. Example: /midi/cc 0 /position/x target 0 1920. *WARNING: this only works with commands that accept 1 argument.*
+Map the control value to a CMD. The last 2 CMD arguments should be MIN and MAX, in that order. Example: /midi/cc 0 1 /position/x target 0 1920. *WARNING: this only works with commands that accept 1 argument.*
 
 === /midi/cc/free channel:i [num:i]
 

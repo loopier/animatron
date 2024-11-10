@@ -118,7 +118,7 @@ var coreCommands: Dictionary = {
 	"/osc/remote": CommandDescription.new(connectOscRemote, "ip:s port:i", "Set the IP address and PORT number of a remote OSC server.", Flags.asArray(true)),
 	"/osc/send": CommandDescription.new(sendOscMsg, "msg:s", "Send an OSC message to a remote server. See `/osc/remote`.", Flags.asArray(true)),
 	# midi
-	"/midi/cc": CommandDescription.new(midiCC, "channel:i cmd:s", "Map the control value to a CMD. The last 2 CMD arguments should be MIN and MAX, in that order. Example: /midi/cc 0 /position/x target 0 1920. *WARNING: this only works with commands that accept 1 argument.*", Flags.asArray(true)),
+	"/midi/cc": CommandDescription.new(midiCC, "channel:i num:i cmd:s", "Map the control value to a CMD. The last 2 CMD arguments should be MIN and MAX, in that order. Example: /midi/cc 0 1 /position/x target 0 1920. *WARNING: this only works with commands that accept 1 argument.*", Flags.asArray(true)),
 	"/midi/noteon/num": CommandDescription.new(midiNoteOnNum, "channel:i cmd:s", "Map the pressed note number to a CMD. The last 2 CMD arguments should be MIN and MAX, in that order. Example: /midi/noteon/num 0 /position/x target 0 1920. *WARNING: this only works with commands that accept 1 argument.*", Flags.asArray(true)),
 	"/midi/noteon/trig": CommandDescription.new(midiNoteOnTrig, "channel:i note:i cmd:s", "Execute a CMD when a note-on event is triggered on a specific NOTE.", Flags.asArray(true)),
 	"/midi/noteon/num/velocity": CommandDescription.new(midiNoteOnNumVelocity, "channel:i note:i cmd:s", "Map the NOTE velocity to a CMD. The last 2 CMD arguments should be MIN and MAX, in that order. Example: /midi/noteon/num 0 60 /position/y target 0 1080. *WARNING: this only works with commands that accept 1 argument.*", Flags.asArray(true)),
@@ -421,10 +421,12 @@ func sendOscMsg(msg: Array) -> Status:
 func midiCC(args: Array) -> Status:
 	var chan = int(args[0])
 	var num = int(args[1])
-	# convert las 2 arguments (min and max)
+	# convert last 2 arguments (min and max)
 	args[-2] = float(args[-2])
 	args[-1] = float(args[-1])
-	midiCommands[chan]["cc"][num].append(args.slice(2))
+	# this replaces the command in the slot. It would be better to append new commands but
+	# midiCommands[chan]["cc"][num].append(args.slize(2)) appends to ALL midiCommands[chan]["cc"] slots
+	midiCommands[chan]["cc"][num] = [args.slice(2)]
 	return Status.ok()
 
 func midiNoteOnNum(args: Array) -> Status:

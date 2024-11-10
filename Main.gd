@@ -373,7 +373,11 @@ func _on_midi_noteoff(ch: int, num: int, velocity: int):
 # "cc"
 func _on_midi_cc(ch: int, num: int, value: int):
 	Log.verbose("MIDI CC: %s %s %s" % [ch, num, value])
-	Log.warn("MICI CC: TODO")
+	for cmd in midiCommands[ch]["cc"][num]:
+		value = Midi.map(value, cmd[-2], cmd[-1])
+		cmd = cmd.slice(0,-2)
+		cmd.append(value)
+		evalCommand(cmd, "")
 
 func post(msg: String):
 	if postWindow == null: postWindow = $HSplitContainer/PostWindow
