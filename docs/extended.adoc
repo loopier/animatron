@@ -41,6 +41,12 @@ _Example:_ `/actors`
 
 = actors
 
+=== /create/at actor:s animation:s x:f y:f
+Create an actor at a relative position from the center of the screen.
+
+_Example:_ `/create lola square 100 -100`
+
+
 === /free actor:s
 Delete any existing `actor`.
 

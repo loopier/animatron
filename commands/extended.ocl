@@ -46,6 +46,14 @@
 # = actors
 #################################################################################
 
+# Create an actor at a relative position from the center of the screen.
+#
+# _Example:_ `/create lola square 100 -100`
+#
+/def /create/at actor:s animation:s x:f y:f
+     /create $actor $animation
+     /move $actor $x $y
+
 # Delete any existing `actor`.
 #
 # _Example:_ `/free lola`
