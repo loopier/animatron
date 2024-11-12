@@ -581,6 +581,13 @@
 # = app
 #################################################################################
 
+# List all presets
+#
+# _Example:_ `/presets`
+#
+/def /presets
+     /list/files user://presets/
+
 # Load a preset from a directory `name` under `user://presets/`.
 #
 # _Example:_ `/preset mycommands/somecommands.ocl`

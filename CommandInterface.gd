@@ -56,6 +56,8 @@ var coreCommands: Dictionary = {
 	"/window/method": CommandDescription.new(callWindowMethod, "", "Call a window method.", Flags.asArray(true)),
 	"/view/size": CommandDescription.new(setIndirectViewSize, "width:i height:i", "Set the view's `width` and `height`. This is used for off-screen rendering, so it can be sent over to other apps (Spout, ...).", Flags.asArray(true)),
 	# general commands
+	"/list/dirs": CommandDescription.new(listDirs, "path:s", "Get a list of the subdirectories in PATH."),
+	"/list/files": CommandDescription.new(listFiles, "path:s", "Get a list of the files in PATH."),
 	"/commands/list": CommandDescription.new(listAllCommands, "", "Get list of available commands."),
 	"/commands/load": CommandDescription.new(loadCommandFile, "path:s", "Load a custom command definitions file, which should have the format described below."),
 	# assets
@@ -631,6 +633,22 @@ func _list(dict: Dictionary) -> Status:
 		msg += "%s: %s" % [key, dict[key]]
 	list.sort()
 	return Status.ok(list, msg)
+
+func listDirs(path: String) -> Status:
+	var dirs := DirAccess.get_directories_at(path)
+	dirs.sort()
+	var msg := "Subdirectories at '%s':\n" % [ProjectSettings.globalize_path(path)]
+	for dir in dirs:
+		msg += "%s\n" % [dir]
+	return Status.ok(dirs, msg)
+
+func listFiles(path: String) -> Status:
+	var files := DirAccess.get_files_at(path)
+	files.sort()
+	var msg := "Subdirectories at '%s':\n" % [ProjectSettings.globalize_path(path)]
+	for file in files:
+		msg += "%s\n" % [file]
+	return Status.ok(files, msg)
 
 func listAllCommands() -> Status:
 	var list := "\nCore Commands:\n"

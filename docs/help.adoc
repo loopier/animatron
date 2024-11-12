@@ -495,6 +495,12 @@ _Example:_ `/comic lola bla`
 
 = app
 
+=== /presets
+List all presets
+
+_Example:_ `/presets`
+
+
 === /preset name:s
 Load a preset from a directory `name` under `user://presets/`.
 
@@ -772,6 +778,14 @@ A command sometimes needs parameters, which are described in the help documentat
 - `f` - float
 - `b` - boolean
 - `...` - arbitrary number of paramters of any type
+
+=== /list/dirs path:s
+
+Get a list of the subdirectories in PATH.
+
+=== /list/files path:s
+
+Get a list of the files in PATH.
 
 === /load animation:s
 
