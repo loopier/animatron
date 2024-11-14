@@ -9,6 +9,20 @@
 
 = info
 
+=== /project/path path:s
+Set a project path.
+
+_Example: `/project/path /home/yourname/projectname`
+
+_Usage: `/assets/path $project/assets/animations`
+
+
+=== /assets/path/default
+Set assets path to default location
+
+_Example:_ `/assets/path/default`
+
+
 === /commands
 Lists all available commands.
 

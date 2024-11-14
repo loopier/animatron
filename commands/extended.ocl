@@ -10,6 +10,22 @@
 # = info
 #################################################################################
 
+# Set a project path.
+#
+# _Example: `/project/path /home/yourname/projectname`
+#
+# _Usage: `/assets/path $project/assets/animations`
+#
+/def /project/path path:s
+     /set project:s $path
+
+# Set assets path to default location
+#
+# _Example:_ `/assets/path/default`
+#
+/def /assets/path/default
+     /assets/path user://assets/animations
+
 # Lists all available commands.
 #
 # _Example:_ `/commands`
