@@ -19,6 +19,10 @@ var size: Vector2 = Vector2(1,1):
 		scale = value
 	get: return scale
 
+var angle: float = 0.0:
+	set(value): set_rotation_degrees(value)
+	get: return get_rotation_degrees()
+
 @onready var animNode : AnimatedSprite2D = $Animation
 
 func _ready():
