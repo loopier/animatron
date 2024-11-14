@@ -1167,8 +1167,6 @@ func setActorOpacity(actorName: String, alpha: Variant) -> Status:
 	var result := getActors(actorName)
 	if result.isError(): return result
 	for actor in result.value:
-		#var animation := actor.get_node("Animation") as AnimatedSprite2D
-		#setImageShaderUniform(animation, "uAlpha", alpha as float)
 		actor.set("opacity", alpha)
 	return result
 

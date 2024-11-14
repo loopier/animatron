@@ -211,7 +211,7 @@
 # _Example:_ `/size lola 1.5`
 #
 /def /size actor:s size:f
-     /property /scale $actor $size $size
+     /property /size $actor $size $size
 
 # Set the `actor` 's absolute `size` relative to the normal size with different values on the `x` and `y` axis.
 #
@@ -220,21 +220,21 @@
 # _Example:_ `/size/xy lola 1.5 0.7`
 #
 /def /size/xy actor:s x:f y:f
-     /property /scale $actor $x $y
+     /property /size $actor $x $y
 
 # Set the `actor` 's absolute `size` relative to the normal size on the `x` axis.
 #
 # _Example:_ `/size/x lola 1.5 0.7`
 #
 /def /size/x actor:s x:f
-     /property /scale/x $actor $x
+     /property /size/x $actor $x
 
 # Set the `actor` 's absolute `size` relative to the normal size on the `y` axis.
 #
 # _Example:_ `/size/y lola 1.5 0.7`
 #
 /def /size/y actor:s y:f
-     /property /scale/y $actor $y
+     /property /size/y $actor $y
 
 # `scale` the `actor` relative to the current size equally on both axis.
 #

@@ -13,7 +13,12 @@ var opacity: float = 1.0:
 		opacity = value
 		CommandInterface.setImageShaderUniform(animNode, "uAlpha", value as float)
 	get: return opacity
-	#get: return self.opacity
+
+var size: Vector2 = Vector2(1,1):
+	set(value):
+		scale = value
+	get: return scale
+
 @onready var animNode : AnimatedSprite2D = $Animation
 
 func _ready():
