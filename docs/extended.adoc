@@ -419,6 +419,15 @@ Undo the relationship of the `child` actor to its current parent.
 _Example:_ `/unparent lola`
 
 
+=== /tween/loop dur:f interpolation:s property:s actor:s from:f to:f
+Same as <<_tween,/tween>>, but looping back and forth between FROM and TO.
+
+
+_Example:_ `/tween/loop 1 expo /position/y foo 100 500`
+
+See also: <<_tween,/tween>>
+
+
 
 
 == animation data
