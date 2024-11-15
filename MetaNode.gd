@@ -34,6 +34,18 @@ var y: float:
 	set(value): set_position(Vector2(value, get_position().y))
 	get: return get_position().y
 
+var offset: Vector2 = Vector2(0,0):
+	set(value): get_node("Animation").set_offset(value)
+	get: return get_node("Animation").get_offset()
+
+var offset_x: float = 0:
+	set(value): get_node("Animation").get_offset().x = value
+	get: return get_node("Animation").get_offset().x
+
+var offset_y: float = 0:
+	set(value): get_node("Animation").get_offset().y = value
+	get: return get_node("Animation").get_offset().y
+
 @onready var animNode : AnimatedSprite2D = $Animation
 
 func _ready():

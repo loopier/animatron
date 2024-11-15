@@ -472,14 +472,14 @@
 #
 # _Example:_ `/offset/x lola 50`
 #
-/def /offset/x actor:s pixels:i
+/def /offset/x actor:s x:i
      /animation/property /offset/x $actor $x
 
 # Set the `actor` 's animation drawing offset on the `y` axis.
 #
 # _Example:_ `/offset/y lola -30`
 #
-/def /offset/y actor:s pixels:i
+/def /offset/y actor:s y:i
      /animation/property /offset/y $actor $y
 
 # Undo the relationship of the `child` actor to its current parent.

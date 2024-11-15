@@ -401,13 +401,13 @@ Set the `actor` 's animation drawing offset (in pixels) relative to the anchor p
 _Example:_ `/offset lola 50 -30`
 
 
-=== /offset/x actor:s pixels:i
+=== /offset/x actor:s x:i
 Set the `actor` 's animation drawing offset on the `x` axis.
 
 _Example:_ `/offset/x lola 50`
 
 
-=== /offset/y actor:s pixels:i
+=== /offset/y actor:s y:i
 Set the `actor` 's animation drawing offset on the `y` axis.
 
 _Example:_ `/offset/y lola -30`
