@@ -1,9 +1,11 @@
-=== /error msg:s
+
 = Animatron
 :toc: left
 
 = log
 
+=== /error msg:s
+Log error messages.
 
 
 
