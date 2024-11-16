@@ -342,8 +342,8 @@ func setIndirectViewSize(args: Array) -> Status:
 	mirrorDisplay._on_viewport_size_changed()
 	return Status.ok()
 
-func spoutSend(name: String) -> Status:
-	return indirectView.spoutStart(name)
+func spoutSend(senderName: String) -> Status:
+	return indirectView.spoutStart(senderName)
 
 func spoutStop() -> Status:
 	return indirectView.spoutStop()
@@ -433,7 +433,7 @@ func midiCC(args: Array) -> Status:
 
 func midiNoteOnNum(args: Array) -> Status:
 	var chan = int(args[0])
-	var num = int(args[1])
+	#var num = int(args[1])
 	# convert last 2 arguments (min and max)
 	args[-2] = float(args[-2])
 	args[-1] = float(args[-1])
@@ -457,7 +457,7 @@ func midiNoteOnNumVelocity(args: Array) -> Status:
 
 func midiNoteOnVelocity(args: Array) -> Status:
 	var chan = int(args[0])
-	var num = int(args[1])
+	#var num = int(args[1])
 	# convert las 2 arguments (min and max)
 	args[-2] = float(args[-2])
 	args[-1] = float(args[-1])
@@ -466,13 +466,13 @@ func midiNoteOnVelocity(args: Array) -> Status:
 
 func midiNoteOn(args: Array) -> Status:
 	var chan = int(args[0])
-	var num = int(args[1])
+	#var num = int(args[1])
 	midiCommands[chan]["noteOn"].append(args.slice(2))
 	return Status.ok()
 
 func midiNoteOffNum(args: Array) -> Status:
 	var chan = int(args[0])
-	var num = int(args[1])
+	#var num = int(args[1])
 	# convert las 2 arguments (min and max)
 	args[-2] = float(args[-2])
 	args[-1] = float(args[-1])
@@ -481,7 +481,7 @@ func midiNoteOffNum(args: Array) -> Status:
 
 func midiNoteOff(args: Array) -> Status:
 	var chan = int(args[0])
-	var num = int(args[1])
+	#var num = int(args[1])
 	midiCommands[chan]["noteOff"].append(args.slice(2))
 	return Status.ok()
 
@@ -516,7 +516,7 @@ func freeMidi(cmd: String, args: Array) -> Status:
 	event = event.substr(0,1).to_lower() + event.substr(1)
 	event = event.replace("noteo", "noteO")
 	var chan = int(args[0])
-	var num = args.slice(1)
+	#var num = args.slice(1)
 	midiCommands[chan][event].clear()	
 	Log.debug("event: %s args: %s" % [event, args])
 	return Status.ok()
@@ -676,8 +676,8 @@ func listActors() -> Status:
 		#Log.info(actorsList.back())
 	actorsList.sort()
 	var msg := "List of actors (%s)\n" % [len(actors)]
-	for name in actorsList:
-		msg += "%s\n" % [name]
+	for actorName in actorsList:
+		msg += "%s\n" % [actorName]
 	return Status.ok(actorsList, msg)
 
 func listAnimations() -> Status:
@@ -717,8 +717,7 @@ func unloadAnimationAsset(assetName: String) -> Status:
 func loadAnimationAsset(assetName: String) -> Status:
 	var result : Status
 	var path := animationAssetsPath.path_join(assetName)
-	var dir := DirAccess.open(animationAssetsPath)
-	var assets := assetHelpers.getAssetFilesMatching(animationAssetsPath, assetName)
+	var assets := AssetHelpers.getAssetFilesMatching(animationAssetsPath, assetName)
 	if not assets.sprites.is_empty():
 		result = assetHelpers.loadSprites(animationsLibrary, assets.sprites)
 		if result.isError(): return Status.error("Image asset not loaded: %s" % [path])
@@ -735,12 +734,11 @@ func loadAnimationAsset(assetName: String) -> Status:
 func loadImageSequence(path: String) -> Status:
 	var filenames := DirAccess.get_files_at(path)
 	var animName := path.get_basename().split("/")[-1]
-	var names = animationsLibrary.get_animation_names()
 	if animName != "default" and animationsLibrary.has_animation(animName):
 		return Status.error("Animation already loaded: '%s'" % [animName])
 	animationsLibrary.add_animation(animName)
 	var task_callable = Callable(self, "addImageFiles").bind(path, animName, filenames)
-	var task_id = WorkerThreadPool.add_task(task_callable)
+	var _task_id = WorkerThreadPool.add_task(task_callable)
 	return Status.ok(true, "Loaded %s frames: %s" % [animationsLibrary.get_frame_count(animName), animName])
 
 ## Adds image files to Animations Library
@@ -748,7 +746,7 @@ func addImageFiles(path: String, animName: String, filenames: PackedStringArray)
 	for file in filenames:
 		if file.ends_with(".png"):
 #			Log.debug("Loading img to '%s': %s" % [animName, path.path_join(file)])
-			var texture := assetHelpers.loadImage(path.path_join(file))
+			var texture := AssetHelpers.loadImage(path.path_join(file))
 			animationsLibrary.add_frame(animName, texture)
 
 func getShader(shaderName: String) -> Status:
@@ -804,7 +802,7 @@ func createActor(actorName: String, anim: String) -> Status:
 		result = setActorText([actorName, actorName])
 		return result
 	
-	actor.set_editable_instance(self, true)
+	#actor.set_editable_instance(self, true)
 	actor.get_node("Animation").animation_finished.connect(commandManager._on_animation_finished)
 	return Status.ok(actor, msg)
 
@@ -917,7 +915,6 @@ func callActorMethod(args: Array) -> Status:
 	return Status.ok()
 
 func getObjectMethod(obj: Object, methodName: String) -> Status:
-	var methods = obj.get_method_list()
 	if methodName.begins_with("/"): methodName = methodName.substr(1)
 	methodName = methodName.replace("/", "_")
 	for method in obj.get_method_list():
@@ -1100,9 +1097,9 @@ func callAnimationPlayerMethod(args) -> Status:
 	return Status.ok()
 
 func createAnimationData(args: Array) -> Status:
-	var name = args[0]
+	var animName = args[0]
 	var animation = Animation.new()
-	animationDataLibrary.add_animation(name, animation)
+	animationDataLibrary.add_animation(animName, animation)
 	listAnimationDataLibrary()
 	return Status.ok()
 
@@ -1160,7 +1157,7 @@ func addColorActor(actorName: String, red, green, blue) -> Status:
 	var rgb := Vector3(red as float, green as float, blue as float)
 	for actor in result.value:
 		var animation := actor.get_node("Animation") as AnimatedSprite2D
-		setImageShaderUniform(animation, "uAddColor", rgb)
+		CommandInterface.setImageShaderUniform(animation, "uAddColor", rgb)
 	return Status.ok()
 
 func setActorOpacity(actorName: String, alpha: Variant) -> Status:
@@ -1184,9 +1181,8 @@ func createShader(args: Array) -> Status:
 	return result
 
 func loadShader(shaderName: String) -> Status:
-	var path := shaderAssetsPath.path_join(shaderName)
-	var dir := DirAccess.open(shaderAssetsPath)
-	var shaders := assetHelpers.getFilesMatching(shaderAssetsPath, shaderName, func(ext): return ext == "gdshader")
+	shaderAssetsPath.path_join(shaderName)
+	var shaders := AssetHelpers.getFilesMatching(shaderAssetsPath, shaderName, func(ext): return ext == "gdshader")
 	if not shaders.is_empty():
 		return assetHelpers.loadShaders(shadersLibrary, shaders)
 	return Status.error("No shader '%s' found to load" % [shaderName])
@@ -1212,9 +1208,8 @@ func setActorShaderProperty(args: Array) -> Status:
 	if result.isError(): return result
 	for actor in result.value:
 		var animation := actor.get_node("Animation") as AnimatedSprite2D
-		setImageShaderUniform(animation, propertyName, value)
+		CommandInterface.setImageShaderUniform(animation, propertyName, value)
 	return result
-	return Status.ok()
 
 static func setImageShaderUniform(image: AnimatedSprite2D, uName: StringName, uValue: Variant) -> void:
 	image.material.set_shader_parameter(uName, uValue)
@@ -1230,41 +1225,41 @@ func listRoutines() -> Status:
 	return Status.ok(true)
 
 func addRoutine(args: Array) -> Status:
-	var name: String = args[0]
+	var routineName: String = args[0]
 	var repeats := args[1] as int
 	var interval: float = args[2] as float
 	var command: Array = args.slice(3)
 	var routine: Routine
-	if routinesNode.has_node(name):
-		routine = routinesNode.get_node(name)
+	if routinesNode.has_node(routineName):
+		routine = routinesNode.get_node(routineName)
 		routine.reset()
 	else:
 		routine = Routine.instantiate()
-		routine.name = name
+		routine.name = routineName
 		routinesNode.add_child(routine)
-		routine_added.emit(name) # see Main._on_routine_added
+		routine_added.emit(routineName) # see Main._on_routine_added
 
 	routine.repeats = repeats
 	routine.set_wait_time(interval)
 	routine.command = command
 	routine.start()
 	if Log.getLevel() == Log.LOG_LEVEL_VERBOSE:
-		return Status.ok(true, "New routine '%s' (%s times every %s): %s" % [name, repeats, interval, command])
+		return Status.ok(true, "New routine '%s' (%s times every %s): %s" % [routineName, repeats, interval, command])
 	return Status.ok()
 
-func freeRoutine(name: String) -> Status:
-	for routine in routinesNode.find_children(name, "", true, false):
+func freeRoutine(routineName: String) -> Status:
+	for routine in routinesNode.find_children(routineName, "", true, false):
 		routine.stop()
 		routinesNode.remove_child(routine)
 		routine.queue_free()
-	return Status.ok(true, "Routine removed: %s" % [name])
+	return Status.ok(true, "Routine removed: %s" % [routineName])
 
-func startRoutine(name: String) -> Status:
-	routinesNode.get_node(name).start()
+func startRoutine(routineName: String) -> Status:
+	routinesNode.get_node(routineName).start()
 	return Status.ok(true)
 
-func stopRoutine(name: String) -> Status:
-	routinesNode.get_node(name).stop()
+func stopRoutine(routineName: String) -> Status:
+	routinesNode.get_node(routineName).stop()
 	return Status.ok(true)
 
 func finishedRoutine(args: Array) -> Status:
@@ -1293,8 +1288,8 @@ func addStateMachine(name: String):
 	machine.name = name
 	stateMachines[name] = machine
 
-func defineState(name: String, entry: String, exit: String) -> Status:
-	StateMachine.defineState(name, entry, exit)
+func defineState(stateName: String, entry: String, exit: String) -> Status:
+	StateMachine.defineState(stateName, entry, exit)
 	return Status.ok()
 
 func addState(args: Array) -> Status:
@@ -1463,10 +1458,10 @@ func randCmdValue(args: Array) -> Status:
 	var command = args[0]
 	var result = getActors(args[1])
 	if result.isError(): return result
-	var min = float(args[2])
-	var max = float(args[3])
+	var rMin = float(args[2])
+	var rMax = float(args[3])
 	for actor in result.value:
-		var value = randf_range(min, max)
+		var value = randf_range(rMin, rMax)
 		commandManager.evalCommand([command, actor.name, value], "CommandInterface")
 	return Status.ok(true)
 

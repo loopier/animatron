@@ -59,7 +59,7 @@ static func getAssetFilesMatching(path: String, nameWildcard: String) -> Diction
 			filename = dir.get_next()
 	return files
 
-static func getFilesMatching(path: String, nameWildcard: String, matchExtension: Callable = func(ext): return true) -> Array[String]:
+static func getFilesMatching(path: String, nameWildcard: String, matchExtension: Callable = func(_ext): return true) -> Array[String]:
 	var dir := DirAccess.open(path)
 	var files : Array[String] = []
 	if dir:
@@ -147,7 +147,7 @@ func loadSprites(animFramesLibrary: SpriteFrames, sprites: Array[String]) -> Sta
 	Log.debug("Runtime sprites: %s" % [sprites])
 	# Add the runtime-loaded sprites to our pre-existing library
 	for spritePath in sprites:
-		var res := loadImage(spritePath)
+		var res := AssetHelpers.loadImage(spritePath)
 		if res:
 			var info = getSpriteFileInfo(spritePath.get_file().get_basename())
 			if info.directions == 8:
@@ -170,11 +170,11 @@ func loadSequences(animFramesLibrary: SpriteFrames, sequences: Array[String]):
 		animFramesLibrary.add_animation(info.name)
 		animFramesLibrary.set_animation_speed(info.name, info.fps)
 		var frameId := 0
-		for img in getAnimSequenceFrames(seqPath):
-			var texture := loadImage(seqPath + "/" + img)
+		for img in AssetHelpers.getAnimSequenceFrames(seqPath):
+			var texture := AssetHelpers.loadImage(seqPath + "/" + img)
 			if texture:
-				var width := texture.get_size().x
-				var height := texture.get_size().y
+				#var width := texture.get_size().x
+				#var height := texture.get_size().y
 				animFramesLibrary.add_frame(info.name, texture, frameId)
 				frameId += 1
 

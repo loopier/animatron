@@ -2,8 +2,6 @@ class_name CommandDescription
 
 ## Describes an OSC command including the documentation.
 
-## OSC command
-var cmd: String
 ## Function to be called when command is received.
 var callable: Callable
 var callableObject: String

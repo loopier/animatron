@@ -252,7 +252,6 @@ func executeCommand(command: CommandDescription, args: Array) -> Status:
 		# Reduce the number of args to the expected size, else callv will fail.
 		# Exceeding arguments will be grouped into an array and passed as the last argument.
 		var callableNumArgs = getNumArgsForMethod(command.callable, command.callable.get_method())
-		var excessArgs = args.slice(callableNumArgs)
 		var finalArgs = args.slice(0, callableNumArgs)
 		result = command.callable.callv(finalArgs)
 	if result == null: return Status.ok()
@@ -328,8 +327,8 @@ func _on_command_error(msg: String, sender: String):
 func _on_command_file_loaded(cmds: Array):
 	evalCommands(cmds, lastSender)
 
-func _on_routine_added(name: String):
-	var routine = $Routines.find_child(name, true, false)
+func _on_routine_added(routineName: String):
+	var routine = $Routines.find_child(routineName, true, false)
 	# we need to capture the signal emmited when a routine has been added by OSC
 	# so we can set a call to `Main.evalCommand` from within the `Routine`.
 	# Doing it like this decouples `Routine` from `Main`, because `Routine` doesn't
@@ -399,14 +398,14 @@ func _on_load_preset_dialog_confirmed():
 	evalCommand(["/commands/load", path], "gdscript")
 	Log.verbose("Loading preset from: %s" % [path])
 
-func _on_animation_finished(name):
-	if stateMachines.has(name):
-		var actor = actors.find_child(name)
+func _on_animation_finished(actorName):
+	if stateMachines.has(actorName):
+		var actor = actors.find_child(actorName)
 		var animation = actor.get_node("Animation").get_animation()
-		if not stateMachines[name].states.has(animation): return
-		var nextStates = stateMachines[name].states[animation]
+		if not stateMachines[actorName].states.has(animation): return
+		var nextStates = stateMachines[actorName].states[animation]
 		var nextState = nextStates[randi() % nextStates.size()]
 		if animationsLibrary.has_animation(nextState):
-			evalCommands([["/animation", name, nextState]], "gdscript")
-		Log.debug("%s state machine - %s(%s): %s" % [name, animation, nextState, nextStates])
+			evalCommands([["/animation", actorName, nextState]], "gdscript")
+		Log.debug("%s state machine - %s(%s): %s" % [actorName, animation, nextState, nextStates])
 	pass

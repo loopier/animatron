@@ -22,8 +22,6 @@ func _input(event):
 		if debug: _print_midi_info(event)
 		var ch = event.channel
 		var msg = event.message
-		var num = 0
-		var value = 0
 		match msg:
 			MIDI_MESSAGE_NOTE_ON:
 				midi_noteon.emit(ch, event.pitch, event.velocity)
@@ -43,5 +41,5 @@ func _print_midi_info(midi_event: InputEventMIDI):
 	#print("Controller number: " + str(midi_event.controller_number))
 	#print("Controller value: " + str(midi_event.controller_value))
 
-static func map(input: float, min: float, max: float) -> float:
-	return (input - 0) * (max - min) / (127 - 0) + min
+static func map(input: float, inMin: float, inMax: float) -> float:
+	return (input - 0) * (inMax - inMin) / (127 - 0) + inMin

@@ -23,7 +23,6 @@ static func generateFrom(inputFilePath: String) -> Status:
 	return Status.ok(true, "Help file successfully generated from: %s\nto: %s" % [inputFilePath, asciidocPath])
 
 static func asciidocFromCommandsFile(filepath: String) -> String:
-	var filename = filepath.get_file().get_basename()
 	var contents = getTextFromFile(filepath).value
 	var textBlocks = getTextBlocks(contents).value
 	return DocGenerator.formatAsciiDoc(textBlocks).value

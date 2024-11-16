@@ -108,8 +108,9 @@ func _parseVariables(cmd: Array, cmdVariables: Array, cmdValues:Array) -> Array:
 		newCmd.append(token)
 	return newCmd
 
-func _getValue(variable: Variant) -> Variant:
+func _getValue(_variable: Variant) -> Variant:
 	var value: Variant
+	assert(false)
 	return value
 
 ## Returns the single character representing a type of the [param variableDescription].

@@ -7,13 +7,13 @@ var current := ""
 var states := {}
 static var stateDefs := {}
 
-static func defineState(name: String, entry: String, exit: String):
-	StateMachine.stateDefs[name] = {"entry": entry, "exit": exit}
+static func defineState(inName: String, entry: String, exit: String):
+	StateMachine.stateDefs[inName] = {"entry": entry, "exit": exit}
 
-func addState(state: String, next: Array):
+func addState(state: String, nextState: Array):
 	if isEmpty(): current = state
-	states[state] = next
-	Log.verbose("%s -- Add state: %s %s" % [name, state, next])
+	states[state] = nextState
+	Log.verbose("%s -- Add state: %s %s" % [name, state, nextState])
 
 func removeState(state: String):
 	# There's no wildcard matching for dictionaries, we need it to do it manually

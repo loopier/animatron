@@ -13,8 +13,6 @@ func _ready():
 	hl.add_color_region("$", " ", Color(0.97654688358307, 0.68245977163315, 0.44307622313499)) # variable
 
 func _input(event):
-	var line := get_caret_line()
-	var col := get_caret_column()
 	if event.is_action_pressed("eval_block"): 
 		evalBlock()
 		_ignoreEvent()
@@ -29,14 +27,14 @@ func _input(event):
 func _ignoreEvent():
 	get_parent().get_parent().get_parent().set_input_as_handled()
 
-func evalText(text):
-	text = text.strip_edges()
-	eval_code.emit(text)
+func evalText(inText):
+	inText = inText.strip_edges()
+	eval_code.emit(inText)
 	deselect()
 	
 func evalLine():
 	var ln = get_caret_line()
-	var col = get_caret_column()
+	#var col = get_caret_column()
 	selectLine(ln)
 	evalText(get_selected_text())
 
@@ -80,8 +78,8 @@ func decreaseFont():
 	var fontSize = get_theme_font_size("font_size") - 1
 	add_theme_font_size_override("font_size", fontSize)
 
-func append(text: String):
-	set_text("%s%s" % [get_text(), text])
+func append(inText: String):
+	set_text("%s%s" % [get_text(), inText])
 	set_caret_line(get_line_count())
 
 func _on_save_dialog_confirmed():

@@ -12,7 +12,7 @@ func _on_viewport_size_changed():
 		set_position(viewSize/2)
 
 	var scale2D := viewSize / texture.get_size()
-	var scale: float = min(scale2D.x, scale2D.y)
+	var leastScale: float = min(scale2D.x, scale2D.y)
 	
-	if scale == INF: scale = 1
-	set_scale(Vector2(scale, scale))
+	if leastScale == INF: leastScale = 1
+	set_scale(Vector2(leastScale, leastScale))

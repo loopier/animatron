@@ -7,12 +7,12 @@ func _ready():
 	get_window().connect("size_changed", _on_top_viewport_size_changed)
 	_on_top_viewport_size_changed()
 
-func spoutStart(name: String) -> Status:
+func spoutStart(senderName: String) -> Status:
 	if OS.get_name() == "Windows":
 		# Do this instantiation trick to avoid using the class Spout,
 		# which will not exist on Linux or Mac
 		spout = ClassDB.instantiate(&"Spout")
-		spout.set_sender_name(name)
+		spout.set_sender_name(senderName)
 		RenderingServer.frame_post_draw.connect(_on_frame_post_draw)
 		return Status.ok();
 	return Status.error("Spout only supported on Windows")
