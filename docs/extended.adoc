@@ -91,47 +91,47 @@ _Example:_ `/reload mama`
 
 == transform
 
-=== /position actor:s x:f y:f
+=== /position actor:a x:f y:f
 Set the `x` and `y` coordinates (in pixels) of the `actor`.
 
 _Example:_ `/position lola 500 500`
 
 
-=== /pos actor:s x:f y:f
+=== /pos actor:a x:f y:f
 See <<_position_actors_xf_yf,/position>>
 
 
-=== /position/x actor:s x:f
+=== /position/x actor:a x:f
 Set the `x` coordinate (in pixels) of the `actor`.
 
 _Example:_ `/position/x lola 500`
 
 
-=== /pos/x actor:s value:f
+=== /pos/x actor:a value:f
 See <<_positionx_actors_xf,/position/x>>
 
 _Example:_ `/pos/x mama 500`
 
 
-=== /x actor:s value:f
+=== /x actor:a value:f
 See <<_positionx_actors_xf,/position/x>>
 
 _Example:_ `/x mama 500`
 
 
-=== /position/y actor:s y:f
+=== /position/y actor:a y:f
 Set the `y` coordinate (in pixels) of the `actor`.
 
 _Example:_ `/position/x lola 500`
 
 
-=== /pos/y actor:s value:f
+=== /pos/y actor:a value:f
 Set the `y` coordinate (in pixels) of the `actor`.
 
 _Example:_ `/pos/y mama 500`
 
 
-=== /y actor:s value:f
+=== /y actor:a value:f
 Set the `y` coordinate (in pixels) of the `actor`.
 
 _Example:_ `/y mama 500`
@@ -164,19 +164,19 @@ See <<_ysort_parentActors_sortb,/y/sort>>
 === /y/sort/disable parentActor:s
 See <<_ysort_parentActors_sortb,/y/sort>>
 
-=== /move actor:s x:f y:f
+=== /move actor:a x:f y:f
 Move `actor` an amount of pixels relative to the current position in both `x` and `y` axis.
 
 _Example:_ `/move lola 100 100`
 
 
-=== /move/x actor:s x:f
+=== /move/x actor:a x:f
 Move `actor` an amount of pixels relative to the current position in the `x` axis.
 
 _Example:_ `/move/x lola 100`
 
 
-=== /move/y actor:s y:f
+=== /move/y actor:a y:f
 Move `actor` an amount of pixels relative to the current position in the `y` axis.
 
 _Example:_ `/move/y lola 100`

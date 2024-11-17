@@ -16,19 +16,20 @@ func after_all():
 	gut.p("ran run teardown logger", 2)
 
 func test_for():
-	assert_eq(ocl._for(["i", 2, "/post", "$i"]), [["/post", "0"], ["/post", "1"]]) 
-	assert_eq(ocl._for(["i", 4, "/post", "$i"]), [["/post", "0"], ["/post", "1"], ["/post", "2"], ["/post", "3"]]) 
+	assert_eq(ocl._for(["i", 2, "/post", "$i"]), [["/post", 0], ["/post", 1]]) 
+	assert_eq(ocl._for(["i", 4, "/post", "$i"]), [["/post", 0], ["/post", 1], ["/post", 2], ["/post", 3]]) 
 	assert_eq(ocl._for(["i", 2, "/create", "x$i", "ball"]), [["/create", "x0", "ball"], ["/create", "x1", "ball"]]) 
 
 func test_def():
 	assert_true(true)
 	if false:
-		assert_eq(ocl._def({"arg1": "val1", "arg2": "val2"}, [["/cmdA", "$arg1", "paramB", "$arg2"]]), [["/cmdA", "val1", "paramB", "val2"]])
-		assert_eq(ocl._def({"arg1": "val1"}, [["/cmdA", "$arg1", "paramB", "$arg1"]]), [["/cmdA", "val1", "paramB", "val1"]])
-		assert_eq(ocl._def({"arg1": 2}, [["/cmdA", "$arg1", "paramB", "$arg1"], ["/cmdB", "bla", "$arg2"]]), [["/cmdA", 2, "paramB", 2], ["/cmdB", "bla", "$arg2"]])
-		assert_eq(ocl._def({"arg1": "val1"}, [["/cmdA", "$arg1", "paramB$arg1"]]), [["/cmdA", "val1", "paramBval1"]])
-		assert_eq(ocl._def({"arg1": 1}, [["/cmdA", "$arg1", "paramB$arg1"]]), [["/cmdA", 1, "paramB1"]])
-		assert_eq(ocl._def({"arg1": 1.1}, [["/cmdA", "$arg1", "paramB$arg1"]]), [["/cmdA", 1.1, "paramB1.1"]])
+		var fakeCmdInterface
+		assert_eq(ocl._def({"arg1": "val1", "arg2": "val2"}, [["/cmdA", "$arg1", "paramB", "$arg2"]], fakeCmdInterface), [["/cmdA", "val1", "paramB", "val2"]])
+		assert_eq(ocl._def({"arg1": "val1"}, [["/cmdA", "$arg1", "paramB", "$arg1"]], fakeCmdInterface), [["/cmdA", "val1", "paramB", "val1"]])
+		assert_eq(ocl._def({"arg1": 2}, [["/cmdA", "$arg1", "paramB", "$arg1"], ["/cmdB", "bla", "$arg2"]], fakeCmdInterface), [["/cmdA", 2, "paramB", 2], ["/cmdB", "bla", "$arg2"]])
+		assert_eq(ocl._def({"arg1": "val1"}, [["/cmdA", "$arg1", "paramB$arg1"]], fakeCmdInterface), [["/cmdA", "val1", "paramBval1"]])
+		assert_eq(ocl._def({"arg1": 1}, [["/cmdA", "$arg1", "paramB$arg1"]], fakeCmdInterface), [["/cmdA", 1, "paramB1"]])
+		assert_eq(ocl._def({"arg1": 1.1}, [["/cmdA", "$arg1", "paramB$arg1"]], fakeCmdInterface), [["/cmdA", 1.1, "paramB1.1"]])
 
 func test_resolveVariables():
 	var variables := { "i": 17, "hello": "allo", "other": 3.1416 }
@@ -100,6 +101,7 @@ func test_replaceVariablesWithValues():
 	
 
 func test_getVariableType():
+	assert_eq(ocl._getVariableType("actor:a"), "a")
 	assert_eq(ocl._getVariableType("actor:s"), "s")
 	assert_eq(ocl._getVariableType("actor:i"), "i")
 	assert_eq(ocl._getVariableType("actor:f"), "f")

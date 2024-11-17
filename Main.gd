@@ -206,7 +206,7 @@ func evalCommand(cmdArray: Array, sender: String) -> Status:
 		# put variable values from the OSC command into the 
 		# CommandDescritpion.variables dictionary
 		var args : Array = cmdArray.slice(1)
-		var subcommands = ocl._def(cmdDescription, args)
+		var subcommands = ocl._def(cmdDescription, args, cmdInterface)
 		result = evalCommands(subcommands, sender)
 	elif cmdDescription is CommandDescription:
 		var args : Array = cmdArray.slice(1)

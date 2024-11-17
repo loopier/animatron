@@ -6,6 +6,16 @@ var fullExpressionRegex := RegEx.create_from_string("^(?<!\\{)\\{([^{}]+)\\}(?!\
 var expressionRegex := RegEx.create_from_string(     "(?<!\\{)\\{([^{}]+)\\}(?!\\})")  #  RegEx.create_from_string("\\{([^{}]+)\\}")
 var spacesRegex := RegEx.create_from_string("\\s+")
 
+static func getActorArgument(nameOrActor: Variant, cmdInterface: CommandInterface) -> Array:
+	if typeof(nameOrActor) == TYPE_OBJECT:
+		var actor := nameOrActor as MetaNode
+		if actor != null:
+			return [actor]
+	elif typeof(nameOrActor) == TYPE_ARRAY:
+		return nameOrActor
+	var resolvedActors = cmdInterface.getActors(nameOrActor)
+	return resolvedActors.value if resolvedActors.isOk() else []
+
 ## Example: [code]/for i 4 /post bla_$i or $i[/code]
 func _for(args: Array) -> Array:
 	var result = []
@@ -26,19 +36,22 @@ func _for(args: Array) -> Array:
 ## [param def] is a [class Dictionary] containing the [param def] variables description and 
 ## an [class Array] of subcommands.
 ## [param values] will be put anywhere where the [param def.variables] are present in the subcommands. 
-func _def(def: Dictionary, values: Array) -> Array:
+func _def(def: Dictionary, values: Array, cmdInterface: CommandInterface) -> Array:
 	var cmdArray := []
 	var variables := VariablesManager.getAll()
 	for i in def.variables.size():
-		var varName = str(def.variables[i].split(':')[0])
-		var varType = "s"
-		if def.variables[i].split(':').size() < 2: 
+		var nameAndType: PackedStringArray = def.variables[i].split(':')
+		var varName: String = nameAndType[0]
+		var varType := "s"
+		if nameAndType.size() < 2: 
 			Log.error("Variable type not specified for argument %d ('%s'). See '/help /def'" % [i, varName])
 		else:
-			varType = def.variables[i].split(":")[1] 
+			varType = nameAndType[1]
 		# def arguments take precedence over "app" vars
 		if varType == "...":
 			variables[varName] = " ".join(values.slice(i))
+		elif varType == "a":
+			variables[varName] = getActorArgument(values[min(i, values.size()-1)], cmdInterface)
 		else:
 			variables[varName] = values[min(i, values.size()-1)]
 	for cmd in def.subcommands:
@@ -60,10 +73,13 @@ func _resolveVariables(arg, variables: Dictionary, skipUnknown: bool) -> Status:
 		if variables.has(varName):
 			var value = variables[varName]
 			if typeof(value) == TYPE_CALLABLE: value = value.call()
-			str = str.substr(0, match.get_start(0)) + ("%s" % [value]) + str.substr(match.get_end(1))
-			offset = match.get_start(0)
-#			print("Replaced var '%s', as '%s'" % [varName, str])
-			arg = str
+			if match.get_start(0) == 0 and match.get_end(1) == str.length():
+				arg = value
+			else:
+				str = str.substr(0, match.get_start(0)) + ("%s" % [value]) + str.substr(match.get_end(1))
+				offset = match.get_start(0)
+#				print("Replaced var '%s', as '%s'" % [varName, str])
+				arg = str
 		elif skipUnknown:
 			offset = match.get_end(1)
 		else:
@@ -119,7 +135,7 @@ func _getVariableType(variableDescription: String) -> String:
 	if not variableDescription.contains(":"): return variableDescription
 	var type = variableDescription.split(":")[1]
 	match type:
-		"i", "f", "b", "...": return type
+		"a", "i", "f", "b", "...": return type
 		_: return "s"
 
 ## Returns the name of the variable [param variableDescription].

@@ -109,54 +109,54 @@
 #
 # _Example:_ `/position lola 500 500`
 #
-/def /position actor:s x:f y:f
+/def /position actor:a x:f y:f
      /method /set/position $actor $x $y
 
 # See <<_position_actors_xf_yf,/position>>
 #
-/def /pos actor:s x:f y:f
+/def /pos actor:a x:f y:f
      /position $actor $x $y
 
 # Set the `x` coordinate (in pixels) of the `actor`.
 #
 # _Example:_ `/position/x lola 500`
 #
-/def /position/x actor:s x:f
+/def /position/x actor:a x:f
      /property /position/x $actor $x
 
 # See <<_positionx_actors_xf,/position/x>>
 #
 # _Example:_ `/pos/x mama 500`
 #
-/def /pos/x actor:s value:f
+/def /pos/x actor:a value:f
      /position/x $actor $value
 
 # See <<_positionx_actors_xf,/position/x>>
 #
 # _Example:_ `/x mama 500`
 #
-/def /x actor:s value:f
+/def /x actor:a value:f
      /position/x $actor $value
 
 # Set the `y` coordinate (in pixels) of the `actor`.
 #
 # _Example:_ `/position/x lola 500`
 #
-/def /position/y actor:s y:f
+/def /position/y actor:a y:f
      /property /position/y $actor $y
 
 # Set the `y` coordinate (in pixels) of the `actor`.
 #
 # _Example:_ `/pos/y mama 500`
 #
-/def /pos/y actor:s value:f
+/def /pos/y actor:a value:f
      /position/y $actor $value
 
 # Set the `y` coordinate (in pixels) of the `actor`.
 #
 # _Example:_ `/y mama 500`
 #
-/def /y actor:s value:f
+/def /y actor:a value:f
      /position/y $actor $value
 
 # Sort actors according to their `y` position value. Actors with a higher `y` value will be
@@ -193,21 +193,21 @@
 #
 # _Example:_ `/move lola 100 100`
 #
-/def /move actor:s x:f y:f
+/def /move actor:a x:f y:f
      /method /translate $actor $x $y
 
 # Move `actor` an amount of pixels relative to the current position in the `x` axis.
 #
 # _Example:_ `/move/x lola 100`
 #
-/def /move/x actor:s x:f
+/def /move/x actor:a x:f
      /method /translate $actor $x 0
 
 # Move `actor` an amount of pixels relative to the current position in the `y` axis.
 #
 # _Example:_ `/move/y lola 100`
 #
-/def /move/y actor:s y:f
+/def /move/y actor:a y:f
      /method /translate $actor 0 $y
 
 # Set the absolute rotation of the `actor` in `degrees`.

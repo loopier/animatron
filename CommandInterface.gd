@@ -31,6 +31,7 @@ var mirrorDisplay: Sprite2D
 @onready var loadPresetDialog: FileDialog
 @onready var actorsNode: Node
 @onready var shadersLibrary := {}
+@onready var classMethodInfoCache := {}
 @onready var routinesNode: Node
 @onready var stateMachines: Dictionary
 @onready var stateChangedCallback: Callable
@@ -153,7 +154,7 @@ var coreCommands: Dictionary = {
 	"/behind": CommandDescription.new(setBehindActor, "actor:s target:s", "Draw the ACTOR immediately behind the TARGET.", Flags.asArray(false)),
 	"/top": CommandDescription.new(setTopActor, "actor:s", "Draw the ACTOR on top of everything else.", Flags.asArray(false)),
 	"/bottom": CommandDescription.new(setBottomActor, "actor:s", "Draw the ACTOR behind everything else.", Flags.asArray(false)),
-	"/center": CommandDescription.new(center, "actor:s", "Set the ACTOR to the center of the screen."),
+	"/center": CommandDescription.new(center, "actor:a", "Set the ACTOR to the center of the screen."),
 	
 	# actors
 	"/property": CommandDescription.new(setActorProperty, "property:s actor:s value:...", "Generic command to set the VALUE to any PROPERTY of an ACTOR.", Flags.asArray(false)),
@@ -772,6 +773,8 @@ func getActors(namePatternOrActor: Variant) -> Status:
 	if typeof(namePatternOrActor) == TYPE_OBJECT:
 		var actor := namePatternOrActor as MetaNode
 		if actor != null: return Status.ok([actor])
+	elif typeof(namePatternOrActor) == TYPE_ARRAY:
+		return Status.ok(namePatternOrActor)
 	var actors = actorsNode.find_children(namePatternOrActor, "MetaNode", true, false)
 	if actors == null or len(actors) == 0: return Status.error("No actors found: %s" % [namePatternOrActor])
 	return Status.ok(actors)
@@ -782,17 +785,17 @@ func createActor(actorName: String, anim: String) -> Status:
 	var result = getActor(actorName)
 #	Log.debug(result.msg)
 	if result.value != null:
-		actor = getActor(actorName).value
+		actor = result.value
 		msg = "Actor already exists: %s\n" % [actor]
 		msg += "Setting new animation: %s" % [anim]
 	else:
 		actor = metanode.instantiate()
 		msg = "Created new actor '%s': %s" % [actorName, anim]
+		actor.set_name(actorName)
 #	Log.debug(msg)
-	actor.set_name(actorName)
 	result = createAnimationActor(actor, anim)
 	actorsNode.add_child(actor)
-	center(actorName)
+	center(actor)
 	
 	# Need to set an owner so it appears in the SceneTree and can be found using
 	# Node.find_child(pattern) -- see Node docs
@@ -916,10 +919,19 @@ func callActorMethod(args: Array) -> Status:
 
 func getObjectMethod(obj: Object, methodName: String) -> Status:
 	if methodName.begins_with("/"): methodName = methodName.substr(1)
-	methodName = methodName.replace("/", "_")
-	for method in obj.get_method_list():
-		if method.name == methodName: 
-			return Status.ok(method)
+	if methodName.contains("/"): methodName = methodName.replace("/", "_")
+	
+	var className := obj.get_class()
+	if className not in classMethodInfoCache:
+		classMethodInfoCache[className] = {}
+	var methodInfoCache : Dictionary = classMethodInfoCache[className]
+	if methodName in methodInfoCache:
+		return Status.ok(methodInfoCache[methodName])
+	var methodList = obj.get_method_list()
+	for methodInfo in methodList:
+		methodInfoCache[methodInfo.name] = methodInfo
+		if methodInfo.name == methodName:
+			return Status.ok(methodInfo)
 	return Status.error("Method not found: %s(%s):%s" % [obj.get("name"), obj.get_class(), methodName])
 
 func callObjectMethod(obj: Variant, args: Array) -> Status:
@@ -1320,10 +1332,17 @@ func nextState(machine: String) -> Status:
 		return Status.ok(true, "%s -> Next state: %s" % [machine, stateMachines[machine].status()])
 	return Status.error("Machine not found: %s" % [machine])
 
-func center(actorName: String) -> Status:
-	var result = getActors(actorName)
-	if result.isError(): return result
-	for actor in result.value:
+func center(inActor) -> Status:
+	var actorList : Array
+	if typeof(inActor) == TYPE_OBJECT:
+		var actor := inActor as MetaNode
+		if actor != null:
+			actorList = [actor]
+	else:
+		var result = getActors(inActor)
+		if result.isError(): return result
+		actorList = result.value
+	for actor in actorList:
 		actor.set_position(indirectView.size as Vector2 / 2)
 	return Status.ok()
 
@@ -1462,7 +1481,7 @@ func randCmdValue(args: Array) -> Status:
 	var rMax = float(args[3])
 	for actor in result.value:
 		var value = randf_range(rMin, rMax)
-		commandManager.evalCommand([command, actor.name, value], "CommandInterface")
+		commandManager.evalCommand([command, actor, value], "CommandInterface")
 	return Status.ok(true)
 
 func tweenActorProperty(args: Array) -> Status:
