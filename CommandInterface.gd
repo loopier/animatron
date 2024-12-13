@@ -38,6 +38,7 @@ var mirrorDisplay: Sprite2D
 @onready var commandManager: Node
 @onready var midiCommands: Array
 @onready var oscSender: OscReceiver
+var oscRemoteTarget: String
 var animationsLibrary: SpriteFrames ## The meta node containing these frames needs to be initialized in _ready
 var animationDataLibrary: AnimationLibrary
 var assetsPath := "user://assets"
@@ -185,7 +186,7 @@ func _ready():
 		coreCommands["/spout/stop"] = CommandDescription.new(spoutStop, "", "Stop Spout connection; stop sending the workspace view as a texture. This is only supported on Windows.")
 	
 	coreCommands.make_read_only()
-	oscSender = OscReceiver.new()
+	# oscSender is set by Main when it creates us
 	thread = Thread.new()
 	mutex = Mutex.new()
 	shadersLibrary["Default"] = load("res://meta_node.gdshader")
@@ -412,13 +413,13 @@ func postFile(path: String) -> Status:
 	return Status.ok()
 
 func connectOscRemote(args: Array) -> Status:
-	oscSender.senderIP = args[0]
-	oscSender.senderPort = int(args[1])
-	return Status.ok(oscSender.senderIP, "Connecting to OSC server: %s:%s" % [oscSender.senderIP, oscSender.senderPort])
+	var senderIP: String = args[0]
+	var senderPort := args[1] as int
+	oscRemoteTarget = "%s/%s" % [senderIP, senderPort];
+	return Status.ok(senderIP, "Connecting to OSC target: %s:%s" % [oscRemoteTarget])
 
 func sendOscMsg(msg: Array) -> Status:
-	var target = "%s/%s" % [oscSender.senderIP, oscSender.senderPort]
-	oscSender.sendMessage(target, msg[0], msg.slice(1))
+	oscSender.sendMessage(oscRemoteTarget, msg[0], msg.slice(1))
 	return Status.ok()
 
 func midiCC(args: Array) -> Status:

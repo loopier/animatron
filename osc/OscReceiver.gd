@@ -10,8 +10,6 @@ signal osc_msg_received(addr: String, args: Array, sender: String)
 
 var socketUdp := PacketPeerUDP.new()
 var streamBuf := StreamPeerBuffer.new()
-var senderIP: String
-var senderPort: int
 enum {OSC_ARG_TYPE_NULL, OSC_ARG_TYPE_FLOAT=102, OSC_ARG_TYPE_INT=105, OSC_ARG_TYPE_STRING=115}
 var observers: Dictionary = Dictionary()
 

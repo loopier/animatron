@@ -3,7 +3,6 @@ class_name Main
 
 var Osc := preload("res://osc_receiver.tscn")
 var osc: OscReceiver
-var oscSender: OscReceiver
 static var defaultConfigPath := "res://config/default.ocl"
 static var configPath := "user://config/config.ocl"
 var metanode := preload("res://meta_node.tscn")
@@ -85,6 +84,7 @@ func _ready():
 	cmdInterface.command_error.connect(_on_command_error)
 	cmdInterface.command_file_loaded.connect(_on_command_file_loaded)
 	cmdInterface.routine_added.connect(_on_routine_added)
+	cmdInterface.oscSender = osc
 	
 	var animationsLibraryNode = AnimatedSprite2D.new()
 	animationsLibraryNode.set_sprite_frames(SpriteFrames.new())
