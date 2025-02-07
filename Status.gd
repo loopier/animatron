@@ -2,7 +2,7 @@ class_name Status
 ## All methods that are mapped from OSC messages must return an instance of this class,
 ## in order to determine wether it has succeeded of failed.
 
-enum { NULL = -1, ERROR = 0, OK = 1 }
+enum { NULL = -1, ERROR = 0, OK = 1 , WARNING = 2}
 
 var type: int
 var value: Variant
@@ -19,8 +19,14 @@ static func ok( inValue: Variant = true, inMsg: String = "" ) -> Status:
 static func error(inMsg: String = "") -> Status:
 	return Status.new(Status.ERROR, null, inMsg)
 
+static func warning(inMsg: String = "") -> Status:
+	return Status.new(Status.WARNING, null, inMsg)
+
 func isOk() -> bool:
 	return type == Status.OK
 
 func isError() -> bool:
 	return type == Status.ERROR
+
+func isWarning() -> bool:
+	return type == Status.WARNING

@@ -213,11 +213,11 @@ func evalCommand(cmdArray: Array, sender: String) -> Status:
 		if cmdDescription.toGdScript: args = cmdArray
 		result = executeCommand(cmdDescription, args)
 	else:
-		result = Status.error("Command not found: %s" % [cmd])
+		result = Status.warning("Command not found: %s" % [cmd])
 	
 	# post and reply result
 	_on_command_finished(result, sender)
-	if result.msg.length() > 0: post(result.msg)
+	#if result.msg.length() > 0: post(result.msg)
 	return result
 
 ## Executes a [param command] described in a [CommandDescription], with the given [param args].
@@ -314,6 +314,9 @@ func _on_command_finished(result: Status, sender: String):
 	if result.isError():
 		_on_command_error(result.msg, sender)
 		return
+	elif result.isWarning():
+		_on_command_warning(result.msg, sender)
+		return
 	if result.msg.is_empty(): return
 	Log.verbose("Command finished:\n%s" % [result.msg])
 	if sender:
@@ -323,6 +326,11 @@ func _on_command_error(msg: String, sender: String):
 	Log.error("Command error: %s" % [msg])
 	if sender:
 		osc.sendMessage(sender, "/error/reply", [msg])
+
+func _on_command_warning(msg: String, sender: String):
+	Log.warn(msg)
+	if sender:
+		osc.sendMessage(sender, "/warning/reply", [msg])
 
 func _on_command_file_loaded(cmds: Array):
 	evalCommands(cmds, lastSender)
