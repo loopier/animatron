@@ -21,7 +21,7 @@ static func setTarget( inTarget : TextEdit ):
 
 static func setLevel( inLevel: int ):
 	level = inLevel
-	logMsg("Log level set to: %s" % [levelNames[level]], false)
+	logMsg("Log level set to: %s" % [levelNames[level]])
 
 static func getLevel() -> int:
 	return level
@@ -58,7 +58,7 @@ static func error( msg ):
 static func warn( msg ):
 	if level < LOG_LEVEL_WARNING:
 		return
-	logMsg("[WARNING]: %s" % [msg], false)
+	logMsg("[WARNING]: %s" % [msg], true)
 
 static func info( msg ):
 	if level < LOG_LEVEL_INFO:
@@ -68,16 +68,15 @@ static func info( msg ):
 static func debug( msg ):
 	if level < LOG_LEVEL_DEBUG:
 		return
-	logMsg("[DEBUG]: %s" % [msg], false)
+	logMsg("[DEBUG]: %s" % [msg])
 
 static func verbose( msg ):
 	if level < LOG_LEVEL_VERBOSE:
 		return
-	logMsg("[VERBOSE]: %s" % [msg], false)
+	logMsg("[VERBOSE]: %s" % [msg])
 
-static func logMsg( msg, post: bool ):
+static func logMsg( msg, post: bool = false ):
 	print(msg)
-	print(post)
 	if target != null and post:
 		target.append(msg)
 
