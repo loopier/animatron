@@ -552,7 +552,9 @@ func getHelp(cmd: String) -> Status:
 			if result.isError(): continue
 			text += DocGenerator.getTextFromFile(file).value
 		var result : Status = DocGenerator.getDocString(text, cmd)
-		if result.isError(): return result
+		if result.isError():
+			result.value = result.msg
+			#return result
 		var msg : String = result.value.strip_edges()
 		msg += "\n\n"
 		msg += "[SOURCE]\n"
@@ -563,6 +565,7 @@ func getHelp(cmd: String) -> Status:
 		for subcmd in cmdDesc.subcommands:
 			msg += "\t%s\n" % [" ".join(subcmd)]
 		
+		post([msg])
 		return Status.ok(cmdDesc, msg)
 	
 	# it's a core command

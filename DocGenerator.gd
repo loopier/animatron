@@ -77,7 +77,7 @@ static func getDocString(text:String, def: String) -> Status:
 		docstring.push_front(defstring.strip_edges())
 		docstring = "\n".join(docstring)
 		return Status.ok(docstring)
-	return Status.error("/def not found: %s" % [def])
+	return Status.error("Documentation not found: %s" % [def])
 
 ## Generate a tutorial in [param destinationFile] from the files in [param fromDir].
 static func generateTutorial(destinationFile: String, fromDir: String):
