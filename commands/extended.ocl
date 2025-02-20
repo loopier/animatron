@@ -64,6 +64,18 @@
 # = actors
 #################################################################################
 
+# Create a background actor named `bg`.
+/def /bg
+     /create bg solid
+     /behind bg *
+
+# Create a black background actor named `bg`.
+# It needs to have a predefined `/black` color.
+/def /bg/black
+     /create bg solid
+     /black bg
+     /behind bg *
+
 # Create an actor at a relative position from the center of the screen.
 #
 # _Example:_ `/create lola square 100 -100`
@@ -624,7 +636,7 @@
 # See also: <<_preset_load,/preset/load>>
 /def /preset name:s
      /commands/load presets/$name.ocl
-     /$name
+     # /$name
 
 # Load a preset using the file browser.
 #

@@ -57,6 +57,13 @@ _Example:_ `/actors`
 
 = actors
 
+=== /bg
+Create a background actor named `bg`.
+
+=== /bg/black
+Create a black background actor named `bg`.
+It needs to have a predefined `/black` color.
+
 === /create/at actor:s animation:s x:f y:f
 Create an actor at a relative position from the center of the screen.
 
@@ -532,6 +539,8 @@ Load a preset from a directory `name` under `user://presets/`.
 _Example:_ `/preset mycommands/somecommands.ocl`
 
 See also: <<_preset_load,/preset/load>>
+
+/$name
 
 === /preset/load
 Load a preset using the file browser.
