@@ -570,7 +570,7 @@ func getHelp(cmd: String) -> Status:
 	
 	# it's a core command
 	var msg = "[HELP] %s %s\n\n%s" % [cmd, cmdDesc.argsDescription, cmdDesc.description]
-	return Status.ok(cmdDesc, msg)
+	return Status.info(cmdDesc, msg)
 
 ## Return a dictionary based on the string [param oscStr] of OSC messages.[br]
 ## The address is the key of the dictionary (or the first element), and the 
@@ -645,7 +645,7 @@ func listDirs(path: String) -> Status:
 	var msg := "Subdirectories at '%s':\n" % [ProjectSettings.globalize_path(path)]
 	for dir in dirs:
 		msg += "%s\n" % [dir]
-	return Status.ok(dirs, msg)
+	return Status.info(dirs, msg)
 
 func listFiles(path: String) -> Status:
 	var files := DirAccess.get_files_at(path)
@@ -653,14 +653,14 @@ func listFiles(path: String) -> Status:
 	var msg := "Subdirectories at '%s':\n" % [ProjectSettings.globalize_path(path)]
 	for file in files:
 		msg += "%s\n" % [file]
-	return Status.ok(files, msg)
+	return Status.info(files, msg)
 
 func listAllCommands() -> Status:
 	var list := "\nCore Commands:\n"
 	list += listCommands(coreCommands).value
 	list += "\nDef Commands:\n"
 	list += listCommands(defCommands).value
-	return Status.ok(list, list)
+	return Status.info(list, list)
 
 func listCommands(commands: Dictionary) -> Status:
 	var list := "\n--\n"
@@ -668,7 +668,7 @@ func listCommands(commands: Dictionary) -> Status:
 	keys.sort()
 	for command in keys:
 		list += "%s\n" % [command]
-	return Status.ok(list)
+	return Status.info(list)
 
 func listActors() -> Status:
 	var actorsList := []
@@ -683,7 +683,7 @@ func listActors() -> Status:
 	var msg := "List of actors (%s)\n" % [len(actors)]
 	for actorName in actorsList:
 		msg += "%s\n" % [actorName]
-	return Status.ok(actorsList, msg)
+	return Status.info(actorsList, msg)
 
 func listAnimations() -> Status:
 	var animationNames = animationsLibrary.get_animation_names()
@@ -691,7 +691,7 @@ func listAnimations() -> Status:
 	for animName in animationNames:
 		var frameCount = animationsLibrary.get_frame_count(animName)
 		msg += "%s (%s)\n" % [animName, frameCount]
-	return Status.ok(animationNames, msg)
+	return Status.info(animationNames, msg)
 
 func listAnimationAssets() -> Status:
 	var dir := DirAccess.open(animationAssetsPath)
@@ -706,7 +706,7 @@ func listAnimationAssets() -> Status:
 	var msg := "Assets at '%s':\n" % [ProjectSettings.globalize_path(animationAssetsPath)]
 	for assetName in assetNames:
 		msg += "%s\n" % [assetName]
-	return Status.ok(assetNames, msg)
+	return Status.info(assetNames, msg)
 
 func setAssetsPath(path: String) -> Status:
 	if path == "null": return Status.ok(animationAssetsPath, animationAssetsPath)
@@ -1151,7 +1151,7 @@ func listAnimationDataLibrary() -> Status:
 	var list := "Animation Data Library:\n"
 	for animation in animationDataLibrary.get_animation_list():
 		list += "%s\n" % [animation]
-	return Status.ok(list, list)
+	return Status.info(list, list)
 	
 
 # Note that the red/green/blue arguments can't have static typing,
@@ -1231,14 +1231,16 @@ static func setImageShaderUniform(image: AnimatedSprite2D, uName: StringName, uV
 	image.material.set_shader_parameter(uName, uValue)
 
 func listRoutines() -> Status:
-	var routineList := []
+	var routines := []
 	for child in routinesNode.get_children():
-		routineList.append("%s(%s/%s): %s" % [child.name, child.iteration, child.repeats, child.command])
-	routineList.sort()
-	for routine in routineList:
+		routines.append("%s(%s/%s): %s" % [child.name, child.iteration, child.repeats, child.command])
+	routines.sort()
+	var routinesList := "Routines:\n"
+	for routine in routines:
 		# FIX: send OSC message
-		Log.info(routine)
-	return Status.ok(true)
+		#Log.info(routine)
+		routinesList = "%s\n%s" % [routinesList, routine]
+	return Status.info(routinesList, routinesList)
 
 func addRoutine(args: Array) -> Status:
 	var routineName: String = args[0]
@@ -1296,7 +1298,7 @@ func listStates() -> Status:
 	for machine in machines:
 		msg += "%s(%s): %s" % [machine, stateMachines[machine].status(), stateMachines[machine].list()]
 		msg += "\n"
-	return Status.ok(machines, msg)
+	return Status.info(machines, msg)
 
 func addStateMachine(name: String):
 	var machine = StateMachine.new()
@@ -1431,7 +1433,7 @@ func listChildren(parentName: String) -> Status:
 	for child in parent.get_children():
 		children.append(child.name)
 	children.sort()
-	return Status.ok(children, "%s" % [children])
+	return Status.info(children, "%s" % [children])
 
 func setInFrontOfActor(args: Array) -> Status:
 	var result = getActor(args[0])

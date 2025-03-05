@@ -51,33 +51,32 @@ static func fatal( msg ):
 	logMsg("[FATAL]: %s" % [msg], true)
 
 static func error( msg ):
-	if level < LOG_LEVEL_ERROR:
+	if level <= LOG_LEVEL_ERROR:
 		return
 	logMsg("[ERROR]: %s" % [msg], true)
 
 static func warn( msg ):
-	if level < LOG_LEVEL_WARNING:
+	if level <= LOG_LEVEL_WARNING:
 		return
 	logMsg("[WARNING]: %s" % [msg], false)
 
 static func info( msg ):
-	if level < LOG_LEVEL_INFO:
+	if level <= LOG_LEVEL_INFO:
 		return
 	logMsg("[INFO]: %s" % [msg], true)
 
 static func debug( msg ):
-	if level < LOG_LEVEL_DEBUG:
+	if level <= LOG_LEVEL_DEBUG:
 		return
 	logMsg("[DEBUG]: %s" % [msg], false)
 
 static func verbose( msg ):
-	if level < LOG_LEVEL_VERBOSE:
+	if level <= LOG_LEVEL_VERBOSE:
 		return
 	logMsg("[VERBOSE]: %s" % [msg], false)
 
 static func logMsg( msg, post: bool ):
 	print(msg)
-	print(post)
 	if target != null and post:
 		target.append(msg)
 

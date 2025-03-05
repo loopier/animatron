@@ -311,16 +311,21 @@ func _on_eval_code(text: String):
 	evalCommands(cmds, "NULL_SENDER")
 
 func _on_command_finished(result: Status, sender: String):
-	if result.isError():
-		_on_command_error(result.msg, sender)
-		return
-	elif result.isWarning():
-		_on_command_warning(result.msg, sender)
-		return
-	if result.msg.is_empty(): return
-	Log.verbose("Command finished:\n%s" % [result.msg])
+	#if result.msg.is_empty(): return
+	match result.type:
+		Status.NULL: return
+		Status.INFO: _on_command_info(result.msg, sender)
+		Status.ERROR: _on_command_error(result.msg, sender)
+		Status.WARNING: _on_command_warning(result.msg, sender)
+		_: 
+			Log.verbose("Command finished:\n%s" % [result.msg])
+			return
+
+func _on_command_info(msg: String, sender: String):
+	Log.info(msg)
+	cmdInterface.post([msg])
 	if sender:
-		osc.sendMessage(sender, "/status/reply", [result.msg])
+		osc.sendMessage(sender, "/status/reply", [msg])
 
 func _on_command_error(msg: String, sender: String):
 	Log.error("Command error: %s" % [msg])
