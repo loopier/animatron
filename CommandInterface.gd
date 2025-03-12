@@ -643,16 +643,14 @@ func listDirs(path: String) -> Status:
 	var dirs := DirAccess.get_directories_at(path)
 	dirs.sort()
 	var msg := "Subdirectories at '%s':\n" % [ProjectSettings.globalize_path(path)]
-	for dir in dirs:
-		msg += "%s\n" % [dir]
+	msg += "\n".join(dirs)
 	return Status.info(dirs, msg)
 
 func listFiles(path: String) -> Status:
 	var files := DirAccess.get_files_at(path)
 	files.sort()
 	var msg := "Subdirectories at '%s':\n" % [ProjectSettings.globalize_path(path)]
-	for file in files:
-		msg += "%s\n" % [file]
+	msg += "\n".join(files)
 	return Status.info(files, msg)
 
 func listAllCommands() -> Status:
@@ -666,8 +664,7 @@ func listCommands(commands: Dictionary) -> Status:
 	var list := "\n--\n"
 	var keys = commands.keys()
 	keys.sort()
-	for command in keys:
-		list += "%s\n" % [command]
+	list += "\n".join(keys)
 	return Status.info(list)
 
 func listActors() -> Status:
@@ -681,8 +678,7 @@ func listActors() -> Status:
 		#Log.info(actorsList.back())
 	actorsList.sort()
 	var msg := "List of actors (%s)\n" % [len(actors)]
-	for actorName in actorsList:
-		msg += "%s\n" % [actorName]
+	msg += "\n".join(actorsList)
 	return Status.info(actorsList, msg)
 
 func listAnimations() -> Status:
@@ -704,8 +700,7 @@ func listAnimationAssets() -> Status:
 			filename = dir.get_next()
 	assetNames.sort()
 	var msg := "Assets at '%s':\n" % [ProjectSettings.globalize_path(animationAssetsPath)]
-	for assetName in assetNames:
-		msg += "%s\n" % [assetName]
+	msg += "\n".join(assetNames)
 	return Status.info(assetNames, msg)
 
 func setAssetsPath(path: String) -> Status:
@@ -1236,10 +1231,7 @@ func listRoutines() -> Status:
 		routines.append("%s(%s/%s): %s" % [child.name, child.iteration, child.repeats, child.command])
 	routines.sort()
 	var routinesList := "Routines:\n"
-	for routine in routines:
-		# FIX: send OSC message
-		#Log.info(routine)
-		routinesList = "%s\n%s" % [routinesList, routine]
+	routinesList += "\n".join(routines)
 	return Status.info(routinesList, routinesList)
 
 func addRoutine(args: Array) -> Status:
@@ -1296,8 +1288,7 @@ func listStates() -> Status:
 	machines.sort()
 	var msg := "State machines:\n"
 	for machine in machines:
-		msg += "%s(%s): %s" % [machine, stateMachines[machine].status(), stateMachines[machine].list()]
-		msg += "\n"
+		msg += "%s(%s): %s\n" % [machine, stateMachines[machine].status(), stateMachines[machine].list()]
 	return Status.info(machines, msg)
 
 func addStateMachine(name: String):
