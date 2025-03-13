@@ -1,4 +1,4 @@
-[gd_scene load_steps=11 format=3 uid="uid://q56taxhy2mot"]
+[gd_scene load_steps=12 format=3 uid="uid://q56taxhy2mot"]
 
 [ext_resource type="Script" path="res://Main.gd" id="1_70ykf"]
 [ext_resource type="Script" path="res://IndirectView.gd" id="2_8xn6f"]
@@ -8,6 +8,7 @@
 [ext_resource type="Script" path="res://CodeEdit.gd" id="3_xiw00"]
 [ext_resource type="StyleBox" uid="uid://dqdhrgvrn3l8a" path="res://styles/left-margin-transparent.stylebox" id="5_efpnp"]
 [ext_resource type="Script" path="res://MirrorDisplay.gd" id="7_hhsd4"]
+[ext_resource type="PackedScene" uid="uid://bnllwfc06vsae" path="res://addons/repl/control.tscn" id="8_wp3x8"]
 
 [sub_resource type="CodeHighlighter" id="CodeHighlighter_833ra"]
 number_color = Color(0.862745, 0.611765, 0.407843, 1)
@@ -75,6 +76,10 @@ drag_and_drop_selection_enabled = false
 virtual_keyboard_enabled = false
 middle_mouse_paste_enabled = false
 wrap_mode = 1
+
+[node name="Control" parent="HSplitContainer" instance=ExtResource("8_wp3x8")]
+visible = false
+layout_mode = 2
 
 [node name="SaveFileDialog" type="FileDialog" parent="."]
 title = "Load Preset"

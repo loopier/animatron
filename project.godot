@@ -29,7 +29,7 @@ window/stretch/mode="canvas_items"
 
 [editor_plugins]
 
-enabled=PackedStringArray("res://addons/gut/plugin.cfg")
+enabled=PackedStringArray("res://addons/gut/plugin.cfg", "res://addons/repl/plugin.cfg")
 
 [filesystem]
 
