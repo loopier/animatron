@@ -31,7 +31,7 @@ func _input(event):
 	if event.is_action_pressed("previous_command"):
 		previousCommand()
 		_ignoreEvent()
-	if event.is_action_pressed("previous_command"):
+	if event.is_action_pressed("next_command"):
 		nextCommand()
 		_ignoreEvent()
 
