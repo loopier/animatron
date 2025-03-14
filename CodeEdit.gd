@@ -82,6 +82,11 @@ func append(inText: String):
 	set_text("%s%s" % [get_text(), inText])
 	set_caret_line(get_line_count())
 
+func getFontSize() -> float:
+	var size := self.get_theme_font_size("font size")
+	var lineSpacing := 1.7 # not available as property :(
+	return size * lineSpacing
+
 func _on_save_dialog_confirmed():
 	Log.debug("save file confirmed: %s" % [saveDialog.current_path])
 	saveFile(saveDialog.current_path)

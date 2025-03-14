@@ -37,15 +37,13 @@ script = ExtResource("3_68liq")
 
 [node name="Routines" type="Node" parent="."]
 
-[node name="HSplitContainer" type="HSplitContainer" parent="."]
-offset_right = 1920.0
-offset_bottom = 1080.0
+[node name="VSplitContainer" type="VSplitContainer" parent="."]
+offset_right = 9.0
+offset_bottom = 12.0
 size_flags_horizontal = 3
 size_flags_vertical = 3
-theme_override_constants/separation = 0
-split_offset = 426
 
-[node name="CodeEdit" type="CodeEdit" parent="HSplitContainer"]
+[node name="CodeEdit" type="CodeEdit" parent="VSplitContainer"]
 z_index = 1
 layout_mode = 2
 size_flags_horizontal = 3
@@ -62,7 +60,7 @@ auto_brace_completion_enabled = true
 auto_brace_completion_highlight_matching = true
 script = ExtResource("3_xiw00")
 
-[node name="PostWindow" type="CodeEdit" parent="HSplitContainer"]
+[node name="PostWindow" type="CodeEdit" parent="VSplitContainer"]
 z_index = 1
 layout_mode = 2
 size_flags_horizontal = 3
@@ -77,7 +75,7 @@ virtual_keyboard_enabled = false
 middle_mouse_paste_enabled = false
 wrap_mode = 1
 
-[node name="Control" parent="HSplitContainer" instance=ExtResource("8_wp3x8")]
+[node name="Control" parent="VSplitContainer" instance=ExtResource("8_wp3x8")]
 visible = false
 layout_mode = 2
 

@@ -16,8 +16,9 @@ var metanode := preload("res://meta_node.tscn")
 @onready var loadedCmdFiles := [] # keep track of loaded files to generate docs on the fly
 var ocl: OpenControlLanguage
 var config := preload("res://Config.gd").new()
-@onready var editor := $HSplitContainer/CodeEdit
-@onready var postWindow := $HSplitContainer/PostWindow
+@onready var vsplit := $VSplitContainer
+@onready var editor := $VSplitContainer/CodeEdit
+@onready var postWindow := $VSplitContainer/PostWindow
 
 #@onready var variablesManager: VariablesManager
 
@@ -64,7 +65,7 @@ func initPostWindowMsg():
 	msg += "/tutorial\n\n"
 	msg += "and press SHIFT + ENTER while the cursor is on that line.\n"
 	msg += "---\n\n"
-	$HSplitContainer/PostWindow.set_text(msg)
+	postWindow.set_text(msg)
 
 func _ready():
 	# Have the content area fit to fill the main window
@@ -94,9 +95,9 @@ func _ready():
 	cmdInterface.animationsLibrary = animationsLibrary
 	cmdInterface.animationDataLibrary = animationDataLibrary
 	cmdInterface.actorsNode = $IndirectView/Actors
-	cmdInterface.editor = $HSplitContainer/CodeEdit
-	cmdInterface.textContainer = $HSplitContainer
-	cmdInterface.postWindow = $HSplitContainer/PostWindow
+	cmdInterface.editor = $VSplitContainer/CodeEdit
+	cmdInterface.textContainer = $VSplitContainer
+	cmdInterface.postWindow = $VSplitContainer/PostWindow
 	cmdInterface.mirrorDisplay = $MirrorDisplay
 	cmdInterface.indirectView = $IndirectView
 	cmdInterface.routinesNode = $Routines
@@ -141,6 +142,7 @@ func _ready():
 	DocGenerator.writeTextToFile("res://docs/help.adoc", helpContents)
 	DocGenerator.generateTutorial("res://docs/tutorial.adoc", "res://tutorial/")
 	initPostWindowMsg()
+	updateVSplitOffset()
 
 func getPathFromArgs() -> String:
 	Log.verbose("CLI args: %s" % [OS.get_cmdline_args()])
@@ -157,8 +159,8 @@ func _process(_delta):
 	pass
 
 func _input(event):
+	#updateVSplitOffset()
 	if event.is_action_pressed("toggle_editor", true):
-		#$HSplitContainer.set_visible(not($HSplitContainer.is_visible()))
 		evalCommand(["/editor/toggle"], "")
 		_ignoreEvent()
 	if event.is_action_pressed("clear_post", true):
@@ -166,7 +168,6 @@ func _input(event):
 		evalCommand(["/post/toggle"], "")
 		_ignoreEvent()
 	if event.is_action_pressed("toggle_post", true):
-		#$HSplitContainer/VBoxContainer.set_visible(not($HSplitContainer/VBoxContainer.is_visible()))
 		evalCommand(["/post/toggle"], "")
 		_ignoreEvent()
 	if event.is_action_pressed("open_text_file", true):
@@ -300,6 +301,9 @@ func convertArguments(argsDescription: String, args: Array) -> Array:
 func loadConfig(filename: String):
 	cmdInterface.loadCommandFile(filename)
 
+func updateVSplitOffset():
+	vsplit.set_split_offset(editor.getFontSize() * (editor.get_line_count() + 0.5) - (vsplit.get_size().y/2))
+
 func _on_eval_code(text: String):
 	var cmds := []
 	text = ocl._removeExpressionSpaces(text)
@@ -392,7 +396,7 @@ func _on_midi_cc(ch: int, num: int, value: int):
 		evalCommand(cmd, "")
 
 func post(msg: String):
-	if postWindow == null: postWindow = $HSplitContainer/PostWindow
+	if postWindow == null: postWindow = $VSplitContainer/PostWindow
 	postWindow.set_text(msg)
 	postWindow.set_caret_line(postWindow.get_line_count())
 
@@ -422,3 +426,6 @@ func _on_animation_finished(actorName):
 			evalCommands([["/animation", actorName, nextState]], "gdscript")
 		Log.debug("%s state machine - %s(%s): %s" % [actorName, animation, nextState, nextStates])
 	pass
+
+func _on_resized() -> void:
+	updateVSplitOffset()
