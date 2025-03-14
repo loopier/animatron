@@ -75,6 +75,8 @@ func _ready():
 	
 	# if you need to change the log level, do it from the res://config/default.ocl
 	Log.setLevel(Log.LOG_LEVEL_INFO)
+	Log.setLevel(Log.LOG_LEVEL_DEBUG)
+
 	
 	osc = OscReceiver.new()
 	self.add_child.call_deferred(osc)
@@ -125,6 +127,7 @@ func _ready():
 	editor.saveDialog = $SaveFileDialog
 	editor.loadDialog = $OpenFileDialog
 	editor.eval_code.connect(_on_eval_code)
+	editor.font_size_changed.connect(_on_editor_font_size_chaned.bind(editor))
 	
 	$Midi.midi_noteon.connect(_on_midi_noteon)
 	$Midi.midi_noteoff.connect(_on_midi_noteoff)
@@ -159,7 +162,7 @@ func _process(_delta):
 	pass
 
 func _input(event):
-	#updateVSplitOffset()
+	updateVSplitOffset()
 	if event.is_action_pressed("toggle_editor", true):
 		evalCommand(["/editor/toggle"], "")
 		_ignoreEvent()
@@ -217,6 +220,7 @@ func evalCommand(cmdArray: Array, sender: String) -> Status:
 		result = Status.warning("Command not found: %s" % [cmd])
 	
 	# post and reply result
+	post("> %s" % [" ".join(cmdArray)])
 	_on_command_finished(result, sender)
 	#if result.msg.length() > 0: post(result.msg)
 	return result
@@ -302,7 +306,8 @@ func loadConfig(filename: String):
 	cmdInterface.loadCommandFile(filename)
 
 func updateVSplitOffset():
-	vsplit.set_split_offset(editor.getFontSize() * (editor.get_line_count() + 0.5) - (vsplit.get_size().y/2))
+	var offset = editor.getFontSize() * (editor.get_line_count() + 0.5) - vsplit.get_size().y
+	vsplit.set_split_offset(offset)
 
 func _on_eval_code(text: String):
 	var cmds := []
@@ -395,10 +400,12 @@ func _on_midi_cc(ch: int, num: int, value: int):
 		cmd.append(value)
 		evalCommand(cmd, "")
 
-func post(msg: String):
+func post(msg: Variant):
 	if postWindow == null: postWindow = $VSplitContainer/PostWindow
-	postWindow.set_text(msg)
-	postWindow.set_caret_line(postWindow.get_line_count())
+	prependText(postWindow, msg)
+
+func prependText(target: TextEdit, msg: Variant):
+	target.set_line(0, "%s\n%s" % [msg, target.get_line(0)])
 
 func _on_state_changed(cmd: Array):
 	Log.debug("Received signal -- State changed: %s" % [cmd])
@@ -428,4 +435,9 @@ func _on_animation_finished(actorName):
 	pass
 
 func _on_resized() -> void:
+	updateVSplitOffset()
+
+func _on_editor_font_size_chaned(obj: CodeEdit) -> void:
+	#if editor == null: return
+	Log.debug("font : %s" % [obj.getFontSize()])
 	updateVSplitOffset()

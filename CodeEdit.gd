@@ -1,10 +1,15 @@
 extends CodeEdit
 
 signal eval_code(text: String)
+signal font_size_changed(object: CodeEdit)
 
+@onready var fontSize = get_theme_font_size("theme")
 @onready var hl = get_syntax_highlighter() as CodeHighlighter
 @onready var saveDialog: FileDialog
 @onready var loadDialog: FileDialog
+
+@onready var history = []
+@onready var historyIndex = 0
 
 # Called when the node enters the scene tree for the first time.
 func _ready():
@@ -23,6 +28,12 @@ func _input(event):
 	if event.is_action_pressed("decrease_editor_font"): 
 		decreaseFont()
 		_ignoreEvent()
+	if event.is_action_pressed("previous_command"):
+		previousCommand()
+		_ignoreEvent()
+	if event.is_action_pressed("previous_command"):
+		nextCommand()
+		_ignoreEvent()
 
 func _ignoreEvent():
 	get_parent().get_parent().get_parent().set_input_as_handled()
@@ -31,6 +42,8 @@ func evalText(inText):
 	inText = inText.strip_edges()
 	eval_code.emit(inText)
 	deselect()
+	updateHistory(inText)
+	clearPrompt()
 	
 func evalLine():
 	var ln = get_caret_line()
@@ -71,12 +84,14 @@ func findNextLinebreak(line: int) -> int:
 	return ln - 1
 
 func increaseFont():
-	var fontSize = get_theme_font_size("font_size") + 1
+	fontSize = get_theme_font_size("font_size") + 1
 	add_theme_font_size_override("font_size", fontSize)
+	font_size_changed.emit(self)
 
 func decreaseFont():
-	var fontSize = get_theme_font_size("font_size") - 1
+	fontSize = get_theme_font_size("font_size") - 1
 	add_theme_font_size_override("font_size", fontSize)
+	font_size_changed.emit(self)
 
 func append(inText: String):
 	set_text("%s%s" % [get_text(), inText])
@@ -84,8 +99,36 @@ func append(inText: String):
 
 func getFontSize() -> float:
 	var size := self.get_theme_font_size("font size")
-	var lineSpacing := 1.7 # not available as property :(
+	var lineSpacing := 2.5 # not available as property :(
 	return size * lineSpacing
+
+func clearPrompt():
+	set_placeholder(getLastCommand())
+	clear()
+
+func getLastCommand() -> String:
+	return history.back()
+
+func updateHistory(cmd: String):
+	history.append(cmd)
+	# swap index of memorized command
+	if historyIndex != history.size() - 1:
+		history.remove_at(historyIndex)
+	historyIndex = history.size()
+	Log.debug(history)
+
+func previousCommand():
+	if history.size() <= 0: return
+	historyIndex -= 1
+	if historyIndex < 0: historyIndex = history.size() - 1
+	var cmd : String = history[historyIndex]
+	self.set_text(cmd)
+
+func nextCommand():
+	if history.size() <= 0: return
+	historyIndex = abs(historyIndex + 1) % history.size()
+	var cmd : String = history[historyIndex]
+	self.set_text(cmd)
 
 func _on_save_dialog_confirmed():
 	Log.debug("save file confirmed: %s" % [saveDialog.current_path])

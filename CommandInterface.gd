@@ -379,12 +379,16 @@ func openTextFileFrom(path: String) -> Status:
 	editor.openFile(path)
 	return Status.ok()
 
+func prependText(target: TextEdit, msg: String):
+	postWindow.set_line(0, "%s\n%s" % [msg, target.get_line(0)]) # 
+
 func post(args: Array) -> Status:
 	args = " ".join(PackedStringArray(args)).split("\\n")
 	for arg in args:
 		Log.info(arg)
-	postWindow.set_line(postWindow.get_line_count()-1, postWindow.get_line(postWindow.get_line_count()-1) + " ".join(args) + "\n")
-	postWindow.set_caret_line(postWindow.get_line_count())
+		prependText(postWindow, arg)
+	#postWindow.set_line(postWindow.get_line_count()-1, postWindow.get_line(postWindow.get_line_count()-1) + " ".join(args) + "\n")
+	#postWindow.set_caret_line(postWindow.get_line_count())
 	return Status.ok(args)
 
 func showPost() -> Status:

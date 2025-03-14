@@ -1,4 +1,4 @@
-[gd_scene load_steps=12 format=3 uid="uid://q56taxhy2mot"]
+[gd_scene load_steps=11 format=3 uid="uid://q56taxhy2mot"]
 
 [ext_resource type="Script" path="res://Main.gd" id="1_70ykf"]
 [ext_resource type="Script" path="res://IndirectView.gd" id="2_8xn6f"]
@@ -8,7 +8,6 @@
 [ext_resource type="Script" path="res://CodeEdit.gd" id="3_xiw00"]
 [ext_resource type="StyleBox" uid="uid://dqdhrgvrn3l8a" path="res://styles/left-margin-transparent.stylebox" id="5_efpnp"]
 [ext_resource type="Script" path="res://MirrorDisplay.gd" id="7_hhsd4"]
-[ext_resource type="PackedScene" uid="uid://bnllwfc06vsae" path="res://addons/repl/control.tscn" id="8_wp3x8"]
 
 [sub_resource type="CodeHighlighter" id="CodeHighlighter_833ra"]
 number_color = Color(0.862745, 0.611765, 0.407843, 1)
@@ -42,6 +41,7 @@ offset_right = 1920.0
 offset_bottom = 1080.0
 size_flags_horizontal = 3
 size_flags_vertical = 3
+split_offset = -1
 
 [node name="CodeEdit" type="CodeEdit" parent="VSplitContainer"]
 z_index = 1
@@ -51,6 +51,7 @@ size_flags_vertical = 3
 theme = ExtResource("3_fotw2")
 theme_override_colors/font_outline_color = Color(0, 0, 0, 1)
 theme_override_constants/outline_size = 10
+scroll_fit_content_height = true
 caret_type = 1
 syntax_highlighter = SubResource("CodeHighlighter_833ra")
 highlight_all_occurrences = true
@@ -74,10 +75,7 @@ drag_and_drop_selection_enabled = false
 virtual_keyboard_enabled = false
 middle_mouse_paste_enabled = false
 wrap_mode = 1
-
-[node name="Control" parent="VSplitContainer" instance=ExtResource("8_wp3x8")]
-visible = false
-layout_mode = 2
+scroll_fit_content_height = true
 
 [node name="SaveFileDialog" type="FileDialog" parent="."]
 title = "Load Preset"
