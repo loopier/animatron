@@ -38,8 +38,8 @@ script = ExtResource("3_68liq")
 [node name="Routines" type="Node" parent="."]
 
 [node name="VSplitContainer" type="VSplitContainer" parent="."]
-offset_right = 9.0
-offset_bottom = 12.0
+offset_right = 1920.0
+offset_bottom = 1080.0
 size_flags_horizontal = 3
 size_flags_vertical = 3
 
