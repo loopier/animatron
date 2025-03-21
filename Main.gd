@@ -179,6 +179,18 @@ func _input(event):
 	if event.is_action_pressed("save_text_file", true):
 		$SaveFileDialog.popup()
 		_ignoreEvent()
+	if event.is_action_pressed("eval_block"): 
+		editor._input(event)
+	if event.is_action_pressed("eval_line"): 
+		editor._input(event)
+	if event.is_action_pressed("increase_editor_font"): 
+		editor._input(event)
+	if event.is_action_pressed("decrease_editor_font"): 
+		editor._input(event)
+	if event.is_action_pressed("previous_command"):
+		editor._input(event)
+	if event.is_action_pressed("next_command"):
+		editor._input(event)
 		
 func _ignoreEvent():
 	get_parent().set_input_as_handled()

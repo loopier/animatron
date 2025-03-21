@@ -21,7 +21,9 @@ func _input(event):
 	if event.is_action_pressed("eval_block"): 
 		evalBlock()
 		_ignoreEvent()
-	if event.is_action_pressed("eval_line"): evalLine()
+	if event.is_action_pressed("eval_line"): 
+		evalLine()
+		_ignoreEvent()
 	if event.is_action_pressed("increase_editor_font"): 
 		increaseFont()
 		_ignoreEvent()
@@ -40,6 +42,8 @@ func _ignoreEvent():
 
 func evalText(inText):
 	inText = inText.strip_edges()
+	if inText.length() == 0:
+		inText = getLastCommand()
 	eval_code.emit(inText)
 	deselect()
 	updateHistory(inText)
@@ -107,9 +111,11 @@ func clearPrompt():
 	clear()
 
 func getLastCommand() -> String:
+	if history.size() <= 0: return ""
 	return history.back()
 
 func updateHistory(cmd: String):
+	if cmd == getLastCommand(): return
 	history.append(cmd)
 	# swap index of memorized command
 	if historyIndex != history.size() - 1:
