@@ -1056,6 +1056,10 @@ Draw the ACTOR on top of everything else.
 Tweens a PROPERTY of an ACTOR between the current value and final VALUE in a span of time equal to DURation, in seconds. The TRANSITION must be one of: linear, sine, quint, quart, quad, expo, elastic, cubic, circ, bounce, back and spring.
 See also: <<_tween_loop,/tween/loop>>.
 
+=== /unix/cmd cmd:s
+
+Execute a unix command and get the output in the console.
+
 === /unload animation:s
 
 Removes the ANIMATION asset from disk. This allows to free memory, and to reload a fresh version of the animation.
