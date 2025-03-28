@@ -232,7 +232,7 @@ func evalCommand(cmdArray: Array, sender: String) -> Status:
 		result = Status.warning("Command not found: %s" % [cmd])
 	
 	# post and reply result
-	post("> %s" % [" ".join(cmdArray)])
+	Log.verbose("> %s" % [" ".join(cmdArray)])
 	_on_command_finished(result, sender)
 	#if result.msg.length() > 0: post(result.msg)
 	return result
