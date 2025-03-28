@@ -941,6 +941,12 @@ Print the contents of a file on the post window.
 
 Hide post window.
 
+=== /post/property property:s value:...
+
+Change the post window's font GDScript PROPERTY. Slashes ('/') will be replaced for underscores '_'. Leading slash is optional.
+
+Usage: `/editor/property /font/size 32`
+
 === /post/show 
 
 Show post window.

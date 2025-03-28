@@ -71,7 +71,6 @@ var coreCommands: Dictionary = {
 	
 	# label
 	"/text/property": CommandDescription.new(_setTextProperty, "property:s actor:s value:...", "Change the ACTOR's text GDScript PROPERTY. Slashes ('/') will be replaced for underscores '_'. Leading slash is optional.\n\nUsage: `/text/property /text target alo bla`", Flags.asArray(true)),
-	"/editor/property": CommandDescription.new(_setEditorProperty, "property:s value:...", "Change the editor's font GDScript PROPERTY. Slashes ('/') will be replaced for underscores '_'. Leading slash is optional.\n\nUsage: `/editor/property /font/size 32`", Flags.asArray(true)),
 	
 	"/actors/list": CommandDescription.new(listActors, "", "Get list of current actor instances. Returns /list/actors/reply OSC message."),
 	"/create": CommandDescription.new(createActor, "actor:s animation:s", "Create an ACTOR that plays ANIMATION."),
@@ -103,7 +102,8 @@ var coreCommands: Dictionary = {
 	"/def": CommandDescription.new(defineCommand, "cmdName:s [args:v] subcommands:c", "Define a custom OSC command that is a list of other OSC commands. This may be recursive, so each SUBCOMMAND may reference one of the built-in commands, or another custom-defined command. Another way to define custom commands is via the file commands/init.osc. The CMDNAME string (first argument) may include argument names (ARG1 ... ARGN), which may be referenced as SUBCOMMAND arguments using $ARG1 ... $ARGN. Example: /def \"/addsel actor anim\" \"/create $actor $anim\" \"/select $actor\". ", Flags.asArray(true)),
 	# for (loop)
 	"/for": CommandDescription.new(forCommand, "varName:s iterations:i cmd:s", "Iterate `iterations` times over `varName`, substituting the current iteration value in each call to `cmd`.", Flags.asArray(true)),
-	# editor
+	# editor"
+	"/editor/property": CommandDescription.new(_setEditorProperty, "property:s value:...", "Change the editor's font GDScript PROPERTY. Slashes ('/') will be replaced for underscores '_'. Leading slash is optional.\n\nUsage: `/editor/property /font/size 32`", Flags.asArray(true)),
 	"/editor/toggle": CommandDescription.new(toggleEditor, "", "Toggle editor and post window visibility."),
 	"/editor/append": CommandDescription.new(appendTextToEditor, "text:...", "Append TEXT to the last line of the editor.", Flags.asArray(true)),
 	"/editor/clear": CommandDescription.new(clearEditor, "", "Delete all text from the editor."),
@@ -112,6 +112,7 @@ var coreCommands: Dictionary = {
 	"/editor/open/from": CommandDescription.new(openTextFileFrom, "path:s", "Load code from PATH and append it to the end."),
 	"/editor/save/to": CommandDescription.new(saveTextFileTo, "path:s", "Save the code to PATH."),
 	# post
+	"/post/property": CommandDescription.new(_setPostProperty, "property:s value:...", "Change the post window's font GDScript PROPERTY. Slashes ('/') will be replaced for underscores '_'. Leading slash is optional.\n\nUsage: `/editor/property /font/size 32`", Flags.asArray(true)),
 	"/post": CommandDescription.new(post, "msg:s", "Print MSG in the post window.", Flags.asArray(false)),
 	"/post/show": CommandDescription.new(showPost, "", "Show post window."),
 	"/post/hide": CommandDescription.new(hidePost, "", "Hide post window."),
@@ -1012,11 +1013,11 @@ func _setTextProperty(args: Array) -> Status:
 		actorLabel.call(calledProperty, value)
 	return Status.ok()
 
-func _setEditorProperty(args: Array) -> Status:
+func _setCodeEditProperty(target: CodeEdit, args: Array) -> Status:
 	var property = _cmdToGdScript(args[0])
 	if property.begins_with("_"): property = property.substr(1)
 	var method = "add_theme_%s_override" % [property]
-	var valueType := typeof(editor.call("get_theme_%s" % [property], property))
+	var valueType := typeof(target.call("get_theme_%s" % [property], property))
 	var value: Variant
 	match valueType:
 		TYPE_INT: value = args[1] as int
@@ -1026,8 +1027,14 @@ func _setEditorProperty(args: Array) -> Status:
 		_: # try TYPE_OBJECT
 			Log.warn("I don't know what to do with this: %s" % [args[1]])
 			return
-	editor.call(method, property, value)
+	target.call(method, property, value)
 	return Status.ok()
+
+func _setEditorProperty(args: Array) -> Status:
+	return _setCodeEditProperty(editor, args)
+
+func _setPostProperty(args: Array) -> Status:
+	return _setCodeEditProperty(postWindow, args)
 
 func setAnimationFramesProperty(property, args) -> Status:
 	return callAnimationFramesMethod(["/set" + property] + [args])
