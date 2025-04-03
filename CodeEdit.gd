@@ -18,6 +18,20 @@ func _ready():
 	hl.add_color_region("$", " ", Color(0.97654688358307, 0.68245977163315, 0.44307622313499)) # variable
 
 func _input(event):
+	if event.is_action_pressed("up"):
+		if self.text.is_empty() or isCaretAtBeginning():
+			previousCommand()
+		elif isCaretAtTop():
+			self.set_caret_column(0)
+	if event.is_action_pressed("down") and (self.text.is_empty() or isCaretAtBottom()):
+		if self.text.is_empty() or isCaretAtEnd():
+			nextCommand()
+		elif isCaretAtBottom():
+			self.set_caret_column(getEndOfLine())
+	#if event.is_action_pressed("left") and self.text.is_empty():
+		#previousCommand()
+	if event.is_action_pressed("right") and self.text.is_empty():
+		previousCommand()
 	if event.is_action_pressed("eval_block"): 
 		evalBlock()
 		_ignoreEvent()
@@ -39,6 +53,21 @@ func _input(event):
 
 func _ignoreEvent():
 	get_parent().get_parent().get_parent().set_input_as_handled()
+
+func isCaretAtTop() -> bool:
+	return self.get_caret_line() == 0
+
+func isCaretAtBottom() -> bool:
+	return self.get_caret_line() >= self.get_line_count() - 1
+
+func isCaretAtBeginning() -> bool:
+	return isCaretAtTop() and self.get_caret_column() == 0
+
+func isCaretAtEnd() -> bool:
+	return isCaretAtBottom() and self.get_caret_column() >= getEndOfLine()
+
+func getEndOfLine() -> int:
+	return self.get_line(self.get_caret_line()).length()
 
 func evalText(inText):
 	inText = inText.strip_edges()
@@ -129,12 +158,17 @@ func previousCommand():
 	if historyIndex < 0: historyIndex = history.size() - 1
 	var cmd : String = history[historyIndex]
 	self.set_text(cmd)
+	moveCaretToEndOfLine()
 
 func nextCommand():
 	if history.size() <= 0: return
 	historyIndex = abs(historyIndex + 1) % history.size()
 	var cmd : String = history[historyIndex]
 	self.set_text(cmd)
+	moveCaretToEndOfLine()
+
+func moveCaretToEndOfLine():
+	self.set_caret_column(self.get_line(self.get_caret_line()).length())
 
 func _on_save_dialog_confirmed():
 	Log.debug("save file confirmed: %s" % [saveDialog.current_path])

@@ -163,6 +163,8 @@ func _process(_delta):
 
 func _input(event):
 	updateVSplitOffset()
+	if event.is_pressed():
+		editor.grab_focus()
 	if event.is_action_pressed("toggle_editor", true):
 		evalCommand(["/editor/toggle"], "")
 		_ignoreEvent()
@@ -191,7 +193,6 @@ func _input(event):
 		editor._input(event)
 	if event.is_action_pressed("next_command"):
 		editor._input(event)
-		
 func _ignoreEvent():
 	get_parent().set_input_as_handled()
 
