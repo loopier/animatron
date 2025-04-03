@@ -542,13 +542,17 @@ func clearMidi() -> Status:
 
 func getHelp(cmd: String) -> Status:
 	var cmdDesc = getCommandDescription(cmd)
+	if typeof(cmdDesc) == TYPE_ARRAY:
+		cmdDesc.sort()
+		post(["\n".join(cmdDesc)])
+		return Status.ok()
 	if not(cmd.begins_with("/")): 
 		return getHelp("/" + cmd)
 	if cmdDesc == null:
 		return Status.error("Help not found: %s" % [cmd])
 	
 	postWindow.set_visible(true)
-	postWindow.set_text("")
+	#postWindow.set_text("")
 	# if it's a /def
 	if typeof(cmdDesc) == TYPE_DICTIONARY:
 		var text := ""
@@ -619,11 +623,26 @@ func getVar(varName: String) -> Status:
 	#return Status.ok(value, "Variable '%s': %s" % [varName, value])
 	return Status.ok(value)
 
+func getMatchingKeys(pattern: String, dict: Dictionary) -> Array:
+	var matchingKeys := []
+	pattern = pattern.substr(1) if pattern.begins_with("/") else pattern
+	pattern = pattern.insert(0, "*")
+	pattern = pattern + "*"
+	for key in dict:
+		if key.match(pattern): matchingKeys.append(key)
+	return matchingKeys
+
 ## Returns the value of a command to be executed.
 ## If no description is found, it returns [code]null[/code].
+## If using a wildcard, return a list of matching commands (without their descriptions).
 func getCommandDescription(command: String) -> Variant:
 	if coreCommands.has(command): return coreCommands[command]
 	elif defCommands.has(command): return defCommands[command]
+	
+	var matchingCmds := getMatchingKeys(command, coreCommands)
+	matchingCmds.append_array( getMatchingKeys(command, defCommands) )
+	if matchingCmds.size() >= 2:
+		return matchingCmds
 	else: return null
 
 ## Remove the [param key] and its value from [param dict]
