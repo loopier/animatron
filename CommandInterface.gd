@@ -1016,8 +1016,14 @@ func _setTextProperty(args: Array) -> Status:
 func _setCodeEditProperty(target: CodeEdit, args: Array) -> Status:
 	var property = _cmdToGdScript(args[0])
 	if property.begins_with("_"): property = property.substr(1)
-	var method = "add_theme_%s_override" % [property]
-	var valueType := typeof(target.call("get_theme_%s" % [property], property))
+	var method := ""
+	var valueType := TYPE_NIL
+	if isThemeProperty(target, property):
+		valueType = typeof(target.call("get_theme_%s" % [property], property))
+		method = "add_theme_%s_override" % [property]
+	elif property.contains("color"):
+		valueType = TYPE_COLOR
+		method = "add_theme_color_override"
 	var value: Variant
 	match valueType:
 		TYPE_INT: value = args[1] as int
@@ -1029,6 +1035,11 @@ func _setCodeEditProperty(target: CodeEdit, args: Array) -> Status:
 			return
 	target.call(method, property, value)
 	return Status.ok()
+
+func isThemeProperty(target: CodeEdit, property: String) -> bool:
+	var b := false
+	var method = target.get("get_theme_%s" % [property])
+	return method != null
 
 func _setEditorProperty(args: Array) -> Status:
 	return _setCodeEditProperty(editor, args)

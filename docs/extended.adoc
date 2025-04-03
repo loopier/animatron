@@ -564,6 +564,12 @@ Set the editor's font size in `pixels`.
 _Example:_ `/editor/font/size 60`
 
 
+=== /editor/font/color r:f g:f b:f
+Set the editor's font color.
+
+_Example:_ `/editor/font/color 0 0 0`
+
+
 
 
 == window

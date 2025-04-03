@@ -666,6 +666,13 @@
 /def /editor/font/size pixels:i
      /editor/property /font/size $pixels
 
+# Set the editor's font color.
+#
+# _Example:_ `/editor/font/color 0 0 0`
+#
+/def /editor/font/color r:f g:f b:f
+     /editor/property /font/color $r $g $b
+
 
 #################################################################################
 # == window
