@@ -173,6 +173,9 @@ func _input(event):
 	if event.is_action_pressed("toggle_editor", true):
 		evalCommand(["/editor/toggle"], "")
 		_ignoreEvent()
+	if event.is_action_pressed("clear_editor", true):
+		evalCommand(["/editor/clear"], "")
+		_ignoreEvent()
 	if event.is_action_pressed("clear_post", true):
 		postWindow.clear()
 		evalCommand(["/post/toggle"], "")
