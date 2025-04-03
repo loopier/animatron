@@ -25,6 +25,9 @@ var config := preload("res://Config.gd").new()
 @onready var animationsLibrary : SpriteFrames
 @onready var animationDataLibrary : AnimationLibrary
 
+@onready var lastMouseClick : Vector2:
+	get(): return lastMouseClick
+
 func _init_midi():
 	# separate commands by channel
 	midiCommands.resize(16)
@@ -165,6 +168,8 @@ func _input(event):
 	updateVSplitOffset()
 	if event.is_pressed():
 		editor.grab_focus()
+	if event is InputEventMouseButton and event.pressed:
+		setLastMouseClick()
 	if event.is_action_pressed("toggle_editor", true):
 		evalCommand(["/editor/toggle"], "")
 		_ignoreEvent()
@@ -419,6 +424,12 @@ func post(msg: Variant):
 
 func prependText(target: TextEdit, msg: Variant):
 	target.set_line(0, "%s\n%s" % [msg, target.get_line(0)])
+
+func setLastMouseClick():
+		lastMouseClick = get_viewport().get_mouse_position()
+		evalCommand(["/set","mousex:f",lastMouseClick.x],"main")
+		evalCommand(["/set","mousey:f",lastMouseClick.y],"main")
+		evalCommand(["/post","mouse: ", lastMouseClick.x, lastMouseClick.y],"main")
 
 func _on_state_changed(cmd: Array):
 	Log.debug("Received signal -- State changed: %s" % [cmd])
