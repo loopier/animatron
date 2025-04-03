@@ -730,6 +730,10 @@ Set the ACTOR to the center of the screen.
 
 List all PARENT's children actors.
 
+=== /choose cmd:s actor:s values:...
+
+Send a CMD to an ACTOR with one of the VALUES chosen randomly. If a wildcard is used, e.g. `bl*`, all ACTORs with with a name that begins with `bl` will get a different value. *WARNING: This only works with single-value commands.*
+
 === /color actor:s r:f g:f b:f
 
 Modulate the ACTOR by an RGB colour. R, G and B should be in the 0-1 range. Set to white (1,1,1) to restore its original colour.
