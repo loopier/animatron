@@ -147,7 +147,7 @@ func updateHistory(cmd: String):
 	if cmd == getLastCommand(): return
 	history.append(cmd)
 	# swap index of memorized command
-	if historyIndex != history.size() - 1:
+	if historyIndex != history.size() - 1 and cmd == history[historyIndex]:
 		history.remove_at(historyIndex)
 	historyIndex = history.size()
 	Log.debug(history)
