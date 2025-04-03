@@ -1018,12 +1018,12 @@ func _setCodeEditProperty(target: CodeEdit, args: Array) -> Status:
 	if property.begins_with("_"): property = property.substr(1)
 	var method := ""
 	var valueType := TYPE_NIL
-	if isThemeProperty(target, property):
-		valueType = typeof(target.call("get_theme_%s" % [property], property))
-		method = "add_theme_%s_override" % [property]
-	elif property.contains("color"):
+	if property.contains("color"):
 		valueType = TYPE_COLOR
 		method = "add_theme_color_override"
+	else:
+		valueType = typeof(target.call("get_theme_%s" % [property], property))
+		method = "add_theme_%s_override" % [property]
 	var value: Variant
 	match valueType:
 		TYPE_INT: value = args[1] as int
