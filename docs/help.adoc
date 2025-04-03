@@ -730,9 +730,9 @@ Set the ACTOR to the center of the screen.
 
 List all PARENT's children actors.
 
-=== /choose cmd:s actor:s values:...
+=== /choose cmd:s [actor:s] values:...
 
-Send a CMD to an ACTOR with one of the VALUES chosen randomly. If a wildcard is used, e.g. `bl*`, all ACTORs with with a name that begins with `bl` will get a different value. *WARNING: This only works with single-value commands.*
+Send a CMD with one of the VALUES chosen randomly. The second argument ACTOR is only needed for ACTOR commands. If a wildcard is used, e.g. `bl*`, all ACTORs with a name that begins with `bl` will get a different value. *WARNING: This only works with single-value commands.*
 
 === /color actor:s r:f g:f b:f
 
@@ -975,7 +975,7 @@ Generic command to set the VALUE to any PROPERTY of an ACTOR.
 
 === /rand cmd:s actor:s min:f max:f
 
-Send a CMD to an ACTOR with a random value between MIN and MAX. If a wildcard is used, e.g. `bl*`, all ACTORs with with a name that begins with `bl` will get a different value. *WARNING: This only works with single-value commands.*
+Send a CMD to an ACTOR with a random value between MIN and MAX. If a wildcard is used, e.g. `bl*`, all ACTORs with a name that begins with `bl` will get a different value. *WARNING: This only works with single-value commands.*
 
 === /remove actor:s
 

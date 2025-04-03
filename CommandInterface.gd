@@ -142,7 +142,7 @@ var coreCommands: Dictionary = {
 	"/midi/free": CommandDescription.new(clearMidi, "", "Remove all commands from MIDI events."),
 	# utils
 	"/rand": CommandDescription.new(randCmdValue, "cmd:s actor:s min:f max:f", "Send a CMD to an ACTOR with a random value between MIN and MAX. If a wildcard is used, e.g. `bl*`, all ACTORs with a name that begins with `bl` will get a different value. *WARNING: This only works with single-value commands.*", Flags.asArray(true)),
-	"/choose": CommandDescription.new(chooseCmdValue, "cmd:s actor:s values:...", "Send a CMD to an ACTOR with one of the VALUES chosen randomly. If a wildcard is used, e.g. `bl*`, all ACTORs with a name that begins with `bl` will get a different value. *WARNING: This only works with single-value commands.*", Flags.asArray(true)),
+	"/choose": CommandDescription.new(chooseCmdValue, "cmd:s [actor:s] values:...", "Send a CMD with one of the VALUES chosen randomly. The second argument ACTOR is only needed for ACTOR commands. If a wildcard is used, e.g. `bl*`, all ACTORs with a name that begins with `bl` will get a different value. *WARNING: This only works with single-value commands.*", Flags.asArray(true)),
 	"/tween": CommandDescription.new(tweenActorProperty, "dur:f transition:s property:s actor:s value:f", "Tweens a PROPERTY of an ACTOR between the current value and final VALUE in a span of time equal to DURation, in seconds. The TRANSITION must be one of: linear, sine, quint, quart, quad, expo, elastic, cubic, circ, bounce, back and spring.\nSee also: <<_tween_loop,/tween/loop>>.", Flags.asArray(true)),
 	"/unix/cmd": CommandDescription.new(unixCmd, "cmd:s", "Execute a unix command and get the output in the console.", Flags.asArray(true)),
 	# Node
@@ -1506,7 +1506,12 @@ func randCmdValue(args: Array) -> Status:
 func chooseCmdValue(args: Array) -> Status:
 	var command = args[0]
 	var result = getActors(args[1])
-	if result.isError(): return result
+	if result.isError(): 
+		args = args.slice(1)
+		var index = randi() % args.size()
+		var value = args[index]
+		result = commandManager.evalCommand([command, value], "CommandInterface")
+		return result
 	args = args.slice(2)
 	for actor in result.value:
 		var index = randi() % args.size()
