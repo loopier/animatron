@@ -541,13 +541,14 @@ func clearMidi() -> Status:
 	return Status.ok()
 
 func getHelp(cmd: String) -> Status:
+	if not(cmd.begins_with("/")): 
+		return getHelp("/" + cmd)
+	
 	var cmdDesc = getCommandDescription(cmd)
-	if typeof(cmdDesc) == TYPE_ARRAY:
+	if typeof(cmdDesc) == TYPE_ARRAY and cmdDesc.size() > 1:
 		cmdDesc.sort()
 		post(["\n".join(cmdDesc)])
 		return Status.ok()
-	if not(cmd.begins_with("/")): 
-		return getHelp("/" + cmd)
 	if cmdDesc == null:
 		return Status.error("Help not found: %s" % [cmd])
 	
