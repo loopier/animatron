@@ -783,6 +783,10 @@ Get list of available commands.
 
 Load a custom command definitions file, which should have the format described below.
 
+=== /copy new_actor:a actor:a
+
+Create NEW_ACTOR copying everything from ACTOR.
+
 === /create actor:s animation:s
 
 Create an ACTOR that plays ANIMATION.
