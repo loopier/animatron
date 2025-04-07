@@ -63,12 +63,15 @@ func printVersion():
 
 func initPostWindowMsg():
 	var msg = ""
-	msg += "Animatron\nversion %s\n" % [getAnimatronVersion()]
-	msg += "---\n"
-	msg += "To see the tutorial write:\n\n"
-	msg += "/tutorial\n\n"
-	msg += "and press SHIFT + ENTER while the cursor is on that line.\n"
-	msg += "---\n\n"
+	msg += "Animatron v%s\n" % [getAnimatronVersion()]
+	#msg += "---\n"
+	#msg += "To see the tutorial write:\n\n"
+	#msg += "/tutorial\n"
+	msg += "\n"
+	msg += "type /help /commands\n"
+	msg += "and press CTRL + ENTER.\n"
+	#msg += "---\n"
+	msg += "\n"
 	postWindow.set_text(msg)
 
 func createSessionHistoryLogFile():
