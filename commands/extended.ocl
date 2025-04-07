@@ -222,6 +222,22 @@
 /def /move/y actor:a y:f
      /method /translate $actor 0 $y
 
+# Move `actor` up an amount of pixels relative to the current position.
+/def /move/up actor:a y:f
+     /move/y $actor -$y
+
+# Move `actor` down an amount of pixels relative to the current position.
+/def /move/down actor:a y:f
+     /move/y $actor $y
+
+# Move `actor` left an amount of pixels relative to the current position.
+/def /move/left actor:a x:f
+     /move/x $actor -$x
+
+# Move `actor` down an amount of pixels relative to the current position.
+/def /move/right actor:a x:f
+     /move/x $actor $x
+
 # Set the absolute rotation of the `actor` in `degrees`.
 #
 # _Example:_ `/angle lola 45`

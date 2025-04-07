@@ -189,6 +189,18 @@ Move `actor` an amount of pixels relative to the current position in the `y` axi
 _Example:_ `/move/y lola 100`
 
 
+=== /move/up actor:a y:f
+Move `actor` up an amount of pixels relative to the current position.
+
+=== /move/down actor:a y:f
+Move `actor` down an amount of pixels relative to the current position.
+
+=== /move/left actor:a x:f
+Move `actor` left an amount of pixels relative to the current position.
+
+=== /move/right actor:a x:f
+Move `actor` down an amount of pixels relative to the current position.
+
 === /angle actor:s degrees:f
 Set the absolute rotation of the `actor` in `degrees`.
 
