@@ -114,22 +114,16 @@ Set the `x` coordinate (in pixels) of the `actor`.
 _Example:_ `/position/x lola 500`
 
 
-=== /pos/x actor:a value:f
-See <<_positionx_actors_xf,/position/x>>
-
-_Example:_ `/pos/x mama 500`
-
-
-=== /x actor:a value:f
-See <<_positionx_actors_xf,/position/x>>
-
-_Example:_ `/x mama 500`
-
-
 === /position/y actor:a y:f
 Set the `y` coordinate (in pixels) of the `actor`.
 
 _Example:_ `/position/x lola 500`
+
+
+=== /pos/x actor:a value:f
+See <<_positionx_actors_xf,/position/x>>
+
+_Example:_ `/pos/x mama 500`
 
 
 === /pos/y actor:a value:f
@@ -138,10 +132,37 @@ Set the `y` coordinate (in pixels) of the `actor`.
 _Example:_ `/pos/y mama 500`
 
 
+=== /x actor:a value:f
+See <<_positionx_actors_xf,/position/x>>
+
+_Example:_ `/x mama 500`
+
+
 === /y actor:a value:f
 Set the `y` coordinate (in pixels) of the `actor`.
 
 _Example:_ `/y mama 500`
+
+
+=== /mouse actor:a
+Set the `x` coordinate (in pixels) of the `actor` to the
+last mouse click.
+
+_Example:_ `/mouse mama`
+
+
+=== /mouse/x actor:a
+Set the `x` coordinate (in pixels) of the `actor` to the
+last mouse click.
+
+_Example:_ `/mouse/x mama
+
+
+=== /mouse/y actor:a
+Set the `y` coordinate (in pixels) of the `actor` to the
+last mouse click.
+
+_Example:_ `/mouse/y mama
 
 
 === /y/sort parentActor:s sort:b

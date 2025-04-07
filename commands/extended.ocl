@@ -136,12 +136,26 @@
 /def /position/x actor:a x:f
      /property /position/x $actor $x
 
+# Set the `y` coordinate (in pixels) of the `actor`.
+#
+# _Example:_ `/position/x lola 500`
+#
+/def /position/y actor:a y:f
+     /property /position/y $actor $y
+
 # See <<_positionx_actors_xf,/position/x>>
 #
 # _Example:_ `/pos/x mama 500`
 #
 /def /pos/x actor:a value:f
      /position/x $actor $value
+
+# Set the `y` coordinate (in pixels) of the `actor`.
+#
+# _Example:_ `/pos/y mama 500`
+#
+/def /pos/y actor:a value:f
+     /position/y $actor $value
 
 # See <<_positionx_actors_xf,/position/x>>
 #
@@ -152,24 +166,34 @@
 
 # Set the `y` coordinate (in pixels) of the `actor`.
 #
-# _Example:_ `/position/x lola 500`
-#
-/def /position/y actor:a y:f
-     /property /position/y $actor $y
-
-# Set the `y` coordinate (in pixels) of the `actor`.
-#
-# _Example:_ `/pos/y mama 500`
-#
-/def /pos/y actor:a value:f
-     /position/y $actor $value
-
-# Set the `y` coordinate (in pixels) of the `actor`.
-#
 # _Example:_ `/y mama 500`
 #
 /def /y actor:a value:f
      /position/y $actor $value
+
+# Set the `x` coordinate (in pixels) of the `actor` to the
+# last mouse click.
+#
+# _Example:_ `/mouse mama`
+#
+/def /mouse actor:a
+     /position $actor $mousex $mousey
+
+# Set the `x` coordinate (in pixels) of the `actor` to the
+# last mouse click.
+#
+# _Example:_ `/mouse/x mama
+#
+/def /mouse/x actor:a
+     /position/x $actor $mousex
+
+# Set the `y` coordinate (in pixels) of the `actor` to the
+# last mouse click.
+#
+# _Example:_ `/mouse/y mama
+#
+/def /mouse/y actor:a
+     /position/y $actor $mousey
 
 # Sort actors according to their `y` position value. Actors with a higher `y` value will be
 # drawn lower on the screen and on top of actors with a smaller `y` position value.
