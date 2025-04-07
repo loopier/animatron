@@ -3,6 +3,7 @@ class_name Main
 
 var Osc := preload("res://osc_receiver.tscn")
 var osc: OscReceiver
+static var historyLogFile := ""
 static var defaultConfigPath := "res://config/default.ocl"
 static var configPath := "user://config/config.ocl"
 var metanode := preload("res://meta_node.tscn")
@@ -70,6 +71,14 @@ func initPostWindowMsg():
 	msg += "---\n\n"
 	postWindow.set_text(msg)
 
+func createSessionHistoryLogFile():
+	var timeDict := Time.get_datetime_dict_from_system()
+	var time = "%04d%02d%02d_%02d%02d%02d" % [timeDict["year"], timeDict["month"], timeDict["day"], timeDict["hour"], timeDict["minute"], timeDict["second"]]
+	historyLogFile = "user://logs/animatron-session-history-%s.ocl" % [time]
+	var file = FileAccess.open(historyLogFile, FileAccess.WRITE)
+	file.store_string("# animatron session - %s\n" % [time])
+	file.close()
+
 func _ready():
 	# Have the content area fit to fill the main window
 	# To change the "stage" size to something of fixed resolution,
@@ -79,7 +88,7 @@ func _ready():
 	# if you need to change the log level, do it from the res://config/default.ocl
 	Log.setLevel(Log.LOG_LEVEL_INFO)
 	Log.setLevel(Log.LOG_LEVEL_DEBUG)
-
+	
 	
 	osc = OscReceiver.new()
 	self.add_child.call_deferred(osc)
@@ -131,6 +140,8 @@ func _ready():
 	editor.loadDialog = $OpenFileDialog
 	editor.eval_code.connect(_on_eval_code)
 	editor.font_size_changed.connect(_on_editor_font_size_chaned.bind(editor))
+	createSessionHistoryLogFile()
+	editor.historyFile = historyLogFile
 	
 	$Midi.midi_noteon.connect(_on_midi_noteon)
 	$Midi.midi_noteoff.connect(_on_midi_noteoff)

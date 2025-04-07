@@ -10,6 +10,7 @@ signal font_size_changed(object: CodeEdit)
 
 @onready var history = []
 @onready var historyIndex = 0
+@onready var historyFile := ""
 
 # Called when the node enters the scene tree for the first time.
 func _ready():
@@ -150,7 +151,14 @@ func updateHistory(cmd: String):
 	if historyIndex != history.size() - 1 and cmd == history[historyIndex]:
 		history.remove_at(historyIndex)
 	historyIndex = history.size()
+	appendToHistoryLog(cmd)
 	Log.debug(history)
+
+func appendToHistoryLog(cmd: String):
+	var file = FileAccess.open(historyFile, FileAccess.READ_WRITE)
+	file.seek_end()
+	file.store_string(cmd + "\n")
+	file.close()
 
 func previousCommand():
 	if history.size() <= 0: return
