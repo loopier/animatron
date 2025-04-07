@@ -783,10 +783,6 @@ Get list of available commands.
 
 Load a custom command definitions file, which should have the format described below.
 
-=== /copy new_actor:a actor:a
-
-Create NEW_ACTOR copying everything from ACTOR.
-
 === /create actor:s animation:s
 
 Create an ACTOR that plays ANIMATION.
@@ -794,6 +790,10 @@ Create an ACTOR that plays ANIMATION.
 === /def cmdName:s [args:v] subcommands:c
 
 Define a custom OSC command that is a list of other OSC commands. This may be recursive, so each SUBCOMMAND may reference one of the built-in commands, or another custom-defined command. Another way to define custom commands is via the file commands/init.osc. The CMDNAME string (first argument) may include argument names (ARG1 ... ARGN), which may be referenced as SUBCOMMAND arguments using $ARG1 ... $ARGN. Example: /def "/addsel actor anim" "/create $actor $anim" "/select $actor". 
+
+=== /duplicate new_actor:a actor:a
+
+Create NEW_ACTOR copying everything from ACTOR.
 
 === /editor/append text:...
 

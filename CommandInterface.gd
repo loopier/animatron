@@ -75,7 +75,7 @@ var coreCommands: Dictionary = {
 	"/actors/list": CommandDescription.new(listActors, "", "Get list of current actor instances. Returns /list/actors/reply OSC message."),
 	"/create": CommandDescription.new(createActor, "actor:s animation:s", "Create an ACTOR that plays ANIMATION."),
 	"/remove": CommandDescription.new(removeActor, "actor:s", "Delete the ACTOR by name (remove its instance). "),
-	"/copy": CommandDescription.new(copyActor, "new_actor:a actor:a", "Create NEW_ACTOR copying everything from ACTOR."),
+	"/duplicate": CommandDescription.new(duplicateActor, "new_actor:a actor:a", "Create NEW_ACTOR copying everything from ACTOR."),
 	"/color": CommandDescription.new(colorActor, "actor:s r:f g:f b:f", "Modulate the ACTOR by an RGB colour. R, G and B should be in the 0-1 range. Set to white (1,1,1) to restore its original colour."),
 	"/color/add": CommandDescription.new(addColorActor, "actor:s r:f g:f b:f", "Add an RGB colour to the ACTOR. R, G and B should be in the 0-1 range (can be negative to subtract colour). Set to black (0,0,0) to remove its effect. The addition is done after the modulation by `/color` (if any)."),
 	"/opacity": CommandDescription.new(setActorOpacity, "actor:s opacity:f", "Set OPACITY of ACTOR and its children."),
@@ -855,7 +855,7 @@ func removeActor(actorName: String) -> Status:
 		actorsNode.remove_child(actor)
 	return Status.ok()
 
-func copyActor(newActorName: String, oldActorName: String) -> Status:
+func duplicateActor(newActorName: String, oldActorName: String) -> Status:
 	var result = getActor(oldActorName)
 	if result.isError(): return result
 	var oldActor = result.value
@@ -864,6 +864,7 @@ func copyActor(newActorName: String, oldActorName: String) -> Status:
 	newActor = oldActor.duplicate()
 	newActor.set_name(newActorName)
 	actorsNode.add_child(newActor)
+	callAnimationMethod(["/play", newActorName])
 	return Status.ok()
 
 func setActorAnimation(actorName, animation) -> Status:
