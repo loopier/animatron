@@ -11,7 +11,7 @@ config_version=5
 [application]
 
 config/name="Animatron"
-config/version="0.0.16"
+config/version="0.0.17"
 run/main_scene="res://main.tscn"
 config/use_custom_user_dir=true
 config/custom_user_dir_name="animatron"

@@ -215,6 +215,7 @@ func _input(event):
 		editor._input(event)
 	if event.is_action_pressed("next_command"):
 		editor._input(event)
+
 func _ignoreEvent():
 	get_parent().set_input_as_handled()
 
