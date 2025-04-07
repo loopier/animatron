@@ -855,12 +855,15 @@ func removeActor(actorName: String) -> Status:
 		actorsNode.remove_child(actor)
 	return Status.ok()
 
-func copyActor(newActor: String, oldActor: String) -> Status:
-	var result = getActor(oldActor)
+func copyActor(newActorName: String, oldActorName: String) -> Status:
+	var result = getActor(oldActorName)
 	if result.isError(): return result
-	var actor = result.value.duplicate()
-	actor.set_name(newActor)
-	actorsNode.add_child(actor)
+	var oldActor = result.value
+	var newActor = getActor(newActorName)
+	if newActor.isOk(): removeActor(newActorName)
+	newActor = oldActor.duplicate()
+	newActor.set_name(newActorName)
+	actorsNode.add_child(newActor)
 	return Status.ok()
 
 func setActorAnimation(actorName, animation) -> Status:
