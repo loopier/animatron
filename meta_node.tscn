@@ -1,8 +1,8 @@
-[gd_scene load_steps=8 format=3 uid="uid://bv4h4a2us0yne"]
+[gd_scene load_steps=7 format=3 uid="uid://bv4h4a2us0yne"]
 
 [ext_resource type="Script" path="res://MetaNode.gd" id="1_dit08"]
 [ext_resource type="Script" path="res://Animation.gd" id="2_wfrnp"]
-[ext_resource type="FontFile" uid="uid://daia8ao3j3s85" path="res://fonts/TT2020StyleF-Regular.ttf" id="3_fjn8v"]
+[ext_resource type="Theme" uid="uid://fdwx0dyeryqy" path="res://styles/comic-baloon.tres" id="3_a2ai6"]
 
 [sub_resource type="Shader" id="Shader_a7rav"]
 code = "shader_type canvas_item;
@@ -30,11 +30,6 @@ shader_parameter/uSelected = false
 
 [sub_resource type="SpriteFrames" id="SpriteFrames_g6lqa"]
 
-[sub_resource type="Theme" id="Theme_2spbi"]
-default_font = ExtResource("3_fjn8v")
-default_font_size = 64
-Label/colors/font_color = Color(0, 0, 0, 1)
-
 [node name="MetaNode" type="CharacterBody2D"]
 script = ExtResource("1_dit08")
 
@@ -55,7 +50,7 @@ grow_horizontal = 2
 grow_vertical = 0
 size_flags_horizontal = 4
 size_flags_vertical = 4
-theme = SubResource("Theme_2spbi")
+theme = ExtResource("3_a2ai6")
 bbcode_enabled = true
 fit_content = true
 scroll_active = false

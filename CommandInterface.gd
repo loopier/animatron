@@ -71,6 +71,7 @@ var coreCommands: Dictionary = {
 	
 	# label
 	"/text/property": CommandDescription.new(_setTextProperty, "property:s actor:s value:...", "Change the ACTOR's text GDScript PROPERTY. Slashes ('/') will be replaced for underscores '_'. Leading slash is optional.\n\nUsage: `/text/property /text target alo bla`", Flags.asArray(true)),
+	"/text/color": CommandDescription.new(setActorTextColor, "actor:s r:f g:f b:f", "Set the color of the text of the ACTOR. R, G and B should be in the 0-1 range. Set to white (1,1,1) to restore its original colour."),
 	
 	"/actors/list": CommandDescription.new(listActors, "", "Get list of current actor instances. Returns /list/actors/reply OSC message."),
 	"/create": CommandDescription.new(createActor, "actor:s animation:s", "Create an ACTOR that plays ANIMATION."),
@@ -1042,10 +1043,14 @@ func _setTextProperty(args: Array) -> Status:
 		result = getArgsAsPropertyType(actorLabel, property, propertyArgs)
 		if result.isError(): return result
 		property = result.value.propertyName
-		var value = result.value.propertyValue
+		var value = formatText(result.value.propertyValue)
 		var calledProperty = _cmdToGdScriptSetter(property)
 		actorLabel.call(calledProperty, value)
 	return Status.ok()
+
+## Center and add linebreaks
+func formatText(msg: String) -> String:
+	return ("[center]%s[/center]" % [msg]).replace("\\n","\n")
 
 func _setCodeEditProperty(target: CodeEdit, args: Array) -> Status:
 	var property = _cmdToGdScript(args[0])
@@ -1214,7 +1219,7 @@ func colorActor(actorName: String, red, green, blue) -> Status:
 	var rgb := Color(red as float, green as float, blue as float)
 	for actor in result.value:
 		actor.color = rgb
-		setTextColor(actorName, red, green, blue)
+		setActorTextColor(actorName, red, green, blue)
 	return Status.ok()
 
 func addColorActor(actorName: String, red, green, blue) -> Status:
@@ -1678,7 +1683,7 @@ func callTextMethod(textProperty: String, args: Array) -> Status:
 	return Status.ok()
 
 ## see colorActor comments about non-typing the arguments
-func setTextColor(actorName: String, red, green, blue) -> Status:
+func setActorTextColor(actorName: String, red, green, blue) -> Status:
 	var result = getActors(actorName)
 	if result.isError(): return result
 	var color = Color(red as float, green as float, blue as float)

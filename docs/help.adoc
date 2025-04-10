@@ -1094,6 +1094,10 @@ See `/state/def`
 
 Get a list of states for the given ACTOR.
 
+=== /text/color actor:s r:f g:f b:f
+
+Set the color of the text of the ACTOR. R, G and B should be in the 0-1 range. Set to white (1,1,1) to restore its original colour.
+
 === /text/property property:s actor:s value:...
 
 Change the ACTOR's text GDScript PROPERTY. Slashes ('/') will be replaced for underscores '_'. Leading slash is optional.
