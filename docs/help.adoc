@@ -545,16 +545,21 @@ See also: <<_type_actors_text,/type>>
 
 WARNING: Commands in this section are highly experimental. Proceed with caution.
 
-=== /comic actor:s animation:s
+=== /linefill actor:s animation:s
 Creates an `actor` with a pair of 2 `animation` 's.
 
 This allows to create actors with separate animations for line and fill colors.
 The `*-ln` actor is a child of the main (fill) actor.
 
-Suppose we want to create an animation named `bla` with separate fill and line colors. We would have to create 2 directories: one holding the line (`bla-ln`) art and the other the fill (`bla-fl`).
+Suppose we want to create an animation named `bla` with separate fill and line
+colors. We would have to create 2 directories: one holding the line (`bla-ln`)
+art and the other the fill (`bla-fl`).
 
-_Example:_ `/comic lola bla`
+_Example:_ `/linefill lola bla`
 
+
+=== /baloon actor:a msg:s
+Create a comic speech baloon.
 
 
 
@@ -960,9 +965,29 @@ Set OPACITY of ACTOR and its children.
 
 Set the IP address and PORT number of a remote OSC server.
 
-=== /osc/send msg:s
+=== /osc/remote/add name:s ip:s port:i
 
-Send an OSC message to a remote server. See `/osc/remote`.
+Add a new remote OSC server with a NAME, the IP address and PORT number. See `/osc/remote/remove`
+
+=== /osc/remote/ip remote:s ip:s
+
+Change the IP of an existing REMOTE OSC server. See `/osc/remote/add`
+
+=== /osc/remote/port remote:s port:i
+
+Change the PORT of an existing REMOTE OSC server. See `/osc/remote/add`
+
+=== /osc/remote/remove name:s
+
+Remove the remote OSC server with NAME.
+
+=== /osc/remotes 
+
+List available remotes.
+
+=== /osc/send remote:s msg:...
+
+Send an OSC message to a named REMOTE OSC server. See `/osc/remote/add`.
 
 === /parent child:s parent:s
 

@@ -182,7 +182,7 @@ func _input(event):
 	updateVSplitOffset()
 	if event.is_pressed():
 		editor.grab_focus()
-	if event is InputEventMouseButton and event.pressed:
+	if event.is_action_pressed("mouse_click", true):
 		setLastMouseClick()
 	if event.is_action_pressed("toggle_editor", true):
 		evalCommand(["/editor/toggle"], "")

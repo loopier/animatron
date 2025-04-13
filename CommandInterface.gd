@@ -38,7 +38,6 @@ var mirrorDisplay: Sprite2D
 @onready var commandManager: Node
 @onready var midiCommands: Array
 @onready var oscSender: OscReceiver
-var oscRemoteTarget: String
 var animationsLibrary: SpriteFrames ## The meta node containing these frames needs to be initialized in _ready
 var animationDataLibrary: AnimationLibrary
 var assetsPath := "user://assets"
@@ -122,8 +121,13 @@ var coreCommands: Dictionary = {
 	"/post/clear": CommandDescription.new(clearPost, "", "Clear post window contents."),
 	"/post/file": CommandDescription.new(postFile, "path:s", "Print the contents of a file on the post window."),
 	# osc
+	"/osc/remotes": CommandDescription.new(listOscRemotes, "", "List available remotes."),
 	"/osc/remote": CommandDescription.new(connectOscRemote, "ip:s port:i", "Set the IP address and PORT number of a remote OSC server.", Flags.asArray(true)),
-	"/osc/send": CommandDescription.new(sendOscMsg, "msg:s", "Send an OSC message to a remote server. See `/osc/remote`.", Flags.asArray(true)),
+	"/osc/remote/add": CommandDescription.new(addOscRemote, "name:s ip:s port:i", "Add a new remote OSC server with a NAME, the IP address and PORT number. See `/osc/remote/remove`", Flags.asArray(true)),
+	"/osc/remote/remove": CommandDescription.new(removeOscRemote, "name:s", "Remove the remote OSC server with NAME."),
+	"/osc/remote/ip": CommandDescription.new(setOscRemoteIp, "remote:s ip:s", "Change the IP of an existing REMOTE OSC server. See `/osc/remote/add`", Flags.asArray(true)),
+	"/osc/remote/port": CommandDescription.new(setOscRemotePort, "remote:s port:i", "Change the PORT of an existing REMOTE OSC server. See `/osc/remote/add`", Flags.asArray(true)),
+	"/osc/send": CommandDescription.new(sendOscMsg, "remote:s msg:...", "Send an OSC message to a named REMOTE OSC server. See `/osc/remote/add`.", Flags.asArray(true)),
 	# midi
 	"/midi/cc": CommandDescription.new(midiCC, "channel:i num:i cmd:s", "Map the control value to a CMD. The last 2 CMD arguments should be MIN and MAX, in that order. Example: /midi/cc 0 1 /position/x target 0 1920. *WARNING: this only works with commands that accept 1 argument.*", Flags.asArray(true)),
 	"/midi/noteon/num": CommandDescription.new(midiNoteOnNum, "channel:i cmd:s", "Map the pressed note number to a CMD. The last 2 CMD arguments should be MIN and MAX, in that order. Example: /midi/noteon/num 0 /position/x target 0 1920. *WARNING: this only works with commands that accept 1 argument.*", Flags.asArray(true)),
@@ -419,14 +423,73 @@ func postFile(path: String) -> Status:
 	post([content])
 	return Status.ok()
 
+func listOscRemotes() -> Status:
+	var remotes := []
+	for key in oscSender.remotes:
+		remotes.append(oscRemoteToString(key))
+	remotes.sort()
+	var remotesList := "OSC remote servers:\n"
+	remotesList += "\n".join(remotes)
+	remotesList += "\n"
+	post([remotesList])
+	return Status.info(remotesList)
+
+func oscRemoteToString(remoteName: String) -> String:
+	var remote = oscSender.remotes[remoteName]
+	return "%s\t%s/%s" % [remoteName, remote.ip, remote.port]
+
 func connectOscRemote(args: Array) -> Status:
 	var senderIP: String = args[0]
 	var senderPort := args[1] as int
-	oscRemoteTarget = "%s/%s" % [senderIP, senderPort];
-	return Status.ok(senderIP, "Connecting to OSC target: %s:%s" % [oscRemoteTarget])
+	var oscRemoteTarget = "%s/%s" % [senderIP, senderPort];
+	return Status.info(senderIP, "Connecting to OSC target: %s:%s" % [oscRemoteTarget])
 
-func sendOscMsg(msg: Array) -> Status:
-	oscSender.sendMessage(oscRemoteTarget, msg[0], msg.slice(1))
+# FIX: for some reason passing individual arugments doesn't work. It needs to be an array - Flags.asArray(true)
+#func addOscRemote(name: String, ip: String, port: int) -> Status:
+func addOscRemote(args: Array) -> Status:
+	var name : String = args[0]
+	var ip : String = args[1]
+	var port: String = args[2]
+	oscSender.remotes[name] = {"ip": ip, "port": port}
+	return Status.ok()
+
+func removeOscRemote(name: String) -> Status:
+	oscSender.remotes.erase(name)
+	return Status.ok()
+
+func setOscRemoteIp(args: Array) -> Status:
+	var remoteName : String = args[0]
+	var ip : String = args[1]
+	if not(oscSender.remotes.has(remoteName)):
+		var msg := "Remote not found: %s" % [remoteName]
+		listOscRemotes()
+		post([msg])
+		return Status.error(msg)
+	oscSender.remotes[remoteName]["ip"] = ip
+	return Status.info(oscSender.remotes[remoteName])
+
+func setOscRemotePort(args: Array) -> Status:
+	var remoteName : String = args[0]
+	var port : int = args[1] as int
+	if not(oscSender.remotes.has(remoteName)):
+		var msg := "Remote not found: %s" % [remoteName]
+		listOscRemotes()
+		post([msg])
+		return Status.error(msg)
+	oscSender.remotes[remoteName]["port"] = port
+	var msg := oscRemoteToString(remoteName)
+	return Status.info(msg,msg)
+
+#func sendOscMsg(remoteName: String, msg: Array) -> Status:
+func sendOscMsg(args: Array) -> Status:
+	var remoteName : String = args[0]
+	var msg := args.slice(1)
+	if not(oscSender.remotes.has(remoteName)):
+		var remotesList : String = listOscRemotes().value
+		return Status.error("Could not find remote OSC server: %s\n%s" % [remoteName, remotesList])
+	var remote = oscSender.remotes[remoteName]
+	var remoteString = "%s/%s" % [remote.ip, remote.port]
+	oscSender.sendMessage(remoteString, msg[0], msg.slice(1))
 	return Status.ok()
 
 func midiCC(args: Array) -> Status:

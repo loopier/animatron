@@ -5,3 +5,6 @@
 /editor/clear
 
 #/commands/load res://test/test-init-code.ocl
+
+/osc/remote/add sclang 127.0.0.1 57120
+/osc/remote/add ziva 127.0.0.1 57120

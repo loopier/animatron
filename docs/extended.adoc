@@ -545,16 +545,21 @@ See also: <<_type_actors_text,/type>>
 
 WARNING: Commands in this section are highly experimental. Proceed with caution.
 
-=== /comic actor:s animation:s
+=== /linefill actor:s animation:s
 Creates an `actor` with a pair of 2 `animation` 's.
 
 This allows to create actors with separate animations for line and fill colors.
 The `*-ln` actor is a child of the main (fill) actor.
 
-Suppose we want to create an animation named `bla` with separate fill and line colors. We would have to create 2 directories: one holding the line (`bla-ln`) art and the other the fill (`bla-fl`).
+Suppose we want to create an animation named `bla` with separate fill and line
+colors. We would have to create 2 directories: one holding the line (`bla-ln`)
+art and the other the fill (`bla-fl`).
 
-_Example:_ `/comic lola bla`
+_Example:_ `/linefill lola bla`
 
+
+=== /baloon actor:a msg:s
+Create a comic speech baloon.
 
 
 

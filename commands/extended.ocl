@@ -648,15 +648,25 @@
 # This allows to create actors with separate animations for line and fill colors.
 # The `*-ln` actor is a child of the main (fill) actor.
 #
-# Suppose we want to create an animation named `bla` with separate fill and line colors. We would have to create 2 directories: one holding the line (`bla-ln`) art and the other the fill (`bla-fl`).
+# Suppose we want to create an animation named `bla` with separate fill and line
+# colors. We would have to create 2 directories: one holding the line (`bla-ln`)
+# art and the other the fill (`bla-fl`).
 #
-# _Example:_ `/comic lola bla`
+# _Example:_ `/linefill lola bla`
 #
-/def /comic actor:s animation:s
+/def /linefill actor:s animation:s
      /create $actor $animation-fl
      /create $actor-ln $animation-ln
      /parent $actor-ln $name
 
+
+# Create a comic speech baloon.
+/def /baloon actor:a msg:s
+    /create $actor-baloon comic-speech-baloon
+    /stop $actor-baloon
+    /color $actor-baloon 1 1 1
+    /text/color $actor-baloon 0 0 0
+    /type $actor-baloon $msg
 
 #################################################################################
 # = app
@@ -785,6 +795,11 @@
 /def /osc msg:s
      /osc/send $msg
 
+# Control Ziva from Animatron.
+#
+# Send an OSC message to Ziva.
+/def /ziva msg:s
+     /osc/send ziva $msg
 
 #################################################################################
 # == midi

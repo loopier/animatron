@@ -205,3 +205,14 @@ func test_getAxis():
 	assert_eq(cmd.getAxis("size_x").value, "x")
 	assert_eq(cmd.getAxis("/color/r").value, "r")
 	assert_null(cmd.getAxis("/blax"))
+
+func test_oscRemotes():
+	cmd.addOscRemote("bla", "127.0.0.1", 11111)
+	assert_eq(cmd.oscSender.remotes["bla"], {"ip": "127.0.0.1", "port": 11111})
+	assert_eq(cmd.listOscRemotes().value, "OSC remotes:\nbla\t127.0.0.1/11111")
+	cmd.addOscRemote("alo", "192.168.1.148", 22222)
+	assert_eq(cmd.listOscRemotes().value, "OSC remotes:\nbla\t127.0.0.1/11111\nalo\t192.168.1.148/22222")
+	cmd.addOscRemote("bla", "127.0.0.1", 22222)
+	assert_eq(cmd.listOscRemotes().value, "OSC remotes:\nbla\t127.0.0.1/22222\nalo\t192.168.1.148/22222")
+	cmd.removeOscRemote("bla")
+	assert_eq(cmd.listOscRemotes().value, "OSC remotes:\nalo\t192.168.1.148/22222")

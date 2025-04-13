@@ -12,6 +12,7 @@ var socketUdp := PacketPeerUDP.new()
 var streamBuf := StreamPeerBuffer.new()
 enum {OSC_ARG_TYPE_NULL, OSC_ARG_TYPE_FLOAT=102, OSC_ARG_TYPE_INT=105, OSC_ARG_TYPE_STRING=115}
 var observers: Dictionary = Dictionary()
+var remotes := {}
 
 # osc server
 var serverPort: int = 56101 :
