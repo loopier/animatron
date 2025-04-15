@@ -160,7 +160,8 @@ func updateHistory(cmd: String):
 
 func appendToHistoryLog(cmd: String):
 	var file = FileAccess.open(historyFile, FileAccess.READ_WRITE)
-	file.seek_end()
+	if file != null:
+		file.seek_end()
 	file.store_string(cmd + "\n")
 	file.close()
 
