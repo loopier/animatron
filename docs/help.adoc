@@ -671,6 +671,15 @@ See
 <<_oscsend_msgs,/osc/send>>
 <<_oscremote_ips_porti,/osc/remote>>
 
+=== /ziva msg:...
+Control Ziva from Animatron.
+
+Send an OSC message to Ziva.
+
+first "ziva" is the remote name, the second "/ziva" is the address of
+
+the OSC message sent to Ziva, so it can parse it.
+
 
 
 == midi
@@ -996,6 +1005,10 @@ Set an actor to be the CHILD of another PARENT actor.
 === /parent/free child:s
 
 Free the CHILD actor from it's parent.
+
+=== /pass 
+
+Do nothing.
 
 === /post msg:s
 

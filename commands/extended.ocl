@@ -798,8 +798,10 @@
 # Control Ziva from Animatron.
 #
 # Send an OSC message to Ziva.
-/def /ziva msg:s
-     /osc/send ziva $msg
+/def /ziva msg:...
+     # first "ziva" is the remote name, the second "/ziva" is the address of
+     # the OSC message sent to Ziva, so it can parse it.
+     /osc/send ziva /ziva $msg
 
 #################################################################################
 # == midi
