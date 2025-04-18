@@ -67,7 +67,6 @@ drag_and_drop_selection_enabled = false
 virtual_keyboard_enabled = false
 middle_mouse_paste_enabled = false
 wrap_mode = 1
-scroll_fit_content_height = true
 
 [node name="SaveFileDialog" type="FileDialog" parent="."]
 title = "Load Preset"
