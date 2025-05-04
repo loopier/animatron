@@ -706,3 +706,14 @@ See
 <<_midi_noteon_trig_free,/midi/noteon/trig/free>>
 <<_midi_noteon_velocity,/midi/noteon/velocity>>
 
+=== /utils
+
+utils
+
+
+
+
+== speech bubbles - comic dialog
+
+/free $name
+

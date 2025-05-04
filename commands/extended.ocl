@@ -636,7 +636,6 @@
 /def /text/color actor:s r:f g:f b:f
      /text/property /modulate $actor $r $g $b
 
-
 #################################################################################
 # == experimental
 #################################################################################
@@ -830,12 +829,69 @@
 /def /midi
      /help /midi
 
+#####################
+# utils
+#####################
+/def /utils
+    /help /fade*
+    /help /center*
+    /help /left*
+    /help /right*
+    /help /rand/*
+    /help /color/*
+
+/def /fade/in actor:s time:f
+     /tween $time linear /opacity $actor 1
+
+/def /fade/out actor:s time:f
+     /tween $time linear /opacity $actor 0
+
+/def /left actor:s
+     /x $actor {1920 / 4}
+
+/def /right actor:s
+     /x $actor {1920 / 4 * 3}
+
+/def /center/x actor:a
+     /x $actor {1920 / 2}
+
+/def /center/y actor:a
+     /y $actor {1080 / 2}
+
+/def /rand/width actor:s
+     /rand /x $actor 0 1920
+
+/def /rand/height actor:s
+     /rand /y $actor 0 1080
+
+/def /rand/right actor:s
+     /rand /x $actor 960 1920
+
+/def /rand/left actor:s
+     /rand /x $actor 0 960
+
+/def /rand/top actor:s
+     /rand /y $actor 0 540
+
+/def /rand/bottom actor:s
+     /rand /y $actor 540 1080
+
+/def /rand/pos actor:a
+     /rand/width $actor
+     /rand/height $actor
+
+/def /color/rand actor:s
+     /color $actor {randf()} {randf()} {randf()}
+
+/def /color/to actor:a time:f r:f g:f b:f
+     /tween $time linear /color $actor $r $g $b
+
 #################################################################################
 # == speech bubbles - comic dialog
 #################################################################################
 
 /def /off/voice size:i name:s msg:...
-    /free $name
+    #/free $name
     /create $name bubble
     /stop $name
     /frame $name {$size - 1}
@@ -853,160 +909,160 @@
     /say $size $name $msg
     /frame $name-cua 11
 
-/def /off/voice/1 name msg:...
+/def /off/voice/1 name:s msg:...
     /off/voice 1 $name $msg
 
-/def /off/voice/2 name msg:...
+/def /off/voice/2 name:s msg:...
     /off/voice 2 $name $msg
     /post $name-cua $msg
 
-/def /off/voice/3 name msg:...
+/def /off/voice/3 name:s msg:...
     /off/voice 3 $name $msg
 
-/def /off/voice/4 name msg:...
+/def /off/voice/4 name:s msg:...
     /off/voice 4 $name $msg
 
-/def /off/voice/5 name msg:...
+/def /off/voice/5 name:s msg:...
     /off/voice 5 $name $msg
 
-/def /off/voice/6 name msg:...
+/def /off/voice/6 name:s msg:...
     /off/voice 6 $name $msg
 
-/def /off/voice/7 name msg:...
+/def /off/voice/7 name:s msg:...
     /off/voice 7 $name $msg
 
-/def /off/voice/8 name msg:...
+/def /off/voice/8 name:s msg:...
     /off/voice 8 $name $msg
     /post $name-cua $msg
 
-/def /off/voice/9 name msg:...
+/def /off/voice/9 name:s msg:...
     /off/voice 9 $name $msg
 
-/def /off/voice/10 name msg:...
+/def /off/voice/10 name:s msg:...
     /off/voice 10 $name $msg
 
-/def /think/1 name msg:...
+/def /think/1 name:s msg:...
     /think 1 $name $msg
     /offset $name-cua 0 -70
 
-/def /think/2 name msg:...
+/def /think/2 name:s msg:...
     /think 2 $name $msg
     /offset $name-cua 0 -70
     /post $name-cua $msg
 
-/def /think/3 name msg:...
+/def /think/3 name:s msg:...
     /think 3 $name $msg
     /offset $name-cua 0 -30
 
-/def /think/4 name msg:...
+/def /think/4 name:s msg:...
     /think 4 $name $msg
     /offset $name-cua 0 -30
 
-/def /think/5 name msg:...
+/def /think/5 name:s msg:...
     /think 5 $name $msg
     /offset $name-cua 0 0
 
-/def /think/6 name msg:...
+/def /think/6 name:s msg:...
     /think 6 $name $msg
     /offset $name-cua 0 -70
 
-/def /think/7 name msg:...
+/def /think/7 name:s msg:...
     /think 7 $name $msg
     /offset $name-cua 0 -70
 
-/def /think/8 name msg:...
+/def /think/8 name:s msg:...
     /think 8 $name $msg
     /offset $name-cua 0 -30
     /post $name-cua $msg
 
-/def /think/9 name msg:...
+/def /think/9 name:s msg:...
     /think 9 $name $msg
     /offset $name-cua 0 -30
 
-/def /think/10 name msg:...
+/def /think/10 name:s msg:...
     /think 10 $name $msg
     /offset $name-cua 0 0
 
-/def /say/1 name msg:...
+/def /say/1 name:s msg:...
     /say 1 $name $msg
     /offset $name-cua 0 -70
 
-/def /say/2 name msg:...
+/def /say/2 name:s msg:...
     /say 2 $name $msg
     /offset $name-cua 0 -70
     /post $name-cua $msg
 
-/def /say/3 name msg:...
+/def /say/3 name:s msg:...
     /say 3 $name $msg
     /offset $name-cua 0 -30
 
-/def /say/4 name msg:...
+/def /say/4 name:s msg:...
     /say 4 $name $msg
     /offset $name-cua 0 -30
 
-/def /say/5 name msg:...
+/def /say/5 name:s msg:...
     /say 5 $name $msg
     /offset $name-cua 0 0
 
-/def /say/6 name msg:...
+/def /say/6 name:s msg:...
     /say 6 $name $msg
     /offset $name-cua 0 -70
 
-/def /say/7 name msg:...
+/def /say/7 name:s msg:...
     /say 7 $name $msg
     /offset $name-cua 0 -70
 
-/def /say/8 name msg:...
+/def /say/8 name:s msg:...
     /say 8 $name $msg
     /offset $name-cua 0 -30
     /post $name-cua $msg
 
-/def /say/9 name msg:...
+/def /say/9 name:s msg:...
     /say 9 $name $msg
     /offset $name-cua 0 -30
 
-/def /say/10 name msg:...
+/def /say/10 name:s msg:...
     /say 10 $name $msg
     /offset $name-cua 0 0
 
-/def /think/1 name msg:...
+/def /think/1 name:s msg:...
     /think 1 $name $msg
     /offset $name-cua 0 -70
 
-/def /think/2 name msg:...
+/def /think/2 name:s msg:...
     /think 2 $name $msg
     /offset $name-cua 0 -70
     /post $name-cua $msg
 
-/def /think/3 name msg:...
+/def /think/3 name:s msg:...
     /think 3 $name $msg
     /offset $name-cua 0 -30
 
-/def /think/4 name msg:...
+/def /think/4 name:s msg:...
     /think 4 $name $msg
     /offset $name-cua 0 -30
 
-/def /think/5 name msg:...
+/def /think/5 name:s msg:...
     /think 5 $name $msg
     /offset $name-cua 0 0
 
-/def /think/6 name msg:...
+/def /think/6 name:s msg:...
     /think 6 $name $msg
     /offset $name-cua 0 -70
 
-/def /think/7 name msg:...
+/def /think/7 name:s msg:...
     /think 7 $name $msg
     /offset $name-cua 0 -70
 
-/def /think/8 name msg:...
+/def /think/8 name:s msg:...
     /think 8 $name $msg
     /offset $name-cua 0 -30
     /post $name-cua $msg
 
-/def /think/9 name msg:...
+/def /think/9 name:s msg:...
     /think 9 $name $msg
     /offset $name-cua 0 -30
 
-/def /think/10 name msg:...
+/def /think/10 name:s msg:...
     /think 10 $name $msg
     /offset $name-cua 0 0

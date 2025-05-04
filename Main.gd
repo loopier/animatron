@@ -237,6 +237,7 @@ func evalCommands(cmds: Array, sender: String) -> Status:
 
 func evalCommand(cmdArray: Array, sender: String) -> Status:
 	# we only parse the cmd address because if it's a /def it woul override the def's variables
+	if cmdArray.size() == 0: return
 	var cmd : String = cmdArray[0]
 	var result : Status
 	var cmdDescription : Variant = cmdInterface.getCommandDescription(cmd)
