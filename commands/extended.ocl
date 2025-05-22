@@ -722,6 +722,20 @@
 /def /editor/font/color r:f g:f b:f
      /editor/property /font/color $r $g $b
 
+# Set the post window's font size in `pixels`.
+#
+# _Example:_ `/post/font/size 60`
+#
+/def /post/font/size pixels:i
+     /post/property /font/size $pixels
+
+# Set the post's font color.
+#
+# _Example:_ `/post/font/color 0 0 0`
+#
+/def /post/font/color r:f g:f b:f
+     /post/property /font/color $r $g $b
+
 
 #################################################################################
 # == window

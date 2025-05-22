@@ -608,6 +608,18 @@ Set the editor's font color.
 _Example:_ `/editor/font/color 0 0 0`
 
 
+=== /post/font/size pixels:i
+Set the post window's font size in `pixels`.
+
+_Example:_ `/post/font/size 60`
+
+
+=== /post/font/color r:f g:f b:f
+Set the post's font color.
+
+_Example:_ `/post/font/color 0 0 0`
+
+
 
 
 == window
