@@ -1119,7 +1119,7 @@ func _setTextProperty(args: Array) -> Status:
 func formatText(msg: String) -> String:
 	return ("[center]%s[/center]" % [msg]).replace("\\n","\n")
 
-func _setCodeEditProperty(target: CodeEdit, args: Array) -> Status:
+func _setControlNodeProperty(target: Control, args: Array) -> Status:
 	var property = _cmdToGdScript(args[0])
 	if property.begins_with("_"): property = property.substr(1)
 	var method := ""
@@ -1148,10 +1148,10 @@ func isThemeProperty(target: CodeEdit, property: String) -> bool:
 	return method != null
 
 func _setEditorProperty(args: Array) -> Status:
-	return _setCodeEditProperty(editor, args)
+	return _setControlNodeProperty(editor, args)
 
 func _setPostProperty(args: Array) -> Status:
-	return _setCodeEditProperty(postWindow, args)
+	return _setControlNodeProperty(postWindow, args)
 
 func setAnimationFramesProperty(property, args) -> Status:
 	return callAnimationFramesMethod(["/set" + property] + [args])
