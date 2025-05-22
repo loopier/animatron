@@ -290,7 +290,7 @@
 # _Example:_ `/size/xy lola 1.5 0.7`
 #
 /def /size/xy actor:s x:f y:f
-     /property /size $actor $x $y
+     /property /size/xy $actor $x $y
 
 # Set the `actor` 's absolute `size` relative to the normal size on the `x` axis.
 #
