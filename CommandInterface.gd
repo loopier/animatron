@@ -902,6 +902,9 @@ func createActor(actorName: String, anim: String) -> Status:
 	
 	#actor.set_editable_instance(self, true)
 	actor.get_node("Animation").animation_finished.connect(commandManager._on_animation_finished)
+	# reset speech bubble
+	actor.get_node("SpeechBubbleBg").set_visible(false)
+	actor.get_node("RichTextLabel").set_text("")
 	return Status.ok(actor, msg)
 
 func _on_animation_finished():
@@ -1288,7 +1291,7 @@ func colorActor(actorName: String, red, green, blue) -> Status:
 	var rgb := Color(red as float, green as float, blue as float)
 	for actor in result.value:
 		actor.color = rgb
-		setActorTextColor(actorName, red, green, blue)
+		setActorTextColor(actorName, red as float, green as float, blue as float)
 	return Status.ok()
 
 func addColorActor(actorName: String, red, green, blue) -> Status:
@@ -1732,11 +1735,11 @@ func setActorText(nameAndMsg: Array) -> Status:
 		label.set_text(msg)
 	return Status.ok()
 
-func setTextProperty(textProperty: String, args: Array) -> Status:
-	var result = getActors(args[0])
-	if result.isError(): return result
-	var property = textProperty.replace("/text/", "set/")
-	return callTextMethod(property, args)
+#func setTextProperty(textProperty: String, args: Array) -> Status:
+	#var result = getActors(args[0])
+	#if result.isError(): return result
+	#var property = textProperty.replace("/text/", "set/")
+	#return callTextMethod(property, args)
 
 func callTextMethod(textProperty: String, args: Array) -> Status:
 	var result = getActors(args[0])
@@ -1752,7 +1755,7 @@ func callTextMethod(textProperty: String, args: Array) -> Status:
 	return Status.ok()
 
 ## see colorActor comments about non-typing the arguments
-func setActorTextColor(actorName: String, red, green, blue) -> Status:
+func setActorTextColor(actorName: String, red: float, green: float, blue: float) -> Status:
 	var result = getActors(actorName)
 	if result.isError(): return result
 	var color = Color(red as float, green as float, blue as float)
@@ -1766,14 +1769,20 @@ func setActorSpeechBubble(args: Array) -> Status:
 	var name = args[0]
 	var msg = args.slice(1)
 	# create an empty actor to hold the speech bubble text
-	createActor(name, "non-existent-image") # it return boolean and can't be assignet to an actor variable
+	# it returns boolean and can't be assignet to an actor variable
 	var actor = getActor(name).value
+	if actor == null: 
+		createActor(name, "non-existent-image")
+		actor = getActor(name).value
 	var label = actor.get_node("RichTextLabel")
+	var bgActor = actor.find_child("SpeechBubbleBg")
 	var formattedMsg = formatSpeechBubbleText(msg)
 	label.set_text(formattedMsg)
-	#setActorText([actor, msg])
-	#setTextProperty("text", [name, msg])
-	#actor.draw_rect(Rect2(500,500,200,300), Color(1,1,1))
+	setActorTextColor(name, 0,0,0)
+	# method should be called at the idle time - otherwise it doesn't
+	# get the correct size of the text -- resizeSpeechBubbleBg(label, bgActor)
+	self.call_deferred("resizeSpeechBubbleBg", label, bgActor)
+	bgActor.set_visible(true)
 	return Status.ok()
 	
 func formatSpeechBubbleText(msg: Array) -> String:
@@ -1781,7 +1790,7 @@ func formatSpeechBubbleText(msg: Array) -> String:
 	var wordLengths := []
 	# get number of words
 	# decide line length in words
-	var numOfLines := int(msg.size() / goldenRatio)
+	var numOfLines : int = max(int(msg.size() / goldenRatio), 1)
 	# get the number of total chars
 	var numOfChars := " ".join(msg).c_unescape().length()
 	# divide it by the number of lines = chars per line
@@ -1801,3 +1810,13 @@ func formatSpeechBubbleText(msg: Array) -> String:
 	var formattedMsg := "\n".join(lines)
 	formattedMsg = "[center]%s[/center]" % [formattedMsg]
 	return formattedMsg
+
+func resizeSpeechBubbleBg(label: RichTextLabel, bg: ColorRect):
+	var fontSize = label.get_theme_font_size("normal_font")
+	var padding = fontSize + 50
+	var bgWidth = label.get_content_width() + padding
+	var bgHeight = label.get_content_height() + padding
+	bg.set_color(Color(1,1,1))
+	bg.offset_left = bgWidth * (-1) / 2
+	bg.offset_top = bgHeight * (-1) / 2 - (padding/2)
+	bg.set_size(Vector2(bgWidth, bgHeight))

@@ -40,6 +40,10 @@ script = ExtResource("2_wfrnp")
 
 [node name="CollisionShape2D" type="CollisionShape2D" parent="."]
 
+[node name="SpeechBubbleBg" type="ColorRect" parent="."]
+offset_right = 40.0
+offset_bottom = 40.0
+
 [node name="RichTextLabel" type="RichTextLabel" parent="."]
 anchors_preset = 7
 anchor_left = 0.5
