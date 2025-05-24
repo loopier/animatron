@@ -1790,8 +1790,7 @@ func formatSpeechBubbleText(msg: Array) -> String:
 	# some times, when called from inside a dev, the arguments array is a single
 	# string holding the complete message
 	msg = " ".join(msg).split(" ")
-	var goldenRatio := (1 + sqrt(5)) / 2	
-	var wordLengths := []
+	var goldenRatio := (1 + sqrt(5)) / 2
 	# get number of words
 	# decide line length in words
 	var numOfLines : int = max(int(msg.size() / goldenRatio), 1)
@@ -1799,16 +1798,14 @@ func formatSpeechBubbleText(msg: Array) -> String:
 	var numOfChars := " ".join(msg).c_unescape().length()
 	# divide it by the number of lines = chars per line
 	var charsPerLine = int(numOfChars / numOfLines)
-	# get word lengths 
-	for word in msg:
-		wordLengths.append(word.length())
 	# add a line break when next word exceeds the number of chars per line
 	var lines := []
 	var line := ""
-	for i in wordLengths.size():
+	for i in msg.size():
 		var word = msg[i]
 		line += " %s" % [word]
-		if line.length() >= charsPerLine:
+		var linelength = line.length()
+		if line.length() >= charsPerLine or i == msg.size() - 1:
 			lines.append(line)
 			line = ""
 	var formattedMsg := "\n".join(lines)
@@ -1820,7 +1817,8 @@ func resizeSpeechBubbleBg(label: RichTextLabel, bg: ColorRect):
 	var padding = fontSize + 50
 	var bgWidth = label.get_content_width() + padding
 	var bgHeight = label.get_content_height() + padding
+	#var bgHeight = fontSize * label.get_line_count()
 	bg.set_color(Color(1,1,1))
 	bg.offset_left = bgWidth * (-1) / 2
-	bg.offset_top = bgHeight * (-1) / 2 - (padding/2)
+	bg.offset_top = bgHeight * (-1) + (padding / 2)
 	bg.set_size(Vector2(bgWidth, bgHeight))
