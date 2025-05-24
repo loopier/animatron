@@ -896,15 +896,16 @@ func createActor(actorName: String, anim: String) -> Status:
 	# Node.find_child(pattern) -- see Node docs
 	actor.set_owner(actorsNode)
 	
+	# reset speech bubble
+	actor.get_node("SpeechBubbleBg").set_visible(false)
+	actor.get_node("RichTextLabel").set_text("")
+	
 	if result.isError():
 		result = setActorText([actorName, actorName])
 		return result
 	
 	#actor.set_editable_instance(self, true)
 	actor.get_node("Animation").animation_finished.connect(commandManager._on_animation_finished)
-	# reset speech bubble
-	actor.get_node("SpeechBubbleBg").set_visible(false)
-	actor.get_node("RichTextLabel").set_text("")
 	return Status.ok(actor, msg)
 
 func _on_animation_finished():
@@ -1108,16 +1109,15 @@ func _setTextProperty(args: Array) -> Status:
 	var result = getActors(args[1])
 	if result.isError(): return result
 	var property = _cmdToGdScript(args[0])
+	var propertyArgs = args.slice(2)
 	for actor in result.value:
 		var actorLabel = actor.get_node("RichTextLabel") 
-		#.get_theme().get_default_font()
-		var propertyArgs = args.slice(2)
-		result = getArgsAsPropertyType(actorLabel, property, propertyArgs)
-		if result.isError(): return result
-		property = result.value.propertyName
-		var value = formatText(result.value.propertyValue)
-		var calledProperty = _cmdToGdScriptSetter(property)
-		actorLabel.call(calledProperty, value)
+		if property == "text": 
+			actorLabel.set_text(" ".join(propertyArgs))
+			return Status.ok()
+		propertyArgs.insert(0, property)
+		var partialResult = _setControlNodeProperty(actorLabel, propertyArgs)
+		if partialResult.isError(): return partialResult
 	return Status.ok()
 
 ## Center and add linebreaks
@@ -1786,6 +1786,10 @@ func setActorSpeechBubble(args: Array) -> Status:
 	return Status.ok()
 	
 func formatSpeechBubbleText(msg: Array) -> String:
+	# make sure messages are split into words.
+	# some times, when called from inside a dev, the arguments array is a single
+	# string holding the complete message
+	msg = " ".join(msg).split(" ")
 	var goldenRatio := (1 + sqrt(5)) / 2	
 	var wordLengths := []
 	# get number of words

@@ -61,23 +61,6 @@ scroll_active = false
 autowrap_mode = 0
 shortcut_keys_enabled = false
 
-[node name="RichTextLabel2" type="RichTextLabel" parent="."]
-anchors_preset = 7
-anchor_left = 0.5
-anchor_top = 1.0
-anchor_right = 0.5
-anchor_bottom = 1.0
-grow_horizontal = 2
-grow_vertical = 0
-size_flags_horizontal = 4
-size_flags_vertical = 4
-theme = ExtResource("3_a2ai6")
-bbcode_enabled = true
-fit_content = true
-scroll_active = false
-autowrap_mode = 0
-shortcut_keys_enabled = false
-
 [node name="AnimationPlayer" type="AnimationPlayer" parent="."]
 
 [connection signal="animation_changed" from="Animation" to="Animation" method="_on_animation_changed"]
