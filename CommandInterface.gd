@@ -73,6 +73,8 @@ var coreCommands: Dictionary = {
 	"/text/property": CommandDescription.new(_setTextProperty, "property:s actor:s value:...", "Change the ACTOR's text GDScript PROPERTY. Slashes ('/') will be replaced for underscores '_'. Leading slash is optional.\n\nUsage: `/text/property /text target alo bla`", Flags.asArray(true)),
 	"/text/color": CommandDescription.new(setActorTextColor, "actor:s r:f g:f b:f", "Set the color of the text of the ACTOR. R, G and B should be in the 0-1 range. Set to white (1,1,1) to restore its original colour."),
 	
+	"/speech/bubble": CommandDescription.new(setActorSpeechBubble, "name:s msg:...", "Create a comic speech bubble with a NAME to say a MSG.", Flags.asArray(true)),
+	
 	"/actors/list": CommandDescription.new(listActors, "", "Get list of current actor instances. Returns /list/actors/reply OSC message."),
 	"/create": CommandDescription.new(createActor, "actor:s animation:s", "Create an ACTOR that plays ANIMATION."),
 	"/remove": CommandDescription.new(removeActor, "actor:s", "Delete the ACTOR by name (remove its instance). "),
@@ -1758,3 +1760,44 @@ func setActorTextColor(actorName: String, red, green, blue) -> Status:
 		var label = actor.get_node("RichTextLabel")
 		label.set_modulate(color)
 	return Status.ok()
+
+## create a speech bubble automatically formatting the text and resizing the bubble
+func setActorSpeechBubble(args: Array) -> Status:
+	var name = args[0]
+	var msg = args.slice(1)
+	# create an empty actor to hold the speech bubble text
+	createActor(name, "non-existent-image") # it return boolean and can't be assignet to an actor variable
+	var actor = getActor(name).value
+	var label = actor.get_node("RichTextLabel")
+	var formattedMsg = formatSpeechBubbleText(msg)
+	label.set_text(formattedMsg)
+	#setActorText([actor, msg])
+	#setTextProperty("text", [name, msg])
+	#actor.draw_rect(Rect2(500,500,200,300), Color(1,1,1))
+	return Status.ok()
+	
+func formatSpeechBubbleText(msg: Array) -> String:
+	var goldenRatio := (1 + sqrt(5)) / 2	
+	var wordLengths := []
+	# get number of words
+	# decide line length in words
+	var numOfLines := int(msg.size() / goldenRatio)
+	# get the number of total chars
+	var numOfChars := " ".join(msg).c_unescape().length()
+	# divide it by the number of lines = chars per line
+	var charsPerLine = int(numOfChars / numOfLines)
+	# get word lengths 
+	for word in msg:
+		wordLengths.append(word.length())
+	# add a line break when next word exceeds the number of chars per line
+	var lines := []
+	var line := ""
+	for i in wordLengths.size():
+		var word = msg[i]
+		line += " %s" % [word]
+		if line.length() >= charsPerLine:
+			lines.append(line)
+			line = ""
+	var formattedMsg := "\n".join(lines)
+	formattedMsg = "[center]%s[/center]" % [formattedMsg]
+	return formattedMsg

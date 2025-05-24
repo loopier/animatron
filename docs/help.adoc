@@ -1131,6 +1131,10 @@ Load a named SHADER object from disk, located in a file with `.gdshader` extensi
 
 Set a SHADER property (aka 'uniform' variable) for an ACTOR. The `value` will depend on the type of the property, for example a `vec3` would require three floats, a `float` only requires a single value.
 
+=== /speech/bubble name:s msg:...
+
+Create a comic speech bubble with a NAME to say a MSG.
+
 === /state/add machine:s state:s next:s
 
 Add a STATE with a name to the state MACHINE. NEXT states is an arbitrary number of next possible states. Example: `/state/add mymachine stateA state1 state2` would create a new stateA in `mymachine` that would either repeat or move on to `state2.
