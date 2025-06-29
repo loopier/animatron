@@ -43,7 +43,8 @@ func startServerOn(listenPort: int):
 func _physics_process(_delta):
 	var numPackets := socketUdp.get_available_packet_count()
 	for i in numPackets:
-		var msg := parseOsc(socketUdp.get_packet())
+		var packet = socketUdp.get_packet()
+		var msg := parseOsc(packet)
 		var sender := "%s/%d" % [socketUdp.get_packet_ip(), socketUdp.get_packet_port()]
 		#Log.verbose("OSC message received from %s: %s %s" % [sender, msg.addr, msg.args])
 		osc_msg_received.emit(msg.addr, msg.args, sender)
@@ -95,13 +96,14 @@ func parseOsc(packet: PackedByteArray) -> OscMessage:
 	return msg
 
 func getString(buf: StreamPeer) -> String:
-	var result := ""
-	for i in buf.get_size():
-		var c := buf.get_u8()
-		# keep moving the cursor until the next multiple of 4
-		if c == 0 and buf.get_position() % 4 == 0: break
-		result += char(c)
-	return result
+	var bytes := PackedByteArray()
+	while true:
+		var byte := buf.get_u8()
+		if byte == 0:
+			break
+		bytes.append(byte)
+	# ensure proper UTF-8 decoding
+	return bytes.get_string_from_utf8()
 
 func getFloat(buf: StreamPeer) -> float:
 	return buf.get_float()
