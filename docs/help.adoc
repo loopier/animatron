@@ -812,6 +812,22 @@ Modulate the ACTOR by an RGB colour. R, G and B should be in the 0-1 range. Set 
 
 Add an RGB colour to the ACTOR. R, G and B should be in the 0-1 range (can be negative to subtract colour). Set to black (0,0,0) to remove its effect. The addition is done after the modulation by `/color` (if any).
 
+=== /color/preset actor:a color:s
+
+Modulate the ACTOR using the COLOR preset.
+
+=== /color/preset/add name:s r:f g:f b:f
+
+Create a color preset and add it to memory.
+
+=== /color/preset/remove name:s
+
+Remove a color preset from memory.
+
+=== /color/presets/list 
+
+Get the list of available color presets
+
 === /commands/list 
 
 Get list of available commands.
@@ -1080,6 +1096,10 @@ Generic command to set the VALUE to any PROPERTY of an ACTOR.
 === /rand cmd:s actor:s min:f max:f
 
 Send a CMD to an ACTOR with a random value between MIN and MAX. If a wildcard is used, e.g. `bl*`, all ACTORs with a name that begins with `bl` will get a different value. *WARNING: This only works with single-value commands.*
+
+=== /redef cmdName:s
+
+Writes command to editor so it can be modified.
 
 === /remove actor:s
 

@@ -1,7 +1,7 @@
 [gd_scene load_steps=7 format=3 uid="uid://bv4h4a2us0yne"]
 
-[ext_resource type="Script" path="res://MetaNode.gd" id="1_dit08"]
-[ext_resource type="Script" path="res://Animation.gd" id="2_wfrnp"]
+[ext_resource type="Script" uid="uid://ciqvmtj3ixik4" path="res://MetaNode.gd" id="1_dit08"]
+[ext_resource type="Script" uid="uid://bljf64drtu10u" path="res://Animation.gd" id="2_wfrnp"]
 [ext_resource type="Theme" uid="uid://fdwx0dyeryqy" path="res://styles/comic-baloon.tres" id="3_a2ai6"]
 
 [sub_resource type="Shader" id="Shader_a7rav"]

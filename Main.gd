@@ -13,6 +13,7 @@ var metanode := preload("res://meta_node.tscn")
 @onready var Routine := preload("res://RoutineNode.tscn")
 @onready var routines := $Routines
 @onready var stateMachines := {}
+@onready var colorPresets := {}
 @onready var midiCommands := []
 @onready var loadedCmdFiles := [] # keep track of loaded files to generate docs on the fly
 var ocl: OpenControlLanguage

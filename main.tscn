@@ -1,13 +1,13 @@
 [gd_scene load_steps=10 format=3 uid="uid://q56taxhy2mot"]
 
-[ext_resource type="Script" path="res://Main.gd" id="1_70ykf"]
-[ext_resource type="Script" path="res://IndirectView.gd" id="2_8xn6f"]
-[ext_resource type="Script" path="res://CommandInterface.gd" id="2_xp2d0"]
-[ext_resource type="Script" path="res://Midi.gd" id="3_68liq"]
+[ext_resource type="Script" uid="uid://4hojh0tcl1ai" path="res://Main.gd" id="1_70ykf"]
+[ext_resource type="Script" uid="uid://b3dh8xhr7oc23" path="res://IndirectView.gd" id="2_8xn6f"]
+[ext_resource type="Script" uid="uid://c7lift7wf173w" path="res://CommandInterface.gd" id="2_xp2d0"]
+[ext_resource type="Script" uid="uid://bxb68i5b4gc22" path="res://Midi.gd" id="3_68liq"]
 [ext_resource type="Theme" uid="uid://cccwlwk873tqt" path="res://styles/code_edit.theme" id="3_fotw2"]
-[ext_resource type="Script" path="res://CodeEdit.gd" id="3_xiw00"]
+[ext_resource type="Script" uid="uid://b4aflcjvow3kb" path="res://CodeEdit.gd" id="3_xiw00"]
 [ext_resource type="StyleBox" uid="uid://dqdhrgvrn3l8a" path="res://styles/left-margin-transparent.stylebox" id="5_efpnp"]
-[ext_resource type="Script" path="res://MirrorDisplay.gd" id="7_hhsd4"]
+[ext_resource type="Script" uid="uid://berodsnes55j2" path="res://MirrorDisplay.gd" id="7_hhsd4"]
 
 [sub_resource type="ViewportTexture" id="ViewportTexture_8vqmj"]
 viewport_path = NodePath("IndirectView")

@@ -81,6 +81,10 @@ var coreCommands: Dictionary = {
 	"/duplicate": CommandDescription.new(duplicateActor, "new_actor:a actor:a", "Create NEW_ACTOR copying everything from ACTOR."),
 	"/color": CommandDescription.new(colorActor, "actor:s r:f g:f b:f", "Modulate the ACTOR by an RGB colour. R, G and B should be in the 0-1 range. Set to white (1,1,1) to restore its original colour."),
 	"/color/add": CommandDescription.new(addColorActor, "actor:s r:f g:f b:f", "Add an RGB colour to the ACTOR. R, G and B should be in the 0-1 range (can be negative to subtract colour). Set to black (0,0,0) to remove its effect. The addition is done after the modulation by `/color` (if any)."),
+	"/color/preset/add": CommandDescription.new(addColorPreset, "name:s r:f g:f b:f", "Create a color preset and add it to memory."),
+	"/color/preset/remove": CommandDescription.new(removeColorPreset, "name:s", "Remove a color preset from memory."),
+	"/color/preset": CommandDescription.new(colorActorWithPreset, "actor:a color:s", "Modulate the ACTOR using the COLOR preset."),
+	"/color/presets/list": CommandDescription.new(listColorPresets, "", "Get the list of available color presets"),
 	"/opacity": CommandDescription.new(setActorOpacity, "actor:s opacity:f", "Set OPACITY of ACTOR and its children."),
 	"/shader/create": CommandDescription.new(createShader, "shader:s code:...", "Create a named SHADER object with the given Godot shader CODE. If the code does not compile, then the default shader will be used. Passing no code argument for the shader will reset it to the default shader. Be sure to use double braces `{{}}` around functions and code blocks.", Flags.asArray(true)),
 	"/shader/load": CommandDescription.new(loadShader, "shader:s", "Load a named SHADER object from disk, located in a file with `.gdshader` extension in the `shaders` subdirectory of the user assets path. Sending `*` as the shader name will cause all custom shaders in that directory to be loaded."),
@@ -104,6 +108,7 @@ var coreCommands: Dictionary = {
 	"/state/next": CommandDescription.new(nextState, "machine:s", "Change MACHINE to next state.  This will send the 'exit' command of the current state, and the 'entry' command of the next state.\n\nSee `/state/def`"),
 	# def
 	"/def": CommandDescription.new(defineCommand, "cmdName:s [args:v] subcommands:c", "Define a custom OSC command that is a list of other OSC commands. This may be recursive, so each SUBCOMMAND may reference one of the built-in commands, or another custom-defined command. Another way to define custom commands is via the file commands/init.osc. The CMDNAME string (first argument) may include argument names (ARG1 ... ARGN), which may be referenced as SUBCOMMAND arguments using $ARG1 ... $ARGN.\nExample:\n\n/def  /addsel actor:a anim:s\n\t/create $actor $anim\n\t/select $actor.\n", Flags.asArray(true)),
+	"/redef": CommandDescription.new(redefineCommand, "cmdName:s", "Writes command to editor so it can be modified."),
 	# for (loop)
 	"/for": CommandDescription.new(forCommand, "varName:s iterations:i cmd:s", "Iterate `iterations` times over `varName`, substituting the current iteration value in each call to `cmd`.", Flags.asArray(true)),
 	# editor"
@@ -220,6 +225,48 @@ func defineCommand(args: Array) -> Status:
 	var subCommands = splits.slice(1)
 	defCommands[commandName] = {"variables": commandVariables, "subcommands": subCommands}
 	return Status.ok([commandName, commandVariables, subCommands], "Added command def: %s %s %s" % [commandName, commandVariables, subCommands])
+
+## Writes the CMD code on the editor so it can be edited without having to rewrite everything
+func redefineCommand(cmd: String) -> Status:
+	if not(cmd.begins_with("/")): 
+		return getHelp("/" + cmd)
+	
+	var cmdDesc = getCommandDescription(cmd)
+	if typeof(cmdDesc) == TYPE_ARRAY and cmdDesc.size() > 1:
+		cmdDesc.sort()
+		post(["\n".join(cmdDesc)])
+		return Status.ok()
+	if cmdDesc == null:
+		return Status.error("Help not found: %s" % [cmd])
+	
+	editor.set_visible(true)
+	#postWindow.set_text("")
+	# if it's a /def
+	if typeof(cmdDesc) == TYPE_DICTIONARY:
+		var text := ""
+		for file in commandManager.loadedCmdFiles:
+			var result = DocGenerator.getTextFromFile(file)
+			if result.isError(): continue
+			text += DocGenerator.getTextFromFile(file).value
+		var result : Status = DocGenerator.getDocString(text, cmd)
+		if result.isError():
+			result.value = result.msg
+			#return result
+		var msg : String = result.value.strip_edges()
+		msg += "/def %s" % [cmd]
+		for key in cmdDesc.variables:
+			msg += " %s" % [key]
+		msg += "\n"
+		for subcmd in cmdDesc.subcommands:
+			msg += "\t%s\n" % [" ".join(subcmd)]
+		
+		#appendTextToEditor([msg])
+		editor.evalText(msg)
+		return Status.ok()
+	
+	# it's a core command
+	var msg = "[HELP] %s %s\n\n%s" % [cmd, cmdDesc.argsDescription, cmdDesc.description]
+	return Status.info(cmdDesc, msg)
 
 func forCommand(args: Array) -> Status:
 	var cmds: Array = ocl._for(args)
@@ -1303,6 +1350,24 @@ func addColorActor(actorName: String, red, green, blue) -> Status:
 		CommandInterface.setImageShaderUniform(animation, "uAddColor", rgb)
 	return Status.ok()
 
+func addColorPreset(name: String, r: float, g: float, b: float) -> Status:
+	commandManager.colorPresets[name] = Color(r, g, b)
+	return Status.ok()
+
+func removeColorPreset(name: String) -> Status:
+	commandManager.colorPresets.erase(name)
+	return Status.ok()
+
+func colorActorWithPreset(actorName: String, color: String) -> Status:
+	var result := getActors(actorName)
+	if result.isError(): return result
+	var preset : Color = commandManager.colorPresets[color]
+	colorActor(actorName, preset.r, preset.g, preset.b)
+	return Status.ok()
+
+func listColorPresets() -> Status:
+	return _list(commandManager.colorPresets)
+
 func setActorOpacity(actorName: String, alpha: Variant) -> Status:
 	var result := getActors(actorName)
 	if result.isError(): return result
@@ -1768,6 +1833,9 @@ func setActorTextColor(actorName: String, red: float, green: float, blue: float)
 func setActorSpeechBubble(args: Array) -> Status:
 	var name = args[0]
 	var msg = args.slice(1)
+	if len(" ".join(msg).strip_edges()) < 1: 
+		removeActor(name)
+		return Status.warning("Empty message for speech bubble.")
 	# create an empty actor to hold the speech bubble text
 	# it returns boolean and can't be assignet to an actor variable
 	var actor = getActor(name).value
